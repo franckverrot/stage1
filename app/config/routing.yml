@@ -1,0 +1,4 @@
+app_core:
+    resource: "@AppCoreBundle/Resources/config/routing.xml"
+    prefix:   /
+

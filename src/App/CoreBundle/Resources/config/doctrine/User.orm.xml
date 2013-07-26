@@ -1,0 +1,15 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CoreBundle\Entity\User" table="user">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+        <field name="githubId" column="github_id" type="integer" />
+        <field name="username" column="username" type="string" length="255" />
+        <field name="email" column="email" type="string" length="255" />
+        <field name="accessToken" column="access_token" type="string" length="255" />
+    </entity>
+</doctrine-mapping>

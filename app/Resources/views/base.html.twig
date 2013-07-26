@@ -2,12 +2,46 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}stage1{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+        <style type="text/css">body { padding-top: 60px; }</style>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="brand" href="#">Stage1</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="#">stage1</a></li>
+                        <li><a href="#">Rainforest</a></li>
+                    </ul>
+                </div>
+                <div class="span9">
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </div>
         {% block javascripts %}{% endblock %}
+        <script src="/oauth.js"></script>
+        <script src="/jquery.js"></script>
+        {% if not is_granted('ROLE_USER') %}
+        <script type="text/javascript">
+            OAuth.initialize('maWYPXfzovVpT1hkeqVXPmJ2Yn8');
+            OAuth.popup('github', function(err, result) {
+                $.post('/login/' + result.access_token, function(data) {
+                    console.log(data);
+                });
+            });
+        </script>
+        {% endif %}
     </body>
 </html>
