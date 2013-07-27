@@ -1,6 +1,6 @@
 <ul class="nav nav-pills nav-stacked" id="nav-projects">
     {% for project in app.user.projects %}
-    <li><a href="#">{{ project.name }}</a></li>
+    <li><a href="{{ path('app_core_project_show', { id: project.id }) }}">{{ project.name }}</a></li>
     {% endfor %}
 </ul>
 

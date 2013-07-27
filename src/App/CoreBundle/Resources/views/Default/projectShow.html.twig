@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+<script src="/project_show.js"></script>
+<script type="text/javascript">
+var github_access_token = '{{ access_token }}';
+var detect_branches_url = '{{ path('app_core_project_detect_branches', { id: project.id }) }}';
+var schedule_build_url = '{{ path('app_core_project_schedule_build', { id: project.id }) }}';
+var pending_builds = {{ pending_builds | json_encode | raw }};
+detect_branches();
+</script>
+{% endblock javascripts %}
+
+{% block body %}
+<h3>{{ project.name }}</h3>
+
+<p class="lead">
+    {% if not project.lastBuildAt %}
+    This project has never been built.
+    {% else %}
+    Last built on {{ project.lastBuildAt | date('Y-m-d') }} at {{ project.lastBuildAt | date('H:i') }} for ref {{ project.lastBuildRef }}.
+    {% endif %}
+</p>
+
+<div id="detect_branches_status" class="alert alert-info">
+    <i class="icon-refresh icon-spin"></i>
+    <span>Detecting branches...</span>
+</div>
+
+<div id="branches"></div>
+
+<script type="text/mustache" id="tpl-branch-pending">
+{% verbatim %}
+<div class="branch row-fluid">
+    <div class="span3 ctn-name">{{ name }}</div>
+    <div class="span9 ctn-button">
+        <button class="btn btn-info" disabled="disabled"><i class="icon-ok"></i> Already scheduled</button>
+    </div>
+</div>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-branch">
+{% verbatim %}
+<div class="branch row-fluid">
+    <div class="span3 ctn-name">{{ name }}</div>
+    <div class="span9 ctn-button">
+        <button class="btn">schedule build</button>
+        {{#data}}
+        <input type="hidden" name="{{ name }}" value="{{ value }}" />
+        {{/data}}
+    </div>
+</div>
+{% endverbatim %}
+</script>
+{% endblock body %}

@@ -9,10 +9,14 @@
         <field name="gitUrl" type="string" column="git_url" length="255"/>
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
+        <field name="lastBuildAt" column="last_build_at" type="datetime" nullable="true" />
+        <field name="lastBuildRef" column="last_build_ref" type="string" length="255" />
 
         <many-to-one field="owner" target-entity="App\CoreBundle\Entity\User" inversed-by="projects">
             <join-column name="user_id" referenced-column-name="id" />
         </many-to-one>
+
+        <one-to-many field="builds" target-entity="App\CoreBundle\Entity\Build" mapped-by="project" />
     </entity>
 
 </doctrine-mapping>

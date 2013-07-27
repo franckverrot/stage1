@@ -6,12 +6,12 @@
         var inputs = $(this).parent().find('input:hidden');
         var data = {};
 
-        var tpl_project_nav  = Mustache.compile($('#tpl-project-nav').text());
-        var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
-
         inputs.each(function(index, item) {
             data[item.name] = item.value;
         });
+
+        var tpl_project_nav  = Mustache.compile($('#tpl-project-nav').text());
+        var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
 
         $.ajax({
             url: import_url,

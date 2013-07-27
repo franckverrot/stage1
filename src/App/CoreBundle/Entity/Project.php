@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Entity;
 
+
+
 /**
  * Project
  */
@@ -24,9 +26,15 @@ class Project
 
     private $owner;
 
+    private $builds;
+
     private $createdAt;
 
     private $updatedAt;
+
+    private $lastBuildAt;
+
+    private $lastBuildRef;
 
     /**
      * Get id
@@ -151,5 +159,91 @@ class Project
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Set lastBuildAt
+     *
+     * @param \DateTime $lastBuildAt
+     * @return Project
+     */
+    public function setLastBuildAt($lastBuildAt)
+    {
+        $this->lastBuildAt = $lastBuildAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastBuildAt
+     *
+     * @return \DateTime 
+     */
+    public function getLastBuildAt()
+    {
+        return $this->lastBuildAt;
+    }
+
+    /**
+     * Set lastBuildRef
+     *
+     * @param string $lastBuildRef
+     * @return Project
+     */
+    public function setLastBuildRef($lastBuildRef)
+    {
+        $this->lastBuildRef = $lastBuildRef;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastBuildRef
+     *
+     * @return string 
+     */
+    public function getLastBuildRef()
+    {
+        return $this->lastBuildRef;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->builds = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add builds
+     *
+     * @param \App\CoreBundle\Entity\Build $builds
+     * @return Project
+     */
+    public function addBuild(\App\CoreBundle\Entity\Build $builds)
+    {
+        $this->builds[] = $builds;
+    
+        return $this;
+    }
+
+    /**
+     * Remove builds
+     *
+     * @param \App\CoreBundle\Entity\Build $builds
+     */
+    public function removeBuild(\App\CoreBundle\Entity\Build $builds)
+    {
+        $this->builds->removeElement($builds);
+    }
+
+    /**
+     * Get builds
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getBuilds()
+    {
+        return $this->builds;
     }
 }
