@@ -1,7 +1,7 @@
-<ul class="nav nav-pills nav-stacked">
-    <li><a href="#">Rainforest</a></li>
-    <li><a href="#">stage1</a></li>
-    <li><a href="#">GraphIt</a></li>
+<ul class="nav nav-pills nav-stacked" id="nav-projects">
+    {% for project in app.user.projects %}
+    <li><a href="#">{{ project.name }}</a></li>
+    {% endfor %}
 </ul>
 
 <hr />

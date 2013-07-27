@@ -18,7 +18,7 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             {% if is_granted('ROLE_USER') %}
-                            <li><a href="#">Logged in as {{ app.user.username }}</a></li>
+                            <li><a href="#">Logged in as {{ app.user }}</a></li>
                             <li class="divider-vertical"></li>
                             <li><a href="{{ path('app_core_logout') }}"><i class="icon-off"></i></a></li>
                             {% else %}

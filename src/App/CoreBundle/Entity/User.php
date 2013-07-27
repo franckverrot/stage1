@@ -2,29 +2,53 @@
 
 namespace App\CoreBundle\Entity;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+
 use stdClass;
 
-class User
+class User implements UserInterface
 {
-    public $id;
+    private $id;
 
-    public $githubId;
+    private $githubId;
 
-    public $username;
+    private $username;
 
-    public $email;
+    private $email;
 
-    public $accessToken;
+    private $accessToken;
 
-    public $createdAt;
+    private $createdAt;
 
-    public $updatedAt;
+    private $updatedAt;
 
-    public $lastLoginAt;
+    private $lastLoginAt;
+
+    private $projects;
 
     public function __toString()
     {
-        return $this->getUsername();
+        return (string) $this->username;
+    }
+
+    public function getRoles()
+    {
+        return ['ROLE_USER'];
+    }
+
+    public function getPassword()
+    {
+        return null;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        return true;
     }
 
     static public function fromGithubResponse(stdClass $response)
@@ -206,5 +230,45 @@ class User
     public function getLastLoginAt()
     {
         return $this->lastLoginAt;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->projects = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add projects
+     *
+     * @param \App\CoreBundle\Entity\Project $projects
+     * @return User
+     */
+    public function addProject(\App\CoreBundle\Entity\Project $projects)
+    {
+        $this->projects[] = $projects;
+    
+        return $this;
+    }
+
+    /**
+     * Remove projects
+     *
+     * @param \App\CoreBundle\Entity\Project $projects
+     */
+    public function removeProject(\App\CoreBundle\Entity\Project $projects)
+    {
+        $this->projects->removeElement($projects);
+    }
+
+    /**
+     * Get projects
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getProjects()
+    {
+        return $this->projects;
     }
 }

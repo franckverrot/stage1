@@ -28,13 +28,13 @@ class SecurityController extends Controller
             $user->setAccessToken($accessToken);
             $user->setCreatedAt($now);
             $user->setUpdatedAt($now);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
         }
 
         $user->setLastLoginAt($now);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
 
         $token = new UsernamePasswordToken($user, null, 'main', ['ROLE_USER']);
         $this->get('security.context')->setToken($token);
