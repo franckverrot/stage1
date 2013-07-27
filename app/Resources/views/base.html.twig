@@ -4,7 +4,9 @@
         <meta charset="UTF-8" />
         <title>{% block title %}stage1{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
-        <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="/font-awesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="/stage1.css" />
         <style type="text/css">body { padding-top: 60px; }</style>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -40,10 +42,11 @@
                 </div>
             </div>
         </div>
-        {% block javascripts %}{% endblock %}
-        <script src="/oauth.js"></script>
         <script src="/jquery.js"></script>
+        <script src="/mustache.js"></script>
+        {% block javascripts %}{% endblock %}
         {% if not is_granted('ROLE_USER') %}
+        <script src="/oauth.js"></script>
         <script type="text/javascript">
         $('a#login').click(function() {
             OAuth.initialize('maWYPXfzovVpT1hkeqVXPmJ2Yn8');

@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+<script src="/projects_import.js"></script>
+<script type="text/javascript">
+var github_access_token = '{{ access_token }}';
+// inspect_repositories();
+</script>
+{% endblock javascripts %}
+
+{% block body %}
+<div id="projects_import_status" class="alert alert-info">
+    <i class="icon-refresh icon-spin"></i> <span>Inspecting your github projects...</span>
+    
+</div>
+
+<div id="candidates">
+<div class="candidate row-fluid">
+    <div class="span3 name">symfony2-vagrant</div>
+    <div class="span3">
+        <button class="btn">import</button>
+        <input type="hidden" name="name" value="symfony2-vagrant">
+        <input type="hidden" name="github_id" value="10861309">
+        <input type="hidden" name="git_url" value="git://github.com/ubermuda/symfony2-vagrant.git">
+        <input type="hidden" name="hooks_url" value="https://api.github.com/repos/ubermuda/symfony2-vagrant/hooks">
+        <input type="hidden" name="keys_url" value="https://api.github.com/repos/ubermuda/symfony2-vagrant/keys{/key_id}">
+    </div>
+</div>
+</div>
+
+<script type="text/mustache" id="tpl-project">
+{% verbatim %}
+<div class="candidate row-fluid">
+    <div class="span3 name">{{ name }}</div>
+    <div class="span3">
+        <button class="btn">import</button>
+        {{#data}}
+        <input type="hidden" name="{{ name }}" value="{{ value }}" />
+        {{/data}}
+    </div>
+</div>
+{% endverbatim %}
+</script>
+{% endblock body %}
