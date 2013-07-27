@@ -11,6 +11,8 @@ web/bundles/*
 # Configuration files
 app/config/parameters.ini
 app/config/parameters.yml
+app/SymfonyRequirements.php
+app/check.php
 
 # Vagrant
 .vagrant
