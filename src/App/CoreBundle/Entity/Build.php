@@ -26,6 +26,11 @@ class Build
 
     private $updatedAt;
 
+    public function isPending()
+    {
+        return $this->getStatus() !== self::STATUS_BUILT;
+    }
+
     /**
      * Set status
      *

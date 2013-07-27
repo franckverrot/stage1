@@ -36,6 +36,13 @@ class Project
 
     private $lastBuildRef;
 
+    public function getPendingBuilds()
+    {
+        return $this->getBuilds()->map(function($build) {
+            return $build->isPending();
+        });
+    }
+
     /**
      * Get id
      *

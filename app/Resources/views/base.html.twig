@@ -14,7 +14,7 @@
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
-                    <a class="brand" href="#">Stage1</a>
+                    <a class="brand" href="{{ path('app_core_homepage') }}">Stage1</a>
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             {% if is_granted('ROLE_USER') %}

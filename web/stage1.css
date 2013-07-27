@@ -4,3 +4,7 @@
     line-height: 20px;
     vertical-align: middle;
 }
+
+.nav-tabs > li > a, .nav-pills > li > a {
+    line-height: inherit;
+}
