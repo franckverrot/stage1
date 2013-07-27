@@ -1,0 +1,18 @@
+<h3>{{ project.name }}</h3>
+
+<p class="lead">
+    {% if not project.lastBuildAt %}
+    This project has never been built.
+    {% else %}
+    Last built on {{ project.lastBuildAt | date('Y-m-d') }} at {{ project.lastBuildAt | date('H:i') }} for ref {{ project.lastBuildRef }}.
+    {% endif %}
+</p>
+
+<ul class="nav nav-tabs">
+    <li class="{{ app.request.attributes.get('_route') == 'app_core_project_show' ? 'active' : '' }}">
+        <a href="{{ path('app_core_project_show', { id: project.id }) }}">Builds</a>
+    </li>
+    <li class="{{ app.request.attributes.get('_route') == 'app_core_project_branches' ? 'active' : '' }}">
+        <a href="{{ path('app_core_project_branches', { id: project.id }) }}">Branches</a>
+    </li>
+</ul>

@@ -58,7 +58,7 @@ class DefaultController extends Controller
         return $this->render('AppCoreBundle:Default:dashboard.html.twig');
     }
 
-    public function projectShowAction($id)
+    public function projectBranchesAction($id)
     {
         $project = $this->findProject($id);
 
@@ -68,10 +68,17 @@ class DefaultController extends Controller
             $pendingBuilds[$build->getRef()] = '#';
         }
 
-        return $this->render('AppCoreBundle:Default:projectShow.html.twig', [
+        return $this->render('AppCoreBundle:Default:projectBranches.html.twig', [
             'access_token' => $this->getUser()->getAccessToken(),
             'project' => $project,
             'pending_builds' => $pendingBuilds,
+        ]);        
+    }
+
+    public function projectShowAction($id)
+    {
+        return $this->render('AppCoreBundle:Default:projectShow.html.twig', [
+            'project' => $this->findProject($id),
         ]);
     }
 
@@ -132,7 +139,7 @@ class DefaultController extends Controller
         $existingProjects = [];
 
         foreach ($this->getUser()->getProjects() as $project) {
-            $existingProjects[$project->getName()] = '#';
+            $existingProjects[$project->getName()] = $this->generateUrl('app_core_project_show', ['id' => $project->getId()]);
         }
 
         return $this->render('AppCoreBundle:Default:projectsImport.html.twig', [
