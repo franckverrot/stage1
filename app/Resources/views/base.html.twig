@@ -13,6 +13,17 @@
             <div class="navbar-inner">
                 <div class="container-fluid">
                     <a class="brand" href="#">Stage1</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right">
+                            {% if is_granted('ROLE_USER') %}
+                            <li><a href="#">Logged in as {{ app.user.username }}</a></li>
+                            <li class="divider-vertical"></li>
+                            <li><a href="{{ path('app_core_logout') }}"><i class="icon-off"></i></a></li>
+                            {% else %}
+                            <li><a href="#" id="login">Login with github</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -20,10 +31,9 @@
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span3">
-                    <ul class="nav nav-pills nav-stacked">
-                        <li><a href="#">stage1</a></li>
-                        <li><a href="#">Rainforest</a></li>
-                    </ul>
+                    {% if is_granted('ROLE_USER') %}
+                    {% include 'AppCoreBundle:Default:_sidebar.html.twig' %}
+                    {% endif %}
                 </div>
                 <div class="span9">
                     {% block body %}{% endblock %}
@@ -35,12 +45,14 @@
         <script src="/jquery.js"></script>
         {% if not is_granted('ROLE_USER') %}
         <script type="text/javascript">
+        $('a#login').click(function() {
             OAuth.initialize('maWYPXfzovVpT1hkeqVXPmJ2Yn8');
             OAuth.popup('github', function(err, result) {
                 $.post('/login/' + result.access_token, function(data) {
-                    console.log(data);
+                    window.location = data.redirect_url;
                 });
-            });
+            });            
+        });
         </script>
         {% endif %}
     </body>

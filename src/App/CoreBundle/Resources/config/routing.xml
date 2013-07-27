@@ -8,7 +8,15 @@
         <default key="_controller">AppCoreBundle:Default:index</default>
     </route>
 
+    <route id="app_core_projects_import" pattern="/projects/import" methods="GET">
+        <default key="_controller">AppCoreBundle:Default:projectsImport</default>
+    </route>
+
     <route id="app_core_login" pattern="/login/{accessToken}" methods="POST">
-        <default key="_controller">AppCoreBundle:Default:login</default>
+        <default key="_controller">AppCoreBundle:Security:login</default>
+    </route>
+
+    <route id="app_core_logout" pattern="/logout">
+        <default key="_controller">AppCoreBundle:Security:logout</default>
     </route>
 </routes>

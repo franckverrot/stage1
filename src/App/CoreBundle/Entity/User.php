@@ -16,6 +16,12 @@ class User
 
     public $accessToken;
 
+    public $createdAt;
+
+    public $updatedAt;
+
+    public $lastLoginAt;
+
     public function __toString()
     {
         return $this->getUsername();
@@ -131,5 +137,74 @@ class User
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return User
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     * @return User
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime 
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Set lastLoginAt
+     *
+     * @param \DateTime $lastLoginAt
+     * @return User
+     */
+    public function setLastLoginAt($lastLoginAt)
+    {
+        $this->lastLoginAt = $lastLoginAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastLoginAt
+     *
+     * @return \DateTime 
+     */
+    public function getLastLoginAt()
+    {
+        return $this->lastLoginAt;
     }
 }
