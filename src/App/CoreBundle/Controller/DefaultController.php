@@ -60,6 +60,8 @@ class DefaultController extends Controller
 
     public function projectBranchesAction($id)
     {
+        $this->get('request')->attributes->set('current_project_id', $id);
+        
         $project = $this->findProject($id);
 
         $pendingBuilds = [];
@@ -77,6 +79,8 @@ class DefaultController extends Controller
 
     public function projectShowAction($id)
     {
+        $this->get('request')->attributes->set('current_project_id', $id);
+
         return $this->render('AppCoreBundle:Default:projectShow.html.twig', [
             'project' => $this->findProject($id),
         ]);

@@ -9,10 +9,10 @@
 </p>
 
 <ul class="nav nav-tabs">
-    <li class="{{ app.request.attributes.get('_route') == 'app_core_project_show' ? 'active' : '' }}">
+    <li{% if app.request.attributes.get('_route') == 'app_core_project_show' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_show', { id: project.id }) }}">Builds</a>
     </li>
-    <li class="{{ app.request.attributes.get('_route') == 'app_core_project_branches' ? 'active' : '' }}">
+    <li{% if app.request.attributes.get('_route') == 'app_core_project_branches' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_branches', { id: project.id }) }}">Branches</a>
     </li>
 </ul>
