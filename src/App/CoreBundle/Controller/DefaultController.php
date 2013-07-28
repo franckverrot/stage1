@@ -61,7 +61,7 @@ class DefaultController extends Controller
     public function projectBranchesAction($id)
     {
         $this->get('request')->attributes->set('current_project_id', $id);
-        
+
         $project = $this->findProject($id);
 
         $pendingBuilds = [];
@@ -168,7 +168,7 @@ class DefaultController extends Controller
             $em->persist($project);
             $em->flush();
 
-            return new JsonResponse(['url' => '#', 'project' => ['name' => $project->getName()]], 201);            
+            return new JsonResponse(['url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]), 'project' => ['name' => $project->getName()]], 201);            
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
