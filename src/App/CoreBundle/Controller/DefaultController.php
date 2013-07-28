@@ -94,6 +94,20 @@ class DefaultController extends Controller
         }
     }
 
+    public function buildKillAction($id)
+    {
+        try {
+            $build = $this->findBuild($id);
+            $build->setStatus(Build::STATUS_KILLED);
+
+            $this->persistAndFlush($build);
+
+            return new JsonResponse(null, 200);
+        } catch (Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function projectShowAction($id)
     {
         return $this->redirect($this->generateUrl('app_core_project_builds', ['id' => $id]));

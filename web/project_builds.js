@@ -12,13 +12,13 @@
         }).fail(function(jqXHR) {
             $(this)
                 .html('<i class="icon-remove"></i> ' + jqXHR.responseJSON.message)
-                .removeClass('btn-warning')
-                .addClass('btn-danger');
+                .removeClass(function(index, classes) { return classes; })
+                .addClass('btn btn-danger')
         }).done(function(response) {
             $(this)
-                .html('<i class="icon-ok"></i> Canceled')
-                .removeClass('btn-warning')
-                .addClass('btn-success');
+                .html('<i class="icon-ok"></i> ' + $(this).data('success-message'))
+                .removeClass(function(index, classes) { return classes; })
+                .addClass('btn btn-success')
         });
     });
 })(jQuery, window);

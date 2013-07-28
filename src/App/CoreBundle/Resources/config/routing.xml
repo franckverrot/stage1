@@ -40,6 +40,10 @@
         <default key="_controller">AppCoreBundle:Default:buildCancel</default>
     </route>
 
+    <route id="app_core_build_kill" pattern="/build/{id}/kill">
+        <default key="_controller">AppCoreBundle:Default:buildKill</default>
+    </route>
+
     <route id="app_core_login" pattern="/login/{accessToken}" methods="POST">
         <default key="_controller">AppCoreBundle:Security:login</default>
     </route>

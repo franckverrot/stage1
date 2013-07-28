@@ -13,6 +13,8 @@ class Build
     const STATUS_FAILED = 4;
 
     const STATUS_CANCELED = 5;
+
+    const STATUS_KILLED = 6;
     
     private $id;
 
@@ -40,6 +42,11 @@ class Build
         return $this->getStatus() === self::STATUS_SCHEDULED;
     }
 
+    public function isBuilding()
+    {
+        return $this->getStatus() === self::STATUS_BUILDING;
+    }
+
     public function isPending()
     {
         return in_array($this->getStatus(), [
@@ -58,9 +65,11 @@ class Build
             case self::STATUS_BUILT:
                 return 'success';
             case self::STATUS_FAILED:
-                return 'danger';
-            case self::STATUS_CANCELED:
                 return 'warning';
+            case self::STATUS_CANCELED:
+                return 'canceled';
+            case self::STATUS_KILLED;
+                return 'important';
         }
     }
 
@@ -77,6 +86,8 @@ class Build
                 return 'failed';
             case self::STATUS_CANCELED:
                 return 'canceled';
+            case self::STATUS_KILLED:
+                return 'killed';
         }
     }
 
