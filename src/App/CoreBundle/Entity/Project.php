@@ -38,7 +38,7 @@ class Project
 
     public function getPendingBuilds()
     {
-        return $this->getBuilds()->map(function($build) {
+        return $this->getBuilds()->filter(function($build) {
             return $build->isPending();
         });
     }

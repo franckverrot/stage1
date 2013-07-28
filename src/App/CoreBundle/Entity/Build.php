@@ -9,6 +9,10 @@ class Build
     const STATUS_BUILDING = 2;
 
     const STATUS_BUILT = 3;
+
+    const STATUS_FAILED = 4;
+
+    const STATUS_CANCELED = 5;
     
     private $id;
 
@@ -26,9 +30,38 @@ class Build
 
     private $updatedAt;
 
+    public function isCanceled()
+    {
+        return $this->getStatus() === self::STATUS_CANCELED;
+    }
+
+    public function isScheduled()
+    {
+        return $this->getStatus() === self::STATUS_SCHEDULED;
+    }
+
     public function isPending()
     {
-        return $this->getStatus() !== self::STATUS_BUILT;
+        return in_array($this->getStatus(), [
+            self::STATUS_SCHEDULED,
+            self::STATUS_BUILDING
+        ]);
+    }
+
+    public function getStatusLabel()
+    {
+        switch ($this->getStatus()) {
+            case self::STATUS_SCHEDULED:
+                return 'scheduled';
+            case self::STATUS_BUILDING:
+                return 'building';
+            case self::STATUS_BUILT:
+                return 'built';
+            case self::STATUS_FAILED:
+                return 'failed';
+            case self::STATUS_CANCELED:
+                return 'canceled';
+        }
     }
 
     /**

@@ -57,7 +57,7 @@
                 .addClass('icon-ok');
 
             $('#detect_branches_status span')
-                .text('Found ' + data.length + ' branch' + (data.length != 1 ? 'es' : ''));
+                .text('Found ' + data.length + ' branch' + (data.length != 1 ? 'es' : '') + '.');
         });
     };
 })(jQuery, window);

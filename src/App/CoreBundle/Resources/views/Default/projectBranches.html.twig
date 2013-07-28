@@ -3,7 +3,6 @@
 {% block javascripts %}
 <script src="/project_branches.js"></script>
 <script type="text/javascript">
-var github_access_token = '{{ access_token }}';
 var detect_branches_url = '{{ path('app_core_project_detect_branches', { id: project.id }) }}';
 var schedule_build_url = '{{ path('app_core_project_schedule_build', { id: project.id }) }}';
 var pending_builds = {{ pending_builds | json_encode | raw }};

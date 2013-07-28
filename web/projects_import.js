@@ -25,7 +25,7 @@
                 .addClass('btn-danger');
         }).done(function(response) {
             $('button', this)
-                .html('<i class="icon-ok"></i> Success!')
+                .html('<i class="icon-ok"></i> Success')
                 .addClass('btn-success');
             var project_link = tpl_project_link({ url: response.url, name: response.project.name });
 
@@ -108,7 +108,7 @@
                             .addClass('icon-ok');
 
                         $('#projects_import_status span')
-                            .text('Found ' + candidates_count + ' symfony project' + (candidates_count != 1 ? 's' : ''));
+                            .text('Found ' + candidates_count + ' Symfony project' + (candidates_count != 1 ? 's' : '') + '.');
                     }
                 });
             }

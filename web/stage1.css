@@ -8,3 +8,16 @@
 .nav-tabs > li > a, .nav-pills > li > a {
     line-height: inherit;
 }
+
+td.actions form {
+    margin: 0;
+}
+
+table#builds td {
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+div.branch, div.candidate {
+    line-height: 30px;
+}

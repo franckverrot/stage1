@@ -17,6 +17,28 @@ use DateTime;
 
 class DefaultController extends Controller
 {
+    private function persistAndFlush($entity)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($entity);
+        $em->flush();
+    }
+
+    private function findBuild($id)
+    {
+        $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
+
+        if (!$build) {
+            throw $this->createHttpNotFoundException();
+        }
+
+        if ($build->getProject()->getOwner() != $this->getUser()) {
+            throw new AccessDeniedException();
+        }
+
+        return $build;
+    }
+
     private function findProject($id)
     {
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
@@ -58,6 +80,20 @@ class DefaultController extends Controller
         return $this->render('AppCoreBundle:Default:dashboard.html.twig');
     }
 
+    public function buildCancelAction($id)
+    {
+        try {
+            $build = $this->findBuild($id);
+            $build->setStatus(Build::STATUS_CANCELED);
+
+            $this->persistAndFlush($build);
+
+            return new JsonResponse(null, 200);
+        } catch (Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function projectBranchesAction($id)
     {
         $this->get('request')->attributes->set('current_project_id', $id);
@@ -71,7 +107,6 @@ class DefaultController extends Controller
         }
 
         return $this->render('AppCoreBundle:Default:projectBranches.html.twig', [
-            'access_token' => $this->getUser()->getAccessToken(),
             'project' => $project,
             'pending_builds' => $pendingBuilds,
         ]);        
@@ -106,9 +141,10 @@ class DefaultController extends Controller
             $build->setCreatedAt($now);
             $build->setUpdatedAt($now);
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($build);
-            $em->flush($build);
+            $this->persistAndFlush($build);
+
+            $producer = $this->get('old_sound_rabbit_mq.build_producer');
+            $producer->publish(json_encode(['build_id' => $build->getId()]));
 
             return new JsonResponse(['build_id' => $build->getId()], 201);
         } catch (Exception $e) {
@@ -164,9 +200,7 @@ class DefaultController extends Controller
             $project->setCreatedAt($now);
             $project->setUpdatedAt($now);
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($project);
-            $em->flush();
+            $this->persistAndFlush($project);
 
             return new JsonResponse(['url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]), 'project' => ['name' => $project->getName()]], 201);            
         } catch (Exception $e) {

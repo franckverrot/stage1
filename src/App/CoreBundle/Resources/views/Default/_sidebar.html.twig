@@ -3,7 +3,9 @@
     <li{% if app.request.attributes.get('current_project_id') == project.id %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_show', { id: project.id }) }}">
                 {{ project.name }}
+                {% if project.pendingBuilds | length > 0 %}
                 <p class="pull-right"><span class="label">{{ project.pendingBuilds | length }}</span></p>
+                {% endif %}
         </a>
     </li>
     {% endfor %}
