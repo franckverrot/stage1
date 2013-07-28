@@ -121,8 +121,20 @@ class DefaultController extends Controller
     {
         $this->get('request')->attributes->set('current_project_id', $id);
 
-        return $this->render('AppCoreBundle:Default:projectShow.html.twig', [
-            'project' => $this->findProject($id),
+        $project = $this->findProject($id);
+
+        $qb = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
+
+        $builds = $qb
+            ->where($qb->expr()->eq('b.project', ':project'))
+            ->orderBy('b.createdAt', 'DESC')
+            ->setParameter(':project', $project->getId())
+            ->getQuery()
+            ->execute();
+
+        return $this->render('AppCoreBundle:Default:projectBuilds.html.twig', [
+            'project' => $project,
+            'builds' => $builds,
         ]);
     }
 

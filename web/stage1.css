@@ -21,3 +21,7 @@ table#builds td {
 div.branch, div.candidate {
     line-height: 30px;
 }
+
+tr.status-building td {
+    background-color: #49afcd;
+}

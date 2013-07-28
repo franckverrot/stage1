@@ -48,6 +48,22 @@ class Build
         ]);
     }
 
+    public function getStatusLabelClass()
+    {
+        switch ($this->getStatus()) {
+            case self::STATUS_SCHEDULED:
+                return 'scheduled';
+            case self::STATUS_BUILDING:
+                return 'info';
+            case self::STATUS_BUILT:
+                return 'success';
+            case self::STATUS_FAILED:
+                return 'danger';
+            case self::STATUS_CANCELED:
+                return 'warning';
+        }
+    }
+
     public function getStatusLabel()
     {
         switch ($this->getStatus()) {

@@ -12,29 +12,29 @@ class Project
     /**
      * @var integer
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
      */
-    private $gitUrl;
+    protected $gitUrl;
 
-    private $owner;
+    protected $owner;
 
-    private $builds;
+    protected $builds;
 
-    private $createdAt;
+    protected $createdAt;
 
-    private $updatedAt;
+    protected $updatedAt;
 
-    private $lastBuildAt;
+    protected $lastBuildAt;
 
-    private $lastBuildRef;
+    protected $lastBuildRef;
 
     public function getPendingBuilds()
     {

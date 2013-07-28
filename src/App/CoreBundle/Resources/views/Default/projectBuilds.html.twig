@@ -7,12 +7,12 @@
 {% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
-{% if project.builds | length == 0 %}
+{% if builds | length == 0 %}
 <p class="lead">No build?! Come on, get to work and push some code!</p>
 
 <p>Or you can also <a href="{{ path('app_core_project_branches', { id: project.id }) }}">manually schedule a build</a> in the meantine.</p>
 {% else %}
-<p class="lead">Found <strong>{{ project.builds | length }}</strong> build{% if project.builds | length != 1 %}s{% endif %} for project {{ project.name }}.</p>
+<p class="lead">Found <strong>{{ builds | length }}</strong> build{% if builds | length != 1 %}s{% endif %} for project {{ project.name }}.</p>
 <table id="builds" class="table table-striped">
     <thead>
         <tr>
@@ -25,13 +25,13 @@
         </tr>
     </thead>
     <tbody>
-        {% for build in project.builds %}
+        {% for build in builds %}
         <tr id="build-{{ build.id }}" class="status-{{ build.statusLabel }} branch-{{ build.ref }}">
             <td>#{{ build.id }}</td>
             <td>{{ build.ref }}</td>
             <td><abbr title="{{ build.hash }}">{{ build.hash[0:8] }}</abbr></td>
             <td>{{ build.createdAt | date('Y-m-d H:i:s') }}</td>
-            <td>{{ build.statusLabel }}</td>
+            <td class="build-status"><span class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></td>
             <td class="actions">
                 {% if build.scheduled %}
                 <form method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
