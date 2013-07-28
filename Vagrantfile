@@ -13,5 +13,5 @@ Vagrant.configure("2") do |config|
     config.hostmanager.manage_host = true
 
     config.vm.provision :shell,
-        :inline => "if [ -f /vagrant/composer.json ]; then cd /vagrant && composer install; else composer create-project symfony/framework-standard-edition /tmp/symfony 2.3.1; mv /tmp/symfony/* /vagrant; fi"
+        :inline => "cd /vagrant; composer install; php app/console d:d:c; php app/console d:s:u --force"
 end
