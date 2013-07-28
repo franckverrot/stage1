@@ -63,3 +63,23 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+# Oldsound RabbitMQ Bundle
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host:      'localhost'
+            port:      5672
+            user:      'guest'
+            password:  'guest'
+            vhost:     '/'
+    producers:
+        build:
+            connection: default
+            exchange_options: { name: 'build', type: direct }
+    consumers:
+        build:
+            connection: default
+            exchange_options: { name: 'build', type: direct }
+            queue_options:    { name: 'build' }
+            callback:         app_core.consumer.build
