@@ -94,6 +94,11 @@ class DefaultController extends Controller
         }
     }
 
+    public function projectShowAction($id)
+    {
+        return $this->redirect($this->generateUrl('app_core_project_builds', ['id' => $id]));
+    }
+
     public function projectBranchesAction($id)
     {
         $this->get('request')->attributes->set('current_project_id', $id);
@@ -112,7 +117,7 @@ class DefaultController extends Controller
         ]);        
     }
 
-    public function projectShowAction($id)
+    public function projectBuildsAction($id)
     {
         $this->get('request')->attributes->set('current_project_id', $id);
 

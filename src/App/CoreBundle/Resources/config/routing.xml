@@ -24,6 +24,10 @@
         <default key="_controller">AppCoreBundle:Default:projectBranches</default>
     </route>
 
+    <route id="app_core_project_builds" pattern="/project/{id}/builds" methods="GET">
+        <default key="_controller">AppCoreBundle:Default:projectBuilds</default>
+    </route>
+
     <route id="app_core_project_show" pattern="/project/{id}" methods="GET">
         <default key="_controller">AppCoreBundle:Default:projectShow</default>
     </route>
