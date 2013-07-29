@@ -65,11 +65,11 @@ class Build
             case self::STATUS_BUILT:
                 return 'success';
             case self::STATUS_FAILED:
-                return 'warning';
+                return 'important';
             case self::STATUS_CANCELED:
                 return 'canceled';
             case self::STATUS_KILLED;
-                return 'important';
+                return 'warning';
         }
     }
 

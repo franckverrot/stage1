@@ -18,3 +18,9 @@ div.branch {
 .label-nav {
     background-color: #0088cc;
 }
+
+#table-candidates th {
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+}
