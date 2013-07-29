@@ -28,12 +28,20 @@
         <default key="_controller">AppCoreBundle:Default:projectBuilds</default>
     </route>
 
-    <route id="app_core_project_show" pattern="/project/{id}" methods="GET">
-        <default key="_controller">AppCoreBundle:Default:projectShow</default>
-    </route>
-
     <route id="app_core_project_schedule_build" pattern="/project/{id}/build" methods="POST">
         <default key="_controller">AppCoreBundle:Default:projectScheduleBuild</default>
+    </route>
+
+    <route id="app_core_project_admin" pattern="/project/{id}/admin" methods="GET">
+        <default key="_controller">AppCoreBundle:Default:projectAdmin</default>
+    </route>
+
+    <route id="app_core_project_delete" pattern="/project/{id}/delete" methods="POST">
+        <default key="_controller">AppCoreBundle:Default:projectDelete</default>
+    </route>
+
+    <route id="app_core_project_show" pattern="/project/{id}" methods="GET">
+        <default key="_controller">AppCoreBundle:Default:projectShow</default>
     </route>
 
     <route id="app_core_build_cancel" pattern="/build/{id}/cancel">

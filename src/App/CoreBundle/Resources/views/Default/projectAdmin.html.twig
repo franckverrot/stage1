@@ -1,0 +1,41 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$('#form-delete').on('submit', function(event) {
+    var input = $('#project_name');
+
+    if (input.val() != input.data('expect')) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+});
+
+$('#project_name').on('keyup', function(event) {
+    var $this = $(this);
+    $('#form-delete button').attr('disabled', $this.val() != $this.data('expect'));
+});
+</script>
+{% endblock javascripts %}
+
+{% block body %}
+{% include 'AppCoreBundle:Default:_project_header.html.twig' %}
+
+<form id="form-delete" class="form-inline" method="post" action="{{ path('app_core_project_delete', { id: project.id }) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <fieldset>
+        <legend>Delete project</legend>
+        {% for message in app.session.flashbag.get('delete-error') %}
+        <div class="alert alert-error">
+            {{ message }}
+        </div>
+        {% endfor %}
+        <p>Please type in the name of the project to confirm.</p>
+        <p><strong>This action cannot be undone.</strong></p>
+        <div class="input-append">
+            <input autocomplete="off" type="text" name="name" id="project_name" class="" data-expect="{{ project.name }}" placeholder="{{ project.name }}" required />
+            <button type="submit" class="btn btn-danger" disabled>Delete</button>
+        </div>
+    </fieldset>
+</form>
+{% endblock body %}

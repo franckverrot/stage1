@@ -24,12 +24,19 @@ class DefaultController extends Controller
         $em->flush();
     }
 
+    private function removeAndFlush($entity)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($entity);
+        $em->flush();
+    }
+
     private function findBuild($id)
     {
         $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
 
         if (!$build) {
-            throw $this->createHttpNotFoundException();
+            throw $this->createNotFoundException();
         }
 
         if ($build->getProject()->getOwner() != $this->getUser()) {
@@ -44,7 +51,7 @@ class DefaultController extends Controller
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
 
         if (!$project) {
-            throw $this->createHttpNotFoundException();
+            throw $this->createNotFoundException();
         }
 
         if ($project->getOwner() != $this->getUser()) {
@@ -106,6 +113,44 @@ class DefaultController extends Controller
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
+    }
+
+    public function projectAdminAction($id)
+    {
+        $project = $this->findProject($id);
+        $this->get('request')->attributes->set('current_project_id', $id);
+
+        $token = md5(uniqid());
+        $this->get('session')->set('csrf_token', $token);
+
+        return $this->render('AppCoreBundle:Default:projectAdmin.html.twig', [
+            'project' => $project,
+            'csrf_token' => $token,
+        ]);
+    }
+
+    public function projectDeleteAction(Request $request, $id)
+    {
+        $project = $this->findProject($id);
+
+        $session = $this->get('session');
+        $flash = $session->getFlashBag();
+
+        if ($request->request->get('name') !== $project->getName()) {
+            $flash->add('delete-error', 'Project name validation failed.');
+            return $this->redirect($this->generateUrl('app_core_project_admin', ['id' => $id]));
+        }
+
+        if ($request->request->get('csrf_token') !== $session->get('csrf_token')) {
+            $flash->add('delete-error', 'CSRF validation failed.');
+            return $this->redirect($this->generateUrl('app_core_project_admin', ['id' => $id]));
+        }
+
+        $this->removeAndFlush($project);
+
+        $flash->add('success', sprintf('Project <strong>%s</strong> has been deleted.', $project->getName()));
+
+        return $this->redirect($this->generateUrl('app_core_homepage'));
     }
 
     public function projectShowAction($id)

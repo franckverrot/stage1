@@ -38,6 +38,11 @@
                     {% endif %}
                 </div>
                 <div class="span9">
+                    {% for message in app.session.flashbag.get('success') %}
+                        <div class="alert alert-success">
+                            {{ message | raw }}
+                        </div>
+                    {% endfor %}
                     {% block body %}{% endblock %}
                 </div>
             </div>
