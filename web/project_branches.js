@@ -1,6 +1,7 @@
 (function($, window) {
     var tpl_branch = Mustache.compile($('#tpl-branch').text());
     var tpl_branch_pending = Mustache.compile($('#tpl-branch-pending').text());
+    var tpl_nb_pending_builds = Mustache.compile($('#tpl-nb-pending-builds').text());
     var branches = $('#branches');
 
     $('#branches').on('click', '.branch button', function() {
@@ -27,6 +28,14 @@
             $('button', this)
                 .html('<i class="icon-ok"></i> Success!')
                 .addClass('btn-success');
+
+            var $nbPendingBuilds = $('#nb-pending-builds-' + response.project_id);
+
+            if ($nbPendingBuilds.length == 0) {
+                $('#nav-project-' + response.project_id).append(tpl_nb_pending_builds(response));
+            } else {
+                $('span', $nbPendingBuilds).html(response.nb_pending_builds);
+            }
         });
     });
 

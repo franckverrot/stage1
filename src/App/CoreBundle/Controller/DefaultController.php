@@ -91,11 +91,15 @@ class DefaultController extends Controller
     {
         try {
             $build = $this->findBuild($id);
+            $project = $build->getProject();
             $build->setStatus(Build::STATUS_CANCELED);
 
             $this->persistAndFlush($build);
 
-            return new JsonResponse(null, 200);
+            return new JsonResponse([
+                'project_id' => $project->getId(),
+                'nb_pending_builds' => count($project->getPendingBuilds()),
+            ], 200);
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
@@ -105,11 +109,15 @@ class DefaultController extends Controller
     {
         try {
             $build = $this->findBuild($id);
+            $project = $build->getProject();
             $build->setStatus(Build::STATUS_KILLED);
 
             $this->persistAndFlush($build);
 
-            return new JsonResponse(null, 200);
+            return new JsonResponse([
+                'project_id' => $project->getId(),
+                'nb_pending_builds' => count($project->getPendingBuilds()),
+            ], 200);
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
@@ -222,7 +230,11 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            return new JsonResponse(['build_id' => $build->getId()], 201);
+            return new JsonResponse([
+                'build_id' => $build->getId(),
+                'project_id' => $project->getId(),
+                'nb_pending_builds' => count($project->getPendingBuilds()),
+            ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }

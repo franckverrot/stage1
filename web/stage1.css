@@ -14,3 +14,7 @@ table#builds td, tbody#candidates td, tbody#branches td {
 div.branch {
     line-height: 30px;
 }
+
+.label-nav {
+    background-color: #0088cc;
+}
