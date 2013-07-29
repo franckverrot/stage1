@@ -18,30 +18,42 @@ detect_branches();
     <span>Detecting branches...</span>
 </div>
 
-<div id="branches"></div>
+<table class="table">
+    <thead>
+        <tr>
+            <th width="15%">Branch</th>
+            <th width="10%">Hash</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody id="branches">
+    </tbody>
+</table>
 
 <script type="text/mustache" id="tpl-branch-pending">
 {% verbatim %}
-<div class="branch row-fluid">
-    <div class="span3 ctn-name">{{ name }}</div>
-    <div class="span9 ctn-button">
+<tr class="branch">
+    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
+    <td class="ctn-button">
         <button class="btn btn-info" disabled="disabled"><i class="icon-ok"></i> Already scheduled</button>
-    </div>
-</div>
+    </td>
+</tr>
 {% endverbatim %}
 </script>
 
 <script type="text/mustache" id="tpl-branch">
 {% verbatim %}
-<div class="branch row-fluid">
-    <div class="span3 ctn-name">{{ name }}</div>
-    <div class="span9 ctn-button">
+<tr class="branch">
+    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
+    <td class="ctn-button">
         <button class="btn">schedule build</button>
         {{#data}}
         <input type="hidden" name="{{ name }}" value="{{ value }}" />
         {{/data}}
-    </div>
-</div>
+    </td>
+</tr>
 {% endverbatim %}
 </script>
 {% endblock body %}

@@ -35,10 +35,16 @@
             for (i in data) {
                 var branch = data[i];
                 if (undefined != pending_builds[branch.ref]) {
-                    branches.append(tpl_branch_pending({ name: branch.ref }));
+                    branches.append(tpl_branch_pending({
+                        name: branch.ref,
+                        hash: branch.hash,
+                        abbr_hash: branch.hash.substr(0, 8)                        
+                    }));
                 } else {
                     branches.append(tpl_branch({
                         name: branch.ref,
+                        hash: branch.hash,
+                        abbr_hash: branch.hash.substr(0, 8),
                         data: [
                             { name: 'ref', value: branch.ref },
                             { name: 'hash', value: branch.hash }

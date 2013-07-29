@@ -16,6 +16,16 @@ inspect_repositories();
     <span>Inspecting your github projects...</span>
 </div>
 
+<table class="table">
+    <thead>
+        <tr>
+            <th width="30%">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody id="candidates">
+    </tbody>
+</table>
+
 <div id="candidates"></div>
 
 <script type="text/mustache" id="tpl-project-link">
@@ -28,26 +38,26 @@ inspect_repositories();
 
 <script type="text/mustache" id="tpl-project">
 {% verbatim %}
-<div class="candidate row-fluid">
-    <div class="span3 ctn-name">{{ name }}</div>
-    <div class="span9 ctn-button">
+<tr class="candidate">
+    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-button">
         <button class="btn">import</button>
         {{#data}}
         <input type="hidden" name="{{ name }}" value="{{ value }}" />
         {{/data}}
-    </div>
-</div>
+    </td>
+</tr>
 {% endverbatim %}
 </script>
 
 <script type="text/mustache" id="tpl-project-existing">
 {% verbatim %}
-<div class="candidate row-fluid">
-    <div class="span3 ctn-name"><a href="{{ url }}">{{ name }}</a></div>
-    <div class="span9 ctn-button">
+<tr class="candidate">
+    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-button">
         <button class="btn btn-info" disabled="disabled"><i class="icon-ok"></i> Already imported</button>
-    </div>
-</div>
+    </td>
+</tr>
 {% endverbatim %}
 </script>
 
