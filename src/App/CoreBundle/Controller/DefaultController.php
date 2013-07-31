@@ -199,9 +199,13 @@ class DefaultController extends Controller
             ->getQuery()
             ->execute();
 
+        $topBuilds = array_filter($builds, function($build) { return $build->isTopBuild(); });
+        $builds = array_filter($builds, function($build) { return !$build->isTopBuild(); });
+
         return $this->render('AppCoreBundle:Default:projectBuilds.html.twig', [
             'project' => $project,
             'builds' => $builds,
+            'top_builds' => $topBuilds,
         ]);
     }
 

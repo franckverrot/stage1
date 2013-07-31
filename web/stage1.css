@@ -19,8 +19,29 @@ div.branch {
     background-color: #0088cc;
 }
 
-#table-candidates th {
+#table-candidates th, tr.dummy th {
     line-height: 0;
     margin: 0;
     padding: 0;
+}
+
+tr.dummy th {
+    text-indent: -1000px;
+}
+
+table#builds td {
+    color: gray;
+}
+
+table#builds td .modal {
+    color: black;
+}
+
+table#builds tr:hover td {
+    color: black;
+}
+
+table#builds tr.status-running td {
+    font-weight: bold;
+    color: black;
 }

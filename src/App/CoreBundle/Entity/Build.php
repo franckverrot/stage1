@@ -58,6 +58,11 @@ class Build
         throw new BadMethodCallException(sprintf('Method "%s" does not exist in object "%s"', $method, __CLASS__));
     }
 
+    public function isTopBuild()
+    {
+        return $this->getStatus() === self::STATUS_RUNNING || $this->isPending();
+    }
+
     public function isPending()
     {
         return in_array($this->getStatus(), [

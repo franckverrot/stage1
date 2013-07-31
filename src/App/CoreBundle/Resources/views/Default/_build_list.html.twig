@@ -1,0 +1,48 @@
+<table id="builds" class="table table-striped">    
+    <thead>
+        <tr {% if show_headers is defined and not show_headers %}class="dummy"{% endif %}>
+            <th width="5%">Id</th>
+            <th width="15%">Branch</th>
+            <th width="10%">Hash</th>
+            <th width="20%">Created at</th>
+            <th width="10%">Status</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for build in builds %}
+        <tr id="build-{{ build.id }}" class="status-{{ build.statusLabel }} branch-{{ build.ref }}">
+            <td>#{{ build.id }}</td>
+            <td>{{ build.ref }}</td>
+            <td><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr></td>
+            <td>{{ build.createdAt | date('Y-m-d H:i:s') }}</td>
+            <td class="build-status"><span class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></td>
+            <td class="actions">
+                {% if build.scheduled %}
+                <form method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
+                    <button type="submit" class="btn btn-small btn-warning" data-success-message="Canceled">cancel</button>
+                </form>
+                {% endif %}
+                {% if build.building %}
+                <form method="post" action="{{ path('app_core_build_kill', { id: build.id }) }}">
+                    <button type="submit" class="btn btn-small btn-danger" data-success-message="Killed">kill</button>
+                </form>
+                {% endif %}
+                {% if build.failed and build.message %}
+                <a href="#inspect-{{ build.id }}" role="button" data-toggle="modal" class="inspect btn btn-small">inspect</a>
+
+                {% include '::modal.html.twig' with {
+                    id: 'inspect-' ~ build.id,
+                    title: null,
+                    body: '<p class="lead">' ~ build.message ~ '</p>'
+                } %}
+
+                {% endif %}
+                {% if build.running and build.url %}
+                <a href="{{ build.url }}">{{ build.url }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

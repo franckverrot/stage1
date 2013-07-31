@@ -138,7 +138,7 @@ class BuildConsumer implements ConsumerInterface
         } catch (Exception $e) {
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage($e->getMessage());
-        }
+        }   
 
         $this->persistAndFlush($build);
     }
