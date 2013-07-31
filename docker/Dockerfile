@@ -12,21 +12,26 @@ RUN apt-get install -qy vim curl git
 
 RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
-ADD ./sources.list /etc/apt/sources.list
-ADD ./dotdeb.list /etc/apt/sources.list.d/dotdeb.list
+ADD ./support/sources.list /etc/apt/sources.list
+ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 
 RUN apt-get update -y
 
-RUN apt-get install -qy nginx mysql-server php5-fpm php5-cli php5-mysqlnd
+RUN apt-get install -qy mysql-server php5-cli php5-mysqlnd
 
-ADD ./nginx.conf /etc/nginx/sites-available/default
-ADD ./php.ini /etc/php5/fpm/php.ini
-ADD ./php.ini /etc/php5/cli/php.ini
-ADD ./parameters.yml /etc/symfony/parameters.yml.dist
+# ADD ./support/nginx.conf /etc/nginx/sites-available/default
+# ADD ./support/php.ini /etc/php5/fpm/php.ini
+ADD ./support/php.ini /etc/php5/cli/php.ini
+ADD ./support/parameters.yml /etc/symfony/parameters.yml.dist
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
-ADD ./build.sh /usr/local/bin/build.sh
+ADD ./support/buildapp.sh /usr/local/bin/buildapp
+ADD ./support/runapp.sh /usr/local/bin/runapp
 
-ENTRYPOINT ["/usr/local/bin/build.sh"]
+RUN chmod +x /usr/local/bin/buildapp /usr/local/bin/runapp
+
+RUN apt-get autoremove -qy vim curl
+
+# ENTRYPOINT ["/usr/local/bin/build.sh"]
