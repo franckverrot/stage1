@@ -1,6 +1,9 @@
 TODO
 ====
 
+* dashboard
+    * list of running instances grouped by project and order by project.last_build_id
+
 * builds
     * build the right branch
     * fetch realtime build stdout
@@ -45,6 +48,7 @@ TODO
 * misc UI
     * all "stateful buttons" should present an option to "retry" when failed
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
+    * pre-disabled buttons should change to enabled state when needed (through websockets events eg)
 
 THE DISTANT FUTURE
 ==================
@@ -53,6 +57,7 @@ THE DISTANT FUTURE
     * "build now", premium option to bypass all queuing rules and have your project built now, as in, NOW.
     * add option to specify a build script
         * SECURITY WARNING
+    * Support for build systems like make, ant, phing, etc
 
 * instances
     * add a (disablable) top frame indicating what project / branch you're currently browsing
