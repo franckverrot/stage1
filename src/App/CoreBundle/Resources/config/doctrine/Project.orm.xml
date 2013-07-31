@@ -6,7 +6,7 @@
             <generator strategy="AUTO"/>
         </id>
         <field name="name" type="string" column="name" length="255"/>
-        <field name="gitUrl" type="string" column="git_url" length="255"/>
+        <field name="cloneUrl" type="string" column="clone_url" length="255"/>
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="lastBuildAt" column="last_build_at" type="datetime" nullable="true" />

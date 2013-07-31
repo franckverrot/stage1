@@ -22,7 +22,7 @@ class Project
     /**
      * @var string
      */
-    protected $gitUrl;
+    protected $cloneUrl;
 
     protected $owner;
 
@@ -77,26 +77,26 @@ class Project
     }
 
     /**
-     * Set gitUrl
+     * Set cloneUrl
      *
-     * @param string $gitUrl
+     * @param string $cloneUrl
      * @return Project
      */
-    public function setGitUrl($gitUrl)
+    public function setCloneUrl($cloneUrl)
     {
-        $this->gitUrl = $gitUrl;
+        $this->cloneUrl = $cloneUrl;
     
         return $this;
     }
 
     /**
-     * Get gitUrl
+     * Get cloneUrl
      *
      * @return string 
      */
-    public function getGitUrl()
+    public function getCloneUrl()
     {
-        return $this->gitUrl;
+        return $this->cloneUrl;
     }
 
     /**

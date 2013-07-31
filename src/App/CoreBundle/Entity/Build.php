@@ -28,9 +28,20 @@ class Build
 
     private $hash;
 
+    private $url;
+
+    private $containerId;
+
+    private $imageId;
+
     private $createdAt;
 
     private $updatedAt;
+
+    public function getImageName()
+    {
+        return sprintf('_/build/%s/%s', $this->getProject()->getName(), $this->getRef());
+    }
 
     public function isCanceled()
     {
@@ -45,6 +56,11 @@ class Build
     public function isBuilding()
     {
         return $this->getStatus() === self::STATUS_BUILDING;
+    }
+
+    public function isBuilt()
+    {
+        return $this->getStatus() === self::STATUS_BUILT;
     }
 
     public function isPending()
@@ -260,5 +276,74 @@ class Build
     public function getHash()
     {
         return $this->hash;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     * @return Build
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set containerId
+     *
+     * @param string $containerId
+     * @return Build
+     */
+    public function setContainerId($containerId)
+    {
+        $this->containerId = $containerId;
+    
+        return $this;
+    }
+
+    /**
+     * Get containerId
+     *
+     * @return string 
+     */
+    public function getContainerId()
+    {
+        return $this->containerId;
+    }
+
+    /**
+     * Set imageId
+     *
+     * @param string $imageId
+     * @return Build
+     */
+    public function setImageId($imageId)
+    {
+        $this->imageId = $imageId;
+    
+        return $this;
+    }
+
+    /**
+     * Get imageId
+     *
+     * @return string 
+     */
+    public function getImageId()
+    {
+        return $this->imageId;
     }
 }

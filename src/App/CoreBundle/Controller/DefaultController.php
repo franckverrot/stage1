@@ -244,7 +244,7 @@ class DefaultController extends Controller
     {
         $project = $this->findProject($id);
 
-        $builder = new ProcessBuilder(['/usr/bin/git', 'ls-remote', '--heads', $project->getGitUrl()]);
+        $builder = new ProcessBuilder(['/usr/bin/git', 'ls-remote', '--heads', $project->getCloneUrl()]);
         $process = $builder->getProcess();
         $process->run();
 
@@ -282,7 +282,7 @@ class DefaultController extends Controller
             $project = new Project();
             $project->setOwner($this->getUser());
             $project->setName($request->request->get('name'));
-            $project->setGitUrl($request->request->get('git_url'));
+            $project->setCloneUrl($request->request->get('clone_url'));
 
             $now = new DateTime();
             $project->setCreatedAt($now);

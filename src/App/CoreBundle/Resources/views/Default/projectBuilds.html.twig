@@ -43,6 +43,9 @@
                     <button type="submit" class="btn btn-small btn-danger" data-success-message="Killed">Kill</button>
                 </form>
                 {% endif %}
+                {% if build.built and build.url %}
+                <a href="{{ build.url }}">{{ build.url }}</a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

@@ -9,7 +9,7 @@ case $1 in
         fi
         
         echo $$ > $PID_DIR/$2.pid
-        exec 2>&1 /usr/bin/php $DIR/../app/console rabbitmq:consumer $2
+        exec 2>&1 /usr/bin/php $DIR/../app/console rabbitmq:consumer -w $2
         ;;
     stop)
         kill -9 `cat $PID_DIR/$2.pid`
