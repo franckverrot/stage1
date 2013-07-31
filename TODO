@@ -1,0 +1,71 @@
+TODO
+====
+
+* builds
+    * build the right branch
+    * fetch realtime build stdout
+    * remove old running instance of a branch after a successful build
+    * the build process must be completely error/fool proof
+    * make the symfony builder a bit more clever
+        * things that should work ootb
+            * doctrine orm/odm
+            * doctrine/alice fixtures
+            * mysql/pgsql
+            * mongodb/couchdb
+            * redis/memcached
+    * rename "top builds" to "running instances"?
+    * also separate "pending builds", hence having 3 categories of builds (running instances, pending, others)?
+    * disallow scheduling a build if a running instance for the same hash exists
+    * allow shutting down a running instance
+    * kill build should actually kill a build
+    * encapsulate builds in a separate process than the consumer, so that it can be easily grepped and killed
+    * separate builds and jobs
+
+* projects
+    * allow per-project docker image selection
+        This should not be in the UI, it's an admin (as in, me) only feature for now
+        This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
+    * setup webhook and deploy key on import
+    * import should make ajax queries to stage1 instead of directly querying github
+    * allow non-github projects (?)
+
+* bi-directionnal communication
+    * update web ui accordingly for the following events
+        * build status change
+        * number of builds running
+        * new builds
+        * new instance available
+        * new project (detected through a build poke)
+
+* admin
+    * monitor all running docker container
+    * ability to kill / top any running docker container
+    * manually schedule builds for any project/branch
+
+* misc UI
+    * all "stateful buttons" should present an option to "retry" when failed
+    * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
+
+THE DISTANT FUTURE
+==================
+
+* builds
+    * "build now", premium option to bypass all queuing rules and have your project built now, as in, NOW.
+    * add option to specify a build script
+        * SECURITY WARNING
+
+* instances
+    * add a (disablable) top frame indicating what project / branch you're currently browsing
+
+* projects
+    * allow project creation through build poke (?)
+    * autodetect new projects 
+        run periodic background checks to the user's github account for new importable projects
+    * symfony
+        * allow env selection (dev / prod)
+
+* images
+    * premium option to allow a user to build his own docker image and then assign it to his projects
+
+* misc
+    * pusher private channels to receive push notif about your projects' builds
