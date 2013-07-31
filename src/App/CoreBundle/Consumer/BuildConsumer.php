@@ -11,6 +11,7 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 use RuntimeException;
+use Exception;
 
 class BuildConsumer implements ConsumerInterface
 {
@@ -134,11 +135,9 @@ class BuildConsumer implements ConsumerInterface
 
         try {
             $this->doBuild($build);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $build->setStatus(Build::STATUS_FAILED);
-            $this->persistAndFlush($build);
-
-            throw $e;
+            $build->setMessage($e->getMessage());
         }
 
         $this->persistAndFlush($build);

@@ -43,6 +43,16 @@
                     <button type="submit" class="btn btn-small btn-danger" data-success-message="Killed">Kill</button>
                 </form>
                 {% endif %}
+                {% if build.failed and build.message %}
+                <a href="#inspect-{{ build.id }}" role="button" data-toggle="modal" class="inspect btn btn-small btn-primary">inspect</a>
+
+                {% include '::modal.html.twig' with {
+                    id: 'inspect-' ~ build.id,
+                    title: null,
+                    body: '<p class="lead">' ~ build.message ~ '</p>'
+                } %}
+
+                {% endif %}
                 {% if build.running and build.url %}
                 <a href="{{ build.url }}">{{ build.url }}</a>
                 {% endif %}

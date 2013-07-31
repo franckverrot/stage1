@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Entity;
 
+use BadMethodCallException;
+
 class Build
 {
     const STATUS_SCHEDULED = 1;
@@ -36,6 +38,8 @@ class Build
 
     private $imageId;
 
+    private $message;
+
     private $createdAt;
 
     private $updatedAt;
@@ -45,24 +49,13 @@ class Build
         return sprintf('_/build/%s/%s', $this->getProject()->getName(), $this->getRef());
     }
 
-    public function isCanceled()
+    public function __call($method, $args)
     {
-        return $this->getStatus() === self::STATUS_CANCELED;
-    }
+        if (defined($const = 'self::STATUS_'.(strtoupper(strpos($method, 'is') === 0 ? substr($method, 2) : $method)))) {
+            return $this->getStatus() === constant($const);
+        }
 
-    public function isScheduled()
-    {
-        return $this->getStatus() === self::STATUS_SCHEDULED;
-    }
-
-    public function isBuilding()
-    {
-        return $this->getStatus() === self::STATUS_BUILDING;
-    }
-
-    public function isRunning()
-    {
-        return $this->getStatus() === self::STATUS_RUNNING;
+        throw new BadMethodCallException(sprintf('Method "%s" does not exist in object "%s"', $method, __CLASS__));
     }
 
     public function isPending()
@@ -351,5 +344,28 @@ class Build
     public function getImageId()
     {
         return $this->imageId;
+    }
+
+    /**
+     * Set message
+     *
+     * @param string $message
+     * @return Build
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return string 
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }
