@@ -35,16 +35,16 @@
             <td class="actions">
                 {% if build.scheduled %}
                 <form method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
-                    <button type="submit" class="btn btn-small btn-warning" data-success-message="Canceled">Cancel</button>
+                    <button type="submit" class="btn btn-small btn-warning" data-success-message="Canceled">cancel</button>
                 </form>
                 {% endif %}
                 {% if build.building %}
                 <form method="post" action="{{ path('app_core_build_kill', { id: build.id }) }}">
-                    <button type="submit" class="btn btn-small btn-danger" data-success-message="Killed">Kill</button>
+                    <button type="submit" class="btn btn-small btn-danger" data-success-message="Killed">kill</button>
                 </form>
                 {% endif %}
                 {% if build.failed and build.message %}
-                <a href="#inspect-{{ build.id }}" role="button" data-toggle="modal" class="inspect btn btn-small btn-primary">inspect</a>
+                <a href="#inspect-{{ build.id }}" role="button" data-toggle="modal" class="inspect btn btn-small">inspect</a>
 
                 {% include '::modal.html.twig' with {
                     id: 'inspect-' ~ build.id,

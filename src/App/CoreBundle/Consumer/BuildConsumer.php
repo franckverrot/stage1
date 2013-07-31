@@ -112,7 +112,7 @@ class BuildConsumer implements ConsumerInterface
 
         $build->setContainerId($containerId);
         $build->setImageId($imageId);
-        $build->setStatus(Build::STATUS_BUILT);
+        $build->setStatus(Build::STATUS_RUNNING);
         $build->setUrl('http://stage1:'.trim($this->getPort($containerId, 80)));
     }
 
