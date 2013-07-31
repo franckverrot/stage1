@@ -8,13 +8,15 @@ class Build
 
     const STATUS_BUILDING = 2;
 
-    const STATUS_BUILT = 3;
+    const STATUS_RUNNING = 3;
 
     const STATUS_FAILED = 4;
 
     const STATUS_CANCELED = 5;
 
     const STATUS_KILLED = 6;
+
+    const STATUS_DELETED = 7;
     
     private $id;
 
@@ -58,9 +60,9 @@ class Build
         return $this->getStatus() === self::STATUS_BUILDING;
     }
 
-    public function isBuilt()
+    public function isRunning()
     {
-        return $this->getStatus() === self::STATUS_BUILT;
+        return $this->getStatus() === self::STATUS_RUNNING;
     }
 
     public function isPending()
@@ -75,17 +77,19 @@ class Build
     {
         switch ($this->getStatus()) {
             case self::STATUS_SCHEDULED:
-                return 'scheduled';
+                return 'default';
             case self::STATUS_BUILDING:
                 return 'info';
-            case self::STATUS_BUILT:
+            case self::STATUS_RUNNING:
                 return 'success';
             case self::STATUS_FAILED:
                 return 'important';
             case self::STATUS_CANCELED:
-                return 'canceled';
-            case self::STATUS_KILLED;
+                return 'default';
+            case self::STATUS_KILLED:
                 return 'warning';
+            case self::STATUS_DELETED:
+                return 'default';
         }
     }
 
@@ -96,14 +100,16 @@ class Build
                 return 'scheduled';
             case self::STATUS_BUILDING:
                 return 'building';
-            case self::STATUS_BUILT:
-                return 'built';
+            case self::STATUS_RUNNING:
+                return 'running';
             case self::STATUS_FAILED:
                 return 'failed';
             case self::STATUS_CANCELED:
                 return 'canceled';
             case self::STATUS_KILLED:
                 return 'killed';
+            case self::STATUS_DELETED:
+                return 'deleted';
         }
     }
 
