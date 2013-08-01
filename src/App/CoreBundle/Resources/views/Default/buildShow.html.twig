@@ -10,18 +10,52 @@ stream_build_output($('#output'));
 {% endblock javascripts %}
 
 {% block body %}
-<ul class="breadcrumb">
-  <li><a href="{{ path('app_core_homepage') }}">Home</a> <span class="divider">/</span></li>
-  <li><a href="{{ path('app_core_project_show', { id: build.project.id }) }}">{{ build.project.name }}</a> <span class="divider">/</span></li>
-  <li class="active">build #{{ build.id }} ({{ build.ref }})</li>
-</ul>
+{% include 'AppCoreBundle:Default:_project_header.html.twig' with { project: build.project } %}
+
+<fieldset id="build-metadata">
+    <ul class="lead breadcrumb">
+        <li>{{ build.ref }} <span class="divider">/</span></li>
+        <li><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr></li>
+    </ul>
+    <div class="row-fluid">
+        <dl class="span4">
+            <dt>Status</dt>
+            <dd><span class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
+            {% if build.running and build.url %}
+            <dt>Url</dt>
+            <dd><a href="{{ build.url }}">{{ build.url }}</a></dd>
+            {% endif %}
+        </dl>
+
+        <dl class="span4">
+            <dt>Ref.</dt>
+            <dd>{{ build.ref }}</dd>
+            <dt>Hash</dt>
+            <dd><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr></dd>
+        </dl>
+
+        <dl class="span4">
+            <dt>Initiator</dt>
+            <dd>{{ build.initiator.username }}</dd>
+            <dt>Created at</dt>
+            <dd>{{ build.createdAt | date('Y-m-d H:i:s') }}</dd>
+        </dl>
+    </div>
+</fieldset>
 
 {% if build.building or build.output %}
+<div id="output-container">
+    {% if build.building %}
+    <div class="build-building-icon">
+        <i class="icon-refresh icon-spin icon-4x"></i>
+    </div>
+    {% endif %}
 <pre id="output">{% spaceless %}
     {% if not build.building and build.output %}
         {{ build.output | raw }}
     {% endif %}
 {% endspaceless %}</pre>
+</div>
 {% else %}
 <p class="lead">This build has no output.</p>
 {% endif %}

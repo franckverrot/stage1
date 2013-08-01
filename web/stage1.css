@@ -47,9 +47,35 @@ table#builds tr.status-running td {
 }
 
 pre#output {
-    max-height: 40em;
-    min-height: 40em;
+    max-height: 35em;
+    min-height: 35em;
     overflow: auto;
     background: black;
     color: lightgray;
+}
+
+#output-container {
+    position: relative;
+}
+
+#build-metadata .breadcrumb {
+    margin-bottom: 0;
+    background-color: transparent;
+    padding-left: 0;
+}
+
+#build-metadata dt {
+    float: left;
+    width: 7em;
+    line-height: 30px;
+}
+
+#build-metadata dd {
+    line-height: 30px;
+}
+
+div.build-building-icon {
+    position: absolute;
+    right: 15px;
+    top: 11px;
 }

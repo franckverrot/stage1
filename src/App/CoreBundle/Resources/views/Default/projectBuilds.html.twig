@@ -7,21 +7,25 @@
 {% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
-{% if builds | length == 0 %}
+{% if builds | length == 0 and top_builds | length == 0 %}
 <p class="lead">No build?! Come on, get to work and push some code!</p>
 
 <p>Or you can also <a href="{{ path('app_core_project_branches', { id: project.id }) }}">manually schedule a build</a> in the meantine.</p>
 {% else %}
 
+{% if top_builds | length > 0 %}
 <p class="lead">Found <strong>{{ top_builds | length }}</strong> top build{% if top_builds | length != 1 %}s{% endif %}.</p>
 
 {% include 'AppCoreBundle:Default:_build_list.html.twig' with { builds: top_builds } %}
+{% endif %}
 
-<p class="lead">Also found <strong>{{ builds | length }}</strong>  other build{% if builds | length != 1 %}s{% endif %}.</p>
+{% if builds | length > 0 %}
+<p class="lead">{% if top_builds | length == 0 %}Found{% else %}Also found{% endif %} <strong>{{ builds | length }}</strong>  other build{% if builds | length != 1 %}s{% endif %}.</p>
 {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
     builds: builds,
     show_headers: false
 } %}
+{% endif %}
 
 {% endif %}
 {% endblock body %}

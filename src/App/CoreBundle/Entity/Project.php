@@ -43,6 +43,13 @@ class Project
         });
     }
 
+    public function getBuildingBuilds()
+    {
+        return $this->getBuilds()->filter(function($build) {
+            return $build->isBuilding();
+        });
+    }
+
     /**
      * Get id
      *
