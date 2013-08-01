@@ -34,88 +34,6 @@ class BuildConsumer implements ConsumerInterface
         $em->flush();
     }
 
-    private function build($cloneUrl, $accessToken)
-    {
-        $builder = new ProcessBuilder(['/usr/bin/docker', 'run', '-d', 'symfony2', 'buildapp', $cloneUrl, $accessToken]);
-        $builder->setTimeout(null);
-        $process = $builder->getProcess();
-
-        echo 'running '.$process->getCommandLine().PHP_EOL;
-
-        $process->run();
-
-        echo $process->getErrorOutput();
-
-        $containerId = trim($process->getOutput());
-
-        $builder = new ProcessBuilder(['/usr/bin/docker', 'wait', $containerId]);
-        $process = $builder->getProcess();
-
-        echo 'running '.$process->getCommandLine().PHP_EOL;
-
-        $process->run();
-
-        return $containerId;
-    }
-
-
-    public function run($imageId)
-    {
-        $builder = new ProcessBuilder(['/usr/bin/docker', 'run', '-d', '-p', '80', $imageId, 'runapp']);
-        $process = $builder->getProcess();
-
-        echo 'running '.$process->getCommandLine().PHP_EOL;
-
-        $process->run();
-
-        echo $process->getErrorOutput();
-
-        return trim($process->getOutput());
-    }
-
-    private function commit($containerId, $name)
-    {
-        $builder = new ProcessBuilder(['/usr/bin/docker', 'commit', $containerId, $name]);
-        $process = $builder->getProcess();
-
-        echo 'running '.$process->getCommandLine().PHP_EOL;
-
-        $process->run();
-
-        echo $process->getErrorOutput();
-
-        return trim($process->getOutput());
-    }
-
-    private function getPort($imageId, $port)
-    {
-        $builder = new ProcessBuilder(['/usr/bin/docker', 'port', $imageId, '80']);
-        $process = $builder->getProcess();
-
-        echo 'running '.$process->getCommandLine().PHP_EOL;
-
-        $process->run();
-
-        echo $process->getErrorOutput();
-
-        return trim($process->getOutput());
-    }
-
-    private function doBuild(Build $build)
-    {
-        $cloneUrl = $build->getProject()->getCloneUrl();
-        $accessToken = $build->getProject()->getOwner()->getAccessToken();
-
-        $containerId = $this->build($cloneUrl, $accessToken);
-        $imageId = $this->commit($containerId, $build->getImageName());
-        $containerId = $this->run($imageId);
-
-        $build->setContainerId($containerId);
-        $build->setImageId($imageId);
-        $build->setStatus(Build::STATUS_RUNNING);
-        $build->setUrl('http://stage1:'.trim($this->getPort($containerId, 80)));
-    }
-
     public function execute(AMQPMessage $message)
     {
         $body = json_decode($message->body);
@@ -134,7 +52,26 @@ class BuildConsumer implements ConsumerInterface
         $this->persistAndFlush($build);
 
         try {
-            $this->doBuild($build);
+            $projectDir = realpath(__DIR__.'/../../../..');
+            $builder = new ProcessBuilder([
+                $projectDir.'/bin/build.sh',
+                $build->getId(),
+                $build->getProject()->getCloneUrl(),
+                $build->getProject()->getOwner()->getAccessToken(),
+                $build->getImageName()
+            ]);
+
+            $process = $builder->getProcess();
+
+            echo 'running '.$process->getCommandLine().PHP_EOL;
+            $process->run();
+
+            list($imageId, $containerId, $port) = explode(PHP_EOL, trim($process->getOutput()));
+
+            $build->setContainerId($containerId);
+            $build->setImageId($imageId);
+            $build->setStatus(Build::STATUS_RUNNING);
+            $build->setUrl('http://stage1:'.$port);
         } catch (Exception $e) {
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage($e->getMessage());
