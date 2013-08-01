@@ -23,6 +23,8 @@ TODO
     * log build time
     * log queue time
     * log trigger source (manual / push)
+    * being able to require authentication for accessing instances
+    * disable auto log scroll when manually scrolled
 
 * projects
     * allow per-project docker image selection
