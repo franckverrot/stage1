@@ -31,6 +31,11 @@ class DefaultController extends Controller
         $em->flush();
     }
 
+    private function setCurrentProjectId($id)
+    {
+        $this->get('request')->attributes->set('current_project_id', $id);
+    }
+
     private function findBuild($id)
     {
         $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
@@ -87,6 +92,16 @@ class DefaultController extends Controller
         return $this->render('AppCoreBundle:Default:dashboard.html.twig');
     }
 
+    public function buildShowAction($id)
+    {
+        $build = $this->findBuild($id);
+        $this->setCurrentProjectId($build->getProject()->getId());
+
+        return $this->render('AppCoreBundle:Default:buildShow.html.twig', [
+            'build' => $build,
+        ]);
+    }
+
     public function buildCancelAction($id)
     {
         try {
@@ -126,7 +141,7 @@ class DefaultController extends Controller
     public function projectAdminAction($id)
     {
         $project = $this->findProject($id);
-        $this->get('request')->attributes->set('current_project_id', $id);
+        $this->setCurrentProjectId($id);
 
         $token = md5(uniqid());
         $this->get('session')->set('csrf_token', $token);
@@ -168,7 +183,7 @@ class DefaultController extends Controller
 
     public function projectBranchesAction($id)
     {
-        $this->get('request')->attributes->set('current_project_id', $id);
+        $this->setCurrentProjectId($id);
 
         $project = $this->findProject($id);
 
@@ -186,7 +201,7 @@ class DefaultController extends Controller
 
     public function projectBuildsAction($id)
     {
-        $this->get('request')->attributes->set('current_project_id', $id);
+        $this->setCurrentProjectId($id);
 
         $project = $this->findProject($id);
 
@@ -236,6 +251,7 @@ class DefaultController extends Controller
 
             return new JsonResponse([
                 'build_id' => $build->getId(),
+                'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                 'project_id' => $project->getId(),
                 'nb_pending_builds' => count($project->getPendingBuilds()),
             ], 201);

@@ -45,3 +45,11 @@ table#builds tr.status-running td {
     font-weight: bold;
     color: black;
 }
+
+pre#output {
+    max-height: 40em;
+    min-height: 40em;
+    overflow: auto;
+    background: black;
+    color: lightgray;
+}

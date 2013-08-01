@@ -40,6 +40,8 @@ class Build
 
     private $message;
 
+    private $output;
+
     private $createdAt;
 
     private $updatedAt;
@@ -372,5 +374,28 @@ class Build
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * Set output
+     *
+     * @param string $output
+     * @return Build
+     */
+    public function setOutput($output)
+    {
+        $this->output = $output;
+    
+        return $this;
+    }
+
+    /**
+     * Get output
+     *
+     * @return string 
+     */
+    public function getOutput()
+    {
+        return $this->output;
     }
 }

@@ -12,7 +12,7 @@
     <tbody>
         {% for build in builds %}
         <tr id="build-{{ build.id }}" class="status-{{ build.statusLabel }} branch-{{ build.ref }}">
-            <td>#{{ build.id }}</td>
+            <td><a href="{{ path('app_core_build_show', { id: build.id }) }}">#{{ build.id }}</a></td>
             <td>{{ build.ref }}</td>
             <td><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr></td>
             <td>{{ build.createdAt | date('Y-m-d H:i:s') }}</td>

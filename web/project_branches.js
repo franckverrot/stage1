@@ -28,6 +28,7 @@
             $('button', this)
                 .html('<i class="icon-ok"></i> Success!')
                 .addClass('btn-success');
+            $('.ctn-button', this).append('<a href="' + response.build_url + '" class="btn">view build</a>');
 
             var $nbPendingBuilds = $('#nb-pending-builds-' + response.project_id);
 

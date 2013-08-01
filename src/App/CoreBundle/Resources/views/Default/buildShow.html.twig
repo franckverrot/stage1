@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+<script src="/build_show.js"></script>
+{% if build.building %}
+<script type="text/javascript">
+stream_build_output($('#output'));
+</script>
+{% endif %}
+{% endblock javascripts %}
+
+{% block body %}
+<ul class="breadcrumb">
+  <li><a href="{{ path('app_core_homepage') }}">Home</a> <span class="divider">/</span></li>
+  <li><a href="{{ path('app_core_project_show', { id: build.project.id }) }}">{{ build.project.name }}</a> <span class="divider">/</span></li>
+  <li class="active">build #{{ build.id }} ({{ build.ref }})</li>
+</ul>
+
+{% if build.building or build.output %}
+<pre id="output">{% spaceless %}
+    {% if not build.building and build.output %}
+        {{ build.output | raw }}
+    {% endif %}
+{% endspaceless %}</pre>
+{% else %}
+<p class="lead">This build has no output.</p>
+{% endif %}
+{% endblock body %}

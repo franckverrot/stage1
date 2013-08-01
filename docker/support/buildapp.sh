@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# small delay to be sure to fetch entire output when building projects
+sleep 1;
+
 if [ -z "$1" ]; then
     echo "Missing git repository"
     exit 1
