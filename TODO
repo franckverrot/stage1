@@ -6,7 +6,6 @@ TODO
 
 * builds
     * build the right branch
-    * fetch realtime build stdout
     * remove old running instance of a branch after a successful build
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
@@ -19,10 +18,11 @@ TODO
     * rename "top builds" to "running instances"?
     * also separate "pending builds", hence having 3 categories of builds (running instances, pending, others)?
     * disallow scheduling a build if a running instance for the same hash exists
-    * allow shutting down a running instance
     * kill build should actually kill a build
-    * encapsulate builds in a separate process than the consumer, so that it can be easily grepped and killed
     * separate builds and jobs
+    * log build time
+    * log queue time
+    * log trigger source (manual / push)
 
 * projects
     * allow per-project docker image selection
@@ -58,6 +58,7 @@ THE DISTANT FUTURE
     * add option to specify a build script
         * SECURITY WARNING
     * Support for build systems like make, ant, phing, etc
+    * allow shutting down / restarting a running instance
 
 * instances
     * add a (disablable) top frame indicating what project / branch you're currently browsing
