@@ -1,12 +1,14 @@
 {% extends '::base.html.twig' %}
 
 {% block javascripts %}
+<script src="/ansi_up.js"></script>
 <script src="/build_show.js"></script>
-{% if build.building %}
 <script type="text/javascript">
+$('#output').html(ansi_up.ansi_to_html($('#output').text()));
+{% if build.building %}
 stream_build_output($('#output'));
-</script>
 {% endif %}
+</script>
 {% endblock javascripts %}
 
 {% block body %}
