@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # small delay to be sure to fetch entire output when building projects
-sleep 1;
+# sleep 1;
 
 if [ -z "$1" ]; then
     echo "Missing git repository"
@@ -32,5 +32,5 @@ git clone --depth 1 $1 $APP_ROOT
 cd $APP_ROOT
 
 cp /etc/symfony/parameters.yml.dist app/config/parameters.yml
-composer install --no-progress --no-dev --prefer-dist
+composer install --ansi --no-progress --no-dev --prefer-dist
 chmod -R 777 app/cache app/logs
