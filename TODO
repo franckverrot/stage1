@@ -5,8 +5,6 @@ TODO
     * list of running instances grouped by project and order by project.last_build_id
 
 * builds
-    * build the right branch
-    * remove old running instance of a branch after a successful build
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
         * things that should work ootb
@@ -15,31 +13,25 @@ TODO
             * mysql/pgsql
             * mongodb/couchdb
             * redis/memcached
-    * rename "top builds" to "running instances"?
-    * also separate "pending builds", hence having 3 categories of builds (running instances, pending, others)?
     * disallow scheduling a build if a running instance for the same hash exists
-    * kill build should actually kill a build
-    * separate builds and jobs
     * log build time
-    * log queue time
     * log trigger source (manual / push)
     * being able to require authentication for accessing instances
     * disable auto log scroll when manually scrolled
+    * buildapp failure still not catched
+    * before build: check that the app is actually building (eg: there is a composer.json)
+    * branches list should show current running instance
 
 * projects
     * allow per-project docker image selection
         This should not be in the UI, it's an admin (as in, me) only feature for now
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
-    * setup webhook and deploy key on import
     * import should make ajax queries to stage1 instead of directly querying github
     * allow non-github projects (?)
+    * last_build_at + last_build_ref (last_build_id ?)
 
 * bi-directionnal communication
     * update web ui accordingly for the following events
-        * build status change
-        * number of builds running
-        * new builds
-        * new instance available
         * new project (detected through a build poke)
 
 * admin
@@ -48,6 +40,7 @@ TODO
     * manually schedule builds for any project/branch
 
 * misc UI
+    * show useful indicators of what's happening in the title bar when the window is out of focus
     * all "stateful buttons" should present an option to "retry" when failed
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
     * pre-disabled buttons should change to enabled state when needed (through websockets events eg)
@@ -56,6 +49,8 @@ THE DISTANT FUTURE
 ==================
 
 * builds
+    * log queue time
+    * separate builds and jobs
     * "build now", premium option to bypass all queuing rules and have your project built now, as in, NOW.
     * add option to specify a build script
         * SECURITY WARNING
