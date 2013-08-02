@@ -12,7 +12,10 @@
     {% if running_builds | length > 0 %}
         <p class="lead">Found <strong>{{ running_builds | length }}</strong> running instance{% if running_builds | length != 1 %}s{% endif %}.</p>
 
-        {% include 'AppCoreBundle:Default:_build_list.html.twig' with { builds: running_builds } %}
+        {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
+            builds: running_builds,
+            id: 'running-builds'
+        } %}
     {% endif %}
 
     {% if pending_builds | length > 0 %}
@@ -20,7 +23,8 @@
 
         {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
             builds: pending_builds,
-            show_headers: false
+            show_headers: false,
+            id: 'pending-builds'
         } %}
     {% endif %}
 
@@ -28,7 +32,8 @@
         <p class="lead">Found <strong>{{ other_builds | length }}</strong>  other build{% if other_builds | length != 1 %}s{% endif %}.</p>
         {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
             builds: other_builds,
-            show_headers: false
+            show_headers: false,
+            id: 'other-builds'
         } %}
     {% endif %}
 {% else %}

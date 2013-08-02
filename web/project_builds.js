@@ -1,5 +1,5 @@
 (function($, window) {
-    $('#builds').on('click', 'td.actions form button', function(event) {
+    $('.build-list').on('click', 'td.actions form button', function(event) {
         var $target = $(event.target);
 
         $target.html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');

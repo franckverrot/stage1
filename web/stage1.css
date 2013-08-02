@@ -6,7 +6,7 @@ td.actions form {
     margin: 0;
 }
 
-table#builds td, tbody#candidates td, tbody#branches td {
+table.build-list td, tbody#candidates td, tbody#branches td {
     vertical-align: middle;
     line-height: 30px;
 }
@@ -29,19 +29,19 @@ tr.dummy th {
     text-indent: -1000px;
 }
 
-table#builds td {
+table.build-list td {
     color: gray;
 }
 
-table#builds td .modal {
+table.build-list td .modal {
     color: black;
 }
 
-table#builds tr:hover td {
+table.build-list tr:hover td {
     color: black;
 }
 
-table#builds tr.status-running td {
+table.build-list tr.status-running td {
     font-weight: bold;
     color: black;
 }
