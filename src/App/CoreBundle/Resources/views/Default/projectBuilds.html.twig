@@ -7,25 +7,33 @@
 {% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
-{% if builds | length == 0 and top_builds | length == 0 %}
-<p class="lead">No build?! Come on, get to work and push some code!</p>
+{% if has_builds %}
 
-<p>Or you can also <a href="{{ path('app_core_project_branches', { id: project.id }) }}">manually schedule a build</a> in the meantine.</p>
+    {% if running_builds | length > 0 %}
+        <p class="lead">Found <strong>{{ running_builds | length }}</strong> running instance{% if running_builds | length != 1 %}s{% endif %}.</p>
+
+        {% include 'AppCoreBundle:Default:_build_list.html.twig' with { builds: running_builds } %}
+    {% endif %}
+
+    {% if pending_builds | length > 0 %}
+        <p class="lead">Found <strong>{{ pending_builds | length }}</strong> pending build{% if pending_builds | length != 1 %}s{% endif %}.</p>
+
+        {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
+            builds: pending_builds,
+            show_headers: false
+        } %}
+    {% endif %}
+
+    {% if other_builds | length > 0 %}
+        <p class="lead">Found <strong>{{ other_builds | length }}</strong>  other build{% if other_builds | length != 1 %}s{% endif %}.</p>
+        {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
+            builds: other_builds,
+            show_headers: false
+        } %}
+    {% endif %}
 {% else %}
+    <p class="lead">No builds?! Come on, get to work and push some code!</p>
 
-{% if top_builds | length > 0 %}
-<p class="lead">Found <strong>{{ top_builds | length }}</strong> top build{% if top_builds | length != 1 %}s{% endif %}.</p>
-
-{% include 'AppCoreBundle:Default:_build_list.html.twig' with { builds: top_builds } %}
-{% endif %}
-
-{% if builds | length > 0 %}
-<p class="lead">{% if top_builds | length == 0 %}Found{% else %}Also found{% endif %} <strong>{{ builds | length }}</strong>  other build{% if builds | length != 1 %}s{% endif %}.</p>
-{% include 'AppCoreBundle:Default:_build_list.html.twig' with {
-    builds: builds,
-    show_headers: false
-} %}
-{% endif %}
-
+    <p>Or you can also <a href="{{ path('app_core_project_branches', { id: project.id }) }}">manually schedule a build</a> in the meantine.</p>
 {% endif %}
 {% endblock body %}

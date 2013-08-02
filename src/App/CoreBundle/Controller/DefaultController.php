@@ -214,13 +214,16 @@ class DefaultController extends Controller
             ->getQuery()
             ->execute();
 
-        $topBuilds = array_filter($builds, function($build) { return $build->isTopBuild(); });
-        $builds = array_filter($builds, function($build) { return !$build->isTopBuild(); });
+        $running_builds = array_filter($builds, function($build) { return $build->isRunning(); });
+        $pending_builds = array_filter($builds, function($build) { return $build->isPending(); });
+        $other_builds = array_filter($builds, function($build) { return !($build->isRunning() || $build->isPending()); });
 
         return $this->render('AppCoreBundle:Default:projectBuilds.html.twig', [
             'project' => $project,
-            'builds' => $builds,
-            'top_builds' => $topBuilds,
+            'other_builds' => $other_builds,
+            'running_builds' => $running_builds,
+            'pending_builds' => $pending_builds,
+            'has_builds' => count($builds) > 0
         ]);
     }
 
