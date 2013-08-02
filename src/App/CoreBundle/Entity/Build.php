@@ -19,6 +19,8 @@ class Build
     const STATUS_KILLED = 6;
 
     const STATUS_DELETED = 7;
+
+    const STATUS_OBSOLETE = 8;
     
     private $id;
 
@@ -76,19 +78,15 @@ class Build
     public function getStatusLabelClass()
     {
         switch ($this->getStatus()) {
-            case self::STATUS_SCHEDULED:
-                return 'default';
             case self::STATUS_BUILDING:
                 return 'info';
             case self::STATUS_RUNNING:
                 return 'success';
             case self::STATUS_FAILED:
                 return 'important';
-            case self::STATUS_CANCELED:
-                return 'default';
             case self::STATUS_KILLED:
                 return 'warning';
-            case self::STATUS_DELETED:
+            default:
                 return 'default';
         }
     }
@@ -110,6 +108,8 @@ class Build
                 return 'killed';
             case self::STATUS_DELETED:
                 return 'deleted';
+            case self::STATUS_OBSOLETE:
+                return 'obsolete';
         }
     }
 
