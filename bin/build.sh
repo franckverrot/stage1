@@ -16,11 +16,13 @@ BUILD_INFO_FILE="/tmp/stage1-build-info"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 BUILD_ID=$1
-CLONE_URL=$2
-ACCESS_TOKEN=$3
-COMMIT_NAME=$4
+REF=$2
+HASH=$3
+CLONE_URL=$4
+ACCESS_TOKEN=$5
+COMMIT_NAME=$6
 
-BUILD_JOB=$(docker run -d symfony2 buildapp $CLONE_URL $ACCESS_TOKEN)
+BUILD_JOB=$(docker run -d symfony2 buildapp $CLONE_URL $REF $HASH $ACCESS_TOKEN)
 
 docker attach $BUILD_JOB
 

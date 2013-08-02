@@ -78,6 +78,8 @@ class BuildConsumer implements ConsumerInterface
             $builder = new ProcessBuilder([
                 $projectDir.'/bin/build.sh',
                 $build->getId(),
+                $build->getRef(),
+                $build->getHash(),
                 $build->getProject()->getCloneUrl(),
                 $build->getProject()->getOwner()->getAccessToken(),
                 $build->getImageName()
