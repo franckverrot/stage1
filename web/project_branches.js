@@ -30,13 +30,13 @@
                 .addClass('btn-success');
             $('.ctn-button', this).append('<a href="' + response.build_url + '" class="btn">view build</a>');
 
-            var $nbPendingBuilds = $('#nb-pending-builds-' + response.project_id);
+            // var $nbPendingBuilds = $('#nav-project-' + response.project_id + ' #nb-pending-builds-' + response.project_id);
 
-            if ($nbPendingBuilds.length == 0) {
-                $('#nav-project-' + response.project_id).append(tpl_nb_pending_builds(response));
-            } else {
-                $('span', $nbPendingBuilds).html(response.nb_pending_builds);
-            }
+            // if ($nbPendingBuilds.length == 0) {
+            //     $('#nav-project-' + response.project_id).append(tpl_nb_pending_builds(response));
+            // } else {
+            //     $('span', $nbPendingBuilds).html(response.nb_pending_builds);
+            // }
         });
     });
 

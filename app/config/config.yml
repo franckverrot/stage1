@@ -77,6 +77,9 @@ old_sound_rabbit_mq:
         build:
             connection: default
             exchange_options: { name: 'build', type: direct }
+        websocket:
+            connection: default
+            exchange_options: { name: 'amq.fanout', type: fanout }
     consumers:
         build:
             connection: default

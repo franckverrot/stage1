@@ -22,11 +22,15 @@ stream_build_output($('#output'));
     <div class="row-fluid">
         <dl class="span4">
             <dt>Status</dt>
-            <dd><span class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
-            {% if build.running and build.url %}
+            <dd><span id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
             <dt>Url</dt>
-            <dd><a href="{{ build.url }}">{{ build.url }}</a></dd>
-            {% endif %}
+            <dd id="build-{{ build.id }}-link">{% spaceless %}
+                {% if build.url %}
+                <a href="{{ build.url }}">{{ build.url }}</a>
+                {% else %}
+                <abbr title="Not available">N/A</abbr>
+                {% endif %}
+            {% endspaceless %}</dd>
         </dl>
 
         <dl class="span4">
@@ -48,7 +52,7 @@ stream_build_output($('#output'));
 {% if build.building or build.output %}
 <div id="output-container">
     {% if build.building %}
-    <div class="build-building-icon">
+    <div id="build-{{ build.id }}-progress" class="build-building-icon">
         <i class="icon-refresh icon-spin icon-4x"></i>
     </div>
     {% endif %}
