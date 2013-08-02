@@ -11,6 +11,7 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
 
+use InvalidArgumentException;
 use RuntimeException;
 use Exception;
 
@@ -53,7 +54,107 @@ class BuildConsumer implements ConsumerInterface
             ])
             ->getQuery();
 
-        return (int) $query->getSingleScalarResult();
+        try {
+            return (int) $query->getSingleScalarResult();
+        } catch (Exception $e) {
+            return 0;
+        }
+    }
+
+    private function doBuild(Build $build)
+    {
+        $webUiDebugMode = false;
+
+        $outputFile = '/tmp/stage1-build-output';
+
+        $buildFile = function($type) { return '/tmp/stage1-build-'.$type; };
+
+        if (file_exists($buildFile('output'))) {
+            unlink($buildFile('output'));
+        }
+
+        if (!$webUiDebugMode) {
+            $projectDir = realpath(__DIR__.'/../../../..');
+            $builder = new ProcessBuilder([
+                $projectDir.'/bin/build.sh',
+                $build->getId(),
+                $build->getProject()->getCloneUrl(),
+                $build->getProject()->getOwner()->getAccessToken(),
+                $build->getImageName()
+            ]);
+            $builder->setTimeout(0);
+
+            $process = $builder->getProcess();
+            $process->setCommandLine($process->getCommandLine().' > '.$buildFile('output').' 2>> '.$buildFile('output'));
+
+            echo 'running '.$process->getCommandLine().PHP_EOL;
+            $process->run();
+
+            $build->setOutput(file_get_contents($buildFile('output')));
+            $build->setExitCode($process->getExitCode());
+            $build->setExitCodeText($process->getExitCodeText());
+
+            if (!$process->isSuccessful()) {
+                return false;
+            }
+
+            $buildInfo = explode(PHP_EOL, trim(file_get_contents($buildFile('info'))));
+
+            if (count($buildInfo) !== 3) {
+                throw new InvalidArgumentException('Malformed build info: '.var_export($buildInfo, true));
+            }
+
+            list($imageId, $containerId, $port) = $buildInfo;
+
+            $build->setContainerId($containerId);
+            $build->setImageId($imageId);
+            $build->setUrl('http://stage1:'.$port);
+        }
+
+        $queryBuilder = $this->doctrine->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
+
+        if (!$webUiDebugMode) {
+            try {
+                $previousBuild = $queryBuilder
+                    ->select()
+                    ->where($queryBuilder->expr()->eq('b.project', '?1'))
+                    ->andWhere($queryBuilder->expr()->eq('b.ref', '?2'))
+                    ->andWhere($queryBuilder->expr()->eq('b.status', '?3'))
+                    ->setParameters([
+                        1 => $build->getProject()->getId(),
+                        2 => $build->getRef(),
+                        3 => Build::STATUS_RUNNING,
+                    ])
+                    ->getQuery()
+                    ->getSingleResult();
+
+                $builder = new ProcessBuilder([$projectDir.'/bin/stop.sh', $previousBuild->getContainerId(), $previousBuild->getImageId()]);
+                $process = $builder->getProcess();
+
+                echo 'running '.$process->getCommandLine().PHP_EOL;
+
+                $process->run();
+            } catch (Exception $e) {
+                // maybe we were the first build?
+            }
+        }
+
+        $queryBuilder
+            ->update()
+            ->set('b.status', '?1')
+            ->where($queryBuilder->expr()->eq('b.project', '?2'))
+            ->andWhere($queryBuilder->expr()->eq('b.ref', '?3'))
+            ->andWhere($queryBuilder->expr()->eq('b.status', '?4'))
+            ->setParameters([
+                1 => Build::STATUS_OBSOLETE,
+                2 => $build->getProject()->getId(),
+                3 => $build->getRef(),
+                4 => Build::STATUS_RUNNING
+            ])
+            ->getQuery()
+            ->execute();
+
+        return true;
     }
 
     public function execute(AMQPMessage $message)
@@ -84,75 +185,9 @@ class BuildConsumer implements ConsumerInterface
             ]
         ]]));
 
-        $webUiDebugMode = false;
-
         try {
-            if (!$webUiDebugMode) {
-                $projectDir = realpath(__DIR__.'/../../../..');
-                $builder = new ProcessBuilder([
-                    $projectDir.'/bin/build.sh',
-                    $build->getId(),
-                    $build->getProject()->getCloneUrl(),
-                    $build->getProject()->getOwner()->getAccessToken(),
-                    $build->getImageName()
-                ]);
-
-                $process = $builder->getProcess();
-
-                echo 'running '.$process->getCommandLine().PHP_EOL;
-                $process->run();
-
-                list($imageId, $containerId, $port) = explode(PHP_EOL, trim($process->getOutput()));
-            } else {
-                $containerId = null;
-                $imageId = null;
-                $port = null;
-            }
-
-            $build->setContainerId($containerId);
-            $build->setImageId($imageId);
-            $build->setStatus(Build::STATUS_RUNNING);
-            $build->setUrl('http://stage1:'.$port);
-
-            $queryBuilder = $this->doctrine->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
-
-            if (!$webUiDebugMode) {
-                $previousBuild = $queryBuilder
-                    ->select()
-                    ->where($queryBuilder->expr()->eq('b.project', '?1'))
-                    ->andWhere($queryBuilder->expr()->eq('b.ref', '?2'))
-                    ->andWhere($queryBuilder->expr()->eq('b.status', '?3'))
-                    ->setParameters([
-                        1 => $build->getProject()->getId(),
-                        2 => $build->getRef(),
-                        3 => Build::STATUS_RUNNING,
-                    ])
-                    ->getQuery()
-                    ->getSingleResult();
-
-                $builder = new ProcessBuilder([$projectDir.'/bin/stop.sh', $previousBuild->getContainerId(), $previousBuild->getImageId()]);
-                $process = $builder->getProcess();
-
-                echo 'running '.$process->getCommandLine().PHP_EOL;
-
-                $process->run();
-            }
-
-            $queryBuilder
-                ->update()
-                ->set('b.status', '?1')
-                ->where($queryBuilder->expr()->eq('b.project', '?2'))
-                ->andWhere($queryBuilder->expr()->eq('b.ref', '?3'))
-                ->andWhere($queryBuilder->expr()->eq('b.status', '?4'))
-                ->setParameters([
-                    1 => Build::STATUS_OBSOLETE,
-                    2 => $build->getProject()->getId(),
-                    3 => $build->getRef(),
-                    4 => Build::STATUS_RUNNING
-                ])
-                ->getQuery()
-                ->execute();
-
+            $res = $this->doBuild($build);
+            $build->setStatus($res === false ? Build::STATUS_FAILED : Build::STATUS_RUNNING);
         } catch (Exception $e) {
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage($e->getMessage());

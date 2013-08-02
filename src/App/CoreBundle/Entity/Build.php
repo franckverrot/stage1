@@ -44,6 +44,10 @@ class Build
 
     private $output;
 
+    private $exitCode;
+
+    private $exitCodeText;
+
     private $createdAt;
 
     private $updatedAt;
@@ -392,5 +396,51 @@ class Build
     public function getOutput()
     {
         return $this->output;
+    }
+
+    /**
+     * Set exitCode
+     *
+     * @param integer $exitCode
+     * @return Build
+     */
+    public function setExitCode($exitCode)
+    {
+        $this->exitCode = $exitCode;
+    
+        return $this;
+    }
+
+    /**
+     * Get exitCode
+     *
+     * @return integer 
+     */
+    public function getExitCode()
+    {
+        return $this->exitCode;
+    }
+
+    /**
+     * Set exitCodeText
+     *
+     * @param string $exitCodeText
+     * @return Build
+     */
+    public function setExitCodeText($exitCodeText)
+    {
+        $this->exitCodeText = $exitCodeText;
+    
+        return $this;
+    }
+
+    /**
+     * Get exitCodeText
+     *
+     * @return string 
+     */
+    public function getExitCodeText()
+    {
+        return $this->exitCodeText;
     }
 }

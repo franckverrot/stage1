@@ -45,6 +45,10 @@ stream_build_output($('#output'));
             <dd>{{ build.initiator.username }}</dd>
             <dt>Created at</dt>
             <dd>{{ build.createdAt | date('Y-m-d H:i:s') }}</dd>
+            {% if build.exitCode %}
+            <dt>Exit code</dt>
+            <dd><abbr title="{{ build.exitCodeText }}">{{ build.exitCode }}</abbr></dd>
+            {% endif %}
         </dl>
     </div>
 </fieldset>

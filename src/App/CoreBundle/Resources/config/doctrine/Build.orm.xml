@@ -14,6 +14,8 @@
         <field name="imageId" column="image_id" type="string" length="255" nullable="true" />
         <field name="message" column="message" type="text" nullable="true" />
         <field name="output" column="output" type="text" nullable="true" />
+        <field name="exitCode" column="exit_code" type="integer" nullable="true" />
+        <field name="exitCodeText" column="exit_code_text" type="string" length="255" nullable="true" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
 

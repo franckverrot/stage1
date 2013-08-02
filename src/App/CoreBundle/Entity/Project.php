@@ -43,6 +43,13 @@ class Project
         });
     }
 
+    public function getRunningBuilds()
+    {
+        return $this->getBuilds()->filter(function($build) {
+            return $build->isRunning();
+        });
+    }
+
     public function getBuildingBuilds()
     {
         return $this->getBuilds()->filter(function($build) {
