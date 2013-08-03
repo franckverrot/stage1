@@ -22,7 +22,7 @@ stream_build_output($('#output'));
     <div class="row-fluid">
         <dl class="span4">
             <dt>Status</dt>
-            <dd><span id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
+            <dd><span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
             <dt>Url</dt>
             <dd id="build-{{ build.id }}-link">{% spaceless %}
                 {% if build.url %}

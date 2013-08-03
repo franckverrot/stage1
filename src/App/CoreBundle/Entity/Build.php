@@ -141,6 +141,10 @@ class Build
     public function setStatus($status)
     {
         $this->status = $status;
+
+        if ($status !== self::STATUS_RUNNING) {
+            $this->setUrl(null);
+        }
     
         return $this;
     }

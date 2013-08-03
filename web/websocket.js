@@ -5,6 +5,8 @@
     ws.onmessage = function(message) {
         var data = $.parseJSON(message.data);
 
+        console.log(data.event);
+
         if (data.data.build) {
             callbacks.build(data.data.build);
         }
@@ -66,10 +68,6 @@
                 el.remove();
             });
 
-            update_build(build.id, 'link', function(el) {
-                el.html('<a href="' + build.url + '">' + build.url + '</a>');
-            });
-
             update_build(build.id, 'kill-form', function(el) {
                 if ($('button i', el).hasClass('icon-refresh')) {
                     $('button', el).html('<i class="icon-ok"></i>');
@@ -96,6 +94,14 @@
                     el.remove();
                 }
             });
+
+                console.log(build.url, null != build.url);
+            if (null != build.url && build.url.length > 0) {
+                console.log('updating url', build.id, build.url);
+                update_build(build.id, 'link', function(el) {
+                    el.html('<a href="' + build.url + '">' + build.url + '</a>');
+                });
+            }
 
             if (build.kill_url) {
                 update_build(build.id, 'actions', function(el) {

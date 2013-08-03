@@ -25,11 +25,13 @@
                     <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
                 </form>
                 {% endif %}
+
                 {% if build.building %}
                 <form id="build-{{ build.id }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: build.id }) }}">
                     <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
                 </form>
                 {% endif %}
+
                 <script type="text/mustache" id="tpl-build-kill-form">
                 {% verbatim %}
                 <form id="build-{{ id }}-kill-form" method="post" action="{{ kill_url }}">
@@ -37,6 +39,7 @@
                 </form>
                 {% endverbatim %}
                 </script>
+
                 {% if build.failed and build.message %}
                 <a href="#inspect-{{ build.id }}" role="button" data-toggle="modal" class="inspect btn btn-small">inspect</a>
 
@@ -47,9 +50,11 @@
                 } %}
 
                 {% endif %}
+                <span id="build-{{ build.id }}-link">
                 {% if build.running and build.url %}
                 <a href="{{ build.url }}">{{ build.url }}</a>
                 {% endif %}
+                </span>
             </td>
         </tr>
         {% endfor %}
