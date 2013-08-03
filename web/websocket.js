@@ -4,43 +4,49 @@
 
     ws.onmessage = function(message) {
         var data = $.parseJSON(message.data);
-        console.log(data);
-        callbacks[data.event](data.data);
+
+        if (data.data.build) {
+            callbacks.build(data.data.build);
+        }
+
+        if (data.data.project) {
+            callbacks.project(data.data.project);
+        }
+
+        if (typeof(callbacks[data.event]) == 'function') {
+            callbacks[data.event](data.data);
+        }
     };
 
     var tpl_nb_pending_builds = Mustache.compile($('#tpl-nb-pending-builds').text());
 
     var callbacks = {
-        'build.started': function(data) {
-            update_project_nb_pending_builds(data.project.id, parseInt(data.project.nb_pending_builds));
+        'project': function(project) {
+            update_project_nb_pending_builds(project.id, parseInt(project.nb_pending_builds));
         },
-
-        'build.finished': function(data) {
-            console.log('build.finished');
-            update_project_nb_pending_builds(data.project.id, parseInt(data.project.nb_pending_builds));
-
-            update(data.build.id, 'status', function(el) {
-                console.log('updating status');
-                console.log(el);
-                el.removeClass().addClass('label label-' + data.build.status_label_class).html(data.build.status_label);
+        'build': function(build) {
+            update(build.id, 'status', function(el) {
+                el.removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
             });
 
-            update(data.build.id, 'progress', function(el) {
-                console.log('updating progress');
-                console.log(el);
+            update(build.id, 'progress', function(el) {
                 el.remove();
             });
 
-            update(data.build.id, 'link', function(el) {
-                el.html('<a href="' + data.build.url + '">' + data.build.url + '</a>');
+            update(build.id, 'link', function(el) {
+                el.html('<a href="' + build.url + '">' + build.url + '</a>');
             });
 
-            update(data.build.id, 'kill-form', function(el) {
-                $('button', el).html('<i class="icon-ok"></i>');
-                setTimeout(function() { el.remove(); }, 1000);
+            update(build.id, 'kill-form', function(el) {
+                if ($('button i', el).hasClass('icon-refresh')) {
+                    $('button', el).html('<i class="icon-ok"></i>');
+                    setTimeout(function() { el.remove(); }, 1000);                    
+                } else {
+                    el.remove();
+                }
             });
 
-            update(data.build.id, 'cancel-form', function(el) { el.remove(); });
+            update(build.id, 'cancel-form', function(el) { el.remove(); });
         }
     };
 
