@@ -20,7 +20,8 @@
 
     var prepare = [
         'nb-pending-builds',
-        'build-kill-form'
+        'build-kill-form',
+        'ref-status'
     ]
 
     var tpl = {};
@@ -38,19 +39,31 @@
             update_project_nb_pending_builds(project.id, parseInt(project.nb_pending_builds));
         },
         'build': function(build) {
-            update(build.id, 'status', function(el) {
+            update_build(build.id, 'status', function(el) {
                 el.removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
             });
 
-            update(build.id, 'progress', function(el) {
+            update_ref(build.ref, 'status', function(el) {
+                if (el.length == 0 && undefined != tpl['ref-status']) {
+                    $('#ref-' + build.ref + ' .ctn-status').html(tpl['ref-status']({
+                        name: build.ref,
+                        status_label: build.status_label,
+                        status_label_class: build.status_label_class
+                    }));
+                } else {
+                    el.removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
+                }
+            });
+
+            update_build(build.id, 'progress', function(el) {
                 el.remove();
             });
 
-            update(build.id, 'link', function(el) {
+            update_build(build.id, 'link', function(el) {
                 el.html('<a href="' + build.url + '">' + build.url + '</a>');
             });
 
-            update(build.id, 'kill-form', function(el) {
+            update_build(build.id, 'kill-form', function(el) {
                 if ($('button i', el).hasClass('icon-refresh')) {
                     $('button', el).html('<i class="icon-ok"></i>');
                     setTimeout(function() { el.remove(); }, 1000);                    
@@ -59,7 +72,23 @@
                 }
             });
 
-            update(build.id, 'cancel-form', function(el) { el.remove(); });
+            update_build(build.id, 'cancel-form', function(el) {
+                if ($('button i', el).hasClass('icon-refresh')) {
+                    $('button', el).html('<i class="icon-ok"></i>');
+                    setTimeout(function() { el.remove(); }, 1000);                    
+                } else {
+                    el.remove();
+                }
+            });
+
+            update_ref(build.ref, 'schedule-form', function(el) {
+                if ($('button i', el).hasClass('icon-refresh')) {
+                    $('button', el).html('<i class="icon-ok"></i>');
+                    setTimeout(function() { el.remove(); }, 1000);                    
+                } else {
+                    el.remove();
+                }
+            });
 
             if (build.kill_url) {
                 update(build.id, 'actions', function(el) {
@@ -69,9 +98,14 @@
         }
     };
 
-    function update(build_id, type, callback) {
+    function update_build(build_id, type, callback) {
         callback($('#build-' + build_id + '-' + type));
     }
+
+    function update_ref(ref_name, type, callback) {
+        callback($('#ref-' + ref_name + '-' + type));
+    }
+
 
     function update_project_nb_pending_builds(project_id, nb_pending_builds) {
         var $nbPendingBuilds = $('#nav-project-' + project_id + ' #nb-pending-builds-' + project_id);

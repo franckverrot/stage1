@@ -23,6 +23,7 @@ detect_branches();
         <tr>
             <th width="15%">Branch</th>
             <th width="10%">Hash</th>
+            <th width="10%">&nbsp;</th>
             <th>&nbsp;</th>
         </tr>
     </thead>
@@ -32,26 +33,36 @@ detect_branches();
 
 <script type="text/mustache" id="tpl-branch-pending">
 {% verbatim %}
-<tr class="branch">
+<tr class="branch" id="ref-{{ name }}">
     <td class="ctn-name">{{ name }}</td>
     <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
-    <td class="ctn-button">
-        <button class="btn btn-info" disabled="disabled"><i class="icon-ok"></i> Already scheduled</button>
+    <td class="ctn-status">
+        <span id="ref-{{ name }}-status" class="label label-{{ status_label_class }}">{{ status_label }}</span>
     </td>
+    <td class="ctn-actions">&nbsp;</td>
 </tr>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-ref-status">
+{% verbatim %}
+<span id="ref-{{ name }}-status" class="label label-{{ status_label_class }}">{{ status_label }}</span>
 {% endverbatim %}
 </script>
 
 <script type="text/mustache" id="tpl-branch">
 {% verbatim %}
-<tr class="branch">
+<tr class="branch" id="ref-{{ name }}">
     <td class="ctn-name">{{ name }}</td>
     <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
-    <td class="ctn-button">
-        <button class="btn">schedule build</button>
+    <td class="ctn-status">&nbsp;</td>
+    <td class="ctn-actions">
+        <div id="ref-{{ name }}-schedule-form">
+        <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule build</button>
         {{#data}}
         <input type="hidden" name="{{ name }}" value="{{ value }}" />
         {{/data}}
+        </div>
     </td>
 </tr>
 {% endverbatim %}

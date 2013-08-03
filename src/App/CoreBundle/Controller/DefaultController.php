@@ -25,6 +25,14 @@ class DefaultController extends Controller
         $em->flush();
     }
 
+    private function publishWebsocket($event, $data)
+    {
+        $this->get('old_sound_rabbit_mq.websocket_producer')->publish(json_encode([
+            'event' => $event,
+            'data' => $data,
+        ]));
+    }
+
     private function removeAndFlush($entity)
     {
         $em = $this->getDoctrine()->getManager();
@@ -112,10 +120,12 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($build);
 
-            return new JsonResponse([
-                'project_id' => $project->getId(),
-                'nb_pending_builds' => count($project->getPendingBuilds()),
-            ], 200);
+            $this->publishWebsocket('build.canceled', [
+                'build' => $build->asWebsocketMessage(),
+                'project' => $project->asWebsocketMessage()
+            ]);
+
+            return new JsonResponse(null, 200);
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
@@ -124,7 +134,6 @@ class DefaultController extends Controller
     public function buildKillAction($id)
     {
         try {
-
             $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
             return new JsonResponse(null, 200);
@@ -185,7 +194,10 @@ class DefaultController extends Controller
         $pendingBuilds = [];
 
         foreach ($this->findPendingBuilds($project) as $build) {
-            $pendingBuilds[$build->getRef()] = '#';
+            $pendingBuilds[$build->getRef()] = [
+                'status_label' => $build->getStatusLabel(),
+                'status_label_class' => $build->getStatusLabelClass(),
+            ];
         }
 
         return $this->render('AppCoreBundle:Default:projectBranches.html.twig', [
@@ -247,11 +259,15 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
+            $this->publishWebsocket('build.scheduled', [
+                'build' => array_replace([
+                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+                ], $build->asWebsocketMessage()),
+                'project' => $project->asWebsocketMessage(),
+            ]);
+
             return new JsonResponse([
-                'build_id' => $build->getId(),
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                'project_id' => $project->getId(),
-                'nb_pending_builds' => count($project->getPendingBuilds()),
             ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);

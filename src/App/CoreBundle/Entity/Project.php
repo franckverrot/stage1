@@ -36,6 +36,14 @@ class Project
 
     protected $lastBuildRef;
 
+    public function asWebsocketMessage()
+    {
+        return [
+            'id' => $this->getId(),
+            'nb_pending_builds' => count($this->getPendingBuilds()),
+        ];
+    }
+
     public function getPendingBuilds()
     {
         return $this->getBuilds()->filter(function($build) {

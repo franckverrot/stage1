@@ -20,7 +20,7 @@
             <td id="build-{{ build.id }}-actions" class="actions">
                 {% if build.scheduled %}
                 <form id="build-{{ build.id }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
-                    <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-ok" data-success-message="canceled">cancel</button>
+                    <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
                 </form>
                 {% endif %}
                 {% if build.building %}

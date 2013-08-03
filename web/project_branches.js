@@ -19,24 +19,16 @@
             type: 'POST',
             dataType: 'json',
             data: data,
-            context: $(this).parent().parent()
+            context: this
         }).fail(function(jqXHR) {
-            $('button', this)
+            $(this)
                 .html('<i class="icon-remove"></i> ' + jqXHR.responseJSON.message)
                 .addClass('btn-' + jqXHR.responseJSON.class);
         }).done(function(response) {
-            $('button', this)
-                .html('<i class="icon-ok"></i> Success!')
-                .addClass('btn-success');
-            $('.ctn-button', this).append('<a href="' + response.build_url + '" class="btn">view build</a>');
-
-            // var $nbPendingBuilds = $('#nav-project-' + response.project_id + ' #nb-pending-builds-' + response.project_id);
-
-            // if ($nbPendingBuilds.length == 0) {
-            //     $('#nav-project-' + response.project_id).append(tpl_nb_pending_builds(response));
-            // } else {
-            //     $('span', $nbPendingBuilds).html(response.nb_pending_builds);
-            // }
+            $(this)
+                .html('<i class="' + $(this).data('success-class') + '"></i> ' + $(this).data('success-message'))
+                .removeClass()
+                .addClass('btn btn-small btn-success');
         });
     });
 
@@ -45,10 +37,12 @@
             for (i in data) {
                 var branch = data[i];
                 if (undefined != pending_builds[branch.ref]) {
-                    branches.append(tpl_branch_pending({
+                    var branch = branches.append(tpl_branch_pending({
                         name: branch.ref,
                         hash: branch.hash,
-                        abbr_hash: branch.hash.substr(0, 8)                        
+                        abbr_hash: branch.hash.substr(0, 8),
+                        status_label: pending_builds[branch.ref].status_label,
+                        status_label_class: pending_builds[branch.ref].status_label_class
                     }));
                 } else {
                     branches.append(tpl_branch({

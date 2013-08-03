@@ -17,7 +17,7 @@
         }).done(function(response) {
             $(this)
                 .html('<i class="' + $(this).data('success-class') + '"></i> ' + $(this).data('success-message'))
-                .removeClass(function(index, classes) { return classes; })
+                .removeClass()
                 .addClass('btn btn-small btn-success');
 
                 var $nbPendingBuilds = $('#nb-pending-builds-' + response.project_id);
