@@ -34,6 +34,13 @@
             update(data.build.id, 'link', function(el) {
                 el.html('<a href="' + data.build.url + '">' + data.build.url + '</a>');
             });
+
+            update(data.build.id, 'kill-form', function(el) {
+                $('button', el).html('<i class="icon-ok"></i>');
+                setTimeout(function() { el.remove(); }, 1000);
+            });
+
+            update(data.build.id, 'cancel-form', function(el) { el.remove(); });
         }
     };
 

@@ -19,13 +19,13 @@
             <td class="build-status"><span id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></td>
             <td class="actions">
                 {% if build.scheduled %}
-                <form method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
-                    <button type="submit" class="btn btn-small btn-warning" data-success-message="Canceled">cancel</button>
+                <form id="build-{{ build.id }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
+                    <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-ok" data-success-message="canceled">cancel</button>
                 </form>
                 {% endif %}
                 {% if build.building %}
-                <form method="post" action="{{ path('app_core_build_kill', { id: build.id }) }}">
-                    <button type="submit" class="btn btn-small btn-danger" data-success-message="Killed">kill</button>
+                <form id="build-{{ build.id }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: build.id }) }}">
+                    <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
                 </form>
                 {% endif %}
                 {% if build.failed and build.message %}

@@ -16,7 +16,7 @@
                 .addClass('btn btn-danger');
         }).done(function(response) {
             $(this)
-                .html('<i class="icon-ok"></i> ' + $(this).data('success-message'))
+                .html('<i class="' + $(this).data('success-class') + '"></i> ' + $(this).data('success-message'))
                 .removeClass(function(index, classes) { return classes; })
                 .addClass('btn btn-small btn-success');
 

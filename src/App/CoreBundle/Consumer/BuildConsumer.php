@@ -77,12 +77,12 @@ class BuildConsumer implements ConsumerInterface
             $projectDir = realpath(__DIR__.'/../../../..');
             $builder = new ProcessBuilder([
                 $projectDir.'/bin/build.sh',
-                $build->getId(),
                 $build->getRef(),
                 $build->getHash(),
                 $build->getProject()->getCloneUrl(),
                 $build->getProject()->getOwner()->getAccessToken(),
-                $build->getImageName()
+                $build->getImageName(),
+                $build->getImageTag()
             ]);
             $builder->setTimeout(0);
 
@@ -97,10 +97,15 @@ class BuildConsumer implements ConsumerInterface
             $build->setExitCodeText($process->getExitCodeText());
 
             if (!$process->isSuccessful()) {
+                if (in_array($process->getExitCode(), [137, 143])) {
+                    return Build::STATUS_KILLED;
+                }
+
                 return false;
             }
 
             $buildInfo = explode(PHP_EOL, trim(file_get_contents($buildFile('info'))));
+            unlink($buildFile('info'));
 
             if (count($buildInfo) !== 3) {
                 throw new InvalidArgumentException('Malformed build info: '.var_export($buildInfo, true));
@@ -130,7 +135,12 @@ class BuildConsumer implements ConsumerInterface
                     ->getQuery()
                     ->getSingleResult();
 
-                $builder = new ProcessBuilder([$projectDir.'/bin/stop.sh', $previousBuild->getContainerId(), $previousBuild->getImageId()]);
+                $builder = new ProcessBuilder([
+                    $projectDir.'/bin/stop.sh',
+                    $previousBuild->getContainerId(),
+                    $previousBuild->getImageId(),
+                    $previousBuild->getImageTag(),
+                ]);
                 $process = $builder->getProcess();
 
                 echo 'running '.$process->getCommandLine().PHP_EOL;
@@ -161,6 +171,8 @@ class BuildConsumer implements ConsumerInterface
 
     public function execute(AMQPMessage $message)
     {
+        echo 'received a message, yay!'.PHP_EOL;
+        
         $body = json_decode($message->body);
 
         $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
@@ -171,7 +183,7 @@ class BuildConsumer implements ConsumerInterface
         }
 
         if (!$build->isScheduled()) {
-            return true;
+            return;
         }
 
         $build->setStatus(Build::STATUS_BUILDING);
@@ -189,7 +201,13 @@ class BuildConsumer implements ConsumerInterface
 
         try {
             $res = $this->doBuild($build);
-            $build->setStatus($res === false ? Build::STATUS_FAILED : Build::STATUS_RUNNING);
+            if (true === $res) {
+                $res = Build::STATUS_RUNNING;
+            } elseif (false === $res) {
+                $res = Build::STATUS_FAILED;
+            }
+
+            $build->setStatus($res);
         } catch (Exception $e) {
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage($e->getMessage());
@@ -198,13 +216,7 @@ class BuildConsumer implements ConsumerInterface
         $this->persistAndFlush($build);
 
         $this->producer->publish(json_encode(['event' => 'build.finished', 'data' => [
-            'build' => [
-                'id' => $build->getId(),
-                'status' => $build->getStatus(),
-                'status_label' => $build->getStatusLabel(),
-                'status_label_class' => $build->getStatusLabelClass(),
-                'url' => $build->getUrl(),
-            ],
+            'build' => $build->asWebsocketMessage(),
             'project' => [
                 'id' => $build->getProject()->getId(),
                 'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),

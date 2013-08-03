@@ -52,9 +52,26 @@ class Build
 
     private $updatedAt;
 
+    public function asWebsocketMessage()
+    {
+        return [
+            'id' => $this->getId(),
+            'status' => $this->getStatus(),
+            'status_label' => $this->getStatusLabel(),
+            'status_label_class' => $this->getStatusLabelClass(),
+            'url' => $this->getUrl(),
+        ];
+
+    }
+
     public function getImageName()
     {
-        return sprintf('_/build/%s/%s', $this->getProject()->getName(), $this->getRef());
+        return sprintf('build/%s/%s', $this->getProject()->getName(), $this->getRef());
+    }
+
+    public function getImageTag()
+    {
+        return $this->getId();
     }
 
     public function __call($method, $args)
@@ -109,6 +126,8 @@ class Build
                 return 'deleted';
             case self::STATUS_OBSOLETE:
                 return 'obsolete';
+            default:
+                return 'unknown';
         }
     }
 

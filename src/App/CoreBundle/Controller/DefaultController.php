@@ -12,6 +12,7 @@ use Symfony\Component\Process\ProcessBuilder;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
 
+use RuntimeException;
 use Exception;
 use DateTime;
 
@@ -123,16 +124,10 @@ class DefaultController extends Controller
     public function buildKillAction($id)
     {
         try {
-            $build = $this->findBuild($id);
-            $project = $build->getProject();
-            $build->setStatus(Build::STATUS_KILLED);
 
-            $this->persistAndFlush($build);
+            $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
-            return new JsonResponse([
-                'project_id' => $project->getId(),
-                'nb_pending_builds' => count($project->getPendingBuilds()),
-            ], 200);
+            return new JsonResponse(null, 200);
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
