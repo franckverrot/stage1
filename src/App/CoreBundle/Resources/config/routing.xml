@@ -56,6 +56,10 @@
         <default key="_controller">AppCoreBundle:Default:buildKill</default>
     </route>
 
+    <route id="app_core_hooks_github" pattern="/hooks/github">
+        <default key="_controller">AppCoreBundle:Default:hooksGithub</default>
+    </route>
+
     <route id="app_core_login" pattern="/login/{accessToken}" methods="POST">
         <default key="_controller">AppCoreBundle:Security:login</default>
     </route>

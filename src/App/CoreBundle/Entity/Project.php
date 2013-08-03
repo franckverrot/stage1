@@ -24,6 +24,16 @@ class Project
      */
     protected $cloneUrl;
 
+    protected $githubId;
+
+    protected $githubFullName;
+
+    protected $githubOwnerLogin;
+
+    protected $githubHookId;
+
+    protected $githubDeployKeyId;
+
     protected $owner;
 
     protected $builds;
@@ -274,5 +284,120 @@ class Project
     public function getBuilds()
     {
         return $this->builds;
+    }
+
+    /**
+     * Set githubFullName
+     *
+     * @param string $githubFullName
+     * @return Project
+     */
+    public function setGithubFullName($githubFullName)
+    {
+        $this->githubFullName = $githubFullName;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubFullName
+     *
+     * @return string 
+     */
+    public function getGithubFullName()
+    {
+        return $this->githubFullName;
+    }
+
+    /**
+     * Set githubOwnerLogin
+     *
+     * @param string $githubOwnerLogin
+     * @return Project
+     */
+    public function setGithubOwnerLogin($githubOwnerLogin)
+    {
+        $this->githubOwnerLogin = $githubOwnerLogin;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubOwnerLogin
+     *
+     * @return string 
+     */
+    public function getGithubOwnerLogin()
+    {
+        return $this->githubOwnerLogin;
+    }
+
+    /**
+     * Set githubHookId
+     *
+     * @param integer $githubHookId
+     * @return Project
+     */
+    public function setGithubHookId($githubHookId)
+    {
+        $this->githubHookId = $githubHookId;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubHookId
+     *
+     * @return integer 
+     */
+    public function getGithubHookId()
+    {
+        return $this->githubHookId;
+    }
+
+    /**
+     * Set githubDeployKeyId
+     *
+     * @param integer $githubDeployKeyId
+     * @return Project
+     */
+    public function setGithubDeployKeyId($githubDeployKeyId)
+    {
+        $this->githubDeployKeyId = $githubDeployKeyId;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubDeployKeyId
+     *
+     * @return integer 
+     */
+    public function getGithubDeployKeyId()
+    {
+        return $this->githubDeployKeyId;
+    }
+
+    /**
+     * Set githubId
+     *
+     * @param integer $githubId
+     * @return Project
+     */
+    public function setGithubId($githubId)
+    {
+        $this->githubId = $githubId;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubId
+     *
+     * @return integer 
+     */
+    public function getGithubId()
+    {
+        return $this->githubId;
     }
 }

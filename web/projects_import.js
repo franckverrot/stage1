@@ -85,6 +85,8 @@
                                     name: this.name,
                                     data: [
                                         { name: 'name', value: this.name },
+                                        { name: 'github_full_name', value: this.full_name },
+                                        { name: 'github_owner_login', value: this.owner.login },
                                         { name: 'github_id', value: this.id },
                                         { name: 'clone_url', value: this.clone_url },
                                         { name: 'hooks_url', value: this.hooks_url },

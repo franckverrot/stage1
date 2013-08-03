@@ -42,7 +42,7 @@ stream_build_output($('#output'));
 
         <dl class="span4">
             <dt>Initiator</dt>
-            <dd>{{ build.initiator.username }}</dd>
+            <dd>{% if build.initiator %}{{ build.initiator.username }}{% else %}<abbr title="Not available">N/A</abbr>{% endif %}</dd>
             <dt>Created at</dt>
             <dd>{{ build.createdAt | date('Y-m-d H:i:s') }}</dd>
             {% if build.exitCode %}

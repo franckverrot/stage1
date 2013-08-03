@@ -18,6 +18,29 @@ use DateTime;
 
 class DefaultController extends Controller
 {
+    private function github_post($url, $payload)
+    {
+        file_put_contents('/tmp/payload.json', json_encode($payload));
+        return json_decode(file_get_contents($url, false, stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'content' => json_encode($payload),
+                'header' => 'Authorization: token '.$this->getUser()->getAccessToken()."\r\n".
+                            "Content-Type: application/json\r\n"
+            ],
+        ])));
+    }
+
+    private function github_get($url)
+    {
+        return json_decode(file_get_contents($url, false, stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => 'Authorization: token '.$this->getUser()->getAccessToken()."\r\n"
+            ],
+        ])));
+    }
+
     private function persistAndFlush($entity)
     {
         $em = $this->getDoctrine()->getManager();
@@ -240,10 +263,6 @@ class DefaultController extends Controller
     {
         $project = $this->findProject($id);
 
-        if (0 > count($this->findPendingBuilds($project))) {
-            return new JsonResponse(['class' => 'warning', 'message' => 'You already have a build pending for this project']);
-        }
-
         try {
             $ref = $request->request->get('ref');
 
@@ -331,6 +350,9 @@ class DefaultController extends Controller
     {
         try {
             $project = new Project();
+            $project->setGithubId($request->request->get('github_id'));
+            $project->setGithubOwnerLogin($request->request->get('github_owner_login'));
+            $project->setGithubFullName($request->request->get('github_full_name'));
             $project->setOwner($this->getUser());
             $project->setName($request->request->get('name'));
             $project->setCloneUrl($request->request->get('clone_url'));
@@ -339,11 +361,102 @@ class DefaultController extends Controller
             $project->setCreatedAt($now);
             $project->setUpdatedAt($now);
 
+            $hooksUrl = $request->request->get('hooks_url');
+            $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
+
+            $hooks = $this->github_get($hooksUrl);
+
+            foreach ($hooks as $_) {
+                if ($_->name === 'web' && $_->config->url === $githubHookUrl) {
+                    $hook = $_;
+                    break;
+                }
+            }
+
+            if (!isset($hook)) {
+                $hook = $this->github_post($hooksUrl, [
+                    'name' => 'web',
+                    'active' => true,
+                    'events' => ['push'],
+                    'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
+                ]);                
+            }
+
+            $project->setGithubHookId($hook->id);
+
+            $keysUrl = str_replace('{/key_id}', '', $request->request->get('keys_url'));
+            $keys = $this->github_get($keysUrl);
+
+            $deployKey = trim(file_get_contents(__DIR__.'/../../../../app/Resources/deploy_keys/id_rsa.pub'));
+            $deployKey = substr($deployKey, 0, strrpos($deployKey, ' '));
+
+            foreach ($keys as $_) {
+                if ($_->key === $deployKey) {
+                    $key = $_;
+                    break;
+                }
+            }
+
+            if (!isset($key)) {
+                $key = $this->github_post($keysUrl, [
+                    'key' => $deployKey,
+                    'title' => 'stage1',
+                ]);
+            }
+
+            $project->setGithubDeployKeyId($key->id);
+
             $this->persistAndFlush($project);
 
             return new JsonResponse(['url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]), 'project' => ['name' => $project->getName()]], 201);            
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function hooksGithubAction(Request $request)
+    {
+
+        $payload = json_decode($request->getContent());
+
+        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
+
+        if (!$project) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            $ref = substr($payload->ref, 11);
+            $hash = $payload->after;
+
+            $build = new Build();
+            $build->setProject($project);
+            $build->setStatus(Build::STATUS_SCHEDULED);
+            $build->setRef($ref);
+            $build->setHash($hash);
+
+            $now = new DateTime();
+            $build->setCreatedAt($now);
+            $build->setUpdatedAt($now);
+
+            $this->persistAndFlush($build);
+
+            $producer = $this->get('old_sound_rabbit_mq.build_producer');
+            $producer->publish(json_encode(['build_id' => $build->getId()]));
+
+            $this->publishWebsocket('build.scheduled', [
+                'build' => array_replace([
+                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+                ], $build->asWebsocketMessage()),
+                'project' => $project->asWebsocketMessage(),
+            ]);
+
+            return new JsonResponse([
+                'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+                'build' => $build->asWebsocketMessage(),
+            ], 201);
+        } catch (Exception $e) {
+            return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
 }
