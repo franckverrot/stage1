@@ -16,7 +16,9 @@
             <td>{{ build.ref }}</td>
             <td><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr></td>
             <td>{{ build.createdAt | date('Y-m-d H:i:s') }}</td>
-            <td class="build-status"><span id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></td>
+            <td class="build-status">
+                <span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span>
+            </td>
             <td id="build-{{ build.id }}-actions" class="actions">
                 {% if build.scheduled %}
                 <form id="build-{{ build.id }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">

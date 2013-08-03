@@ -40,18 +40,25 @@
         },
         'build': function(build) {
             update_build(build.id, 'status', function(el) {
-                el.removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
+                var previousStatus = parseInt(el.data('status'));
+                if (previousStatus < build.status) {
+                    el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
+                }
             });
 
             update_ref(build.ref, 'status', function(el) {
                 if (el.length == 0 && undefined != tpl['ref-status']) {
                     $('#ref-' + build.ref + ' .ctn-status').html(tpl['ref-status']({
                         name: build.ref,
+                        status: build.status,
                         status_label: build.status_label,
                         status_label_class: build.status_label_class
                     }));
                 } else {
-                    el.removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
+                    var previousStatus = parseInt(el.data('status'));
+                    if (previousStatus < build.status) {
+                        el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
+                    }
                 }
             });
 
@@ -83,7 +90,7 @@
 
             update_ref(build.ref, 'schedule-form', function(el) {
                 if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).html('<i class="icon-ok"></i>');
+                    $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
                     setTimeout(function() { el.remove(); }, 1000);                    
                 } else {
                     el.remove();
@@ -91,18 +98,22 @@
             });
 
             if (build.kill_url) {
-                update(build.id, 'actions', function(el) {
-                    el.append(tpl['build-kill-form'](build));
+                update_build(build.id, 'actions', function(el) {
+                    if (undefined !== tpl['build-kill-form']) {
+                        el.append(tpl['build-kill-form'](build));
+                    }
                 });
             }
         }
     };
 
     function update_build(build_id, type, callback) {
+        console.log('update_build', build_id, type);
         callback($('#build-' + build_id + '-' + type));
     }
 
     function update_ref(ref_name, type, callback) {
+        console.log('update_ref', ref_name, type);
         callback($('#ref-' + ref_name + '-' + type));
     }
 

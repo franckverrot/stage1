@@ -12,9 +12,9 @@ class Build
 
     const STATUS_RUNNING = 3;
 
-    const STATUS_FAILED = 4;
+    const STATUS_CANCELED = 4;
 
-    const STATUS_CANCELED = 5;
+    const STATUS_FAILED = 5;
 
     const STATUS_KILLED = 6;
 

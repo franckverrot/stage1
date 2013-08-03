@@ -25,10 +25,12 @@
                 .html('<i class="icon-remove"></i> ' + jqXHR.responseJSON.message)
                 .addClass('btn-' + jqXHR.responseJSON.class);
         }).done(function(response) {
-            $(this)
-                .html('<i class="' + $(this).data('success-class') + '"></i> ' + $(this).data('success-message'))
-                .removeClass()
-                .addClass('btn btn-small btn-success');
+            if (!$(this).hasClass('btn-success')) {
+                $(this)
+                    .html('<i class="' + $(this).data('success-class') + '"></i> ' + $(this).data('success-message'))
+                    .removeClass()
+                    .addClass('btn btn-small btn-success');                
+            }
         });
     });
 

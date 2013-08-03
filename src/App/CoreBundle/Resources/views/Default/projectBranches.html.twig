@@ -46,7 +46,7 @@ detect_branches();
 
 <script type="text/mustache" id="tpl-ref-status">
 {% verbatim %}
-<span id="ref-{{ name }}-status" class="label label-{{ status_label_class }}">{{ status_label }}</span>
+<span id="ref-{{ name }}-status" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
 {% endverbatim %}
 </script>
 
