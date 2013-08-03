@@ -51,6 +51,10 @@
         <script src="/mustache.js"></script>
         <script src="/websocket.js"></script>
         <script src="/bootstrap/js/bootstrap.js"></script>
+        <script src="/jquery.timeago.js"></script>
+        <script type="text/javascript">
+        $(function() { $('abbr.timeago').timeago(); });
+        </script>
         {% block javascripts %}{% endblock %}
         {% if not is_granted('ROLE_USER') %}
         <script src="/oauth.js"></script>
