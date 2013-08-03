@@ -4,6 +4,8 @@ namespace App\CoreBundle\Consumer;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use App\CoreBundle\Entity\Build;
 
@@ -21,10 +23,13 @@ class BuildConsumer implements ConsumerInterface
 
     private $producer;
 
-    public function __construct(RegistryInterface $doctrine, Producer $producer)
+    private $router;
+
+    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router)
     {
         $this->doctrine = $doctrine;
         $this->producer = $producer;
+        $this->router = $router;
     }
 
     public function getDoctrine()
@@ -37,6 +42,11 @@ class BuildConsumer implements ConsumerInterface
         $em = $this->getDoctrine()->getManager();
         $em->persist($entity);
         $em->flush();
+    }
+
+    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    {
+        return $this->router->generate($route, $parameters, $referenceType);
     }
 
     public function getPendingBuildsCount($project)
@@ -190,9 +200,9 @@ class BuildConsumer implements ConsumerInterface
         $this->persistAndFlush($build);
 
         $this->producer->publish(json_encode(['event' => 'build.started', 'data' => [
-            'build' => [
-                'id' => $build->getId()
-            ],
+            'build' => array_replace([
+                'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
+            ], $build->asWebsocketMessage()),
             'project' => [
                 'id' => $build->getProject()->getId(),
                 'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject())

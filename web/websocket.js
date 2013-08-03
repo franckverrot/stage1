@@ -18,7 +18,20 @@
         }
     };
 
-    var tpl_nb_pending_builds = Mustache.compile($('#tpl-nb-pending-builds').text());
+    var prepare = [
+        'nb-pending-builds',
+        'build-kill-form'
+    ]
+
+    var tpl = {};
+
+    for (i in prepare) {
+        var tpl_id = prepare[i];
+        if ($('#tpl-' + tpl_id).length > 0) {
+            console.log('preparing template', tpl_id);
+            tpl[tpl_id] = Mustache.compile($('#tpl-' + tpl_id).text());
+        }
+    }
 
     var callbacks = {
         'project': function(project) {
@@ -47,6 +60,12 @@
             });
 
             update(build.id, 'cancel-form', function(el) { el.remove(); });
+
+            if (build.kill_url) {
+                update(build.id, 'actions', function(el) {
+                    el.append(tpl['build-kill-form'](build));
+                });
+            }
         }
     };
 
@@ -55,22 +74,17 @@
     }
 
     function update_project_nb_pending_builds(project_id, nb_pending_builds) {
-        console.log('updating pending builds count');
-        console.log(project_id, nb_pending_builds);
         var $nbPendingBuilds = $('#nav-project-' + project_id + ' #nb-pending-builds-' + project_id);
 
         if ($nbPendingBuilds.length == 0) {
-            console.log('adding');
-            $('#nav-project-' + project_id).append(tpl_nb_pending_builds({
+            $('#nav-project-' + project_id).append(tpl['nb-pending-builds']({
                 project_id: project_id,
                 nb_pending_builds: nb_pending_builds
             }));
         } else {
             if (nb_pending_builds > 0) {
-                console.log('updating');
                 $('span', $nbPendingBuilds).html(nb_pending_builds);                    
             } else {
-                console.log('removing');
                 $nbPendingBuilds.remove();
             }
         }
