@@ -29,6 +29,7 @@ class DefaultController extends Controller
     {
         $this->get('old_sound_rabbit_mq.websocket_producer')->publish(json_encode([
             'event' => $event,
+            'timestamp' => microtime(true),
             'data' => $data,
         ]));
     }
@@ -195,6 +196,7 @@ class DefaultController extends Controller
 
         foreach ($this->findPendingBuilds($project) as $build) {
             $pendingBuilds[$build->getRef()] = [
+                'status' => $build->getStatus(),
                 'status_label' => $build->getStatusLabel(),
                 'status_label_class' => $build->getStatusLabelClass(),
             ];
@@ -242,13 +244,27 @@ class DefaultController extends Controller
             return new JsonResponse(['class' => 'warning', 'message' => 'You already have a build pending for this project']);
         }
 
-        try {            
+        try {
+            $ref = $request->request->get('ref');
+
+            if (null === $hash = $request->request->get('hash')) {
+                $builder = new ProcessBuilder([
+                    '/usr/bin/git', 'ls-remote', '--heads', $project->getCloneUrl(), $ref
+                ]);
+                $process = $builder->getProcess();
+                $process->run();
+
+                $output = trim($process->getOutput());
+                list($hash, $ref) = explode("\t", $output);
+                $ref = substr($ref, 11);
+            }
+
             $build = new Build();
             $build->setProject($project);
             $build->setInitiator($this->getUser());
             $build->setStatus(Build::STATUS_SCHEDULED);
-            $build->setRef($request->request->get('ref'));
-            $build->setHash($request->request->get('hash'));
+            $build->setRef($ref);
+            $build->setHash($hash);
 
             $now = new DateTime();
             $build->setCreatedAt($now);
@@ -268,6 +284,7 @@ class DefaultController extends Controller
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+                'build' => $build->asWebsocketMessage(),
             ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);

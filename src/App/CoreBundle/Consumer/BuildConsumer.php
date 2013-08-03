@@ -199,7 +199,7 @@ class BuildConsumer implements ConsumerInterface
         $build->setStatus(Build::STATUS_BUILDING);
         $this->persistAndFlush($build);
 
-        $this->producer->publish(json_encode(['event' => 'build.started', 'data' => [
+        $this->producer->publish(json_encode(['event' => 'build.started', 'timestamp' => microtime(true), 'data' => [
             'build' => array_replace([
                 'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
             ], $build->asWebsocketMessage()),
@@ -225,8 +225,10 @@ class BuildConsumer implements ConsumerInterface
 
         $this->persistAndFlush($build);
 
-        $this->producer->publish(json_encode(['event' => 'build.finished', 'data' => [
-            'build' => $build->asWebsocketMessage(),
+        $this->producer->publish(json_encode(['event' => 'build.finished', 'timestamp' => microtime(true), 'data' => [
+            'build' => array_replace([
+                'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
+                ], $build->asWebsocketMessage()),
             'project' => [
                 'id' => $build->getProject()->getId(),
                 'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),

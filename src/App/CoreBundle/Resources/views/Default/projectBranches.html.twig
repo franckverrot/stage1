@@ -39,13 +39,24 @@ detect_branches();
 {% endverbatim %}
 </script>
 
+<script type="text/mustache" id="tpl-ref-schedule-form">
+{% verbatim %}
+<form id="ref-{{ name }}-schedule-form" method="post" action="{{ schedule_build_url }}">
+    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule build</button>
+    {{#data}}
+    <input type="hidden" name="{{ name }}" value="{{ value }}" />
+    {{/data}}
+</form>
+{% endverbatim %}
+</script>
+
 <script type="text/mustache" id="tpl-branch-pending">
 {% verbatim %}
 <tr class="branch" id="ref-{{ name }}">
     <td class="ctn-name">{{ name }}</td>
     <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
     <td class="ctn-status">
-        <span id="ref-{{ name }}-status" class="label label-{{ status_label_class }}">{{ status_label }}</span>
+        <span id="ref-{{ name }}-status" data-hash="{{ hash }}" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
     </td>
     <td class="actions" id="ref-{{ name }}-actions"></td>
 </tr>
@@ -54,7 +65,7 @@ detect_branches();
 
 <script type="text/mustache" id="tpl-ref-status">
 {% verbatim %}
-<span id="ref-{{ name }}-status" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
+<span id="ref-{{ name }}-status" data-hash="{{ hash }}" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
 {% endverbatim %}
 </script>
 

@@ -4,6 +4,8 @@ namespace App\CoreBundle\Consumer;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use App\CoreBundle\Entity\Build;
 
@@ -21,10 +23,18 @@ class KillConsumer implements ConsumerInterface
 
     private $producer;
 
-    public function __construct(RegistryInterface $doctrine, Producer $producer)
+    private $router;
+
+    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router)
     {
         $this->doctrine = $doctrine;
         $this->producer = $producer;
+        $this->router = $router;
+    }
+
+    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    {
+        return $this->router->generate($route, $parameters, $referenceType);
     }
 
     public function getDoctrine()
@@ -73,8 +83,10 @@ class KillConsumer implements ConsumerInterface
         }
 
         if (!$build->isBuilding()) {
-            $this->producer->publish(json_encode(['event' => 'build.finished', 'data' => [
-                'build' => $build->asWebsocketMessage(),
+            $this->producer->publish(json_encode(['event' => 'build.finished', 'timestamp' => microtime(true), 'data' => [
+                'build' => array_replace([
+                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
+                    ], $build->asWebsocketMessage()),
                 'project' => [
                     'id' => $build->getProject()->getId(),
                     'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),
@@ -101,8 +113,10 @@ class KillConsumer implements ConsumerInterface
                 $build->setStatus(Build::STATUS_KILLED);
                 $this->persistAndFlush($build);
 
-                $this->producer->publish(json_encode(['event' => 'build.finished', 'data' => [
-                    'build' => $build->asWebsocketMessage(),
+                $this->producer->publish(json_encode(['event' => 'build.finished', 'timestamp' => microtime(true), 'data' => [
+                    'build' => array_replace([
+                        'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
+                        ], $build->asWebsocketMessage()),
                     'project' => [
                         'id' => $build->getProject()->getId(),
                         'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),

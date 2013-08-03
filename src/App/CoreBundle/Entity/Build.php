@@ -57,6 +57,7 @@ class Build
         return [
             'id' => $this->getId(),
             'ref' => $this->getRef(),
+            'hash' => $this->getHash(),
             'status' => $this->getStatus(),
             'status_label' => $this->getStatusLabel(),
             'status_label_class' => $this->getStatusLabelClass(),

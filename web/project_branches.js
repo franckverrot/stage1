@@ -43,6 +43,7 @@
                         name: branch.ref,
                         hash: branch.hash,
                         abbr_hash: branch.hash.substr(0, 8),
+                        status: pending_builds[branch.ref].status,
                         status_label: pending_builds[branch.ref].status_label,
                         status_label_class: pending_builds[branch.ref].status_label_class
                     }));
