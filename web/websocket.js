@@ -23,6 +23,7 @@
     var prepare = [
         'nb-pending-builds',
         'build-kill-form',
+        'ref-kill-form',
         'ref-status'
     ]
 
@@ -41,74 +42,93 @@
             update_project_nb_pending_builds(project.id, parseInt(project.nb_pending_builds));
         },
         'build': function(build) {
-            update_build(build.id, 'status', function(el) {
-                var previousStatus = parseInt(el.data('status'));
-                if (previousStatus < build.status) {
+            var previousBuildStatus = parseInt($('#build-' + build.id + '-status').data('status'));
+            if (isNaN(previousBuildStatus) || build.status > previousBuildStatus) {
+                update_build(build.id, 'status', function(el) {
                     el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
-                }
-            });
-
-            update_ref(build.ref, 'status', function(el) {
-                if (el.length == 0 && undefined != tpl['ref-status']) {
-                    $('#ref-' + build.ref + ' .ctn-status').html(tpl['ref-status']({
-                        name: build.ref,
-                        status: build.status,
-                        status_label: build.status_label,
-                        status_label_class: build.status_label_class
-                    }));
-                } else {
-                    var previousStatus = parseInt(el.data('status'));
-                    if (previousStatus < build.status) {
-                        el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
-                    }
-                }
-            });
-
-            update_build(build.id, 'progress', function(el) {
-                el.remove();
-            });
-
-            update_build(build.id, 'kill-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).html('<i class="icon-ok"></i>');
-                    setTimeout(function() { el.remove(); }, 1000);                    
-                } else {
-                    el.remove();
-                }
-            });
-
-            update_build(build.id, 'cancel-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).html('<i class="icon-ok"></i>');
-                    setTimeout(function() { el.remove(); }, 1000);                    
-                } else {
-                    el.remove();
-                }
-            });
-
-            update_ref(build.ref, 'schedule-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
-                    setTimeout(function() { el.remove(); }, 1000);                    
-                } else {
-                    el.remove();
-                }
-            });
-
-                console.log(build.url, null != build.url);
-            if (null != build.url && build.url.length > 0) {
-                console.log('updating url', build.id, build.url);
-                update_build(build.id, 'link', function(el) {
-                    el.html('<a href="' + build.url + '">' + build.url + '</a>');
                 });
+
+                update_build(build.id, 'progress', function(el) {
+                    el.remove();
+                });
+
+                update_build(build.id, 'kill-form', function(el) {
+                    if ($('button i', el).hasClass('icon-refresh')) {
+                        $('button', el).html('<i class="icon-ok"></i>');
+                        setTimeout(function() { el.remove(); }, 1000);                    
+                    } else {
+                        el.remove();
+                    }
+                });
+
+                update_build(build.id, 'cancel-form', function(el) {
+                    if ($('button i', el).hasClass('icon-refresh')) {
+                        $('button', el).html('<i class="icon-ok"></i>');
+                        setTimeout(function() { el.remove(); }, 1000);                    
+                    } else {
+                        el.remove();
+                    }
+                });
+
+                if (null != build.url && build.url.length > 0) {
+                    update_build(build.id, 'link', function(el) {
+                        el.html('<a href="' + build.url + '">' + build.url + '</a>');
+                    });
+                }
+
+                if (build.kill_url) {
+                    update_build(build.id, 'actions', function(el) {
+                        if (undefined !== tpl['build-kill-form']) {
+                            el.append(tpl['build-kill-form'](build));
+                        }
+                    });
+                }
             }
 
-            if (build.kill_url) {
-                update_build(build.id, 'actions', function(el) {
-                    if (undefined !== tpl['build-kill-form']) {
-                        el.append(tpl['build-kill-form'](build));
+            var previousRefStatus = parseInt($('#ref-' + build.ref + '-status').data('status'));
+            if (isNaN(previousRefStatus) || build.status > previousRefStatus) {
+                update_ref(build.ref, 'status', function(el) {
+                    if (el.length == 0 && undefined != tpl['ref-status']) {
+                        $('#ref-' + build.ref + ' .ctn-status').html(tpl['ref-status']({
+                            name: build.ref,
+                            status: build.status,
+                            status_label: build.status_label,
+                            status_label_class: build.status_label_class
+                        }));
+                    } else {
+                        el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
                     }
                 });
+
+
+                update_ref(build.ref, 'schedule-form', function(el) {
+                    if ($('button i', el).hasClass('icon-refresh')) {
+                        $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
+                        setTimeout(function() { el.remove(); }, 1000);                    
+                    } else {
+                        el.remove();
+                    }
+                });
+
+                update_ref(build.ref, 'kill-form', function(el) {
+                    if ($('button i', el).hasClass('icon-refresh')) {
+                        $('button', el).html('<i class="icon-ok"></i>');
+                        setTimeout(function() { el.remove(); }, 1000);                    
+                    } else {
+                        el.remove();
+                    }
+                });
+
+                if (build.kill_url) {
+                    update_ref(build.ref, 'actions', function(el) {
+                        if (undefined !== tpl['ref-kill-form']) {
+                            el.append(tpl['ref-kill-form']({
+                                name: build.ref,
+                                kill_url: build.kill_url
+                            }));
+                        }
+                    });
+                }
             }
         }
     };

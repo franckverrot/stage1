@@ -15,7 +15,7 @@
         });
 
         $.ajax({
-            url: schedule_build_url,
+            url: $(this).parent().attr('action'),
             type: 'POST',
             dataType: 'json',
             data: data,
@@ -54,7 +54,8 @@
                         data: [
                             { name: 'ref', value: branch.ref },
                             { name: 'hash', value: branch.hash }
-                        ]
+                        ],
+                        schedule_build_url: window.schedule_build_url
                     }));                    
                 }
             }

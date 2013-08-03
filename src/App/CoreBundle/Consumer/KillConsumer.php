@@ -72,6 +72,18 @@ class KillConsumer implements ConsumerInterface
             throw new RuntimeException('Could not find Build#'.$body->build_id);
         }
 
+        if (!$build->isBuilding()) {
+            $this->producer->publish(json_encode(['event' => 'build.finished', 'data' => [
+                'build' => $build->asWebsocketMessage(),
+                'project' => [
+                    'id' => $build->getProject()->getId(),
+                    'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),
+                ]
+            ]]));
+            
+            return true;
+        }
+
         $builder = new ProcessBuilder([
             realpath(__DIR__.'/../../../../bin/kill.sh'),
             $build->getId()

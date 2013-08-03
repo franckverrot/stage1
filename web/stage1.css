@@ -2,8 +2,9 @@
     line-height: inherit;
 }
 
-td.actions form {
+td.actions form, td.actions div {
     margin: 0;
+    display: inline-block;
 }
 
 table.build-list td, tbody#candidates td, tbody#branches td {
