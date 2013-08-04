@@ -16,6 +16,9 @@ app/check.php
 
 # Vagrant
 .vagrant
+app/Resources/boxes/
 
 # Others
 *~
+rsync.log
+github.json
