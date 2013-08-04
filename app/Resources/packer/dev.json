@@ -1,0 +1,55 @@
+{
+    "builders": [
+        {
+            "type": "vmware",
+            "iso_url": "/Users/ash/ISO/ubuntu-12.04.2-server-amd64.iso",
+            "iso_checksum": "af5f788aee1b32c4b2634734309cc9e9",
+            "iso_checksum_type": "md5",
+            "disk_size": 10000,
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "guest_os_type": "ubuntu-64",
+            "headless": false,
+            "http_directory": "app/Resources/support/preseed",
+            "boot_wait": "5s",
+            "boot_command": [
+                "<esc><esc><enter><wait>",
+                "/install/vmlinuz noapic preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu.seed <wait>",
+                "debian-installer=en_US auto=true locale=en_US kbd-chooser/method=us <wait>",
+                "hostname={{ .Name }} <wait>",
+                "fb=false debconf/frontend=noninteractive <wait>",
+                "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
+                "initrd=/install/initrd.gz -- <enter><wait>"
+            ],
+            "shutdown_command": "sudo halt -p",
+            "tools_upload_flavor": "linux",
+            "tools_upload_path": "/tmp/vmware-{{ .Flavor }}.iso"
+        }
+    ],
+
+    "provisioners": [
+        { "type": "file", "source": "app/Resources/support/config/apt/sources.list", "destination": "/tmp/apt-sources.list" },
+        { "type": "file", "source": "app/Resources/support/config/apt/rabbitmq.list", "destination": "/tmp/apt-rabbitmq.list" },
+        { "type": "file", "source": "app/Resources/support/config/apt/dotdeb.list", "destination": "/tmp/apt-dotdeb.list" },
+        { "type": "file", "source": "app/Resources/support/config/nginx/dev", "destination": "/tmp/nginx-default" },
+        { "type": "file", "source": "app/Resources/support/config/php/dev.ini", "destination": "/tmp/php-php.ini" },
+        { "type": "file", "source": "app/Resources/support/config/rabbitmq/vm.config", "destination": "/tmp/rabbitmq-rabbitmq.config" },
+        {
+            "type": "shell",
+            "scripts": [
+                "app/Resources/support/scripts/stage1.sh",
+                "app/Resources/support/scripts/dev.sh",
+                "app/Resources/support/scripts/vagrant.sh",
+                "app/Resources/support/scripts/vmware.sh"
+            ],
+            "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
+        }
+    ],
+
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "output": "app/Resources/boxes/dev.box"
+        }
+    ]
+}
