@@ -1,0 +1,6 @@
+Host stage1-dev
+    Hostname 192.168.215.42
+    User vagrant
+    IdentityFile ~/.ssh/id_rsa
+    StrictHostKeyChecking no
+    # UserKnownHostsFile /dev/null

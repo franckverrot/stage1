@@ -3,7 +3,7 @@ export VAGRANT_PUBKEY="ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyr
 
 mkdir -pm 700 /home/vagrant/.ssh
 
-echo $VAGRANT_PUBKEY > /home/vagrant/.ssh/authorized_keys
+curl https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub > /home/vagrant/.ssh/authorized_keys
 
 chmod 0600 /home/vagrant/.ssh/authorized_keys
 chown -R vagrant:vagrant /home/vagrant/

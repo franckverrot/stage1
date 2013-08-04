@@ -34,11 +34,15 @@
         { "type": "file", "source": "app/Resources/support/config/nginx/dev", "destination": "/tmp/nginx-default" },
         { "type": "file", "source": "app/Resources/support/config/php/dev.ini", "destination": "/tmp/php-php.ini" },
         { "type": "file", "source": "app/Resources/support/config/rabbitmq/vm.config", "destination": "/tmp/rabbitmq-rabbitmq.config" },
+        { "type": "file", "source": "app/Resources/support/config/ssh/dev", "destination": "/tmp/ssh-config" },
+        { "type": "file", "source": "app/Resources/support/keys/stage1-vm", "destination": "/tmp/keys-stage1-vm" },    
+        { "type": "file", "source": "app/Resources/support/keys/stage1-vm.pub", "destination": "/tmp/keys-stage1-vm.pub" },    
         {
             "type": "shell",
             "scripts": [
                 "app/Resources/support/scripts/stage1.sh",
                 "app/Resources/support/scripts/dev.sh",
+                "app/Resources/support/scripts/ssh.sh",
                 "app/Resources/support/scripts/vagrant.sh",
                 "app/Resources/support/scripts/vmware.sh"
             ],
