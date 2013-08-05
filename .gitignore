@@ -22,3 +22,4 @@ app/Resources/boxes/
 *~
 rsync.log
 github.json
+*.pyc
