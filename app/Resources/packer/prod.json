@@ -36,7 +36,8 @@
             "scripts": [
                 "app/Resources/support/scripts/ssh.sh",
                 "app/Resources/support/scripts/vagrant.sh",
-                "app/Resources/support/scripts/vmware.sh"
+                "app/Resources/support/scripts/vmware.sh",
+                "app/Resources/support/scripts/zerodisk.sh"
             ],
             "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
         }
