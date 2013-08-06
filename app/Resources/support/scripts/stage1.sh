@@ -24,8 +24,7 @@ apt-get -qy install \
     mysql-client \
     mysql-server \
     monit \
-    linux-image-generic-lts-raring \
-    amqp-tools \
+    amqp-tools
 
 cp /tmp/nginx-default /etc/nginx/sites-available/default
 
