@@ -8,7 +8,36 @@ env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
 env.consumers = []
 
-def setup():
+def provision():
+    with settings(warn_only=True):
+        if run('test -f /etc/apt/sources.list.d/dotdeb.list').succeeded:
+            info('already provisioned, skipping')
+            return
+
+    info('provisioning host')
+
+    with cd('/tmp'):
+        put('app/Resources/support/config/apt/dotdeb.list', 'apt-dotdeb.list')
+        put('app/Resources/support/config/apt/rabbitmq.list', 'apt-rabbitmq.list')
+        put('app/Resources/support/config/apt/sources.list', 'apt-sources.list')
+        put('app/Resources/support/config/nginx/prod', 'nginx-default')
+        put('app/Resources/support/config/php/prod.ini', 'php-php.ini')
+        put('app/Resources/support/scripts/stage1.sh', 'stage1.sh')
+
+        with settings(warn_only=True):
+            if run('test -d /usr/lib/vmware-tools').succeeded:
+                put('app/Resources/support/config/rabbitmq/vm.config', 'rabbitmq-rabbitmq.config')
+
+    sudo('bash /tmp/stage1.sh')
+    reboot()
+
+def prepare():
+    with settings(warn_only=True):
+        if run('test -d /app').succeeded:
+            info('already prepared, skipping')
+            return
+
+    info('preparing host')
     sudo('mkdir /app')
     sudo('chown vagrant /app')
 
