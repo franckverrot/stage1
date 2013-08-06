@@ -60,8 +60,12 @@
         <default key="_controller">AppCoreBundle:Default:hooksGithub</default>
     </route>
 
-    <route id="app_core_login" pattern="/login/{accessToken}" methods="POST">
-        <default key="_controller">AppCoreBundle:Security:login</default>
+    <route id="app_core_auth_github_authorize" pattern="/login/github">
+        <default key="_controller">AppCoreBundle:Security:authorize</default>
+    </route>
+
+    <route id="app_core_auth_github_callback" pattern="/auth/github">
+        <default key="_controller">AppCoreBundle:Security:callback</default>
     </route>
 
     <route id="app_core_logout" pattern="/logout">

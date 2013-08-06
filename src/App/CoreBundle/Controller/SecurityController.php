@@ -14,9 +14,11 @@ use App\CoreBundle\Entity\User;
 
 use DateTime;
 
+use RuntimeException;
+
 class SecurityController extends Controller
 {
-    public function loginAction(Request $request, $accessToken)
+    private function registerGithubUser(Request $request, $accessToken)
     {
         $result = file_get_contents('https://api.github.com/user?access_token='.$accessToken);
         $result = json_decode($result);
@@ -42,9 +44,57 @@ class SecurityController extends Controller
         $loginEvent = new InteractiveLoginEvent($request, $token);
         $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
 
+        return $user;
+    }
+
+    public function authorizeAction()
+    {
+        $token = md5(uniqid());
+        $this->get('session')->set('csrf_token', $token);
+
+        $payload = [
+            'client_id' => $this->container->getParameter('github_client_id'),
+            'redirect_uri' => $this->generateUrl('app_core_auth_github_callback', [], true),
+            'scope' => 'repo',
+            'state' => $token,
+        ];
+
+        return $this->redirect('https://github.com/login/oauth/authorize?'.http_build_query($payload));
+    }
+
+    public function callbackAction(Request $request)
+    {
+        $code = $request->query->get('code');
+        $token = $request->query->get('state');
+
+        if ($token !== $this->get('session')->get('csrf_token')) {
+            throw new RuntimeException('CSRF Mismatch');
+        }
+
+        $this->get('session')->remove('csrf_token');
+
+        $payload = [
+            'client_id' => $this->container->getParameter('github_client_id'),
+            'client_secret' => $this->container->getParameter('github_client_secret'),
+            'code' => $code,
+        ];
+
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'content' => http_build_query($payload),
+                'header' => "Content-Type: application/x-www-form-urlencoded\r\n".
+                            "Accept: application/json\r\n"
+
+            ]
+        ]);
+
+        $response = json_decode(file_get_contents('https://github.com/login/oauth/access_token', false, $context));
+
+        $user = $this->registerGithubUser($request, $response->access_token);
         $redirectRoute = ($user->getLastLoginAt() == $user->getCreatedAt()) ? 'app_core_projects_import' : 'app_core_homepage';
 
-        return new JsonResponse(['redirect_url' => $this->generateUrl($redirectRoute)]);
+        return $this->redirect($this->generateUrl($redirectRoute));
     }
 
     public function logoutAction()

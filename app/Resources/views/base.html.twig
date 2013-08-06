@@ -22,7 +22,7 @@
                             <li class="divider-vertical"></li>
                             <li><a href="{{ path('app_core_logout') }}"><i class="icon-off"></i></a></li>
                             {% else %}
-                            <li><a href="#" id="login">Login with github</a></li>
+                            <li><a href="{{ path('app_core_auth_github_authorize') }}" id="login">Login with github</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -56,18 +56,5 @@
         $(function() { $('abbr.timeago').timeago(); });
         </script>
         {% block javascripts %}{% endblock %}
-        {% if not is_granted('ROLE_USER') %}
-        <script src="/oauth.js"></script>
-        <script type="text/javascript">
-        $('a#login').click(function() {
-            OAuth.initialize('maWYPXfzovVpT1hkeqVXPmJ2Yn8');
-            OAuth.popup('github', function(err, result) {
-                $.post('/login/' + result.access_token, function(data) {
-                    window.location = data.redirect_url;
-                });
-            });            
-        });
-        </script>
-        {% endif %}
     </body>
 </html>
