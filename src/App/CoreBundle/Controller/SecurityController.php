@@ -20,7 +20,7 @@ class SecurityController extends Controller
 {
     private function registerGithubUser(Request $request, $accessToken)
     {
-        $result = file_get_contents('https://api.github.com/user?access_token='.$accessToken);
+        $result = file_get_contents($this->container->get('github_api_url').'/user?access_token='.$accessToken);
         $result = json_decode($result);
 
         $now = new DateTime();
@@ -59,7 +59,7 @@ class SecurityController extends Controller
             'state' => $token,
         ];
 
-        return $this->redirect('https://github.com/login/oauth/authorize?'.http_build_query($payload));
+        return $this->redirect($this->container->getParameter('github_base_url').'/login/oauth/authorize?'.http_build_query($payload));
     }
 
     public function callbackAction(Request $request)
@@ -89,7 +89,7 @@ class SecurityController extends Controller
             ]
         ]);
 
-        $response = json_decode(file_get_contents('https://github.com/login/oauth/access_token', false, $context));
+        $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
 
         $user = $this->registerGithubUser($request, $response->access_token);
         $redirectRoute = ($user->getLastLoginAt() == $user->getCreatedAt()) ? 'app_core_projects_import' : 'app_core_homepage';
