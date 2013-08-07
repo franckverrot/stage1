@@ -4,21 +4,26 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="app_core.consumer.build.class">App\CoreBundle\Consumer\BuildConsumer</parameter>
-        <parameter key="app_core.consumer.kill.class">App\CoreBundle\Consumer\KillConsumer</parameter>
-    </parameters>
-
     <services>
-        <service id="app_core.consumer.build" class="%app_core.consumer.build.class%">
+        <service id="app_core.consumer.build" class="App\CoreBundle\Consumer\BuildConsumer">
             <argument type="service" id="doctrine" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
             <argument type="service" id="router" />
         </service>
-        <service id="app_core.consumer.kill" class="%app_core.consumer.kill.class%">
+        <service id="app_core.consumer.kill" class="App\CoreBundle\Consumer\KillConsumer">
             <argument type="service" id="doctrine" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
             <argument type="service" id="router" />
+        </service>
+        <service id="app_core.listener.configure" class="App\CoreBundle\EventListener\ConfigureListener">
+            <argument>%configured%</argument>
+            <argument type="service" id="app_core.controller.configure" />
+            <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
+        </service>
+        <service id="app_core.controller.configure" class="App\CoreBundle\Controller\ConfigureController">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
         </service>
     </services>
 </container>

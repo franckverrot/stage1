@@ -65,7 +65,7 @@
         var projects_count = 0;
         var candidates_count = 0;
 
-        github('https://api.github.com/user').then(function(data) {
+        github(window.github_api_base_url + '/user').then(function(data) {
             return github(data.repos_url);
         }).then(function(repos) {
             projects_count = repos.length;

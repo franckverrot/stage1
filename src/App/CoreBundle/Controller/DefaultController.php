@@ -343,6 +343,7 @@ class DefaultController extends Controller
         return $this->render('AppCoreBundle:Default:projectsImport.html.twig', [
             'access_token' => $this->getUser()->getAccessToken(),
             'existing_projects' => $existingProjects,
+            'github_api_base_url' => $this->container->getParameter('github_api_base_url')
         ]);
     }
 

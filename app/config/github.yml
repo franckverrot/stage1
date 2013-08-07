@@ -1,5 +1,5 @@
 parameters:
     github_client_id: 2b8642215f1ce90cb8e6
     github_client_secret: 2d9c19492ebf56d456b2be5a23b22765e15cec29
-    github_api_base_url: https://api.github.com
-    github_base_url: https://github.com
+    github_api_base_url: 'https://api.github.com'
+    github_base_url: 'https://github.com'

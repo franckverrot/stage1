@@ -71,4 +71,12 @@
     <route id="app_core_logout" pattern="/logout">
         <default key="_controller">AppCoreBundle:Security:logout</default>
     </route>
+
+    <route id="app_core_configure_save" pattern="/configure" methods="POST">
+        <default key="_controller">AppCoreBundle:Configure:save</default>
+    </route>
+
+    <route id="app_core_configure" pattern="/configure" methods="GET">
+        <default key="_controller">AppCoreBundle:Configure:index</default>
+    </route>
 </routes>

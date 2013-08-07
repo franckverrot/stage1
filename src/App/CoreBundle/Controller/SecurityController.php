@@ -20,7 +20,7 @@ class SecurityController extends Controller
 {
     private function registerGithubUser(Request $request, $accessToken)
     {
-        $result = file_get_contents($this->container->get('github_api_url').'/user?access_token='.$accessToken);
+        $result = file_get_contents($this->container->getParameter('github_api_base_url').'/user?access_token='.$accessToken);
         $result = json_decode($result);
 
         $now = new DateTime();

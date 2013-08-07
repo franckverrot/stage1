@@ -4,6 +4,7 @@
 <script src="/projects_import.js"></script>
 <script type="text/javascript">
 var github_access_token = '{{ access_token }}';
+var github_api_base_url = '{{ github_api_base_url }}';
 var import_url = '{{ path('app_core_project_import') }}';
 var existing_projects = {{ existing_projects | json_encode | raw }};
 inspect_repositories();
