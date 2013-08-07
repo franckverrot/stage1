@@ -92,7 +92,7 @@ class SecurityController extends Controller
         $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
 
         $user = $this->registerGithubUser($request, $response->access_token);
-        $redirectRoute = ($user->getLastLoginAt() == $user->getCreatedAt()) ? 'app_core_projects_import' : 'app_core_homepage';
+        $redirectRoute = (count($user->getProjects()) == 0) ? 'app_core_projects_import' : 'app_core_homepage';
 
         return $this->redirect($this->generateUrl($redirectRoute));
     }
