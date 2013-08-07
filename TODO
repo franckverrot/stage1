@@ -45,6 +45,15 @@ TODO
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
     * pre-disabled buttons should change to enabled state when needed (through websockets events eg)
 
+GITHUB ENTERPRISE
+=================
+
+A problem will be github's API rate limit and composer, because the access token we have is not a valid github.com access token (it's a github enterprise token). So we have two, maybe three, solutions:
+
+1. acquire a github.com application token specific to this stage1 instance
+2. acquire a github.com through the user
+3. bundle the VM with an installation of satis
+
 THE DISTANT FUTURE
 ==================
 
