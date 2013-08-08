@@ -92,10 +92,11 @@
                 });
             }
 
-            update_ref(build.ref, 'status', function(el) {
+            update_ref(build.normRef, 'status', function(el) {
                 if (el.length == 0 && undefined != tpl['ref-status']) {
-                    $('#ref-' + build.ref + ' .ctn-status').html(tpl['ref-status']({
+                    $('#ref-' + build.normRef + ' .ctn-status').html(tpl['ref-status']({
                         name: build.ref,
+                        normName: build.normRef,
                         hash: build.hash,
                         status: build.status,
                         status_label: build.status_label,
@@ -107,7 +108,7 @@
             });
 
 
-            update_ref(build.ref, 'schedule-form', function(el) {
+            update_ref(build.normRef, 'schedule-form', function(el) {
                 if ($('button i', el).hasClass('icon-refresh')) {
                     $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
                     setTimeout(function() { el.remove(); }, 1000);                    
@@ -116,7 +117,7 @@
                 }
             });
 
-            update_ref(build.ref, 'kill-form', function(el) {
+            update_ref(build.normRef, 'kill-form', function(el) {
                 if ($('button i', el).hasClass('icon-refresh')) {
                     $('button', el).html('<i class="icon-ok"></i>');
                     setTimeout(function() { el.remove(); }, 1000);                    
@@ -126,18 +127,20 @@
             });
 
             if (build.kill_url && tpl['ref-kill-form']) {
-                update_ref(build.ref, 'actions', function(el) {
+                update_ref(build.normRef, 'actions', function(el) {
                     el.append(tpl['ref-kill-form']({
                         name: build.ref,
+                        normName: build.normRef,
                         kill_url: build.kill_url
                     }));
                 });
             }
 
             if (build.schedule_url && tpl['ref-schedule-form']) {
-                update_ref(build.ref, 'actions', function(el) {
+                update_ref(build.normRef, 'actions', function(el) {
                     el.append(tpl['ref-schedule-form']({
                         name: build.ref,
+                        normName: build.normRef,
                         schedule_build_url: build.schedule_url,
                         data: [
                             { name: 'ref', value: build.ref },
@@ -153,9 +156,9 @@
         callback($('#build-' + build_id + '-' + type));
     }
 
-    function update_ref(ref_name, type, callback) {
+    function update_ref(norm_name, type, callback) {
         // console.log('update_ref', ref_name, type);
-        callback($('#ref-' + ref_name + '-' + type));
+        callback($('#ref-' + norm_name + '-' + type));
     }
 
 

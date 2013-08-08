@@ -22,5 +22,6 @@ app/Resources/boxes/
 *~
 rsync.log
 github.json
+payload/
 *.pyc
 output-vmware

@@ -52,6 +52,11 @@ class Build
 
     private $updatedAt;
 
+    public function getNormRef()
+    {
+        return strtolower(preg_replace('/[^a-z0-9\-]/', '-', $this->getRef()));
+    }
+
     public function asWebsocketMessage()
     {
         return [
