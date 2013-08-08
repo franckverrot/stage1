@@ -1,6 +1,14 @@
 TODO
 ====
 
+* test
+    * test repositories belonging to an organisation the user belongs to
+    * test private repositories
+
+* bugs
+    * deploy key must be unique, you can't reuse the same deploy for several projects on github
+    * pending builds seem to not update automatically on "import projects" page (just after login)
+
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
 
@@ -64,10 +72,10 @@ THE DISTANT FUTURE
     * add option to specify a build script
         * SECURITY WARNING
     * Support for build systems like make, ant, phing, etc
-    * allow shutting down / restarting a running instance
 
 * instances
     * add a (disablable) top frame indicating what project / branch you're currently browsing
+    * allow shutting down / restarting a running instance
 
 * projects
     * allow project creation through build poke (?)
