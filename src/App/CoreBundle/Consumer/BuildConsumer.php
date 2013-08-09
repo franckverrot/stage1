@@ -92,7 +92,8 @@ class BuildConsumer implements ConsumerInterface
                 $build->getProject()->getCloneUrl(),
                 $build->getProject()->getOwner()->getAccessToken(),
                 $build->getImageName(),
-                $build->getImageTag()
+                $build->getImageTag(),
+                $build->getId()
             ]);
             $builder->setTimeout(0);
 

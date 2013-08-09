@@ -12,6 +12,8 @@ use Symfony\Component\Process\ProcessBuilder;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
 
+use App\CoreBundle\SshKeys;
+
 use RuntimeException;
 use Exception;
 use DateTime;
@@ -358,6 +360,11 @@ class DefaultController extends Controller
             $project->setName($request->request->get('name'));
             $project->setCloneUrl($request->request->get('clone_url'));
 
+            $keys = SshKeys::generate();
+
+            $project->setPublicKey($keys['public']);
+            $project->setPrivateKey($keys['private']);
+
             $now = new DateTime();
             $project->setCreatedAt($now);
             $project->setUpdatedAt($now);
@@ -388,7 +395,7 @@ class DefaultController extends Controller
             $keysUrl = str_replace('{/key_id}', '', $request->request->get('keys_url'));
             $keys = $this->github_get($keysUrl);
 
-            $deployKey = trim(file_get_contents(__DIR__.'/../../../../app/Resources/deploy_keys/id_rsa.pub'));
+            $deployKey = $project->getPublicKey();
             $deployKey = substr($deployKey, 0, strrpos($deployKey, ' '));
 
             foreach ($keys as $_) {
@@ -401,7 +408,7 @@ class DefaultController extends Controller
             if (!isset($key)) {
                 $key = $this->github_post($keysUrl, [
                     'key' => $deployKey,
-                    'title' => 'stage1',
+                    'title' => 'stage1 deploy key',
                 ]);
             }
 

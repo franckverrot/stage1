@@ -16,6 +16,8 @@
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="lastBuildAt" column="last_build_at" type="datetime" nullable="true" />
         <field name="lastBuildRef" column="last_build_ref" type="string" length="255" nullable="true" />
+        <field name="publicKey" column="public_key" type="text" />
+        <field name="privateKey" column="private_key" type="text" />
 
         <many-to-one field="owner" target-entity="App\CoreBundle\Entity\User" inversed-by="projects">
             <join-column name="user_id" referenced-column-name="id" />
