@@ -54,7 +54,7 @@ class Build
 
     public function getNormRef()
     {
-        return strtolower(preg_replace('/[^a-z0-9\-]/', '-', $this->getRef()));
+        return preg_replace('/[^a-z0-9\-]/', '-', strtolower($this->getRef()));
     }
 
     public function asWebsocketMessage()
@@ -62,6 +62,7 @@ class Build
         return [
             'id' => $this->getId(),
             'ref' => $this->getRef(),
+            'normRef' => $this->getNormRef(),
             'hash' => $this->getHash(),
             'status' => $this->getStatus(),
             'status_label' => $this->getStatusLabel(),
