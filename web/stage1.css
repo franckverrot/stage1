@@ -7,7 +7,7 @@ td.actions form, td.actions div {
     display: inline-block;
 }
 
-table.build-list td, tbody#candidates td, tbody#branches td {
+table.build-list td, table.candidates tbody td, tbody#branches td {
     vertical-align: middle;
     line-height: 30px;
 }
@@ -20,7 +20,7 @@ div.branch {
     background-color: #0088cc;
 }
 
-#table-candidates th, tr.dummy th {
+.table-candidates th, tr.dummy th {
     line-height: 0;
     margin: 0;
     padding: 0;
@@ -79,4 +79,10 @@ div.build-building-icon {
     position: absolute;
     right: 15px;
     top: 11px;
+}
+
+.candidates-organisation-avatar {
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 3px;
 }

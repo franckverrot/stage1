@@ -348,7 +348,7 @@ class DefaultController extends Controller
         $existingProjects = [];
 
         foreach ($this->getUser()->getProjects() as $project) {
-            $existingProjects[$project->getName()] = $this->generateUrl('app_core_project_show', ['id' => $project->getId()]);
+            $existingProjects[$project->getFullName()] = $this->generateUrl('app_core_project_show', ['id' => $project->getId()]);
         }
 
         return $this->render('AppCoreBundle:Default:projectsImport.html.twig', [
@@ -426,7 +426,13 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($project);
 
-            return new JsonResponse(['url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]), 'project' => ['name' => $project->getName()]], 201);            
+            return new JsonResponse([
+                'url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]),
+                'project' => [
+                    'name' => $project->getName(),
+                    'full_name' => $project->getFullName(),
+                ]
+            ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
