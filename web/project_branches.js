@@ -41,6 +41,7 @@
                 if (undefined != pending_builds[branch.ref]) {
                     var branch = branches.append(tpl_branch_pending({
                         name: branch.ref,
+                        normName: branch.ref.toLowerCase().replace(/[^a-z0-9\-]/, '-'),
                         hash: branch.hash,
                         abbr_hash: branch.hash.substr(0, 8),
                         status: pending_builds[branch.ref].status,
@@ -50,6 +51,7 @@
                 } else {
                     branches.append(tpl_branch({
                         name: branch.ref,
+                        normName: branch.ref.toLowerCase().replace(/[^a-z0-9\-]/, '-'),
                         hash: branch.hash,
                         abbr_hash: branch.hash.substr(0, 8),
                         data: [
