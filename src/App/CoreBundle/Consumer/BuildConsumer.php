@@ -89,7 +89,7 @@ class BuildConsumer implements ConsumerInterface
                 $projectDir.'/bin/build.sh',
                 $build->getRef(),
                 $build->getHash(),
-                $build->getProject()->getCloneUrl(),
+                $build->getProject()->getSshUrl(),
                 $build->getProject()->getOwner()->getAccessToken(),
                 $build->getImageName(),
                 $build->getImageTag(),

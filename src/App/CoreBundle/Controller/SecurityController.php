@@ -27,12 +27,12 @@ class SecurityController extends Controller
 
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result->id))) {
             $user = User::fromGithubResponse($result);
-            $user->setAccessToken($accessToken);
             $user->setCreatedAt($now);
             $user->setUpdatedAt($now);
         }
 
         $user->setLastLoginAt($now);
+        $user->setAccessToken($accessToken);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);

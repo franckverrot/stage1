@@ -29,7 +29,7 @@ function fail {
     exit $RES
 }
 
-CLONE_URL=$1
+SSH_URL=$1
 REF=$2
 HASH=$3
 ACCESS_TOKEN=$4
@@ -48,7 +48,7 @@ EOF
 
 APP_ROOT=/var/www
 
-git clone --depth 1 --branch $REF $CLONE_URL $APP_ROOT
+git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT
 
 cd $APP_ROOT
 
