@@ -3,7 +3,7 @@
     {% for project in app.user.projects %}
     <li{% if app.request.attributes.get('current_project_id') == project.id %} class="active"{% endif %}>
         <a id="nav-project-{{ project.id }}" href="{{ path('app_core_project_show', { id: project.id }) }}">
-            {{ project.name }}
+            {{ project.fullName }}
             {% if project.pendingBuilds | length > 0 %}
             <div id="nb-pending-builds-{{ project.id }}" class="pull-right"><span class="label label-nav">
                 {{ project.pendingBuilds | length }}
