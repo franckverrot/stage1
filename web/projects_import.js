@@ -65,9 +65,7 @@
         var projects_count = 0;
         var candidates_count = 0;
 
-        github(window.github_api_base_url + '/user').then(function(data) {
-            return github(data.repos_url);
-        }).then(function(repos) {
+        github(window.github_api_base_url + '/user/repos').then(function(repos) {
             projects_count = repos.length;
             for (i in repos) {
                 fetch_composer_json(repos[i]).done(function(content) {
@@ -89,6 +87,7 @@
                                         { name: 'github_owner_login', value: this.owner.login },
                                         { name: 'github_id', value: this.id },
                                         { name: 'clone_url', value: this.clone_url },
+                                        { name: 'ssh_url', value: this.ssh_url },
                                         { name: 'hooks_url', value: this.hooks_url },
                                         { name: 'keys_url', value: this.keys_url }
                                     ]

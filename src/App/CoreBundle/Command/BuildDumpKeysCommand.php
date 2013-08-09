@@ -8,6 +8,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use App\CoreBundle\SshKeys;
+
 use InvalidArgumentException;
 
 class BuildDumpKeysCommand extends ContainerAwareCommand
@@ -31,12 +33,7 @@ class BuildDumpKeysCommand extends ContainerAwareCommand
             throw new InvalidArgumentException('Could not find build');
         }
 
-        if (null === $file = $input->getOption('file')) {
-            $file = tempnam(sys_get_temp_dir(), 'build-ssh-keys-');
-        }
-
-        file_put_contents($file, $build->getProject()->getPrivateKey());
-        file_put_contents($file.'.pub', $build->getProject()->getPublicKey());
+        $file = SshKeys::dump($build->getProject(), $input->getOption('file'));
 
         $output->writeln($file);
     }
