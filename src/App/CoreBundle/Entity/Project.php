@@ -52,6 +52,11 @@ class Project
 
     protected $privateKey;
 
+    public function getFullName()
+    {
+        return $this->getGithubFullName();
+    }
+
     public function asWebsocketMessage()
     {
         return [
