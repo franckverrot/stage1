@@ -22,7 +22,6 @@ class DefaultController extends Controller
 {
     private function github_post($url, $payload)
     {
-        file_put_contents('/tmp/payload.json', json_encode($payload));
         return json_decode(file_get_contents($url, false, stream_context_create([
             'http' => [
                 'method' => 'POST',
@@ -269,15 +268,22 @@ class DefaultController extends Controller
             $ref = $request->request->get('ref');
 
             if (null === $hash = $request->request->get('hash')) {
-                $builder = new ProcessBuilder([
-                    '/usr/bin/git', 'ls-remote', '--heads', $project->getCloneUrl(), $ref
+                $url = vsprintf('%s/repos/%s/%s/git/refs/heads', [
+                    $this->container->getParameter('github_api_base_url'),
+                    $project->getGithubOwnerLogin(),
+                    $project->getName(),
                 ]);
-                $process = $builder->getProcess();
-                $process->run();
 
-                $output = trim($process->getOutput());
-                list($hash, $ref) = explode("\t", $output);
-                $ref = substr($ref, 11);
+
+                $refs = $this->github_get($url);
+
+                $branches = array();
+
+                foreach ($refs as $_) {
+                    if ('refs/heads/'.$ref === $_->ref) {
+                        $hash = $_->object->sha;
+                    }
+                }
             }
 
             $build = new Build();
@@ -316,19 +322,22 @@ class DefaultController extends Controller
     {
         $project = $this->findProject($id);
 
-        $builder = new ProcessBuilder(['/usr/bin/git', 'ls-remote', '--heads', $project->getCloneUrl()]);
-        $process = $builder->getProcess();
-        $process->run();
+        $url = vsprintf('%s/repos/%s/%s/git/refs/heads', [
+            $this->container->getParameter('github_api_base_url'),
+            $project->getGithubOwnerLogin(),
+            $project->getName(),
+        ]);
 
-        $output = trim($process->getOutput());
-        $lines = explode(PHP_EOL, $output);
 
-        $branches = [];
+        $refs = $this->github_get($url);
 
-        foreach ($lines as $line) {
-            list($hash, $ref) = explode("\t", $line);
+        $branches = array();
 
-            $branches[] = ['ref' => substr($ref, 11), 'hash' => $hash];
+        foreach ($refs as $ref) {
+            $branches[] = [
+                'ref' => substr($ref->ref, 11),
+                'hash' => $ref->object->sha,
+            ];
         }
 
         return new JsonResponse($branches);
@@ -359,6 +368,7 @@ class DefaultController extends Controller
             $project->setOwner($this->getUser());
             $project->setName($request->request->get('name'));
             $project->setCloneUrl($request->request->get('clone_url'));
+            $project->setSshUrl($request->request->get('ssh_url'));
 
             $keys = SshKeys::generate();
 

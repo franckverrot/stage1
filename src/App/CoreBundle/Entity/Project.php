@@ -24,6 +24,8 @@ class Project
      */
     protected $cloneUrl;
 
+    protected $sshUrl;
+
     protected $githubId;
 
     protected $githubFullName;
@@ -449,5 +451,28 @@ class Project
     public function getPrivateKey()
     {
         return $this->privateKey;
+    }
+
+    /**
+     * Set sshUrl
+     *
+     * @param string $sshUrl
+     * @return Project
+     */
+    public function setSshUrl($sshUrl)
+    {
+        $this->sshUrl = $sshUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get sshUrl
+     *
+     * @return string 
+     */
+    public function getSshUrl()
+    {
+        return $this->sshUrl;
     }
 }
