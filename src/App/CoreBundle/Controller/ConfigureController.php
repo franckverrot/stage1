@@ -5,6 +5,11 @@ namespace App\CoreBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Command\CacheClearCommand;
+use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Filesystem\Exception\IOException;
+
 
 class ConfigureController extends Controller
 {
@@ -43,6 +48,15 @@ class ConfigureController extends Controller
         $yaml['parameters']['configured'] = true;
 
         file_put_contents($this->getConfigPath('parameters'), Yaml::dump($yaml));
+
+        try {
+            session_destroy();
+            $input = new ArrayInput([]);
+
+            $command = new CacheClearCommand();
+            $command->setContainer($this->container);
+            $command->run($input, new NullOutput());            
+        } catch (IOException $e) { }
 
         return $this->render('AppCoreBundle:Configure:success.html.twig');
     }
