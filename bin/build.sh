@@ -18,7 +18,7 @@ function dummy {
     echo 'This is some dummy output'
     echo 'This is some dummy error output'
 
-    sleep 5
+    sleep 10
 
     echo 'dummy-img' > $BUILD_INFO_FILE
     echo 'dummy-container' >> $BUILD_INFO_FILE
@@ -42,8 +42,10 @@ COMMIT_TAG=$6
 BUILD_ID=$7
 
 # insert ssh keys
-CONTEXT_DIR="/tmp/stage1/build-$COMMIT_NAME-$COMMIT_TAG/"
+CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
 mkdir -p $CONTEXT_DIR
+
+# echo 'context dir' $CONTEXT_DIR
 
 # echo /usr/bin/php $DIR/../app/console build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa
 SSH_KEY_PATH=$(basename $(/usr/bin/php $DIR/../app/console build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
@@ -66,14 +68,14 @@ RUN chmod -R 0600 /root/.ssh
 RUN chown -R root:root /root/.ssh
 EOF
 
-docker build -q -t $COMMIT_NAME:$COMMIT_TAG $CONTEXT_DIR > /dev/null 2> /dev/null
+docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev/null
 
-docker run -i -t $COMMIT_NAME:$COMMIT_TAG ls -la /root/.ssh
+# docker run -i -t ${COMMIT_NAME}:${COMMIT_TAG} ls -la /root/.ssh
 
 rm -rf $CONTEXT_DIR
 
-BUILD_JOB=$(docker run -d $COMMIT_NAME:$COMMIT_TAG buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN)
-# BUILD_JOB=$(docker run -d $COMMIT_NAME:$COMMIT_TAG echo $SSH_URL $REF $HASH $ACCESS_TOKEN)
+BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN)
+# BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} echo $SSH_URL $REF $HASH $ACCESS_TOKEN)
 RES=$?
 
 if [ "$RES" != 0 ]; then
@@ -89,9 +91,12 @@ rm $BUILD_JOB_FILE
 
 BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME $COMMIT_TAG)
 
-WEB_WORKER=$(docker run -d -p 80 $COMMIT_NAME:$COMMIT_TAG runapp)
+WEB_WORKER=$(docker run -d -p 80 ${COMMIT_NAME}:${COMMIT_TAG} runapp)
 
 PORT=$(docker port $WEB_WORKER 80)
+
+echo
+echo "Build finished ($(date))"
 
 echo $BUILD_IMG > $BUILD_INFO_FILE
 echo $WEB_WORKER >> $BUILD_INFO_FILE

@@ -6,7 +6,10 @@ if [ -f /etc/environment ]; then
 fi
 
 PID_DIR="/tmp/run"
-PID_FILE=$PID_DIR/consumer-$2.pid
+PID_FILE="$PID_DIR/consumer-$2.pid"
+
+LOG_DIR="/tmp/log"
+LOG_FILE="$LOG_DIR/consumer-$2.log"
 
 ACTION=$1
 CONSUMER=$2
@@ -18,9 +21,13 @@ case $1 in
         if [ ! -d $PID_DIR ]; then
             mkdir -p $PID_DIR
         fi
+
+        if [ ! -d $LOG_DIR ]; then
+            mkdir -p $LOG_DIR
+        fi
         
         echo $$ > $PID_FILE
-        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer -vvv -w $2
+        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer -vvv -w $2 > $LOG_FILE 2> $LOG_FILE
         ;;
     stop)
         kill $(cat $PID_FILE)
