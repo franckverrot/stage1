@@ -1,6 +1,10 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+if [ -f /etc/environment ]; then
+    source /etc/environment
+fi
+
 PID_DIR="/tmp/run"
 PID_FILE=$PID_DIR/websocket-$2.pid
 
