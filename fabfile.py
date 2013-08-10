@@ -131,18 +131,16 @@ def git_branch():
 
 def processes_stop():
     info('stopping processes')
-    for service in env.processes:
-        run('monit stop ' + service)
+    run('monit stop all')
 
 def processes_start():
     info('starting processes')
-    for service in env.processes:
-        run('monit start ' + service)
+    run('monit start all')
 
 def services_restart():
     sudo('/etc/init.d/nginx restart')
     sudo('/etc/init.d/php5-fpm restart')
-    sudo('/etc/init.d/monit restart')
+    sudo('/etc/init.d/rabbitmq-server restart')
 
 @runs_once
 def prepare_deploy(ref='HEAD'):
