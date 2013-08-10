@@ -36,7 +36,14 @@
         { "type": "file", "source": "app/Resources/support/config/rabbitmq/vm.config", "destination": "/tmp/rabbitmq-rabbitmq.config" },
         { "type": "file", "source": "app/Resources/support/config/ssh/dev", "destination": "/tmp/ssh-config" },
         { "type": "file", "source": "app/Resources/support/keys/stage1-vm", "destination": "/tmp/keys-stage1-vm" },    
-        { "type": "file", "source": "app/Resources/support/keys/stage1-vm.pub", "destination": "/tmp/keys-stage1-vm.pub" },    
+        { "type": "file", "source": "app/Resources/support/keys/stage1-vm.pub", "destination": "/tmp/keys-stage1-vm.pub" },
+        
+        { "type": "file", "source": "app/Resources/support/config/monit/monitrc", "destination": "/tmp/monit-monitrc" },
+        { "type": "file", "source": "app/Resources/support/config/monit/consumer-build", "destination": "/tmp/monit-consumer-build" },
+        { "type": "file", "source": "app/Resources/support/config/monit/consumer-kill", "destination": "/tmp/monit-consumer-kill" },
+        { "type": "file", "source": "app/Resources/support/config/monit/websocket-build", "destination": "/tmp/monit-websocket-build" },
+        { "type": "file", "source": "app/Resources/support/config/monit/websocket-build-output", "destination": "/tmp/monit-websocket-build-output" },
+
         {
             "type": "shell",
             "scripts": [

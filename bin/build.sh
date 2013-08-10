@@ -27,7 +27,7 @@ function dummy {
     exit 0    
 }
 
-dummy
+# dummy
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
