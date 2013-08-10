@@ -1,7 +1,7 @@
 TODO URGENT
 ===========
 
-* all symfony commands need to be run with --env=prod in production
+* all symfony commands need to be run with --env=prod in production (set SYMFONY_ENV to prod)
 * probleme avec les websockets (url websocket hardcodee sur http://stage1/)
 * probleme avec font-awesome (fixed in next deploy)
 * url des builds est hardcoded sur http://stage1:$PORT/
