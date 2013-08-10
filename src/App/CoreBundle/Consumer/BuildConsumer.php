@@ -126,7 +126,7 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setContainerId($containerId);
             $build->setImageId($imageId);
-            $build->setUrl('http://stage1:'.$port);
+            $build->setPort($port);
         }
 
         $queryBuilder = $this->doctrine->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');

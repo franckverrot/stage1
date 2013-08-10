@@ -54,7 +54,7 @@ class Build
 
     public function getUrl()
     {
-        return 'http://'.$_SERVER['HTTP_HOST'].':'.$this->getPort().'/';
+        return (null === $this->getPort()) ? null : 'http://'.$_SERVER['HTTP_HOST'].':'.$this->getPort().'/';
     }
 
     public function getNormRef()
@@ -155,7 +155,7 @@ class Build
         $this->status = $status;
 
         if ($status !== self::STATUS_RUNNING) {
-            $this->setUrl(null);
+            $this->setPort(null);
         }
     
         return $this;
@@ -455,5 +455,28 @@ class Build
     public function getExitCodeText()
     {
         return $this->exitCodeText;
+    }
+
+    /**
+     * Set port
+     *
+     * @param string $port
+     * @return Build
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+    
+        return $this;
+    }
+
+    /**
+     * Get port
+     *
+     * @return string 
+     */
+    public function getPort()
+    {
+        return $this->port;
     }
 }
