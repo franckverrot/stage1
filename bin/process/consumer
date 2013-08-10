@@ -16,7 +16,7 @@ case $1 in
         fi
         
         echo $$ > $PID_FILE
-        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer -vvv -w $2
+        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer --env=prod -vvv -w $2
         ;;
     stop)
         kill $(cat $PID_FILE)

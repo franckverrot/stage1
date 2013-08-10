@@ -1,0 +1,37 @@
+{
+    "builders": [
+        {
+            "type": "digitalocean",
+            "api_key": "0988Y84XvmEIlQa11MhuuVEeo1bUsqdiyWMMA71Ur",
+            "client_id": "xlylJ0GKfaX5pXDL5JN4z",
+            "region_id": 2,
+            "image_id": 284203,
+            "size_id": 66,
+            "snapshot_name": "stage1.{{ .CreateTime }}"
+        }
+    ],
+
+    "provisioners": [
+        { "type": "file", "source": "app/Resources/support/config/apt/sources.list", "destination": "/tmp/apt-sources.list" },
+        { "type": "file", "source": "app/Resources/support/config/apt/rabbitmq.list", "destination": "/tmp/apt-rabbitmq.list" },
+        { "type": "file", "source": "app/Resources/support/config/apt/dotdeb.list", "destination": "/tmp/apt-dotdeb.list" },
+        { "type": "file", "source": "app/Resources/support/config/nginx/prod", "destination": "/tmp/nginx-default" },
+        { "type": "file", "source": "app/Resources/support/config/php/prod.ini", "destination": "/tmp/php-php.ini" },
+        
+        { "type": "file", "source": "app/Resources/support/config/monit/monitrc", "destination": "/tmp/monit-monitrc" },
+        { "type": "file", "source": "app/Resources/support/config/monit/consumer-build", "destination": "/tmp/monit-consumer-build" },
+        { "type": "file", "source": "app/Resources/support/config/monit/consumer-kill", "destination": "/tmp/monit-consumer-kill" },
+        { "type": "file", "source": "app/Resources/support/config/monit/websocket-build", "destination": "/tmp/monit-websocket-build" },
+        { "type": "file", "source": "app/Resources/support/config/monit/websocket-build-output", "destination": "/tmp/monit-websocket-build-output" },
+
+        {
+            "type": "shell",
+            "scripts": [
+                "app/Resources/support/scripts/digitalocean.sh",
+                "app/Resources/support/scripts/stage1.sh",
+                "app/Resources/support/scripts/dev.sh"
+            ],
+            "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
+        }
+    ]
+}
