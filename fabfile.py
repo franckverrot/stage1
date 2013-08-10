@@ -32,6 +32,10 @@ def provision():
     sudo('bash /tmp/stage1.sh')
     reboot()
 
+def needs_cold_deploy():
+    with settings(warn_only=True):
+        return run('test -d %s' % env.project_path).failed
+
 def prepare():
     with settings(warn_only=True):
         if run('test -d %s' % env.project_path).succeeded:
@@ -51,58 +55,64 @@ def init_parameters():
 def docker_build():
     sudo('docker build -t symfony2 %s/docker' % env.project_path)
 
-def cold_deploy():
-    with hide('running', 'stdout'):
-        prepare()
-        branch = git_branch()
-        info('deploying branch "%s"' % branch)
-
-        prepare_deploy(branch)
-        tag_release()
-        reset_environment()
-
-        processes_stop()
-        rsync()
-
-        with cd(env.project_path):
-            docker_build()
-            init_parameters()
-            info('clearing remote cache')
-            run('php app/console cache:clear --env=prod --no-debug')
-            run('chmod -R 0777 app/cache app/logs')
-            create_database()
-            info('running database migrations')
-            run('php app/console doctrine:schema:update --env=prod --no-debug --force')
-
-        services_restart()
-        processes_start()
-
-        run('chown -R www-data:www-data %s' % env.project_path)
-        run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
-
 def deploy():
-    with hide('running', 'stdout'):
-        branch = git_branch()
-        info('deploying branch "%s"' % branch)
+    with hide('running', 'stdout', 'stderr'):
+        if needs_cold_deploy():
+            info('first time deploy')
+            cold_deploy()
+        else:
+            hot_deploy()
 
-        prepare_deploy(branch)
-        tag_release()
-        reset_environment()
+def cold_deploy():
+    prepare()
+    branch = git_branch()
+    info('deploying branch "%s"' % branch)
 
-        processes_stop()
-        rsync()
+    prepare_deploy(branch)
+    tag_release()
+    reset_environment()
 
-        with cd(env.project_path):
-            info('clearing remote cache')
-            run('php app/console cache:clear --env=prod --no-debug')
-            run('chmod -R 0777 app/cache app/logs')
-            info('running database migrations')
-            run('php app/console doctrine:schema:update --env=prod --no-debug --force')
+    processes_stop()
+    rsync()
 
-        services_restart()
-        processes_start()
-        run('chown -R www-data:www-data %s' % env.project_path)
-        run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
+    with cd(env.project_path):
+        docker_build()
+        init_parameters()
+        info('clearing remote cache')
+        run('php app/console cache:clear --env=prod --no-debug')
+        run('chmod -R 0777 app/cache app/logs')
+        create_database()
+        info('running database migrations')
+        run('php app/console doctrine:schema:update --env=prod --no-debug --force')
+
+    services_restart()
+    processes_start()
+
+    run('chown -R www-data:www-data %s' % env.project_path)
+    run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
+
+def hot_deploy():
+    branch = git_branch()
+    info('deploying branch "%s"' % branch)
+
+    prepare_deploy(branch)
+    tag_release()
+    reset_environment()
+
+    processes_stop()
+    rsync()
+
+    with cd(env.project_path):
+        info('clearing remote cache')
+        run('php app/console cache:clear --env=prod --no-debug')
+        run('chmod -R 0777 app/cache app/logs')
+        info('running database migrations')
+        run('php app/console doctrine:schema:update --env=prod --no-debug --force')
+
+    services_restart()
+    processes_start()
+    run('chown -R www-data:www-data %s' % env.project_path)
+    run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
 
 def info(string):
     print(green('---> %s' % string))
