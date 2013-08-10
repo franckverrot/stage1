@@ -9,7 +9,7 @@
         </id>
         <field name="githubId" column="github_id" type="integer" />
         <field name="username" column="username" type="string" length="255" />
-        <field name="email" column="email" type="string" length="255" />
+        <field name="email" column="email" type="string" length="255" nullable="true" />
         <field name="accessToken" column="access_token" type="string" length="255" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
