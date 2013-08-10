@@ -5,8 +5,6 @@ TODO URGENT
 * ajouter la gestion de doctrine dans le build par defaut
 * OU ajouter un fichier de conf de build genre .stage1.yml dans lequel on puisse enquiller des commandes de build
 * ajouter un mail genre "votre inscription sur stage1.io coucou"
-* tester les organisations
-* tester les repos prives
 * faire la conf monit 
 
 TODO
@@ -36,6 +34,7 @@ TODO
     * buildapp failure still not catched
     * before build: check that the app is actually building (eg: there is a composer.json)
     * branches list should show current running instance
+    * before starting a build, check the required docker image is present
 
 * projects
     * allow per-project docker image selection
