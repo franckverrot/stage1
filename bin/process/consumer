@@ -1,6 +1,13 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 PID_DIR="/tmp/run"
+PID_FILE=$PID_DIR/consumer-$2.pid
+
+ACTION=$1
+CONSUMER=$2
+
+CONSOLE=$(realpath $DIR/../../app/console)
 
 case $1 in 
     start)
@@ -8,11 +15,11 @@ case $1 in
             mkdir -p $PID_DIR
         fi
         
-        echo $$ > $PID_DIR/$2.pid
-        exec 2>&1 /usr/bin/php $DIR/../app/console rabbitmq:consumer -vvv -w $2
+        echo $$ > $PID_FILE
+        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer -vvv -w $2
         ;;
     stop)
-        kill -9 `cat $PID_DIR/$2.pid`
+        kill $(cat $PID_FILE)
         ;;
     *)
         echo "usage $0 {start|stop} consumer-name"

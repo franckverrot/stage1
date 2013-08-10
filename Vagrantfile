@@ -1,6 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+$script = <<EOF
+sudo /etc/init.d/monit restart
+sudo docker build -t symfony /vagrant/docker/
+cd /vagrant
+composer install
+/vagrant/app/console doctrine:database:create
+/vagrant/app/console doctrine:schema:update --force
+EOF
+
 Vagrant.configure("2") do |config|
 
     config.hostmanager.enabled = true
@@ -15,8 +24,7 @@ Vagrant.configure("2") do |config|
         dev.vm.synced_folder ".", "/vagrant", :nfs => true
         dev.hostmanager.aliases = %w(stage1)
 
-        dev.vm.provision :shell,
-            :inline => "cd /vagrant; composer install; php app/console d:d:c; php app/console d:s:u --force"
+        dev.vm.provision :shell, :inline => $script
     end
 
     config.vm.define :prod do |prod|

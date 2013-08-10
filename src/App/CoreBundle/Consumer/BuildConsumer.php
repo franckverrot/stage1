@@ -189,11 +189,7 @@ class BuildConsumer implements ConsumerInterface
         $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
         $build = $buildRepo->find($body->build_id);
 
-        if (!$build) {
-            throw new RuntimeException('Could not find Build#'.$body->build_id);
-        }
-
-        if (!$build->isScheduled()) {
+        if (!$build || !$build->isScheduled()) {
             return;
         }
 
