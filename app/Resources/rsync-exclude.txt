@@ -4,6 +4,7 @@ rsync.log
 app/SymfonyRequirements.php
 app/check.php
 app/config/parameters.yml
+app/config/github.yml
 
 Vagrantfile
 .vagrant
