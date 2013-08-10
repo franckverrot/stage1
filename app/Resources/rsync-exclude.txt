@@ -20,7 +20,6 @@ Vagrantfile
 *.less
 *.scss
 
-web/font-awesome/font/
 web/font-awesome/less/
 web/font-awesome/scss/
 
@@ -60,3 +59,4 @@ composer.*
 /app/logs/
 /web/app_dev.php
 /vendor/incenteev/
+/app/Resources/boxes/

@@ -2,11 +2,11 @@ from fabric.api import *
 from fabric.colors import *
 
 env.host_string = 'stage1-prod'
-env.project_path = '/app'
+env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
-env.consumers = []
+env.processes = ['consumer-build', 'consumer-kill', 'websocket-build', 'websocket-build-output']
 
 def provision():
     with settings(warn_only=True):
@@ -33,13 +33,51 @@ def provision():
 
 def prepare():
     with settings(warn_only=True):
-        if run('test -d /app').succeeded:
+        if run('test -d %s' % env.project_path).succeeded:
             info('already prepared, skipping')
             return
 
     info('preparing host')
-    sudo('mkdir /app')
-    sudo('chown vagrant /app')
+    sudo('mkdir %s' % env.project_path)
+    sudo('chown -R www-data:www-data %s' % env.project_path)
+
+def create_database():
+    run('%s/app/console --env=prod doctrine:database:create' % env.project_path)
+
+def init_parameters():
+    run('cp %s/app/config/parameters.yml.dist %s/app/config/parameters.yml' % (env.project_path, env.project_path))
+
+def docker_build():
+    sudo('docker build -t symfony2 %s/docker' % env.project_path)
+
+def cold_deploy():
+    with hide('running', 'stdout'):
+        prepare()
+        branch = git_branch()
+        info('deploying branch "%s"' % branch)
+
+        prepare_deploy(branch)
+        tag_release()
+        reset_environment()
+
+        processes_stop()
+        rsync()
+
+        with cd(env.project_path):
+            docker_build()
+            init_parameters()
+            info('clearing remote cache')
+            run('php app/console cache:clear --env=prod --no-debug')
+            run('chmod -R 0777 app/cache app/logs')
+            create_database()
+            info('running database migrations')
+            run('php app/console doctrine:schema:update --env=prod --no-debug --force')
+
+        services_restart()
+        processes_start()
+
+        run('chown -R www-data:www-data %s' % env.project_path)
+        run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
 
 def deploy():
     with hide('running', 'stdout'):
@@ -50,11 +88,10 @@ def deploy():
         tag_release()
         reset_environment()
 
-        consumers_stop()
+        processes_stop()
         rsync()
 
         with cd(env.project_path):
-            run('cp app/config/parameters.yml.dist app/config/parameters.yml')
             info('clearing remote cache')
             run('php app/console cache:clear --env=prod --no-debug')
             run('chmod -R 0777 app/cache app/logs')
@@ -62,7 +99,9 @@ def deploy():
             run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
         services_restart()
-        consumers_start()
+        processes_start()
+        run('chown -R www-data:www-data %s' % env.project_path)
+        run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
 
 def info(string):
     print(green('---> %s' % string))
@@ -79,19 +118,20 @@ def is_release_tagged():
 def git_branch():
     return local('git symbolic-ref -q HEAD | sed -e \'s|^refs/heads/||\'', capture=True)
 
-def consumers_stop():
-    info('stopping consumers')
-    for service in env.consumers:
+def processes_stop():
+    info('stopping processes')
+    for service in env.processes:
         run('monit stop ' + service)
 
-def consumers_start():
-    info('starting consumers')
-    for service in env.consumers:
+def processes_start():
+    info('starting processes')
+    for service in env.processes:
         run('monit start ' + service)
 
 def services_restart():
     sudo('/etc/init.d/nginx restart')
     sudo('/etc/init.d/php5-fpm restart')
+    sudo('/etc/init.d/monit restart')
 
 @runs_once
 def prepare_deploy(ref='HEAD'):
@@ -126,7 +166,7 @@ def reset_environment():
 
 def rsync():
     info('rsyncing to remote')
-    c = "rsync --quiet --rsh=ssh --exclude-from=%(exclude_from)s --progress -crDpLt --force --delete ./ %(host)s:%(remote)s" % {
+    c = "rsync --verbose --rsh=ssh --exclude-from=%(exclude_from)s --progress -crDpLt --force --delete ./ %(host)s:%(remote)s" % {
         'exclude_from': env.rsync_exclude_from,
         'host': env.host_string,
         'remote': env.project_path

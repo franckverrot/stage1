@@ -5,7 +5,7 @@ server {
         access_log   /var/log/nginx/symfony.access.log;
         error_log    /var/log/nginx/symfony.error.log;
 
-        root /app;
+        root /vagrant/web;
         index app.php;
 
         location / {

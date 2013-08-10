@@ -15,6 +15,18 @@ Vagrant.configure("2") do |config|
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
 
+    config.vm.provider :digital_ocean do |provider, override|
+        override.ssh.private_key_path = '~/.ssh/id_rsa'
+        override.vm.box = 'digital_ocean'
+        override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+
+        provider.client_id = 'xlylJ0GKfaX5pXDL5JN4z'
+        provider.api_key = '0988Y84XvmEIlQa11MhuuVEeo1bUsqdiyWMMA71Ur'
+        provider.region = 2
+        provider.size = 66
+        provider.image = 'stage1.1376112242'
+    end
+
     config.vm.define :dev do |dev|
         dev.vm.box = "stage1-dev"
         dev.vm.box_url = "app/Resources/boxes/dev.box"

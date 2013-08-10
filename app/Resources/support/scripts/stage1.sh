@@ -57,3 +57,5 @@ apt-get install -qy \
 add-apt-repository -y ppa:dotcloud/lxc-docker
 apt-get update
 apt-get install -qy lxc-docker
+
+docker pull ubuntu:precise
