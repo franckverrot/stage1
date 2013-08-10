@@ -24,7 +24,9 @@ apt-get -qy install \
     mysql-client \
     mysql-server \
     monit \
-    amqp-tools
+    amqp-tools \
+    realpath \
+    htop
 
 cp /tmp/nginx-default /etc/nginx/sites-available/default
 
@@ -35,11 +37,17 @@ if [ -f /tmp/rabbitmq-rabbitmq.config ]; then
     cp /tmp/rabbitmq-rabbitmq.config /etc/rabbitmq/rabbitmq.config
 fi
 
+cp /tmp/monit-monitrc /etc/monit/monitrc
+cp /tmp/monit-consumer-build /etc/monit/conf.d/consumer-build
+cp /tmp/monit-consumer-kill /etc/monit/conf.d/consumer-kill
+cp /tmp/monit-websocket-build /etc/monit/conf.d/websocket-build
+cp /tmp/monit-websocket-build-output /etc/monit/conf.d/websocket-build-output
+
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 
-mkdir /var/run/app
-chown vagrant /var/run/app
+mkdir /tmp/run
+chown vagrant /tmp/run
 
 # docker specific stuff
 

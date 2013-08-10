@@ -1,0 +1,28 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+PID_DIR="/tmp/run"
+PID_FILE=$PID_DIR/websocket-$2.pid
+
+ACTION=$1
+SCRIPT=$(realpath $DIR/../websocket/$2)
+PORT=$3
+
+WEBSOCKETD=$(realpath $DIR/../websocketd)
+
+case $ACTION in 
+    start)
+        if [ ! -d $PID_DIR ]; then
+            mkdir -p $PID_DIR
+        fi
+        
+        echo $$ > $PID_FILE
+        exec 2>&1 $WEBSOCKETD --port=$PORT $SCRIPT
+        ;;
+    stop)
+        kill $(cat $PID_FILE)
+        ;;
+    *)
+        echo "usage $0 {start|stop} script port"
+esac
+exit 0
