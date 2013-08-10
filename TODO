@@ -2,9 +2,6 @@ TODO URGENT
 ===========
 
 * all symfony commands need to be run with --env=prod in production (set SYMFONY_ENV to prod)
-* probleme avec les websockets (url websocket hardcodee sur http://stage1/)
-* probleme avec font-awesome (fixed in next deploy)
-* url des builds est hardcoded sur http://stage1:$PORT/
 
 * build failed: 2013/08/10 06:40:21 Unable to set up networking: ip failed: ip route add default via 172.17.42.1 (see https://github.com/dotcloud/docker/pull/1374)
 * buildapp failure still not catched
