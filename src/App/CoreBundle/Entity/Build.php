@@ -34,7 +34,7 @@ class Build
 
     private $hash;
 
-    private $url;
+    private $port;
 
     private $containerId;
 
@@ -51,6 +51,11 @@ class Build
     private $createdAt;
 
     private $updatedAt;
+
+    public function getUrl()
+    {
+        return 'http://'.$_SERVER['HTTP_HOST'].':'.$this->getPort().'/';
+    }
 
     public function getNormRef()
     {
@@ -312,29 +317,6 @@ class Build
     public function getHash()
     {
         return $this->hash;
-    }
-
-    /**
-     * Set url
-     *
-     * @param string $url
-     * @return Build
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    
-        return $this;
-    }
-
-    /**
-     * Get url
-     *
-     * @return string 
-     */
-    public function getUrl()
-    {
-        return $this->url;
     }
 
     /**

@@ -9,7 +9,7 @@
         <field name="status" column="status" type="integer" />
         <field name="ref" column="ref" type="string" length="255" />
         <field name="hash" column="hash" type="string" length="255" />
-        <field name="url" column="url" type="string" length="255" nullable="true" />
+        <field name="port" column="port" type="string" length="5" nullable="true" />
         <field name="containerId" column="container_id" type="string" length="255" nullable="true" />
         <field name="imageId" column="image_id" type="string" length="255" nullable="true" />
         <field name="message" column="message" type="text" nullable="true" />
