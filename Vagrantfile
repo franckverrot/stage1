@@ -8,6 +8,9 @@ cd /vagrant
 composer install
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
+WWW_USER=$(ps aux | grep -E 'nginx' | grep -v root | head -1 | cut -d\  -f1)
+setfacl -R -m u:$WWW_USER:rwX -m u:$(whoami):rwX /vagrant/app/cache /vagrant/app/logs
+setfacl -dR -m u:$WWW_USER:rwX -m u:$(whoami):rwX /vagrant/app/cache /vagrant/app/logs
 EOF
 
 Vagrant.configure("2") do |config|

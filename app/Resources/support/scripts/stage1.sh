@@ -26,7 +26,12 @@ apt-get -qy install \
     monit \
     amqp-tools \
     realpath \
-    htop
+    htop \
+    acl
+
+# enable ACL on /
+sed -e 's/errors=remount-ro/&,acl/' -i /etc/fstab
+mount -o remount /
 
 cp /tmp/nginx-default /etc/nginx/sites-available/default
 

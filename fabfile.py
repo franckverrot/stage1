@@ -32,6 +32,18 @@ def provision():
     sudo('bash /tmp/stage1.sh')
     reboot()
 
+def check_connection():
+    run('echo "OK"')
+
+def fix_permissions():
+    with settings(warn_only=True):
+        if run('test -d /vagrant/app/cache').succeeded:
+            info('fixing cache and logs permissions')
+            www_user = run('ps aux | grep -E \'nginx\' | grep -v root | head -1 | cut -d\  -f1')
+            sudo('setfacl -R -m u:%(www_user)s:rwX -m u:$(whoami):rwX %(project_path)s/app/cache %(project_path)s/app/logs' % { 'www_user': www_user, 'project_path': env.project_path })
+            sudo('setfacl -dR -m u:%(www_user)s:rwX -m u:$(whoami):rwX %(project_path)s/app/cache %(project_path)s/app/logs' % { 'www_user': www_user, 'project_path': env.project_path })
+
+
 def needs_cold_deploy():
     with settings(warn_only=True):
         return run('test -d %s' % env.project_path).failed
@@ -76,6 +88,8 @@ def cold_deploy():
 
     processes_stop()
     rsync()
+
+    fix_permissions()
 
     with cd(env.project_path):
         docker_build()
