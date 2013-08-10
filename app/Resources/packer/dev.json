@@ -31,7 +31,7 @@
         { "type": "file", "source": "app/Resources/support/config/apt/sources.list", "destination": "/tmp/apt-sources.list" },
         { "type": "file", "source": "app/Resources/support/config/apt/rabbitmq.list", "destination": "/tmp/apt-rabbitmq.list" },
         { "type": "file", "source": "app/Resources/support/config/apt/dotdeb.list", "destination": "/tmp/apt-dotdeb.list" },
-        { "type": "file", "source": "app/Resources/support/config/nginx/dev", "destination": "/tmp/nginx-default" },
+        { "type": "file", "source": "app/Resources/support/config/nginx/dev/default", "destination": "/tmp/nginx-default" },
         { "type": "file", "source": "app/Resources/support/config/php/dev.ini", "destination": "/tmp/php-php.ini" },
         { "type": "file", "source": "app/Resources/support/config/rabbitmq/vm.config", "destination": "/tmp/rabbitmq-rabbitmq.config" },
         { "type": "file", "source": "app/Resources/support/config/ssh/dev", "destination": "/tmp/ssh-config" },
