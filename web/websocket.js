@@ -1,6 +1,6 @@
 (function($, window) {
 
-    var ws = new WebSocket('ws://stage1:8889');
+    var ws = new WebSocket('ws://' + document.location.hostname +':8889');
     var lastTimestamp = 0;
 
     ws.onmessage = function(message) {
