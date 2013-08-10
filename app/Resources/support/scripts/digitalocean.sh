@@ -5,4 +5,4 @@ export DEBIAN_FRONTEND=noninteractive
 # see https://github.com/dotcloud/docker/issues/1017
 apt-get install linux-image-extra-3.2.0-23-virtual
 
-echo 'SYMFONY_ENV=prod' >> /etc/environment
+echo 'export SYMFONY_ENV=prod' >> /etc/environment
