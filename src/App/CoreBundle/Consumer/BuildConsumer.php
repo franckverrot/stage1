@@ -131,7 +131,7 @@ class BuildConsumer implements ConsumerInterface
 
         $queryBuilder = $this->doctrine->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
 
-        if (!$webUiDebugMode) {
+        if (!$webUiDebugMode && $build->getPort() != 42) {
             try {
                 $previousBuild = $queryBuilder
                     ->select()
@@ -182,8 +182,6 @@ class BuildConsumer implements ConsumerInterface
 
     public function execute(AMQPMessage $message)
     {
-        echo 'received a message, yay!'.PHP_EOL;
-        
         $body = json_decode($message->body);
 
         $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');

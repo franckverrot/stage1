@@ -1,12 +1,13 @@
 (function($, window) {
 
-    var ws = new WebSocket('ws://' + document.location.hostname +':8889');
+    var ws = new WebSocket('ws://' + document.location.hostname +':8889/');
     var lastTimestamp = 0;
 
     ws.onmessage = function(message) {
         var data = $.parseJSON(message.data);
 
         // console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
+        // console.log(data.data);
 
         if (data.timestamp <= lastTimestamp) {
             // outdated message, don't even bother
@@ -77,6 +78,13 @@
                     el.remove();
                 }
             });
+
+            if (null != build.port && build.port.length > 0) {
+                update_build(build.id, 'link', function(el) {
+                    var url = 'http://' + document.location.hostname + ':' + build.port + '/';
+                    el.html('<a href="' + url + '/">' + url + '</a>');
+                });
+            }
 
             if (null != build.url && build.url.length > 0) {
                 update_build(build.id, 'link', function(el) {
@@ -157,7 +165,7 @@
     }
 
     function update_ref(norm_name, type, callback) {
-        // console.log('update_ref', ref_name, type);
+        // console.log('update_ref', norm_name, type);
         callback($('#ref-' + norm_name + '-' + type));
     }
 

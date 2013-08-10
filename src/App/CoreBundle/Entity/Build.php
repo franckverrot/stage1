@@ -54,7 +54,15 @@ class Build
 
     public function getUrl()
     {
-        return (null === $this->getPort()) ? null : 'http://'.$_SERVER['HTTP_HOST'].':'.$this->getPort().'/';
+        if (null === $this->getPort()) {
+            return null;
+        }
+
+        if (!array_key_exists('HTTP_HOST', $_SERVER)) {
+            return null;
+        }
+
+        return 'http://'.$_SERVER['HTTP_HOST'].':'.$this->getPort().'/';
     }
 
     public function getNormRef()
@@ -73,6 +81,7 @@ class Build
             'status_label' => $this->getStatusLabel(),
             'status_label_class' => $this->getStatusLabelClass(),
             'url' => $this->getUrl(),
+            'port' => $this->getPort(),
         ];
 
     }
