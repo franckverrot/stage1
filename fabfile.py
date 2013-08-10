@@ -20,7 +20,8 @@ def provision():
         put('app/Resources/support/config/apt/dotdeb.list', 'apt-dotdeb.list')
         put('app/Resources/support/config/apt/rabbitmq.list', 'apt-rabbitmq.list')
         put('app/Resources/support/config/apt/sources.list', 'apt-sources.list')
-        put('app/Resources/support/config/nginx/prod', 'nginx-default')
+        put('app/Resources/support/config/nginx/prod/default', 'nginx-default')
+        put('app/Resources/support/config/nginx/prod/htpasswd', 'nginx-htpasswd')
         put('app/Resources/support/config/php/prod.ini', 'php-php.ini')
         put('app/Resources/support/scripts/stage1.sh', 'stage1.sh')
 
