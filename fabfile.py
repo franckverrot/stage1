@@ -1,7 +1,7 @@
 from fabric.api import *
 from fabric.colors import *
 
-env.host_string = 'stage1-prod'
+env.host_string = 'digitalocean'
 env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
