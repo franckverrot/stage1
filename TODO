@@ -9,6 +9,7 @@ DONE
 * commit name docker: use project id rather than project name
 * faire la conf monit 
 * build.sh should print "Build finished and successful at $time"
+* ajouter la gestion de doctrine dans le build par defaut
 
 BUGS
 ----
@@ -20,10 +21,8 @@ BUGS
 FEATURES
 --------
 * production needs to have working error reporting
-* integrer hipache
-* ajouter la gestion de doctrine dans le build par defaut
-* OU ajouter un fichier de conf de build genre .stage1.yml dans lequel on puisse enquiller des commandes de build
-* ajouter un mail genre "votre inscription sur stage1.io coucou"
+* integrate hipache
+* add a "thanks for signing up" email after signup
 
 TODO
 ====
@@ -52,6 +51,14 @@ TODO
     * before build: check that the app is actually building (eg: there is a composer.json)
     * branches list should show current running instance
     * before starting a build, check the required docker image is present
+    * need a way to update buildapp in runtime without re building the whole image
+    * rewrite the build system, with extensibility in mind
+        * build steps could be infered at import time (or pre-build time)
+        * a build file could be generated with said steps
+        * the builder would iterate through the build file, run steps and check their exit status
+        * if a step fails, the builder fails
+    * checkbox "go to this build when it's finished"
+    * check that a new build deletes the old image if exists
 
 * projects
     * allow per-project docker image selection
