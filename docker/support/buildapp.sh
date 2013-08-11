@@ -23,18 +23,13 @@ if [ -z "$4" ]; then
     exit 2
 fi
 
-function fail {
-    RES=$?
-    echo "$@"
-    exit $RES
-}
-
 SSH_URL=$1
 REF=$2
 HASH=$3
 ACCESS_TOKEN=$4
 
 # composer configuration to avoid hitting github's api rate limit
+echo "---> Configuring composer"
 mkdir /.composer
 cat > /.composer/config.json <<EOF
 {
@@ -48,6 +43,7 @@ EOF
 
 APP_ROOT=/var/www
 
+echo "---> Cloning repository"
 git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT
 
 cd $APP_ROOT
@@ -55,5 +51,16 @@ cd $APP_ROOT
 git reset --hard $HASH
 
 cp /etc/symfony/parameters.yml.dist app/config/parameters.yml
+
+echo "---> Installing dependencies through composer"
 composer install --ansi --no-progress --no-dev --prefer-dist
 chmod -R 777 app/cache app/logs
+
+if app/console list doctrine:database > /dev/null 2>&1; then
+    echo "---> Detected doctrine, activating mysql"
+    /etc/init.d/mysql start
+
+    echo "---> Initializing database"
+    app/console doctrine:database:create
+    app/console doctrine:schema:update --force
+fi
