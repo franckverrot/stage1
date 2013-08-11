@@ -52,6 +52,7 @@ TODO
     * before build: check that the app is actually building (eg: there is a composer.json)
     * branches list should show current running instance
     * before starting a build, check the required docker image is present
+    * need a way to update buildapp in runtime without re building the whole image
 
 * projects
     * allow per-project docker image selection
