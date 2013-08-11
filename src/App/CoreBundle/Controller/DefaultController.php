@@ -385,7 +385,9 @@ class DefaultController extends Controller
             $hooks = $this->github_get($hooksUrl);
 
             foreach ($hooks as $_) {
-                if ($_->name === 'web' && $_->config->url === $githubHookUrl) {
+                # temp workaround for detecting hooks url even with basic auth info in it
+                if ($_->name === 'web' && strpos($_->config->url, 'stage1.io') !== false) {
+                // if ($_->name === 'web' && $_->config->url === $githubHookUrl) {
                     $hook = $_;
                     break;
                 }
