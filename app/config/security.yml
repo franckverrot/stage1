@@ -17,7 +17,11 @@ security:
 
         main:
             pattern: ^/
-            form_login: ~
+            form_login:
+                default_target_path: /
+                use_referer: true
+                failure_path: /
+                login_path: /login/github
             logout: true
             anonymous: true
 
