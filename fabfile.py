@@ -58,6 +58,12 @@ def prepare():
     sudo('mkdir %s' % env.project_path)
     sudo('chown -R www-data:www-data %s' % env.project_path)
 
+def reset_database():
+    with cd(env.project_path):
+        run('app/console --env=prod doctrine:database:drop --force')
+        run('app/console --env=prod doctrine:database:create')
+        run('app/console --env=prod doctrine:schema:update --force')
+
 def create_database():
     run('%s/app/console --env=prod doctrine:database:create' % env.project_path)
 
