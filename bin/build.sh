@@ -1,12 +1,7 @@
 #!/bin/bash
 
 # see http://www.ss64.com/bash/set.html
-# tl;dr:
-#   -n echoes statement before executing them
-#   -e exit scripts as soon as a command fails
-test -z "$STAGE1_DEBUG" || set -n
 set -e
-
 
 # @todo move that to the CONTEXT_DIR
 BUILD_INFO_FILE="/tmp/stage1-build-info"
@@ -48,7 +43,7 @@ $($CONSOLE build:infos $1)
 CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
 mkdir -p $CONTEXT_DIR
 
-SSH_KEY_PATH=$(basename $(/usr/bin/php $CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
+SSH_KEY_PATH=$(basename $($CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
 SSH_CONFIG=$(tempfile --directory=$CONTEXT_DIR)
 
 cat > $SSH_CONFIG <<EOF

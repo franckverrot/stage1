@@ -1,10 +1,6 @@
 #!/bin/bash
 
 # see http://www.ss64.com/bash/set.html
-# tl;dr:
-#   -n echoes statement before executing them
-#   -e exit scripts as soon as a command fails
-test -z "$STAGE1_DEBUG" || set -n
 set -e
 
 if [ -z "$1" ]; then
