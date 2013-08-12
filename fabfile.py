@@ -65,6 +65,7 @@ def reset_database():
         run('app/console --env=prod doctrine:database:create')
         run('app/console --env=prod doctrine:schema:update --force')
     processes_start()
+    docker_clean()
 
 def create_database():
     run('%s/app/console --env=prod doctrine:database:create' % env.project_path)
@@ -76,6 +77,10 @@ def init_parameters():
 def docker_build():
     info('building docker')
     sudo('docker build -t symfony2 %s/docker' % env.project_path)
+
+def docker_clean():
+    info('cleaning docker')
+    sudo('%s/bin/docker-clean.sh' % env.project_path)
 
 def deploy():
     with hide('running', 'stdout', 'stderr'):
@@ -160,6 +165,10 @@ def processes_stop():
 def processes_start():
     info('starting processes')
     run('monit start all')
+
+def processes_restart():
+    info('restarting processes')
+    run('monit restart all')
 
 def services_restart():
     sudo('/etc/init.d/nginx restart')
