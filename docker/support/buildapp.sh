@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# small delay to be sure to fetch entire output when building projects
-# sleep 1;
+# see http://www.ss64.com/bash/set.html
+# tl;dr:
+#   -n echoes statement before executing them
+#   -e exit scripts as soon as a command fails
+test -z "$STAGE1_DEBUG" || set -n
+set -e
 
 if [ -z "$1" ]; then
     echo "Missing git repository"
@@ -20,7 +24,7 @@ fi
 
 if [ -z "$4" ]; then
     echo "Github access token is missing"
-    exit 2
+    exit 1
 fi
 
 SSH_URL=$1

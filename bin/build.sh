@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# see http://www.ss64.com/bash/set.html
+# tl;dr:
+#   -n echoes statement before executing them
+#   -e exit scripts as soon as a command fails
+test -z "$STAGE1_DEBUG" || set -n
+set -e
+
+
+# @todo move that to the CONTEXT_DIR
 BUILD_INFO_FILE="/tmp/stage1-build-info"
 BUILD_JOB_FILE="/tmp/stage1-build-job"
 
@@ -31,24 +40,15 @@ function dummy {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# @todo implement a build:infos command that echoes these informations
-#       instead of passing them as arguments, and just pass the build id
-REF=$1
-HASH=$2
-SSH_URL=$3
-ACCESS_TOKEN=$4
-COMMIT_NAME=$5
-COMMIT_TAG=$6
-BUILD_ID=$7
+CONSOLE=$(realpath $DIR/../app/console)
+
+$($CONSOLE build:infos $1)
 
 # insert ssh keys
 CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
 mkdir -p $CONTEXT_DIR
 
-# echo 'context dir' $CONTEXT_DIR
-
-# echo /usr/bin/php $DIR/../app/console build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa
-SSH_KEY_PATH=$(basename $(/usr/bin/php $DIR/../app/console build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
+SSH_KEY_PATH=$(basename $(/usr/bin/php $CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
 SSH_CONFIG=$(tempfile --directory=$CONTEXT_DIR)
 
 cat > $SSH_CONFIG <<EOF
@@ -70,17 +70,9 @@ EOF
 
 docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev/null
 
-# docker run -i -t ${COMMIT_NAME}:${COMMIT_TAG} ls -la /root/.ssh
-
 rm -rf $CONTEXT_DIR
 
 BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN)
-# BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} echo $SSH_URL $REF $HASH $ACCESS_TOKEN)
-RES=$?
-
-if [ "$RES" != 0 ]; then
-    exit $RES;
-fi;
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM
 echo $BUILD_JOB > $BUILD_JOB_FILE
