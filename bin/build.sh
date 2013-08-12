@@ -11,12 +11,13 @@ function cleanup {
     if [ -f $BUILD_JOB_FILE ]; then
         docker stop $(cat $BUILD_JOB_FILE) > /dev/null
         docker rm $(cat $BUILD_JOB_FILE) > /dev/null
+
+        rm -f $BUILD_JOB_FILE
     fi
-    
-    rm -f $BUILD_INFO_FILE $BUILD_JOB_FILE
 }
 
 function error_handler {
+    echo
     echo "---> Build failed ($(date))"
     cleanup
     exit $1    
@@ -97,7 +98,7 @@ WEB_WORKER=$(docker run -d -p 80 ${COMMIT_NAME}:${COMMIT_TAG} runapp) || false
 PORT=$(docker port $WEB_WORKER 80) || false
 
 echo
-echo "Build finished ($(date))"
+echo "---> Build finished ($(date))"
 
 echo $BUILD_IMG > $BUILD_INFO_FILE
 echo $WEB_WORKER >> $BUILD_INFO_FILE
