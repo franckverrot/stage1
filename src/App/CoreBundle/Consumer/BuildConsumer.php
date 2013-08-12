@@ -87,12 +87,6 @@ class BuildConsumer implements ConsumerInterface
             $projectDir = realpath(__DIR__.'/../../../..');
             $builder = new ProcessBuilder([
                 $projectDir.'/bin/build.sh',
-                $build->getRef(),
-                $build->getHash(),
-                $build->getProject()->getSshUrl(),
-                $build->getProject()->getOwner()->getAccessToken(),
-                $build->getImageName(),
-                $build->getImageTag(),
                 $build->getId()
             ]);
             $builder->setTimeout(0);

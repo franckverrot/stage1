@@ -37,13 +37,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CONSOLE=$(realpath $DIR/../app/console)
 
-$($CONSOLE build:infos $1)
+$(php $CONSOLE build:infos $1)
 
 # insert ssh keys
 CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
 mkdir -p $CONTEXT_DIR
 
-SSH_KEY_PATH=$(basename $($CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
+SSH_KEY_PATH=$(basename $(php $CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
 SSH_CONFIG=$(tempfile --directory=$CONTEXT_DIR)
 
 cat > $SSH_CONFIG <<EOF
