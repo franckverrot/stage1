@@ -1,22 +1,30 @@
 #!/bin/bash
 
-# see http://www.ss64.com/bash/set.html
+test -n "$STAGE1_DEBUG" && set -x
+
 set -e
 
-# @todo move that to the CONTEXT_DIR
-BUILD_INFO_FILE="/tmp/stage1-build-info"
-BUILD_JOB_FILE="/tmp/stage1-build-job"
+trap 'error_handler $?' ERR
+trap cleanup SIGTERM EXIT
 
 function cleanup {
     if [ -f $BUILD_JOB_FILE ]; then
-        docker stop $BUILD_JOB_FILE
-        docker rm $BUILD_JOB_FILE
+        docker stop $(cat $BUILD_JOB_FILE) > /dev/null
+        docker rm $(cat $BUILD_JOB_FILE) > /dev/null
     fi
     
     rm -f $BUILD_INFO_FILE $BUILD_JOB_FILE
 }
 
-trap cleanup SIGTERM
+function error_handler {
+    echo "---> Build failed ($(date))"
+    cleanup
+    exit $1    
+}
+
+# @todo move that to the CONTEXT_DIR
+BUILD_INFO_FILE="/tmp/stage1-build-info"
+BUILD_JOB_FILE="/tmp/stage1-build-job"
 
 function dummy {
     echo 'This is some dummy output'
@@ -35,16 +43,16 @@ function dummy {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CONSOLE=$(realpath $DIR/../app/console)
+CONSOLE=$(realpath $DIR/../app/console) || false
 
-$(php $CONSOLE build:infos $1)
+$(php $CONSOLE build:infos $1) || false
 
 # insert ssh keys
 CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
 mkdir -p $CONTEXT_DIR
 
-SSH_KEY_PATH=$(basename $(php $CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa))
-SSH_CONFIG=$(tempfile --directory=$CONTEXT_DIR)
+SSH_KEY_PATH=$(basename $(php $CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa)) || false
+SSH_CONFIG=$(tempfile --directory=$CONTEXT_DIR) || false
 
 cat > $SSH_CONFIG <<EOF
 Host github.com
@@ -67,20 +75,26 @@ docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev
 
 rm -rf $CONTEXT_DIR
 
-BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN)
+BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN) || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM
 echo $BUILD_JOB > $BUILD_JOB_FILE
 
 docker attach $BUILD_JOB
 
+EXIT_CODE=$(docker inspect $BUILD_JOB | grep ExitCode | grep -Eo '[0-9]+') || false
+
+if [ "$EXIT_CODE" != 0 ]; then
+    error_handler $EXIT_CODE
+fi
+
 rm $BUILD_JOB_FILE
 
-BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME $COMMIT_TAG)
+BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME $COMMIT_TAG) || false
 
-WEB_WORKER=$(docker run -d -p 80 ${COMMIT_NAME}:${COMMIT_TAG} runapp)
+WEB_WORKER=$(docker run -d -p 80 ${COMMIT_NAME}:${COMMIT_TAG} runapp) || false
 
-PORT=$(docker port $WEB_WORKER 80)
+PORT=$(docker port $WEB_WORKER 80) || false
 
 echo
 echo "Build finished ($(date))"

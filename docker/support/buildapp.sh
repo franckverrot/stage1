@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# see http://www.ss64.com/bash/set.html
+test -n "$STAGE1_DEBUG" && set -x
+
 set -e
+
+trap 'exit $?' ERR
 
 if [ -z "$1" ]; then
     echo "Missing git repository"
