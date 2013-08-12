@@ -6,6 +6,8 @@ use Symfony\Component\Process\ProcessBuilder;
 
 use App\CoreBundle\Entity\Project;
 
+use RuntimeException;
+
 class SshKeys
 {
     static public function dump(Project $project, $file = null)
@@ -31,6 +33,10 @@ class SshKeys
         $process = $builder->getProcess();
 
         $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException($process->getErrorOutput());
+        }
 
         return [
             'private' => file_get_contents($private),
