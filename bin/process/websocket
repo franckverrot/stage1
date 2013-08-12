@@ -28,7 +28,7 @@ case $ACTION in
         fi
 
         echo $$ > $PID_FILE
-        exec 2>&1 $WEBSOCKETD --port=$PORT $SCRIPT > $LOG_FILE 2> $LOG_FILE
+        exec 2>&1 $WEBSOCKETD --port=$PORT $SCRIPT >> $LOG_FILE 2>> $LOG_FILE
         ;;
     stop)
         kill $(cat $PID_FILE)
