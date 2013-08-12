@@ -74,7 +74,6 @@
         var add_candidate = function(owner, html) {
             if ($('#org-' + owner.login).length == 0) {
                 organisations_count++;
-                console.log(owner);
                 $('#organisations').append(tpl_organisation({
                     'name': owner.login,
                     'avatar_url': owner.avatar_url
@@ -87,6 +86,10 @@
 
         projects_count = repos.length;
         for (i in repos) {
+            if (!repos[i].permissions.admin) {
+                continue;
+            }
+
             fetch_composer_json(repos[i]).done(function(content) {
                 for (pkg in content.require) {
                     if (pkg == 'symfony/symfony') {
