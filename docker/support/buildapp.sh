@@ -64,3 +64,8 @@ if app/console list doctrine:database > /dev/null 2>&1; then
     app/console doctrine:database:create
     app/console doctrine:schema:update --force
 fi
+
+if app/console list doctrine:fixtures > /dev/null 2>&1; then
+    echo "---> Loading fixtures"
+    app/console doctrine:fixtures:load
+fi
