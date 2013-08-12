@@ -61,7 +61,7 @@ chmod -R 777 app/cache app/logs
 
 if app/console list doctrine:database > /dev/null 2>&1; then
     echo "---> Detected doctrine, activating mysql"
-    /etc/init.d/mysql start
+    /etc/init.d/mysql start 2> /dev/null
 
     echo "---> Initializing database"
     app/console doctrine:database:create
