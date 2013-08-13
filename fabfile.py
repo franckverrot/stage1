@@ -8,6 +8,18 @@ env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
 env.processes = ['consumer-build', 'consumer-kill', 'websocket-build', 'websocket-build-output']
 
+def hipache_start():
+    sudo('monit hipache start')
+
+def hipache_stop():
+    sudo('monit hipache stop')
+
+def hipache_restart():
+    sudo('monit hipache restart')
+
+def log():
+    sudo('tail -f /var/log/nginx/* /tmp/log/* /tmp/hipache/*')
+
 def provision():
     with settings(warn_only=True):
         if run('test -f /etc/apt/sources.list.d/dotdeb.list').succeeded:
@@ -34,6 +46,10 @@ def provision():
 
 def check_connection():
     run('echo "OK"')
+
+def hipache_init_redis():
+    run('redis-cli DEL frontend:stage1.io')
+    run('redis-cli RPUSH frontend:stage1.io stage1 http://127.0.0.1:8080/')
 
 def fix_permissions():
     with settings(warn_only=True):
@@ -160,15 +176,18 @@ def git_branch():
 
 def processes_stop():
     info('stopping processes')
-    run('monit stop all')
+    for process in env.processes:
+        sudo('monit stop %s' % process)
 
 def processes_start():
     info('starting processes')
-    run('monit start all')
+    for process in env.processes:
+        sudo('monit start %s' % process)
 
 def processes_restart():
     info('restarting processes')
-    run('monit restart all')
+    for process in env.processes:
+        sudo('monit restart %s' % process)
 
 def services_restart():
     sudo('/etc/init.d/nginx restart')

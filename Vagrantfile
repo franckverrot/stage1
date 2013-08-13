@@ -37,7 +37,7 @@ Vagrant.configure("2") do |config|
         dev.vm.hostname = 'stage1-dev'
         dev.vm.network :private_network, ip: '192.168.215.42'
         dev.vm.synced_folder ".", "/vagrant", :nfs => true
-        dev.hostmanager.aliases = %w(stage1)
+        dev.hostmanager.aliases = %w(stage1 feature-checkout.acmemuda-acmeshop.stage1)
 
         dev.vm.provision :shell, :inline => $script
     end

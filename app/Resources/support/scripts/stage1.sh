@@ -27,7 +27,8 @@ apt-get -qy install \
     amqp-tools \
     realpath \
     htop \
-    acl
+    acl \
+    npm
 
 # enable ACL on /
 sed -e 's/errors=remount-ro/&,acl/' -i /etc/fstab
@@ -51,6 +52,7 @@ cp /tmp/monit-consumer-build /etc/monit/conf.d/consumer-build
 cp /tmp/monit-consumer-kill /etc/monit/conf.d/consumer-kill
 cp /tmp/monit-websocket-build /etc/monit/conf.d/websocket-build
 cp /tmp/monit-websocket-build-output /etc/monit/conf.d/websocket-build-output
+cp /tmp/monit-hipache /etc/monit/conf.d/hipache
 
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
@@ -68,3 +70,8 @@ apt-get update
 apt-get install -qy lxc-docker
 
 docker pull ubuntu:precise
+
+# hipache
+
+npm install -g hipache
+mkdir /var/log/hipache

@@ -79,16 +79,20 @@
                 }
             });
 
-            if (null != build.port && build.port.length > 0) {
-                update_build(build.id, 'link', function(el) {
-                    var url = 'http://' + document.location.hostname + ':' + build.port + '/';
-                    el.html('<a href="' + url + '">' + url + '</a>');
-                });
-            }
+            // if (null != build.port && build.port.length > 0) {
+            //     update_build(build.id, 'link', function(el) {
+            //         var url = 'http://' + document.location.hostname + ':' + build.port + '/';
+            //         el.html('<a href="' + url + '">' + url + '</a>');
+            //     });
+            // }
 
             if (null != build.url && build.url.length > 0) {
                 update_build(build.id, 'link', function(el) {
-                    el.html('<a href="' + build.url + '">' + build.url + '</a>');
+                    if (el.data('template')) {
+                        el.html(Mustache.render(el.data('template'), { build_url: build.url }));
+                    } else {
+                        el.html('<a href="' + build.url + '">' + build.url + '</a>');
+                    }
                 });
             }
 

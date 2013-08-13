@@ -36,6 +36,8 @@ class Build
 
     private $port;
 
+    private $url;
+
     private $containerId;
 
     private $imageId;
@@ -52,22 +54,20 @@ class Build
 
     private $updatedAt;
 
-    public function getUrl()
+    # @todo move to its own service
+    private function normalize($string)
     {
-        if (null === $this->getPort()) {
-            return null;
-        }
+        return preg_replace('/[^a-z0-9\-]/', '-', strtolower($string));
+    }
 
-        if (!array_key_exists('HTTP_HOST', $_SERVER)) {
-            return null;
-        }
-
-        return 'http://'.$_SERVER['HTTP_HOST'].':'.$this->getPort().'/';
+    public function getBranchDomain()
+    {
+        return sprintf('%s.%s', $this->getNormRef(), $this->normalize($this->getProject()->getFullName()));
     }
 
     public function getNormRef()
     {
-        return preg_replace('/[^a-z0-9\-]/', '-', strtolower($this->getRef()));
+        return $this->normalize($this->getRef());
     }
 
     public function asWebsocketMessage()
@@ -487,5 +487,28 @@ class Build
     public function getPort()
     {
         return $this->port;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     * @return Build
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 }

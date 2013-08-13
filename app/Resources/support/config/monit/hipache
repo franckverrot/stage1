@@ -1,0 +1,4 @@
+check process hipache with pidfile /tmp/run/hipache.pid
+    start program = "/vagrant/bin/process/hipache start --config /vagrant/app/config/hipache.json"
+        as uid root and gid root
+    stop program = "/vagrant/bin/process/hipache stop build"

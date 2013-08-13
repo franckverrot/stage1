@@ -90,6 +90,7 @@ class BuildConsumer implements ConsumerInterface
                 $build->getId()
             ]);
             $builder->setTimeout(0);
+            // $builder->setEnv('STAGE1_DEBUG', 1);
 
             $process = $builder->getProcess();
             $process->setCommandLine($process->getCommandLine().' > '.$buildFile('output').' 2>> '.$buildFile('output'));
@@ -112,15 +113,16 @@ class BuildConsumer implements ConsumerInterface
             $buildInfo = explode(PHP_EOL, trim(file_get_contents($buildFile('info'))));
             unlink($buildFile('info'));
 
-            if (count($buildInfo) !== 3) {
+            if (count($buildInfo) !== 4) {
                 throw new InvalidArgumentException('Malformed build info: '.var_export($buildInfo, true));
             }
 
-            list($imageId, $containerId, $port) = $buildInfo;
+            list($imageId, $containerId, $port, $url) = $buildInfo;
 
             $build->setContainerId($containerId);
             $build->setImageId($imageId);
             $build->setPort($port);
+            $build->setUrl($url);
         }
 
         $queryBuilder = $this->doctrine->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
