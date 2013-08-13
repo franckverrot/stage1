@@ -8,21 +8,13 @@ BUGS
 FEATURES
 --------
 * production needs to have working error reporting
-* integrate hipache
 * add a "thanks for signing up" email after signup
 
 TODO
 ====
 
-* fabric
-    * fab log
-
 * user
     * explicitely ask github for the private emails 
-
-* test
-    * test repositories belonging to an organisation the user belongs to
-    * test private repositories
 
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
@@ -51,6 +43,8 @@ TODO
         * a build file could be generated with said steps
         * the builder would iterate through the build file, run steps and check their exit status
         * if a step fails, the builder fails
+        * also, if a specific step fail, we know what it exactly is, so we can try and guess why it did fail and
+          tell the user steps to take to fix it (or maybe fix it automatically, I'm looking at you, missing deploy key)
     * checkbox "go to this build when it's finished"
     * check that a new build deletes the old image if exists
 
@@ -67,6 +61,7 @@ TODO
     * manually schedule builds for any project/branch
 
 * misc UI
+    * explain what exactly happens when importing a project (deploy key + webhooks setup)
     * show useful indicators of what's happening in the title bar when the window is out of focus
     * all "stateful buttons" should present an option to "retry" when failed
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
@@ -95,6 +90,7 @@ THE DISTANT FUTURE
 * instances
     * add a (disablable) top frame indicating what project / branch you're currently browsing
     * allow shutting down / restarting a running instance
+    * http://mailcatcher.me/
 
 * projects
     * allow project creation through build poke (?)
