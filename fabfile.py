@@ -118,6 +118,8 @@ def cold_deploy():
     tag_release()
     reset_environment()
 
+    prepare_assets()
+
     processes_stop()
     rsync()
 
@@ -146,6 +148,8 @@ def hot_deploy():
     prepare_deploy(branch)
     tag_release()
     reset_environment()
+
+    prepare_assets()
 
     processes_stop()
     rsync()
