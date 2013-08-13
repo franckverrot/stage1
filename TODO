@@ -4,8 +4,6 @@ TODO URGENT
 BUGS
 ----
 * build failed: 2013/08/10 06:40:21 Unable to set up networking: ip failed: ip route add default via 172.17.42.1 (see https://github.com/dotcloud/docker/pull/1374)
-* explicitely ask github for the email 
-* running and building status are confusing
 
 FEATURES
 --------
@@ -16,6 +14,12 @@ FEATURES
 TODO
 ====
 
+* fabric
+    * fab log
+
+* user
+    * explicitely ask github for the private emails 
+
 * test
     * test repositories belonging to an organisation the user belongs to
     * test private repositories
@@ -24,6 +28,7 @@ TODO
     * list of running instances grouped by project and order by project.last_build_id
 
 * builds
+    * running and building status are confusing
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
         * things that should work ootb
