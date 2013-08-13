@@ -11,6 +11,8 @@ curl http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
 cp /tmp/apt-dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
+add-apt-repository -y ppa:chris-lea/node.js
+
 apt-get update
 
 apt-get -qy install \
@@ -28,11 +30,14 @@ apt-get -qy install \
     realpath \
     htop \
     acl \
-    npm
+    nodejs
 
 # enable ACL on /
+
 sed -e 's/errors=remount-ro/&,acl/' -i /etc/fstab
 mount -o remount /
+
+# install configuration
 
 cp /tmp/nginx-default /etc/nginx/sites-available/default
 
@@ -54,8 +59,12 @@ cp /tmp/monit-websocket-build /etc/monit/conf.d/websocket-build
 cp /tmp/monit-websocket-build-output /etc/monit/conf.d/websocket-build-output
 cp /tmp/monit-hipache /etc/monit/conf.d/hipache
 
+# install composer
+
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
+
+# prepare directories
 
 mkdir /tmp/run
 chown vagrant /tmp/run
