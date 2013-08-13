@@ -54,6 +54,11 @@ class Build
 
     private $updatedAt;
 
+    public function hasContainer()
+    {
+        return $this->containerId !== null;
+    }
+
     # @todo @normalize move to its own service
     private function normalize($string)
     {
