@@ -20,6 +20,9 @@ def hipache_restart():
 def log():
     sudo('tail -f /var/log/nginx/* /tmp/log/* /tmp/hipache/*')
 
+def prepare_assets():
+    local('app/console assetic:dump --env=prod --no-debug')
+
 def provision():
     with settings(warn_only=True):
         if run('test -f /etc/apt/sources.list.d/dotdeb.list').succeeded:

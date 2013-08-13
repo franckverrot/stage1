@@ -5,8 +5,9 @@ app/bootstrap*
 vendor/*
 */logs/*
 */cache/*
-web/uploads/*
-web/bundles/*
+web/uploads/
+web/bundles/
+web/assets/
 
 # Configuration files
 app/config/parameters.ini
@@ -25,3 +26,4 @@ github.json
 payload/
 *.pyc
 output-vmware
+.DS_Store

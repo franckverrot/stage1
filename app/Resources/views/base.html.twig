@@ -3,11 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}stage1{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="stylesheet" href="/bootstrap/css/bootstrap.css" />
-        <link rel="stylesheet" href="/font-awesome/css/font-awesome.css" />
-        <link rel="stylesheet" href="/stage1.css" />
-        <style type="text/css">body { padding-top: 60px; }</style>
+        {% stylesheets 'css/*.css' output="assets/all.css" %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
@@ -47,14 +45,8 @@
                 </div>
             </div>
         </div>
-        <script src="/jquery.js"></script>
-        <script src="/mustache.js"></script>
-        <script src="/websocket.js"></script>
-        <script src="/bootstrap/js/bootstrap.js"></script>
-        <script src="/jquery.timeago.js"></script>
-        <script type="text/javascript">
-        $(function() { $('abbr.timeago').timeago(); });
-        </script>
-        {% block javascripts %}{% endblock %}
+        {% javascripts 'js/*.js' output="assets/all.js" %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
     </body>
 </html>

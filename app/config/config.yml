@@ -31,6 +31,7 @@ assetic:
     debug:          %kernel.debug%
     use_controller: false
     bundles:        [ ]
+    write_to:       %kernel.root_dir%/../web/assets
     #java: /usr/bin/java
     filters:
         cssrewrite: ~

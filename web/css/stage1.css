@@ -1,3 +1,7 @@
+body {
+    padding-top: 60px;
+}
+
 .nav-tabs > li > a, .nav-pills > li > a {
     line-height: inherit;
 }

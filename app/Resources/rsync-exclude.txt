@@ -19,11 +19,7 @@ Vagrantfile
 .git
 *.rst
 
-*.less
-*.scss
-
-web/font-awesome/less/
-web/font-awesome/scss/
+/web/assets/*part*
 
 LICENSE*
 README*
