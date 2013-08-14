@@ -1,8 +1,6 @@
 {% extends '::base.html.twig' %}
 
 {% block javascripts %}
-<script src="/ansi_up.js"></script>
-<script src="/build_show.js"></script>
 <script type="text/javascript">
 $('#output').html(ansi_up.ansi_to_html($('#output').text()));
 {% if build.building %}

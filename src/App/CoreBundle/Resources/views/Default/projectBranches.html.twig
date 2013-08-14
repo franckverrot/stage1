@@ -1,7 +1,6 @@
 {% extends '::base.html.twig' %}
 
 {% block javascripts %}
-<script src="/project_branches.js"></script>
 <script type="text/javascript">
 var detect_branches_url = '{{ path('app_core_project_detect_branches', { id: project.id }) }}';
 var schedule_build_url = '{{ path('app_core_project_schedule_build', { id: project.id }) }}';

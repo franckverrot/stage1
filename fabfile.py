@@ -21,6 +21,7 @@ def log():
     sudo('tail -f /var/log/nginx/* /tmp/log/* /tmp/hipache/*')
 
 def prepare_assets():
+    info('preparing assets')
     local('app/console assetic:dump --env=prod --no-debug')
 
 def provision():

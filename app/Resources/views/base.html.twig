@@ -48,5 +48,6 @@
         {% javascripts 'js/jquery.js' 'js/*.js' output="assets/all.js" %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        {% block javascripts %}{% endblock %}
     </body>
 </html>
