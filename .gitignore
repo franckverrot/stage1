@@ -19,6 +19,9 @@ app/check.php
 .vagrant
 app/Resources/boxes/
 
+# Node
+npm-debug.log
+
 # Others
 *~
 rsync.log
