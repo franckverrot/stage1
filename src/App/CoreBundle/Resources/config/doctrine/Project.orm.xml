@@ -5,7 +5,8 @@
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
-        <field name="name" type="string" column="name" length="255"/>
+        <field name="name" type="string" column="name" length="255" />
+        <field name="slug" type="string" column="slug" length="255" />
         <field name="githubId" type="integer" column="github_id" nullable="true" />
         <field name="githubFullName" type="string" column="github_full_name" length="255" nullable="true" />
         <field name="githubOwnerLogin" type="string" column="github_owner_login" length="255" nullable="true" />

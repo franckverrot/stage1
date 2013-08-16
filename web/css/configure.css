@@ -61,3 +61,7 @@ body {
 #github_register_app_guess {
     display: none;
 }
+
+.project-auth {
+    text-align: center;
+}
