@@ -5,6 +5,7 @@
         "workers": 5,
         "maxSockets": 100,
         "deadBackendTTL": 30,
-        "address": ["0.0.0.0"]
+        "address": ["0.0.0.0"],
+        "stack": ["/vagrant/node_modules/auth.js"]
     }
 }

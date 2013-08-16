@@ -17,6 +17,7 @@ use App\CoreBundle\SshKeys;
 use RuntimeException;
 use Exception;
 use DateTime;
+use Redis;
 
 class DefaultController extends Controller
 {
@@ -100,6 +101,21 @@ class DefaultController extends Controller
         return $project;
     }
 
+    private function findProjectBySlug($slug)
+    {
+        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneBySlug($slug);
+
+        if (!$project) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($project->getOwner() != $this->getUser()) {
+            throw new AccessDeniedException();
+        }
+
+        return $project;
+    }
+
     private function findPendingBuilds($project)
     {
         $qb = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
@@ -110,6 +126,44 @@ class DefaultController extends Controller
             ->setParameter(':project', $project->getId());
 
         return $qb->getQuery()->execute();
+    }
+
+    public function projectAuthAction(Request $request, $slug)
+    {
+        $project = $this->findProjectBySlug($slug);
+
+        return $this->render('AppCoreBundle:Default:projectAuth.html.twig', [
+            'project' => $project,
+            'return' => $request->query->get('return'),
+        ]);
+    }
+
+    public function projectAuthorizeAction(Request $request, $slug)
+    {
+        $project = $this->findProjectBySlug($slug);
+
+        $flashBag = $request->getSession()->getFlashBag();
+
+        if ($request->request->get('password') === 'passroot') {
+            if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+                $redis = new Redis();
+                $redis->connect('127.0.0.1', 6379);
+                $redis->sadd('auth:'.$project->getSlug(), $matches[0]);                
+
+                if (strlen($return = $request->request->get('return')) > 0) {
+                    return $this->redirect('http://' . $request->request->get('return'));
+                }
+    
+                $flashBag->add('success', 'You have been authenticated');
+            } else {
+                $flashBag->add('error', 'Unable to find your IP address');
+            }
+        }
+
+        return $this->render('AppCoreBundle:Default:projectAuth.html.twig', [
+            'project' => $project,
+            'return' => $request->request->get('return'),
+        ]);
     }
 
     public function indexAction()
@@ -362,6 +416,8 @@ class DefaultController extends Controller
     {
         try {
             $project = new Project();
+            # @todo @normalize
+            $project->setSlug(preg_replace('/[^a-z0-9\-]/', '-', strtolower($request->request->get('github_full_name'))));
             $project->setGithubId($request->request->get('github_id'));
             $project->setGithubOwnerLogin($request->request->get('github_owner_login'));
             $project->setGithubFullName($request->request->get('github_full_name'));

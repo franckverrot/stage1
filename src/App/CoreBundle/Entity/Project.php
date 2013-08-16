@@ -24,6 +24,8 @@ class Project
      */
     protected $cloneUrl;
 
+    protected $slug;
+
     protected $sshUrl;
 
     protected $githubId;
@@ -479,5 +481,28 @@ class Project
     public function getSshUrl()
     {
         return $this->sshUrl;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return Project
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
