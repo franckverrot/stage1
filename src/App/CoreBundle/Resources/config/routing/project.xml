@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="app_core_project_auth" pattern="/p/{slug}" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:auth</default>
+    </route>
+
+    <route id="app_core_project_authorize" pattern="/p/{slug}" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:authorize</default>
+    </route>
+
+    <route id="app_core_project_access" pattern="/project/{id}/access" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:access</default>
+    </route>
+
+    <route id="app_core_project_access_create" pattern="/project/{id}/access" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:accessCreate</default>
+    </route>
+
+    <route id="app_core_project_master_password_update" pattern="/project/{id}/access/password" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:masterPasswordUpdate</default>
+    </route>
+</routes>

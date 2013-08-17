@@ -11,9 +11,13 @@ td.actions form, td.actions div {
     display: inline-block;
 }
 
-table.build-list td, table.candidates tbody td, tbody#branches td {
+table.build-list td, table.candidates tbody td, tbody#branches td, table#project-access-list td {
     vertical-align: middle;
     line-height: 30px;
+}
+
+table.table td {
+    border-top-width: 0 !important;
 }
 
 div.branch {

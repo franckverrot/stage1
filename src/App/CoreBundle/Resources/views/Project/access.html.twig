@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% include 'AppCoreBundle:Default:_project_header.html.twig' %}
+
+<p class="lead">Project access management</p>
+
+<p>Project access is filter by IP. Here you can manage the list of IPs authorized to access this project's staging area, or set a master password that users can use to add themselves to the list.</p>
+
+<div class="row-fluid">
+    <div class="span6">
+        <legend>Authorized IPs</legend>
+        <table class="table table-striped" id="project-access-list">
+            <thead>
+                <tr class="dummy">
+                    <th width="80%"></th>
+                    <th</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ip in access_list %}
+                <tr>
+                    <td>{{ ip }}</td>
+                    <td><button class="btn btn-danger btn-small">revoke</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="span6">
+        {{ form_start(master_password_form) }}
+            {{ form_errors(master_password_form) }}
+            <fieldset>
+                <legend>Master password</legend>
+                <div class="input-append">
+                    {{ form_errors(master_password_form.master_password) }}
+                    {{ form_widget(master_password_form.master_password) }}
+                    <button type="submit" class="btn">Update</button>
+                </div>
+            </fieldset>
+        {{ form_end(master_password_form) }}
+
+        {{ form_start(access_form) }}
+            <fieldset>
+                <legend>Grant access</legend>
+                <div class="input-append">
+                    {{ form_errors(access_form.ip) }}
+                    {{ form_widget(access_form.ip) }}
+                    <button type="submit" class="btn">Add IP</button>
+                </div>
+            </fieldset>
+        {{ form_end(access_form) }}
+    </div>
+</div>
+{% endblock body %}
