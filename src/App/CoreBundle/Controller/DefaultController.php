@@ -269,6 +269,16 @@ class DefaultController extends Controller
             $project = new Project();
             # @todo @normalize
             $project->setSlug(preg_replace('/[^a-z0-9\-]/', '-', strtolower($request->request->get('github_full_name'))));
+
+            # this is one special ip that cannot be revoked
+            # it is used to keep the access list "existing"
+            # thus activating auth on the staging areas
+            # yes, it's a bit hacky.
+            $this->grantProjectAccess($project, new ProjectAccess('0.0.0.0'));
+
+            # this, however, is perfectly legit.
+            $this->grantProjectAccess($project, new ProjectAccess($this->getClientIp()));
+
             $project->setGithubId($request->request->get('github_id'));
             $project->setGithubOwnerLogin($request->request->get('github_owner_login'));
             $project->setGithubFullName($request->request->get('github_full_name'));
@@ -334,15 +344,6 @@ class DefaultController extends Controller
             $project->setGithubDeployKeyId($key->id);
 
             $this->persistAndFlush($project);
-
-            # this is one special ip that cannot be revoked
-            # it is used to keep the access list "existing"
-            # thus activating auth on the staging areas
-            # yes, it's a bit hacky.
-            $this->grantProjectAccess($project, new ProjectAccess('0.0.0.0'));
-
-            # this, however, is perfectly legit.
-            $this->grantProjectAccess($project, new ProjectAccess($this->getClientIp()));
 
             return new JsonResponse([
                 'url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]),
