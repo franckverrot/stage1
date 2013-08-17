@@ -32,6 +32,36 @@ class ProjectController extends Controller
             ->smembers('auth:' . $project->getSlug());
     }
 
+    private function grantProjectAccess(Project $project, ProjectAccess $access)
+    {
+        return $this
+            ->get('app_core.redis')
+            ->sadd('auth:' . $project->getSlug(), $access->getIp());
+    }
+
+    public function accessCreateAction(Request $request, $id)
+    {
+        $this->setCurrentProjectId($id);
+        $project = $this->findProject($id);
+
+        $form = $this->getAccessForm($project);
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $this->grantProjectAccess($project, $form->getData());
+            $request->getSession()->getFlashBag()->add('success', 'Access granted');
+
+            return $this->redirect($this->generateUrl('app_core_project_access', ['id' => $project->getId()]));
+        }
+
+        return $this->render('AppCoreBundle:Project:access.html.twig', [
+            'project' => $project,
+            'access_list' => $this->getProjectAccessList($project),
+            'access_form' => $form->createView(),
+            'master_password_form' => $this->getMasterPassword($project)->createView(),
+        ]);
+    }
+
     public function masterPasswordUpdateAction(Request $request, $id)
     {
         $this->setCurrentProjectId($id);
