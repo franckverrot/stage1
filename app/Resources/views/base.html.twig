@@ -38,6 +38,7 @@
                 <div class="span9">
                     {% for message in app.session.flashbag.get('success') %}
                         <div class="alert alert-success">
+                            <i class="icon-ok"></i>
                             {{ message | raw }}
                         </div>
                     {% endfor %}

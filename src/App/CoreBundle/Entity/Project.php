@@ -54,6 +54,8 @@ class Project
 
     protected $privateKey;
 
+    protected $masterPassword;
+
     public function getFullName()
     {
         return $this->getGithubFullName();
@@ -504,5 +506,28 @@ class Project
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set masterPassword
+     *
+     * @param string $masterPassword
+     * @return Project
+     */
+    public function setMasterPassword($masterPassword)
+    {
+        $this->masterPassword = $masterPassword;
+    
+        return $this;
+    }
+
+    /**
+     * Get masterPassword
+     *
+     * @return string 
+     */
+    public function getMasterPassword()
+    {
+        return $this->masterPassword;
     }
 }

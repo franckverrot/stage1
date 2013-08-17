@@ -5,18 +5,13 @@ namespace App\CoreBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Process\ProcessBuilder;
-
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
 
 use App\CoreBundle\SshKeys;
 
-use RuntimeException;
 use Exception;
 use DateTime;
-use Redis;
 
 class DefaultController extends Controller
 {
