@@ -82,5 +82,6 @@ docker pull ubuntu:precise
 
 # hipache
 
-npm install -g hipache
+# npm install -g hipache
+npm install -g git://github.com/ubermuda/hipache.git
 mkdir /var/log/hipache
