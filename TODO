@@ -10,8 +10,15 @@ FEATURES
 * production needs to have working error reporting
 * add a "thanks for signing up" email after signup
 
+* auth: pour les domaines custom: faire afficher la page de login par le middleware, mettre un cookie sur le domaine
+
 TODO
 ====
+
+* REST API / webhooks
+
+* prod
+    * everything needs to transit through SSL
 
 * user
     * explicitely ask github for the private emails 
@@ -32,9 +39,8 @@ TODO
     * disallow scheduling a build if a running instance for the same hash exists
     * log build time
     * log trigger source (manual / push)
-    * being able to require authentication for accessing instances
     * disable auto log scroll when manually scrolled
-    * before build: check that the app is actually building (eg: there is a composer.json)
+    * before build: check that the app is actually buildable (eg: there is a composer.json)
     * branches list should show current running instance
     * before starting a build, check the required docker image is present
     * need a way to update buildapp in runtime without re building the whole image
@@ -47,6 +53,12 @@ TODO
           tell the user steps to take to fix it (or maybe fix it automatically, I'm looking at you, missing deploy key)
     * checkbox "go to this build when it's finished"
     * check that a new build deletes the old image if exists
+    * container ports should be bound on local private IPs instead of stage1.io public IP
+    * alerts
+        * push notif
+        * mail
+        * webhooks
+    * have a way to configure ENV variables in the container
 
 * projects
     * allow per-project docker image selection
@@ -54,11 +66,17 @@ TODO
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
     * import should make ajax queries to stage1 instead of directly querying github
     * last_build_at + last_build_ref (last_build_id ?)
+    * access
+        * implement "one-time-access-granting" URLs
+        * implement "one-time" passwords
+        * implement auto-expiring accesses
+        * implement "access-granting-referers" (automatically gain access if you come from the project's github for example)
 
 * admin
     * monitor all running docker container
     * ability to kill / top any running docker container
     * manually schedule builds for any project/branch
+    * bundle to override container parameters per user
 
 * misc UI
     * explain what exactly happens when importing a project (deploy key + webhooks setup)
@@ -66,6 +84,13 @@ TODO
     * all "stateful buttons" should present an option to "retry" when failed
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
     * pre-disabled buttons should change to enabled state when needed (through websockets events eg)
+
+* websockets
+    * update project access page when an ip is added to the access list
+    * update project access page when a master password is set/unset
+
+* VM / provisioning
+    * use GNU parallel to speed up VM packing and provisioning
 
 GITHUB ENTERPRISE
 =================
@@ -109,3 +134,10 @@ THE DISTANT FUTURE
 
 * misc
     * pusher private channels to receive push notif about your projects' builds
+
+IDEES DE OUF
+============
+
+* le client peut annoter la preprod
+* stage1 enregistre les actions des clients (clic la, clic la, tape ca, clic la)
+* multiplexage de la session (tu vois ce que le client fait en live)
