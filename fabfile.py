@@ -9,13 +9,13 @@ env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 env.processes = ['consumer-build', 'consumer-kill', 'websocket-build', 'websocket-build-output']
 
 def hipache_start():
-    sudo('monit hipache start')
+    sudo('monit start hipache')
 
 def hipache_stop():
-    sudo('monit hipache stop')
+    sudo('monit stop hipache')
 
 def hipache_restart():
-    sudo('monit hipache restart')
+    sudo('monit restart hipache')
 
 def log():
     sudo('tail -f /var/log/nginx/* /tmp/log/* /tmp/hipache/*')
