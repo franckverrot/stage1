@@ -25,19 +25,6 @@ class ProjectController extends Controller
         ]);
     }
 
-    private function getClientIp()
-    {
-        if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
-            return $matches[0];
-        }
-
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            return $_SERVER['REMOTE_ADDR'];
-        }
-
-        return null;
-    }
-
     public function accessDeleteAction(Request $request, $id)
     {
         $this->setCurrentProjectId($id);
@@ -141,7 +128,7 @@ class ProjectController extends Controller
             ->get('app_core.redis')
             ->sismember('auth:' . $project->getSlug(), $this->getClientIp());
 
-        if (!$isAllowed && strlen($project->getMasterPassword())) {
+        if (!$isAllowed && strlen($project->getMasterPassword()) == 0) {
             # assume owner don't want existence of this project to leak
             throw $this->createNotFoundException();
         }
@@ -153,7 +140,7 @@ class ProjectController extends Controller
         return $this->render('AppCoreBundle:Project:auth.html.twig', [
             'project' => $project,
             'is_allowed' => $isAllowed,
-            'running_builds' => $runningBuilds,
+            'running_builds' => $isAllowed ? $runningBuilds : [],
             'return' => $request->query->get('return'),
         ]);
     }
@@ -169,7 +156,7 @@ class ProjectController extends Controller
             if (null !== $this->getClientIp()) {
                 $this
                     ->get('app_core.redis')
-                    ->sadd('auth:'.$project->getSlug(), $matches[0]);
+                    ->sadd('auth:'.$project->getSlug(), $this->getClientIp());
 
                 if (strlen($return = $request->request->get('return')) > 0) {
                     return $this->redirect('http://' . $request->request->get('return'));
