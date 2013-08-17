@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="/css/bootstrap.css" />
     <link rel="stylesheet" href="/css/font-awesome.css" />
+    <link rel="stylesheet" href="/css/stage1.css" />
     <link rel="stylesheet" href="/css/configure.css" />
 
 </head>
@@ -33,6 +34,33 @@
                 </div>
             {% endfor %}
 
+            {% elseif is_allowed %}
+
+                {% if running_builds | length == 0 %}
+                    <p class="lead">There are no running builds for this project at the moment.</p>
+                {% else %}
+                    <p class="lead">This project has <strong>{{ running_builds | length }}</strong> staging area{% if running_builds | length != 1 %}s{% endif %} available right now.</p>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>URL</th>
+                                <th>Ref.</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for build in running_builds %}
+                        <tr>
+                            <td><a href="{{ build.url }}">{{ build.url }}</a></td>
+                            <td>{{ build.ref }}</td>
+                            <td><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+
             {% else %}
 
             <p>To gain access to this staging URL, please enter your password.</p>
@@ -53,5 +81,8 @@
             {% endif %}
         </div>
     </div>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/jquery.timeago.js"></script>
+    <script src="/js/stage1.js"></script>
 </body>
 </html>

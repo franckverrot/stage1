@@ -8,8 +8,31 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
 
+use App\CoreBundle\Value\ProjectAccess;
+
 class Controller extends BaseController
 {
+    protected function getProjectAccessList(Project $project)
+    {
+        return $this
+            ->get('app_core.redis')
+            ->smembers('auth:' . $project->getSlug());
+    }
+
+    protected function grantProjectAccess(Project $project, ProjectAccess $access)
+    {
+        return $this
+            ->get('app_core.redis')
+            ->sadd('auth:' . $project->getSlug(), $access->getIp());
+    }
+
+    protected function revokeProjectAccess(Project $project, ProjectAccess $access)
+    {
+        return $this
+            ->get('app_core.redis')
+            ->srem('auth:' . $project->getSlug(), $access->getIp());
+    }
+
     protected function github_post($url, $payload)
     {
         return json_decode(file_get_contents($url, false, stream_context_create([

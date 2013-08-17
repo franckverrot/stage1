@@ -7,7 +7,7 @@
 
 <div class="row-fluid">
     <div class="span6">
-        <legend><strong>{{ access_list | length }}</strong> authorized IP addresses</legend>
+        <legend><strong>{% if access_list | length == 0 %}no{% else %}{{ access_list | length }}{% endif %}</strong> authorized IP address{% if access_list | length != 1 %}es{% endif %}</legend>
         <form method="POST" action="{{ path('app_core_project_access_delete', { id: project.id }) }}">
             <input type="hidden" name="_method" value="DELETE" />
             <input type="hidden" name="access_delete[csrf_token]" value="{{ access_delete_csrf_token }}" />

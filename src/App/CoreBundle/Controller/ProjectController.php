@@ -17,15 +17,6 @@ class ProjectController extends Controller
         ]);
     }
 
-    private function getAccessDeleteForm(Project $project, $accessList)
-    {
-        $accessList = array_map(function($ip) { return new ProjectAccess($ip); }, $accessList);
-
-        return $this->createForm('project_access_delete', array('ip' => $accessList), [
-            'action' => $this->generateUrl('app_core_project_access_delete', ['id' => $project->getId()]),
-        ]);
-    }
-
     private function getMasterPasswordForm(Project $project)
     {
         return $this->createForm('project_master_password', $project, [
@@ -34,25 +25,17 @@ class ProjectController extends Controller
         ]);
     }
 
-    private function getProjectAccessList(Project $project)
+    private function getClientIp()
     {
-        return $this
-            ->get('app_core.redis')
-            ->smembers('auth:' . $project->getSlug());
-    }
+        if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+            return $matches[0];
+        }
 
-    private function grantProjectAccess(Project $project, ProjectAccess $access)
-    {
-        return $this
-            ->get('app_core.redis')
-            ->sadd('auth:' . $project->getSlug(), $access->getIp());
-    }
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+            return $_SERVER['REMOTE_ADDR'];
+        }
 
-    private function revokeProjectAccess(Project $project, ProjectAccess $access)
-    {
-        return $this
-            ->get('app_core.redis')
-            ->srem('auth:' . $project->getSlug(), $access->getIp());
+        return null;
     }
 
     public function accessDeleteAction(Request $request, $id)
@@ -154,8 +137,23 @@ class ProjectController extends Controller
     {
         $project = $this->findProjectBySlug($slug);
 
+        $isAllowed = $this
+            ->get('app_core.redis')
+            ->sismember('auth:' . $project->getSlug(), $this->getClientIp());
+
+        if (!$isAllowed && strlen($project->getMasterPassword())) {
+            # assume owner don't want existence of this project to leak
+            throw $this->createNotFoundException();
+        }
+
+        if ($isAllowed) {
+            $runningBuilds = $project->getRunningBuilds();
+        }
+
         return $this->render('AppCoreBundle:Project:auth.html.twig', [
             'project' => $project,
+            'is_allowed' => $isAllowed,
+            'running_builds' => $runningBuilds,
             'return' => $request->query->get('return'),
         ]);
     }
@@ -166,9 +164,9 @@ class ProjectController extends Controller
 
         $flashBag = $request->getSession()->getFlashBag();
 
-        if ($request->request->get('password') === 'passroot') {
+        if (password_verify($request->request->get('password'), $project->getMasterPassword())) {
             # @todo fix this
-            if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+            if (null !== $this->getClientIp()) {
                 $this
                     ->get('app_core.redis')
                     ->sadd('auth:'.$project->getSlug(), $matches[0]);
