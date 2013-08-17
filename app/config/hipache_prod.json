@@ -6,6 +6,9 @@
         "maxSockets": 100,
         "deadBackendTTL": 30,
         "address": ["0.0.0.0"],
-        "stack": ["/vagrant/node_modules/auth.js"]
+        "stack": ["/vagrant/node_modules/auth.js"],
+        "config": {
+            "auth_url": "http://stage1.io/p/{slug}"
+        }
     }
 }
