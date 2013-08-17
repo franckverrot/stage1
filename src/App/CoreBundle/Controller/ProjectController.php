@@ -17,6 +17,15 @@ class ProjectController extends Controller
         ]);
     }
 
+    private function getAccessDeleteForm(Project $project, $accessList)
+    {
+        $accessList = array_map(function($ip) { return new ProjectAccess($ip); }, $accessList);
+
+        return $this->createForm('project_access_delete', array('ip' => $accessList), [
+            'action' => $this->generateUrl('app_core_project_access_delete', ['id' => $project->getId()]),
+        ]);
+    }
+
     private function getMasterPasswordForm(Project $project)
     {
         return $this->createForm('project_master_password', $project, [
@@ -39,6 +48,31 @@ class ProjectController extends Controller
             ->sadd('auth:' . $project->getSlug(), $access->getIp());
     }
 
+    private function revokeProjectAccess(Project $project, ProjectAccess $access)
+    {
+        return $this
+            ->get('app_core.redis')
+            ->srem('auth:' . $project->getSlug(), $access->getIp());
+    }
+
+    public function accessDeleteAction(Request $request, $id)
+    {
+        $this->setCurrentProjectId($id);
+        $project = $this->findProject($id);
+
+        $data = $request->request->all();
+        $flashBag = $request->getSession()->getFlashBag();
+
+        if (!$this->get('form.csrf_provider')->isCsrfTokenValid('access_delete', $data['access_delete']['csrf_token'])) {
+            $flashBag->add('error', 'Invalid CSRF token.');
+        } else {
+            $this->revokeProjectAccess($project, new ProjectAccess($data['access_delete']['delete']));
+            $flashBag->add('success', 'Access revoked.');
+        }
+
+        return $this->redirect($this->generateUrl('app_core_project_access', ['id' => $project->getId()]));
+    }
+
     public function accessCreateAction(Request $request, $id)
     {
         $this->setCurrentProjectId($id);
@@ -49,16 +83,19 @@ class ProjectController extends Controller
 
         if ($form->isValid()) {
             $this->grantProjectAccess($project, $form->getData());
-            $request->getSession()->getFlashBag()->add('success', 'Access granted');
+            $request->getSession()->getFlashBag()->add('success', 'Access granted.');
 
             return $this->redirect($this->generateUrl('app_core_project_access', ['id' => $project->getId()]));
         }
 
+        $accessList = $this->getProjectAccessList($project);
+
         return $this->render('AppCoreBundle:Project:access.html.twig', [
             'project' => $project,
-            'access_list' => $this->getProjectAccessList($project),
+            'access_list' => $accessList,
             'access_form' => $form->createView(),
-            'master_password_form' => $this->getMasterPassword($project)->createView(),
+            'access_delete_csrf_token' => $this->get('form.csrf_provider')->generateCsrfToken('access_delete'),
+            'master_password_form' => $this->getMasterPasswordForm($project)->createView(),
         ]);
     }
 
@@ -72,24 +109,27 @@ class ProjectController extends Controller
         $form->bind($request);
 
         if ($form->isValid()) {
-            if ($form->get('delete')->isClicked()) {
+            if ($form->get('delete')->isClicked() || strlen($form->getData()->getMasterPassword()) === 0) {
                 $project->setMasterPassword(null);
-                $message = 'Master password deleted';
+                $message = 'Master password deleted.';
             } else {
                 $project->setMasterPassword(password_hash($project->getMasterPassword(), PASSWORD_BCRYPT));
-                $message = 'Master password updated';
+                $message = 'Master password updated.';
             }
-            
+
             $this->persistAndFlush($project);
             $request->getSession()->getFlashBag()->add('success', $message);
 
             return $this->redirect($this->generateUrl('app_core_project_access', ['id' => $project->getId()]));
         }
 
+        $accessList = $this->getProjectAccessList($project);
+
         return $this->render('AppCoreBundle:Project:access.html.twig', [
             'project' => $project,
-            'access_list' => $this->getProjectAccessList($project),
+            'access_list' => $accessList,
             'access_form' => $this->getAccessForm($project)->createView(),
+            'access_delete_csrf_token' => $this->get('form.csrf_provider')->generateCsrfToken('access_delete'),
             'master_password_form' => $form->createView(),
         ]);
     }
@@ -99,13 +139,14 @@ class ProjectController extends Controller
         $this->setCurrentProjectId($id);
 
         $project = $this->findProject($id);
+        $accessList = $this->getProjectAccessList($project);
 
         return $this->render('AppCoreBundle:Project:access.html.twig', [
             'project' => $project,
-            'access_list' => $this->getProjectAccessList($project),
+            'access_list' => $accessList,
             'access_form' => $this->getAccessForm($project)->createView(),
+            'access_delete_csrf_token' => $this->get('form.csrf_provider')->generateCsrfToken('access_delete'),
             'master_password_form' => $this->getMasterPasswordForm($project)->createView(),
-
         ]);
     }
 

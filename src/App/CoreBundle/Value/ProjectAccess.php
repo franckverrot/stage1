@@ -6,6 +6,11 @@ class ProjectAccess
 {
     public $ip;
 
+    public function __construct($ip = null)
+    {
+        $this->ip = $ip;
+    }
+
     public function getIp()
     {
         return $this->ip;
@@ -15,5 +20,10 @@ class ProjectAccess
     {
         $this->ip = $ip;
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->ip;
     }
 }

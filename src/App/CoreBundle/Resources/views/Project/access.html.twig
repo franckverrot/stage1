@@ -5,29 +5,43 @@
 
 <p class="lead">Project access management</p>
 
-<p>Project access is filter by IP. Here you can manage the list of IPs authorized to access this project's staging area, or set a master password that users can use to add themselves to the list.</p>
-
 <div class="row-fluid">
     <div class="span6">
         <legend><strong>{{ access_list | length }}</strong> authorized IP addresses</legend>
-        <table class="table table-striped" id="project-access-list">
-            <thead>
-                <tr class="dummy">
-                    <th width="80%"></th>
-                    <th</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ip in access_list %}
-                <tr>
-                    <td>{{ ip }}</td>
-                    <td><button class="btn btn-danger btn-small">revoke</button></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <form method="POST" action="{{ path('app_core_project_access_delete', { id: project.id }) }}">
+            <input type="hidden" name="_method" value="DELETE" />
+            <input type="hidden" name="access_delete[csrf_token]" value="{{ access_delete_csrf_token }}" />
+            <table class="table table-striped" id="project-access-list">
+                <thead>
+                    <tr class="dummy">
+                        <th width="80%"></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ip in access_list %}
+                    <tr>
+                        <td>{{ ip }}</td>
+                        <td><button name="access_delete[delete]" value="{{ ip }}" class="btn btn-danger btn-small">revoke</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
     </div>
     <div class="span6">
+        {{ form_start(access_form) }}
+            <fieldset>
+                <legend>Grant access</legend>
+                <div class="input-append">
+                    {{ form_errors(access_form.ip) }}
+                    {{ form_widget(access_form.ip) }}
+                    <button type="submit" class="btn">Add IP</button>
+                </div>
+                <span class="help-block">You can grant access to any arbitrary IP.</span>
+            </fieldset>
+        {{ form_end(access_form) }}
+
         {{ form_start(master_password_form) }}
             {{ form_errors(master_password_form) }}
             <fieldset>
@@ -46,19 +60,9 @@
                     {{ form_widget(master_password_form.update, { attr: { class: "btn" } }) }}
                     {{ form_widget(master_password_form.delete, { attr: { class: "btn btn-danger" } }) }}
                 </div>
+                <span class="help-block">The master password can be used by anyone to grant himself access to this project's staging areas. Deleting the master password will disable this feature.</span>
             </fieldset>
         {{ form_end(master_password_form) }}
-
-        {{ form_start(access_form) }}
-            <fieldset>
-                <legend>Grant access</legend>
-                <div class="input-append">
-                    {{ form_errors(access_form.ip) }}
-                    {{ form_widget(access_form.ip) }}
-                    <button type="submit" class="btn">Add IP</button>
-                </div>
-            </fieldset>
-        {{ form_end(access_form) }}
     </div>
 </div>
 {% endblock body %}
