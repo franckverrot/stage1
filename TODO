@@ -50,6 +50,7 @@ TODO
           tell the user steps to take to fix it (or maybe fix it automatically, I'm looking at you, missing deploy key)
     * checkbox "go to this build when it's finished"
     * check that a new build deletes the old image if exists
+    * container ports should be bound on local private IPs instead of stage1.io public IP
 
 * projects
     * allow per-project docker image selection
