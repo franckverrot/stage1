@@ -13,6 +13,9 @@ FEATURES
 TODO
 ====
 
+* prod
+    * everything needs to transit through SSL
+
 * user
     * explicitely ask github for the private emails 
 
@@ -54,6 +57,10 @@ TODO
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
     * import should make ajax queries to stage1 instead of directly querying github
     * last_build_at + last_build_ref (last_build_id ?)
+    * access
+        * implement "one-time-access-granting" URLs
+        * implement "one-time" passwords
+        * implement auto-expiring accesses
 
 * admin
     * monitor all running docker container
