@@ -75,6 +75,10 @@ TODO
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
     * pre-disabled buttons should change to enabled state when needed (through websockets events eg)
 
+* websockets
+    * update project access page when an ip is added to the access list
+    * update project access page when a master password is set/unset
+
 GITHUB ENTERPRISE
 =================
 
