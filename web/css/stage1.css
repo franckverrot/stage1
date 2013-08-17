@@ -6,7 +6,7 @@ body {
     line-height: inherit;
 }
 
-td.actions form, td.actions div {
+td.actions form, td.actions div, table form {
     margin: 0;
     display: inline-block;
 }

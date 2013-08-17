@@ -16,6 +16,10 @@
         <default key="_controller">AppCoreBundle:Project:access</default>
     </route>
 
+    <route id="app_core_project_access_delete" pattern="/project/{id}/access" methods="DELETE">
+        <default key="_controller">AppCoreBundle:Project:accessDelete</default>
+    </route>
+
     <route id="app_core_project_access_create" pattern="/project/{id}/access" methods="POST">
         <default key="_controller">AppCoreBundle:Project:accessCreate</default>
     </route>

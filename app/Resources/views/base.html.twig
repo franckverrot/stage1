@@ -42,6 +42,12 @@
                             {{ message | raw }}
                         </div>
                     {% endfor %}
+                    {% for message in app.session.flashbag.get('error') %}
+                        <div class="alert alert-error">
+                            <i class="icon-ok"></i>
+                            {{ message | raw }}
+                        </div>
+                    {% endfor %}
                     {% block body %}{% endblock %}
                 </div>
             </div>

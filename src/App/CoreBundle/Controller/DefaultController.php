@@ -75,7 +75,8 @@ class DefaultController extends Controller
         $project = $this->findProject($id);
         $this->setCurrentProjectId($id);
 
-        $token = md5(uniqid());
+        # @todo replace with SessionCsrfProvider
+        $token = uniqid(mt_rand(), true);
         $this->get('session')->set('csrf_token', $token);
 
         return $this->render('AppCoreBundle:Default:projectAdmin.html.twig', [
