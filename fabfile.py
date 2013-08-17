@@ -51,7 +51,18 @@ def provision():
 def check_connection():
     run('echo "OK"')
 
+def redis_list_frontends():
+    run('redis-cli keys frontend:\\*')
+
+def redis_list_auths():
+    run('redis-cli keys auth:\\*')
+
+def redis_flushall():
+    info('flushing redis')
+    run('redis-cli FLUSHALL')
+
 def hipache_init_redis():
+    info('initializing redis for hipache')
     run('redis-cli DEL frontend:stage1.io')
     run('redis-cli RPUSH frontend:stage1.io stage1 http://127.0.0.1:8080/')
 
