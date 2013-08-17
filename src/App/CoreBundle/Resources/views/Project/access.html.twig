@@ -9,7 +9,7 @@
 
 <div class="row-fluid">
     <div class="span6">
-        <legend>Authorized IPs</legend>
+        <legend><strong>{{ access_list | length }}</strong> authorized IP addresses</legend>
         <table class="table table-striped" id="project-access-list">
             <thead>
                 <tr class="dummy">
@@ -31,11 +31,20 @@
         {{ form_start(master_password_form) }}
             {{ form_errors(master_password_form) }}
             <fieldset>
-                <legend>Master password</legend>
+                <legend>Master password
+                    {% if project.masterPassword %}
+                    <span class="label label-success">set</span>
+                    {% else %}
+                    <span class="label label-warning">unset</span>
+                    {% endif %}
+                </legend>
                 <div class="input-append">
                     {{ form_errors(master_password_form.master_password) }}
                     {{ form_widget(master_password_form.master_password) }}
-                    <button type="submit" class="btn">Update</button>
+
+                    {# buttons #}
+                    {{ form_widget(master_password_form.update, { attr: { class: "btn" } }) }}
+                    {{ form_widget(master_password_form.delete, { attr: { class: "btn btn-danger" } }) }}
                 </div>
             </fieldset>
         {{ form_end(master_password_form) }}

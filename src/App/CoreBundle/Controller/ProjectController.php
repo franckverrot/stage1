@@ -72,10 +72,16 @@ class ProjectController extends Controller
         $form->bind($request);
 
         if ($form->isValid()) {
-            $project->setMasterPassword(password_hash($project->getMasterPassword(), PASSWORD_BCRYPT));
+            if ($form->get('delete')->isClicked()) {
+                $project->setMasterPassword(null);
+                $message = 'Master password deleted';
+            } else {
+                $project->setMasterPassword(password_hash($project->getMasterPassword(), PASSWORD_BCRYPT));
+                $message = 'Master password updated';
+            }
+            
             $this->persistAndFlush($project);
-
-            $request->getSession()->getFlashBag()->add('success', 'Master password updated');
+            $request->getSession()->getFlashBag()->add('success', $message);
 
             return $this->redirect($this->generateUrl('app_core_project_access', ['id' => $project->getId()]));
         }
