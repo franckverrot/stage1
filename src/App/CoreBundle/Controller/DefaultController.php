@@ -335,6 +335,13 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($project);
 
+            # this is one special ip that cannot be revoked
+            # it is used to keep the access list "existing"
+            # thus activating auth on the staging areas
+            # yes, it's a bit hacky.
+            $this->grantProjectAccess($project, new ProjectAccess('0.0.0.0'));
+
+            # this, however, is perfectly legit.
             $this->grantProjectAccess($project, new ProjectAccess($this->getClientIp()));
 
             return new JsonResponse([

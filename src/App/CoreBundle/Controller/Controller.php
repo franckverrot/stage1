@@ -12,11 +12,30 @@ use App\CoreBundle\Value\ProjectAccess;
 
 class Controller extends BaseController
 {
+    protected function getClientIp()
+    {
+        if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+            return $matches[0];
+        }
+
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+
+        return null;
+    }
+
     protected function getProjectAccessList(Project $project)
     {
-        return $this
+        $accessList = $this
             ->get('app_core.redis')
             ->smembers('auth:' . $project->getSlug());
+
+        $accessList = array_filter($accessList, function($ip) {
+            return $ip !== '0.0.0.0';
+        });
+
+        return $accessList;
     }
 
     protected function grantProjectAccess(Project $project, ProjectAccess $access)
@@ -135,11 +154,7 @@ class Controller extends BaseController
         if (!$project) {
             throw $this->createNotFoundException();
         }
-
-        if ($project->getOwner() != $this->getUser()) {
-            throw new AccessDeniedException();
-        }
-
+        
         return $project;
     }
 }
