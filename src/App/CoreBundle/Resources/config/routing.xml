@@ -69,11 +69,11 @@
     </route>
 
     <route id="app_core_project_auth" pattern="/auth/{slug}" methods="GET">
-        <default key="_controller">AppCoreBundle:Default:projectAuth</default>
+        <default key="_controller">AppCoreBundle:Project:auth</default>
     </route>
 
     <route id="app_core_project_authorize" pattern="/auth/{slug}" methods="POST">
-        <default key="_controller">AppCoreBundle:Default:projectAuthorize</default>
+        <default key="_controller">AppCoreBundle:Project:authorize</default>
     </route>
 
     <route id="app_core_logout" pattern="/logout">

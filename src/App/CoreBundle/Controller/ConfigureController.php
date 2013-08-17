@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Command\CacheClearCommand;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 
-class ConfigureController extends Controller
+class ConfigureController extends BaseController
 {
     private function getConfigPath($file)
     {
