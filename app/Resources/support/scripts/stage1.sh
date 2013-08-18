@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# sleep 1d
+
 export DEBIAN_FRONTEND=noninteractive
 
 apt-get install -qy vim git curl
@@ -11,7 +14,10 @@ curl http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
 cp /tmp/apt-dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
+apt-get install -qy python-software-properties
+
 add-apt-repository -y ppa:chris-lea/node.js
+add-apt-repository -y ppa:dotcloud/lxc-docker
 
 apt-get update
 
@@ -30,7 +36,9 @@ apt-get -qy install \
     realpath \
     htop \
     acl \
-    nodejs
+    nodejs \
+    linux-image-generic-lts-raring \
+    lxc-docker
 
 # enable ACL on /
 
@@ -66,17 +74,10 @@ mv composer.phar /usr/local/bin/composer
 
 # prepare directories
 
-mkdir /tmp/run
+mkdir -p /tmp/run
 chown vagrant /tmp/run
 
 # docker specific stuff
-
-apt-get install -qy \
-    linux-image-generic-lts-raring \
-    python-software-properties
-add-apt-repository -y ppa:dotcloud/lxc-docker
-apt-get update
-apt-get install -qy lxc-docker
 
 docker pull ubuntu:precise
 
@@ -84,4 +85,4 @@ docker pull ubuntu:precise
 
 # npm install -g hipache
 npm install -g git://github.com/ubermuda/hipache.git
-mkdir /var/log/hipache
+mkdir -p /var/log/hipache

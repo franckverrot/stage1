@@ -149,6 +149,7 @@ def cold_deploy():
 
     services_restart()
     processes_start()
+    hipache_restart()
 
     run('chown -R www-data:www-data %s' % env.project_path)
     run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
@@ -175,6 +176,7 @@ def hot_deploy():
 
     services_restart()
     processes_start()
+    hipache_restart()
     run('chown -R www-data:www-data %s' % env.project_path)
     run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
 
