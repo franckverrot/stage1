@@ -3,7 +3,7 @@
 
 $script = <<EOF
 sudo /etc/init.d/monit restart
-sudo docker build -t symfony /vagrant/docker/
+sudo docker build -t symfony2 /vagrant/docker/
 cd /vagrant
 composer install
 /vagrant/app/console doctrine:database:create

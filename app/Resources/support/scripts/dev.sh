@@ -1,6 +1,8 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 
+redis-cli RPUSH frontend:stage1 stage1 http://127.0.0.1:8080/
+
 apt-get -qy install \
     build-essential \
     python2.7-dev \
