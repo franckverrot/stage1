@@ -4,6 +4,7 @@ namespace App\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\Cookie;
 
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
@@ -12,9 +13,19 @@ use App\CoreBundle\Value\ProjectAccess;
 
 class Controller extends BaseController
 {
+    const REGEXP_IP = '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
+
+    protected function addFlash($type, $message)
+    {
+        $request->getSession()->getFlashBag()->add($type, $message);
+    }
+
+    /**
+     * @todo fix this
+     */
     protected function getClientIp()
     {
-        if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+        if (preg_match('/'.self::REGEXP_IP.'$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
             return $matches[0];
         }
 
@@ -31,25 +42,42 @@ class Controller extends BaseController
             ->get('app_core.redis')
             ->smembers('auth:' . $project->getSlug());
 
-        $accessList = array_filter($accessList, function($ip) {
-            return $ip !== '0.0.0.0';
+        $accessList = array_filter($accessList, function($token) {
+            return $token !== '0.0.0.0';
         });
 
-        return $accessList;
+        $ips = array_filter($accessList, function($string) { return preg_match('/^'.self::REGEXP_IP.'$/S', $string); });
+        $tokens = array_diff($accessList, $ips);
+
+        return ['ips' => $ips, 'tokens' => $tokens];
     }
 
     protected function grantProjectAccess(Project $project, ProjectAccess $access)
     {
         return $this
             ->get('app_core.redis')
-            ->sadd('auth:' . $project->getSlug(), $access->getIp());
+            ->sadd('auth:' . $project->getSlug(), $access->getIp(), $access->getToken());
     }
 
     protected function revokeProjectAccess(Project $project, ProjectAccess $access)
     {
         return $this
             ->get('app_core.redis')
-            ->srem('auth:' . $project->getSlug(), $access->getIp());
+            ->srem('auth:' . $project->getSlug(), $access->getIp(), $access->getToken());
+    }
+
+    protected function isProjectAccessGranted(Project $project, ProjectAccess $access)
+    {
+        $authKey = 'auth:' . $project->getSlug();
+
+        $results = $this
+            ->get('app_core.redis')
+            ->multi()
+            ->sismember($authKey, $access->getIp())
+            ->sismember($authKey, $access->getToken())
+            ->exec();
+
+        return (false !== array_search(true, $results));
     }
 
     protected function github_post($url, $payload)

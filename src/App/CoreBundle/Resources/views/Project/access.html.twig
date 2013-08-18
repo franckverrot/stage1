@@ -7,41 +7,6 @@
 
 <div class="row-fluid">
     <div class="span6">
-        <legend><strong>{% if access_list | length == 0 %}no{% else %}{{ access_list | length }}{% endif %}</strong> authorized IP address{% if access_list | length != 1 %}es{% endif %}</legend>
-        <form method="POST" action="{{ path('app_core_project_access_delete', { id: project.id }) }}">
-            <input type="hidden" name="_method" value="DELETE" />
-            <input type="hidden" name="access_delete[csrf_token]" value="{{ access_delete_csrf_token }}" />
-            <table class="table table-striped" id="project-access-list">
-                <thead>
-                    <tr class="dummy">
-                        <th width="80%"></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ip in access_list %}
-                    <tr>
-                        <td>{{ ip }}</td>
-                        <td><button name="access_delete[delete]" value="{{ ip }}" class="btn btn-danger btn-small">revoke</button></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <div class="span6">
-        {{ form_start(access_form) }}
-            <fieldset>
-                <legend>Grant access</legend>
-                <div class="input-append">
-                    {{ form_errors(access_form.ip) }}
-                    {{ form_widget(access_form.ip) }}
-                    <button type="submit" class="btn">Add IP</button>
-                </div>
-                <span class="help-block">You can grant access to any arbitrary IP.</span>
-            </fieldset>
-        {{ form_end(access_form) }}
-
         {{ form_start(master_password_form) }}
             {{ form_errors(master_password_form) }}
             <fieldset>
@@ -63,6 +28,31 @@
                 <span class="help-block">The master password can be used by anyone to grant himself access to this project's staging areas. Deleting the master password will disable this feature.</span>
             </fieldset>
         {{ form_end(master_password_form) }}
+    </div>
+    <div class="span6">
+    {% if show_ip_access_list %}
+    {% include 'AppCoreBundle:Project:_access_list.html.twig' with {
+        access_list: access_list.ips,
+        access_form: access_form,
+        project: project,
+        csrf_token: access_delete_csrf_token,
+        title_empty: '<strong>no</strong> authorized IP addresses',
+        title_singular: '<strong>1</strong> authorized IP address',
+        title_plural: '<strong>%d</strong> authorized IP addresses',
+    } %}
+    {% endif %}
+
+    {% if show_token_access_list %}
+    {% include 'AppCoreBundle:Project:_access_list.html.twig' with {
+        access_list: access_list.tokens,
+        access_form: null,
+        project: project,
+        csrf_token: access_delete_csrf_token,
+        title_empty: '<strong>no</strong> authorized tokens',
+        title_singular: '<strong>1</strong> authorized token',
+        title_plural: '<strong>%d</strong> authorized tokens',
+    } %}
+    {% endif %}
     </div>
 </div>
 {% endblock body %}

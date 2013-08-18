@@ -18,13 +18,17 @@ framework:
         #assets_version: SomeVersionScheme
     default_locale:  "%locale%"
     trusted_proxies: ~
-    session:         ~
+    session:
+        name: STAGE1SESSID
     fragments:       ~
 
 # Twig Configuration
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
+    globals:
+        show_ip_access_list: %show_ip_access_list%
+        show_token_access_list: %show_token_access_list%
 
 # Assetic Configuration
 assetic:

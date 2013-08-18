@@ -6,13 +6,28 @@ class ProjectAccess
 {
     public $ip;
 
-    public function __construct($ip = null)
+    public $token;
+
+    public function __construct($ip = null, $token = null)
     {
         $this->ip = $ip;
+        $this->token = $token;
+    }
+
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function setToken($token)
+    {
+        $this->token = $token;
+        return $token;
     }
 
     public function getIp()
     {
+        return null;
         return $this->ip;
     }
 
@@ -20,10 +35,5 @@ class ProjectAccess
     {
         $this->ip = $ip;
         return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->ip;
     }
 }

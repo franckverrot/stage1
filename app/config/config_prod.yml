@@ -5,6 +5,10 @@ imports:
 #    validation:
 #        cache: apc
 
+framework:
+    session:
+        cookie_domain: ".stage1.io"
+
 #doctrine:
 #    orm:
 #        metadata_cache_driver: apc

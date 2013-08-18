@@ -1,0 +1,48 @@
+<legend>{% spaceless %}
+    {% if access_list | length == 0 %}
+    {{ title_empty | raw }}
+    {% elseif access_list | length == 1 %}
+    {{ title_singular | raw }}
+    {% else %}
+    {{ title_plural | raw }}
+    {% endif %}
+{% endspaceless %}</legend>
+
+{% if access_form %}
+{{ form_start(access_form, { attr: { id: 'project-access-grant' }}) }}
+<table class="table">
+    <tbody>
+        <tr>
+            <td width="80%">
+                {{ form_errors(access_form.ip) }}
+                {{ form_widget(access_form.ip) }}
+            </td>
+            <td>
+                <button type="submit" class="btn">grant</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{{ form_end(access_form) }}
+{% endif %}
+
+<form method="POST" action="{{ path('app_core_project_access_delete', { id: project.id }) }}">
+    <input type="hidden" name="_method" value="DELETE" />
+    <input type="hidden" name="access_delete[csrf_token]" value="{{ csrf_token }}" />
+    <table class="table table-striped" id="project-access-list">
+        <thead>
+            <tr class="dummy">
+                <th width="80%"></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ip in access_list %}
+            <tr>
+                <td>{{ ip }}</td>
+                <td><button name="access_delete[delete]" value="{{ ip }}" class="btn btn-danger btn-small">revoke</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>

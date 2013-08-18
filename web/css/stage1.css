@@ -20,6 +20,10 @@ table.table td {
     border-top-width: 0 !important;
 }
 
+form#project-access-grant, form#project-access-grant table {
+    margin-bottom: 0;
+}
+
 div.branch {
     line-height: 30px;
 }

@@ -124,9 +124,8 @@ class ProjectController extends Controller
     {
         $project = $this->findProjectBySlug($slug);
 
-        $isAllowed = $this
-            ->get('app_core.redis')
-            ->sismember('auth:' . $project->getSlug(), $this->getClientIp());
+        $access = new ProjectAccess($this->getClientIp(), $request->getSession()->getId());
+        $isAllowed = $this->isProjectAccessGranted($project, $access);
 
         if (!$isAllowed && strlen($project->getMasterPassword()) == 0) {
             # assume owner don't want existence of this project to leak
@@ -149,23 +148,15 @@ class ProjectController extends Controller
     {
         $project = $this->findProjectBySlug($slug);
 
-        $flashBag = $request->getSession()->getFlashBag();
-
         if (password_verify($request->request->get('password'), $project->getMasterPassword())) {
-            # @todo fix this
-            if (null !== $this->getClientIp()) {
-                $this
-                    ->get('app_core.redis')
-                    ->sadd('auth:'.$project->getSlug(), $this->getClientIp());
+            $access = new ProjectAccess($this->getClientIp(), $request->getSession()->getId());
+            $this->grantProjectAccess($project, $access);
 
-                if (strlen($return = $request->request->get('return')) > 0) {
-                    return $this->redirect('http://' . $request->request->get('return'));
-                }
-    
-                $flashBag->add('success', 'You have been authenticated');
-            } else {
-                $flashBag->add('error', 'Unable to find your IP address');
+            if (strlen($return = $request->request->get('return')) > 0) {
+                return $this->redirect('http://' . $request->request->get('return'));
             }
+
+            $this->addFlash('success', 'You have been authenticated');
         }
 
         return $this->render('AppCoreBundle:Project:auth.html.twig', [

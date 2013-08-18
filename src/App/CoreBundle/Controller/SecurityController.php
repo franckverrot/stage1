@@ -48,7 +48,7 @@ class SecurityController extends Controller
 
     public function authorizeAction()
     {
-        $token = md5(uniqid());
+        $token = $this->get('form.csrf_provider')->generateCsrfToken('github');
         $this->get('session')->set('csrf_token', $token);
 
         $payload = [
@@ -66,7 +66,7 @@ class SecurityController extends Controller
         $code = $request->query->get('code');
         $token = $request->query->get('state');
 
-        if ($token !== $this->get('session')->get('csrf_token')) {
+        if (!$this->get('form.csrf_provider')->isCsrfTokenValid('github', $token)) {
             throw new RuntimeException('CSRF Mismatch');
         }
 
