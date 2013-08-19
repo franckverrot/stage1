@@ -8,7 +8,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
 RUN apt-get update -y
-RUN apt-get install -qy vim curl git ruby1.8
+RUN apt-get install -qy vim curl git ruby1.9.1
 
 RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
@@ -33,5 +33,3 @@ ADD ./support/bin/runapp.sh /usr/local/bin/runapp
 RUN chmod +x /usr/local/bin/buildapp /usr/local/bin/runapp
 
 RUN apt-get autoremove -qy vim curl
-
-# ENTRYPOINT ["/usr/local/bin/build.sh"]

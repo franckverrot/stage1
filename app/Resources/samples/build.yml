@@ -1,0 +1,3 @@
+before_script:
+  - composer self-update
+  - composer install --ansi --no-dev --no-interaction --prefer-dist --no-progress

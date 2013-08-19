@@ -3,6 +3,7 @@
 test -n "$STAGE1_DEBUG" && set -x
 
 set -e
+set -u
 
 trap 'exit $?' ERR
 
@@ -56,24 +57,28 @@ cd $APP_ROOT
 
 git reset --hard $HASH
 
-TRAVIS_PATH=.travis.yml
+CONFIG_PATH=".build.yml"
+CONFIG_BEFORE_SCRIPT=""
+CONFIG_ENV=""
 
-if [ -f $TRAVIS_PATH ]; then
-    echo "---> Detected $TRAVIS_PATH, checking before script"
+if [ -f $CONFIG_PATH ]; then
+    echo "---> Detected $CONFIG_PATH"
+    CONFIG_BEFORE_SCRIPT="$(ruby -r yaml -e "puts YAML.load_file('$CONFIG_PATH')['script'] rescue NoMethodError")"
 
-    TRAVIS_BEFORE_SCRIPT="$(ruby -r yaml -e "puts YAML.load_file('$TRAVIS_PATH')['before_script'] rescue NoMethodError")"
-    TRAVIS_ENV="$(ruby -r yaml -e "puts YAML.load_file('$TRAVIS_PATH')['env'][0] rescue NoMethodError")"
+    if [ -z "$CONFIG_BEFORE_SCRIPT" ]; then
+        echo "---> No script found, continuing with default build"
+    fi
 fi
 
-if [ ! -z "$TRAVIS_BEFORE_SCRIPT" ]; then
-    echo "---> Using $TRAVIS_PATH's before_script commands"
+if [ -n "$CONFIG_BEFORE_SCRIPT" ]; then
+    echo "---> Using $CONFIG_PATH's script commands"
 
-    if [ ! -z "$TRAVIS_ENV" ]; then
-        echo "---> Using $TRAVIS_PATH's env ($TRAVIS_ENV)"
-        declare $TRAVIS_ENV
+    if [ -n "$CONFIG_ENV" ]; then
+        echo "---> Using $CONFIG_PATH's env ($CONFIG_ENV)"
+        declare $CONFIG_ENV
     fi
 
-    echo "$TRAVIS_BEFORE_SCRIPT" | while read CMD; do
+    echo "$CONFIG_BEFORE_SCRIPT" | while read CMD; do
         echo "---> Running $CMD"
         eval $CMD
     done
