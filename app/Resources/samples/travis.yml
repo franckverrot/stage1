@@ -1,0 +1,38 @@
+# https://raw.github.com/symfony-cmf/cmf-sandbox/master/.travis.yml
+
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+env:
+  - TRANSPORT=jackrabbit
+#  - TRANSPORT=midgard_sqlite MIDGARD_EXT_VERSION=ratatoskr
+#  - TRANSPORT=midgard_mysql MIDGARD_EXT_VERSION=ratatoskr
+#  - TRANSPORT=midgard_sqlite MIDGARD_EXT_VERSION=gjallarhorn
+#  - TRANSPORT=midgard_mysql MIDGARD_EXT_VERSION=gjallarhorn
+  - TRANSPORT=doctrine_dbal
+
+before_script:
+  - composer self-update
+  - cp app/config/phpcr_${TRANSPORT}.yml.dist app/config/phpcr.yml
+  - cp app/config/parameters.yml.dist app/config/parameters.yml
+  - ./app/tests/travis_${TRANSPORT}.sh
+  - app/console doctrine:phpcr:workspace:create sandbox_test
+  - app/console doctrine:phpcr:repository:init -e=test
+
+
+script: phpunit -c app
+
+notifications:
+  irc: "irc.freenode.org#symfony-cmf"
+  email: "symfony-cmf-devs@googlegroups.com"
+
+#matrix:
+#  allow_failures:
+#    - env: TRANSPORT=midgard_sqlite MIDGARD_EXT_VERSION=ratatoskr
+#    - env: TRANSPORT=midgard_mysql MIDGARD_EXT_VERSION=ratatoskr
+#    - env: TRANSPORT=midgard_sqlite MIDGARD_EXT_VERSION=gjallarhorn
+#    - env: TRANSPORT=midgard_mysql MIDGARD_EXT_VERSION=gjallarhorn

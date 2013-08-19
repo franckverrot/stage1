@@ -114,12 +114,11 @@ def docker_clean():
     sudo('%s/bin/docker-clean.sh' % env.project_path)
 
 def deploy():
-    with hide('running', 'stdout', 'stderr'):
-        if needs_cold_deploy():
-            info('first time deploy')
-            cold_deploy()
-        else:
-            hot_deploy()
+    if needs_cold_deploy():
+        info('first time deploy')
+        cold_deploy()
+    else:
+        hot_deploy()
 
 def cold_deploy():
     prepare()

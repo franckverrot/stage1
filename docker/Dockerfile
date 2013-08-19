@@ -8,7 +8,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
 RUN apt-get update -y
-RUN apt-get install -qy vim curl git
+RUN apt-get install -qy vim curl git ruby1.8
 
 RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
@@ -27,8 +27,8 @@ ADD ./support/parameters.yml /etc/symfony/parameters.yml.dist
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
-ADD ./support/buildapp.sh /usr/local/bin/buildapp
-ADD ./support/runapp.sh /usr/local/bin/runapp
+ADD ./support/bin/buildapp.sh /usr/local/bin/buildapp
+ADD ./support/bin/runapp.sh /usr/local/bin/runapp
 
 RUN chmod +x /usr/local/bin/buildapp /usr/local/bin/runapp
 
