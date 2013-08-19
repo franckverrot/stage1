@@ -59,6 +59,8 @@ TODO
         * mail
         * webhooks
     * have a way to configure ENV variables in the container
+    * export a few ENV var for easier configuration (see http://symfony.com/doc/current/cookbook/configuration/external_parameters.html)
+    * support Procfiles
 
 * projects
     * allow per-project docker image selection
@@ -129,8 +131,10 @@ THE DISTANT FUTURE
     * update web ui accordingly for the following events
         * new project (detected through a build poke)
 
-* images
+* runtimes
     * premium option to allow a user to build his own docker image and then assign it to his projects
+    * support buildpacks, packer, chef, puppet
+
 
 * misc
     * pusher private channels to receive push notif about your projects' builds
