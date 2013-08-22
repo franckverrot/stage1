@@ -23,6 +23,7 @@ detect_branches();
             <th width="15%">Branch</th>
             <th width="10%">Hash</th>
             <th width="10%">Status</th>
+            <th width="15%">&nbsp;</th>
             <th>&nbsp;</th>
         </tr>
     </thead>
@@ -38,27 +39,22 @@ detect_branches();
 {% endverbatim %}
 </script>
 
-<script type="text/mustache" id="tpl-ref-schedule-form">
+<script type="text/mustache" id="tpl-ref-cancel-form">
 {% verbatim %}
-<form id="ref-{{ normName }}-schedule-form" method="post" action="{{ schedule_build_url }}">
-    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule build</button>
-    {{#data}}
-    <input type="hidden" name="{{ name }}" value="{{ value }}" />
-    {{/data}}
+<form id="ref-{{ normName }}-cancel-form" method="post" action="{{ cancel_url }}">
+    <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
 </form>
 {% endverbatim %}
 </script>
 
-<script type="text/mustache" id="tpl-branch-pending">
+<script type="text/mustache" id="tpl-ref-schedule-form">
 {% verbatim %}
-<tr class="branch" id="ref-{{ normName }}">
-    <td class="ctn-name">{{ name }}</td>
-    <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
-    <td class="ctn-status">
-        <span id="ref-{{ normName }}-status" data-hash="{{ hash }}" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
-    </td>
-    <td class="actions" id="ref-{{ normName }}-actions"></td>
-</tr>
+<form id="ref-{{ normName }}-schedule-form" method="post" action="{{ schedule_build_url }}">
+    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule</button>
+    {{#data}}
+    <input type="hidden" name="{{ name }}" value="{{ value }}" />
+    {{/data}}
+</form>
 {% endverbatim %}
 </script>
 
@@ -74,13 +70,9 @@ detect_branches();
     <td class="ctn-name">{{ name }}</td>
     <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
     <td class="ctn-status"></td>
+    <td class="actions" id="ref-{{ normName }}-form-container"></td>
     <td class="actions" id="ref-{{ normName }}-actions">
-        <form id="ref-{{ normName }}-schedule-form" method="post" action="{{ schedule_build_url }}">
-            <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule build</button>
-            {{#data}}
-            <input type="hidden" name="{{ name }}" value="{{ value }}" />
-            {{/data}}
-        </form>
+        <span id="ref-{{ normName }}-link"></span>
     </td>
 </tr>
 {% endverbatim %}

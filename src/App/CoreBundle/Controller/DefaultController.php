@@ -49,8 +49,12 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($build);
 
+            $buildData = $build->asWebsocketMessage();
+
+            $buildData['schedule_url'] = $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]);
+
             $this->publishWebsocket('build.canceled', [
-                'build' => $build->asWebsocketMessage(),
+                'build' => $buildData,
                 'project' => $project->asWebsocketMessage()
             ]);
 
@@ -210,12 +214,14 @@ class DefaultController extends Controller
             $this->publishWebsocket('build.scheduled', [
                 'build' => array_replace([
                     'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+                    'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
                 ], $build->asWebsocketMessage()),
                 'project' => $project->asWebsocketMessage(),
             ]);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+                'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
                 'build' => $build->asWebsocketMessage(),
             ], 201);
         } catch (Exception $e) {
@@ -234,18 +240,57 @@ class DefaultController extends Controller
         ]);
 
 
-        $refs = $this->github_get($url);
+        $heads = $this->github_get($url);
 
         $branches = array();
 
-        foreach ($refs as $ref) {
-            $branches[] = [
-                'ref' => substr($ref->ref, 11),
-                'hash' => $ref->object->sha,
+        foreach ($heads as $head) {
+            $ref = substr($head->ref, 11);
+            $branches[$ref] = [
+                'ref' => $ref,
+                'hash' => $head->object->sha,
             ];
         }
 
-        return new JsonResponse($branches);
+        ksort($branches);
+
+        $builds = $this
+            ->getDoctrine()
+            ->getRepository('AppCoreBundle:Build')
+            ->findLastByRefs($this->getDoctrine()->getManager(), array_keys($branches));
+
+        foreach ($builds as $build) {
+            $buildData = $build->asWebsocketMessage();
+
+            if (!$build->isPending()) {
+                $buildData['schedule_url'] = $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]);
+            }
+
+            if ($build->isBuilding()) {
+                $buildData['kill_url'] = $this->generateUrl('app_core_build_kill', ['id' => $build->getId()]);
+            }
+
+            if ($build->isScheduled()) {
+                $buildData['cancel_url'] = $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]);
+            }
+
+            $branches[$build->getRef()]['last_build'] = $buildData;
+        }
+
+        foreach ($branches as $ref => $branch) {
+            if (!isset($branch['last_build'])) {
+                $branch['last_build'] = array(
+                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]),
+                    # @todo @normalize move to its own service
+                    'normRef' => preg_replace('/[^a-z0-9\-]/', '-', strtolower($ref)),
+                    'ref' => $ref,
+                );
+
+                $branches[$ref] = $branch;
+            }
+        }
+
+        return new JsonResponse(array_values($branches));
     }
 
     public function projectsImportAction()

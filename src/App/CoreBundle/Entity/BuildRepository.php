@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 use Exception;
 
@@ -21,6 +22,15 @@ class BuildRepository extends EntityRepository
             ->getQuery();
 
         return (int) $query->getSingleScalarResult();
+    }
+
+    public function findLastByRefs()
+    {
+        $query = 'SELECT b.* FROM (SELECT * FROM build ORDER BY created_at DESC) b GROUP BY b.ref';
+
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata('App\\CoreBundle\\Entity\\Build', 'b');
+        return $this->getEntityManager()->createNativeQuery($query, $rsm)->execute();
     }
 
     public function findPreviousBuild(Build $build)

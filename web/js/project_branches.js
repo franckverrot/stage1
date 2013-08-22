@@ -38,29 +38,20 @@
         $.getJSON(detect_branches_url).then(function(data) {
             for (i in data) {
                 var branch = data[i];
-                if (undefined != pending_builds[branch.ref]) {
-                    var branch = branches.append(tpl_branch_pending({
-                        name: branch.ref,
-                        normName: branch.ref.toLowerCase().replace(/[^a-z0-9\-]/, '-'),
-                        hash: branch.hash,
-                        abbr_hash: branch.hash.substr(0, 8),
-                        status: pending_builds[branch.ref].status,
-                        status_label: pending_builds[branch.ref].status_label,
-                        status_label_class: pending_builds[branch.ref].status_label_class
-                    }));
-                } else {
-                    branches.append(tpl_branch({
-                        name: branch.ref,
-                        normName: branch.ref.toLowerCase().replace(/[^a-z0-9\-]/, '-'),
-                        hash: branch.hash,
-                        abbr_hash: branch.hash.substr(0, 8),
-                        data: [
-                            { name: 'ref', value: branch.ref },
-                            { name: 'hash', value: branch.hash }
-                        ],
-                        schedule_build_url: window.schedule_build_url
-                    }));                    
-                }
+                branches.append(tpl_branch({
+                    name: branch.ref,
+                    normName: branch.ref.toLowerCase().replace(/[^a-z0-9\-]/, '-'),
+                    hash: branch.hash,
+                    abbr_hash: branch.hash.substr(0, 8),
+                    data: [
+                        { name: 'ref', value: branch.ref },
+                        { name: 'hash', value: branch.hash }
+                    ],
+                    // @todo deprecated?
+                    schedule_build_url: window.schedule_build_url
+                }));
+
+                do_update_ref(branch.last_build);
             }
 
             $('#detect_branches_status')

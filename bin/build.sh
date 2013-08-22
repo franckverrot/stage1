@@ -79,6 +79,7 @@ docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev
 
 rm -rf $CONTEXT_DIR
 
+# @todo use the new -cidfile option
 BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN) || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM

@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-        {% javascripts 'js/jquery.js' 'js/*.js' output="assets/all.js" %}
+        {% javascripts 'js/jquery.js' 'js/mustache.js' 'js/update_ref.js' 'js/*.js' output="assets/all.js" %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
         {% block javascripts %}{% endblock %}

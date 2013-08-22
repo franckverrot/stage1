@@ -32,11 +32,8 @@
 
     var prepare = [
         'nb-pending-builds',
-        'build-kill-form',
-        'ref-kill-form',
-        'ref-schedule-form',
-        'ref-status'
-    ]
+        'build-kill-form'
+    ];
 
     var tpl = {};
 
@@ -52,6 +49,7 @@
         'project': function(event, project) {
             update_project_nb_pending_builds(project.id, parseInt(project.nb_pending_builds));
         },
+        
         'build': function(event, build) {
             update_build(build.id, 'status', function(el) {
                 el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
@@ -104,62 +102,7 @@
                 });
             }
 
-            update_ref(build.normRef, 'status', function(el) {
-                if (el.length == 0 && undefined != tpl['ref-status']) {
-                    $('#ref-' + build.normRef + ' .ctn-status').html(tpl['ref-status']({
-                        name: build.ref,
-                        normName: build.normRef,
-                        hash: build.hash,
-                        status: build.status,
-                        status_label: build.status_label,
-                        status_label_class: build.status_label_class
-                    }));
-                } else {
-                    el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
-                }
-            });
-
-
-            update_ref(build.normRef, 'schedule-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
-                    setTimeout(function() { el.remove(); }, 1000);                    
-                } else {
-                    el.remove();
-                }
-            });
-
-            update_ref(build.normRef, 'kill-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).html('<i class="icon-ok"></i>');
-                    setTimeout(function() { el.remove(); }, 1000);                    
-                } else {
-                    el.remove();
-                }
-            });
-
-            if (build.kill_url && tpl['ref-kill-form']) {
-                update_ref(build.normRef, 'actions', function(el) {
-                    el.append(tpl['ref-kill-form']({
-                        name: build.ref,
-                        normName: build.normRef,
-                        kill_url: build.kill_url
-                    }));
-                });
-            }
-
-            if (build.schedule_url && tpl['ref-schedule-form']) {
-                update_ref(build.normRef, 'actions', function(el) {
-                    el.append(tpl['ref-schedule-form']({
-                        name: build.ref,
-                        normName: build.normRef,
-                        schedule_build_url: build.schedule_url,
-                        data: [
-                            { name: 'ref', value: build.ref },
-                        ]
-                    }));
-                });
-            }
+            do_update_ref(build);
         }
     };
 
@@ -167,12 +110,6 @@
         // console.log('update_build', build_id, type);
         callback($('#build-' + build_id + '-' + type));
     }
-
-    function update_ref(norm_name, type, callback) {
-        // console.log('update_ref', norm_name, type);
-        callback($('#ref-' + norm_name + '-' + type));
-    }
-
 
     function update_project_nb_pending_builds(project_id, nb_pending_builds) {
         var $nbPendingBuilds = $('#nav-project-' + project_id + ' #nb-pending-builds-' + project_id);
