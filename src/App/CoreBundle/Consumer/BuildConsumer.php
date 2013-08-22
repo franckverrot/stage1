@@ -66,7 +66,7 @@ class BuildConsumer implements ConsumerInterface
 
         $projectDir = realpath(__DIR__.'/../../../..');
         $builder = new ProcessBuilder([
-            $projectDir.'/bin/build.sh',
+            $projectDir.'/bin/build/start.sh',
             $build->getId()
         ]);
         $builder->setTimeout(0);
@@ -108,7 +108,7 @@ class BuildConsumer implements ConsumerInterface
 
         if (null !== ($previousBuild = $this->getBuildRepository()->findPreviousBuild($build)) && $previousBuild->hasContainer()) {
             $builder = new ProcessBuilder([
-                $projectDir.'/bin/stop.sh',
+                $projectDir.'/bin/build/stop.sh',
                 $previousBuild->getContainerId(),
                 $previousBuild->getImageId(),
                 $previousBuild->getImageTag(),

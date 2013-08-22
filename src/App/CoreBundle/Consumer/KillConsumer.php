@@ -97,7 +97,7 @@ class KillConsumer implements ConsumerInterface
         }
 
         $builder = new ProcessBuilder([
-            realpath(__DIR__.'/../../../../bin/kill.sh'),
+            realpath(__DIR__.'/../../../../bin/build/kill.sh'),
             $build->getId()
         ]);
         $process = $builder->getProcess();
