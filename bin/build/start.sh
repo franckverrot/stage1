@@ -44,7 +44,7 @@ function dummy {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CONSOLE=$(realpath $DIR/../app/console) || false
+CONSOLE=$(realpath $DIR/../../app/console) || false
 
 $(php $CONSOLE build:infos $1) || false
 
