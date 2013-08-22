@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -e
 
 set -o pipefail
 
@@ -8,6 +8,11 @@ docker ps -q | $XARGS docker stop
 docker ps -q -a | $XARGS docker rm
 docker images | grep -E 'none|b/' | awk '{print $3}' | $XARGS docker rmi
 
-rm -rf /var/lib/docker/containers/*
-rm -rf /var/lib/docker/grap/*
-pkill docker
+if [ "$1" = "-f" ]; then
+    rm -rf /var/lib/docker/containers/*
+    rm -rf /var/lib/docker/grap/*
+
+    docker pull ubuntu:precise
+
+    pkill docker
+fi

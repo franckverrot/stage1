@@ -1,6 +1,4 @@
-#!/bin/bash
-
-test -n "$STAGE1_DEBUG" && set -x
+#!/bin/bash +x
 
 set -e
 
@@ -26,21 +24,6 @@ function error_handler {
 # @todo move that to the CONTEXT_DIR
 BUILD_INFO_FILE="/tmp/stage1-build-info"
 BUILD_JOB_FILE="/tmp/stage1-build-job"
-
-function dummy {
-    echo 'This is some dummy output'
-    echo 'This is some dummy error output'
-
-    sleep 10
-
-    echo 'dummy-img' > $BUILD_INFO_FILE
-    echo 'dummy-container' >> $BUILD_INFO_FILE
-    echo '42' >> $BUILD_INFO_FILE
-
-    exit 0    
-}
-
-# dummy
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -80,6 +63,7 @@ docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev
 rm -rf $CONTEXT_DIR
 
 # @todo use the new -cidfile option
+# echo docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN
 BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN) || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM

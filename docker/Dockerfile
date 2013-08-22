@@ -8,7 +8,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
 RUN apt-get update -y
-RUN apt-get install -qy vim curl git ruby1.9.1
+RUN apt-get install -qy realpath vim curl git ruby1.9.1
 
 RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
@@ -30,6 +30,9 @@ RUN mv composer.phar /usr/local/bin/composer
 ADD ./support/bin/buildapp.sh /usr/local/bin/buildapp
 ADD ./support/bin/runapp.sh /usr/local/bin/runapp
 
-RUN chmod +x /usr/local/bin/buildapp /usr/local/bin/runapp
+ADD ./support/lib/stage1.bash /usr/local/lib/stage1.bash
+ADD ./support/lib/builder/ /usr/local/lib/builder/
+
+RUN chmod -R +x /usr/local/bin/buildapp /usr/local/bin/runapp /usr/local/lib/builder/
 
 RUN apt-get autoremove -qy vim curl

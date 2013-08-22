@@ -1,0 +1,3 @@
+#!/bin/bash
+
+[ -f "$1/composer.json" ] && grep 'symfony/symfony' $1/composer.json &>/dev/null && echo symfony2

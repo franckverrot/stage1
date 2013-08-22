@@ -1,103 +1,86 @@
-#!/bin/bash
+#!/bin/bash -e
 
-test -n "$STAGE1_DEBUG" && set -x
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-set -e
-set -u
+source $DIR/../lib/stage1.bash
 
-trap 'exit $?' ERR
-
-if [ -z "$1" ]; then
+[ -z "$1" ] && {
     echo "Missing git repository"
     exit 1
-fi
+}
 
-if [ -z "$2" ]; then
+[ -z "$2" ] && {
     echo "Missing git ref"
     exit 1
-fi
+}
 
-if [ -z "$3" ]; then
+[ -z "$3" ] && {
     echo "Missing git hash"
     exit 1
-fi
+}
 
-if [ -z "$4" ]; then
+[ -z "$4" ] && {
     echo "Github access token is missing"
     exit 1
-fi
+}
 
-SSH_URL=$1
-REF=$2
-HASH=$3
-ACCESS_TOKEN=$4
+ssh_url=$1
+ref=$2
+hash=$3
+access_token=$4
 
-echo "---> Starting MySQL server"
-/etc/init.d/mysql start
+stage1_announce "starting MySQL server"
+stage1_exec /etc/init.d/mysql start
 
 # composer configuration to avoid hitting github's api rate limit
-echo "---> Configuring composer"
-mkdir /.composer
-cat > /.composer/config.json <<EOF
+# @todo this has to be moved to the symfony builder
+# but it must be ran even when the project provides a custom builder
+# so maybe a $builder/bin/before script could be useful
+stage1_announce "configuring composer"
+
+stage1_exec mkdir -p /.composer
+stage1_exec cat > /.composer/config.json <<EOF
 {
     "config": {
         "github-oauth": {
-            "github.com": "$ACCESS_TOKEN"
+            "github.com": "$access_token"
         }
     }
 }
 EOF
 
-APP_ROOT=/var/www
+app_root=/var/www
 
-echo "---> Cloning repository"
-git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT
+stage1_announce "cloning repository"
+stage1_exec git clone --depth 1 --branch $ref $ssh_url $app_root
 
-cd $APP_ROOT
+cd $app_root
 
-git reset --hard $HASH
+stage1_exec git reset --hard $hash
 
-CONFIG_PATH=".build.yml"
-CONFIG_BEFORE_SCRIPT=""
-CONFIG_ENV=""
+builders_root=$(realpath $DIR/../lib/builder)
+builders=($builders_root/*)
+selected_builder=
 
-if [ -f $CONFIG_PATH ]; then
-    echo "---> Detected $CONFIG_PATH"
-    CONFIG_BEFORE_SCRIPT="$(ruby -r yaml -e "puts YAML.load_file('$CONFIG_PATH')['script'] rescue NoMethodError")"
+if [ -n "$(stage1_get_config_script)" ]; then
+    builder="$STAGE1_CONFIG_PATH"
+    stage1_announce custom build detected
 
-    if [ -z "$CONFIG_BEFORE_SCRIPT" ]; then
-        echo "---> No script found, continuing with default build"
-    fi
-fi
-
-if [ -n "$CONFIG_BEFORE_SCRIPT" ]; then
-    echo "---> Using $CONFIG_PATH's script commands"
-
-    if [ -n "$CONFIG_ENV" ]; then
-        echo "---> Using $CONFIG_PATH's env ($CONFIG_ENV)"
-        declare $CONFIG_ENV
-    fi
-
-    echo "$CONFIG_BEFORE_SCRIPT" | while read CMD; do
-        echo "---> Running $CMD"
-        eval $CMD
+    stage1_get_config_script | while read cmd; do
+        stage1_announce running $cmd
+        stage1_exec eval $cmd
     done
 else
-    cp /etc/symfony/parameters.yml.dist app/config/parameters.yml
+    for builder in "${builders[@]}"; do
+        builder_name=$($builder/bin/detect "$app_root") && selected_builder=$builder && break
+    done
 
-    echo "---> Installing dependencies through composer"
-    composer install --ansi --no-progress --no-dev --prefer-dist --no-interaction
-
-    if app/console list doctrine:database > /dev/null 2>&1; then
-        echo "---> Initializing database"
-        app/console doctrine:database:create
-        app/console doctrine:schema:update --force
+    if [ -n "$builder_name" ]; then
+        stage1_announce $builder_name app detected
+    else
+        stage1_announce could not find a builder
+        exit 1
     fi
 
-    if app/console list doctrine:fixtures > /dev/null 2>&1; then
-        echo "---> Loading fixtures"
-        app/console doctrine:fixtures:load
-    fi
+    $builder/bin/build
 fi
-
-chmod -R 777 app/cache app/logs
