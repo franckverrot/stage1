@@ -3,7 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}stage1{% endblock %}</title>
-        {% stylesheets 'css/*.css' output="assets/all.css" %}
+        {% stylesheets output="assets/all.css"
+            'css/vendor/*'
+            'css/*'
+        %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
@@ -58,7 +61,13 @@
         var websocket_auth_url = '{{ path("app_core_primus_auth") }}';
         </script>
         {% endif %}
-        {% javascripts 'js/jquery.js' 'js/mustache.js' 'js/update_ref.js' 'js/*.js' output="assets/all.js" %}
+        {% javascripts output="assets/all.js"
+            'js/vendor/jquery.js'
+            'js/vendor/mustache.js'
+            'js/vendor/*'
+            'js/update_ref.js'
+            'js/*'
+        %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
         {% block javascripts %}{% endblock %}
