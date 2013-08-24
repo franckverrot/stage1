@@ -12,11 +12,11 @@ stage1_announce() {
 }
 
 stage1_get_config_script() {
-    test -f "$@" && ruby -r yaml -e "puts YAML.load_file('$@')['script'] rescue NoMethodError"
+    test -f "$STAGE1_CONFIG_PATH" && ruby -r yaml -e "puts YAML.load_file('$STAGE1_CONFIG_PATH')['script'] rescue NoMethodError"
 }
 
 stage1_get_config_env() {
-    test -f "$@" && ruby -r yaml -e "puts YAML.load_file('$@')['env'] rescue NoMethodError"
+    test -f "$STAGE1_CONFIG_PATH" && ruby -r yaml -e "puts YAML.load_file('$STAGE1_CONFIG_PATH')['env'] rescue NoMethodError"
 }
 
 stage1_exec() {

@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source $DIR/../../../stage1.bash
+source $DIR/../../../stage1.sh
 
 stage1_exec cp /etc/symfony/parameters.yml.dist app/config/parameters.yml
 

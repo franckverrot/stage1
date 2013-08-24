@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source $DIR/../lib/stage1.bash
+source $DIR/../lib/stage1.sh
 
 [ -z "$1" ] && {
     echo "Missing git repository"
