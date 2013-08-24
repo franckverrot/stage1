@@ -4,7 +4,7 @@
     {% elseif access_list | length == 1 %}
     {{ title_singular | raw }}
     {% else %}
-    {{ title_plural | raw }}
+    {{ title_plural | format(access_list | length) | raw }}
     {% endif %}
 {% endspaceless %}</legend>
 

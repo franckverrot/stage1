@@ -322,7 +322,7 @@ class DefaultController extends Controller
             $this->grantProjectAccess($project, new ProjectAccess('0.0.0.0'));
 
             # this, however, is perfectly legit.
-            $this->grantProjectAccess($project, new ProjectAccess($this->getClientIp()));
+            $this->grantProjectAccess($project, new ProjectAccess($this->getClientIp(), $request->getSession()->getId()));
 
             $project->setGithubId($request->request->get('github_id'));
             $project->setGithubOwnerLogin($request->request->get('github_owner_login'));

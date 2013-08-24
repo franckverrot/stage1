@@ -27,7 +27,6 @@ class ProjectAccess
 
     public function getIp()
     {
-        return null;
         return $this->ip;
     }
 
