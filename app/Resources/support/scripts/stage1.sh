@@ -14,10 +14,12 @@ curl http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
 cp /tmp/apt-dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
+cp /tmp/apt-docker.list /etc/apt/sources.list.d/docker.list
+curl http://get.docker.io/gpg | apt-key add -
+
 apt-get install -qy python-software-properties
 
 add-apt-repository -y ppa:chris-lea/node.js
-add-apt-repository -y ppa:dotcloud/lxc-docker
 
 apt-get update
 
@@ -80,6 +82,8 @@ chown vagrant /tmp/run
 # docker specific stuff
 
 docker pull ubuntu:precise
+groupadd docker
+usermod -G docker vagrant
 
 # hipache
 
