@@ -106,6 +106,8 @@ A problem will be github's API rate limit and composer, because the access token
 THE DISTANT FUTURE
 ==================
 
+* see if https://github.com/travis-ci/travis-build is monkey patchable to not include script and after_script
+
 * builds
     * log queue time
     * separate builds and jobs
@@ -118,6 +120,7 @@ THE DISTANT FUTURE
     * add a (disablable) top frame indicating what project / branch you're currently browsing
     * allow shutting down / restarting a running instance
     * http://mailcatcher.me/
+    * reverse proxy: remove auth cookie in proxied request and reput it in response
 
 * projects
     * allow project creation through build poke (?)
@@ -144,4 +147,5 @@ IDEES DE OUF
 
 * le client peut annoter la preprod
 * stage1 enregistre les actions des clients (clic la, clic la, tape ca, clic la)
+    * faire gaffe aux infos sensibles (numeros de CB, telephone)
 * multiplexage de la session (tu vois ce que le client fait en live)
