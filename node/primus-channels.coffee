@@ -1,7 +1,6 @@
 require 'colors'
 
 redis  = require 'redis'
-crypto = require 'crypto'
 
 @PrimusChannels =
     name: 'channels'
@@ -9,7 +8,7 @@ crypto = require 'crypto'
         primus.subscribe = (channel, token = null) ->
             subscribe = (token) -> primus.write action: 'subscribe', channel: channel, token: token
 
-            if token?
+            if token? or not channel.match /^(private|presence)\-/
                 subscribe token
             else
                 $.post options.auth_url, { channel: channel }, (response) ->
@@ -45,17 +44,15 @@ crypto = require 'crypto'
 class Channel
     constructor: (@name, @redis, @options) ->
         @sparks = []
-
-    sign: (spark) ->
-        crypto
-            .createHmac('sha256', @options.secret)
-            .update(spark.id + ':' + @name)
-            .digest('hex')
+        @isPrivate = @name.match /^(private|presence)\-/
 
     auth: (token, success, failure = ->) ->
-        @redis.sismember 'channel:' + @name, token, (err, result) ->
-            throw err if err
-            if result then success() else failure()
+        if @isPrivate
+            @redis.sismember 'channel:' + @name, token, (err, result) ->
+                throw err if err
+                if result then success() else failure()
+        else
+            success()
 
     subscribe: (spark, token) ->
         @auth token,
