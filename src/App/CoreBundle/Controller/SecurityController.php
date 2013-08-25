@@ -22,11 +22,11 @@ class SecurityController extends Controller
         $sparkId = $request->request->get('spark_id');
         $channel = $request->request->get('channel');
 
-        $signature = hash_hmac('sha256', $sparkId . ':' . $channel, 'ThisIsNotSoSecret');
+        $token = uniqid(mt_rand(), true);
 
-        $this->get('app_core.redis')->sadd('channel:' . $channel, $signature);
+        $this->get('app_core.redis')->sadd('channel:' . $channel, $token);
 
-        return new JsonResponse(json_encode(true));
+        return new JsonResponse(json_encode(['token' => $token]));
     }
 
     private function registerGithubUser(Request $request, $accessToken)

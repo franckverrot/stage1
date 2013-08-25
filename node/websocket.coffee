@@ -1,6 +1,7 @@
 #!/usr/bin/coffee
 
 require 'coffee-script'
+require 'colors'
 
 Primus            = require 'primus'
 http              = require 'http'
@@ -22,7 +23,7 @@ primus.use PrimusChannels
 primus.save(__dirname + '/../web/js/primus.js')
 
 primus.on 'connection', (spark) ->
-    console.log 'spark connected', spark.id
+    console.log ('spark#' + spark.id + ' connected').yellow
 
 port = 8090
 Socket = primus.Socket

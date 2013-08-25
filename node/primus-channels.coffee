@@ -1,28 +1,30 @@
+require 'colors'
+
 redis  = require 'redis'
 crypto = require 'crypto'
 
 @PrimusChannels =
     name: 'channels'
     client: (primus, options) ->
-        primus.on 'data', (data) ->
-            primus.id = data.id if data.id
+        primus.subscribe = (channel, token = null) ->
+            subscribe = (token) -> primus.write action: 'subscribe', channel: channel, token: token
 
-        primus.subscribe = (channel) ->
-            $.post options.auth_url, { spark_id: primus.id, channel: channel }, (response) ->
-                if response
-                    primus.write action: 'subscribe', channel: channel
-            , 'json'
-
-            
+            if token?
+                subscribe token
+            else
+                $.post options.auth_url, { channel: channel }, (response) ->
+                    response = JSON.parse(response)
+                    if response.token
+                        subscribe response.token
 
     server: (primus, options) ->
         primus.channels = {}
         primus.redis = redis.createClient()
 
-        primus.Spark::subscribe = (channel) ->
+        primus.Spark::subscribe = (channel, token) ->
             unless channel in primus.channels
                 primus.channels[channel] = new Channel(channel, primus.redis, options)
-            primus.channels[channel].subscribe this
+            primus.channels[channel].subscribe this, token
 
         primus.Spark::unsubscribe = (channel) ->
             unless primus.channels[channel]?
@@ -32,8 +34,12 @@ crypto = require 'crypto'
         primus.on 'connection', (spark) ->
             spark.write id: spark.id
             spark.on 'data', (data) ->
-                if data.channel and (data.action in ['subscribe', 'unsubscribe'])
-                    spark[data.action] data.channel
+                return unless data.channel
+
+                if data.action == 'subscribe'
+                    spark.subscribe data.channel, data.token
+                if data.action == 'unsubscribe'
+                    spark.unsubscribe data.channel
 
 
 class Channel
@@ -46,20 +52,19 @@ class Channel
             .update(spark.id + ':' + @name)
             .digest('hex')
 
-    auth: (spark, success, failure = ->) ->
-        console.log @sign(spark)
-        @redis.sismember 'channel:' + @name, @sign(spark), (err, result) ->
+    auth: (token, success, failure = ->) ->
+        @redis.sismember 'channel:' + @name, token, (err, result) ->
             throw err if err
             if result then success() else failure()
 
-    subscribe: (spark) ->
-        @auth spark,
+    subscribe: (spark, token) ->
+        @auth token,
             =>
                 @sparks.push spark
-                console.log 'subscribed spark#' + spark.id + ' to channel "' + @name + '"'
+                console.log ('subscribed spark#' + spark.id + ' to channel "' + @name + '"').green
             =>
-                console.log('spark#' + spark.id + ' failed authorization for channel "' + @name + '"')
+                console.log ('spark#' + spark.id + ' failed authorization for channel "' + @name + '"').red
 
     unsubscribe: (spark) ->
         @sparks = (_ for _ in @sparks when _.id != spark.id)
-        console.log 'unsubscribed spark#' + spark.id + ' from channel "' + @name + '"'
+        console.log ('unsubscribed spark#' + spark.id + ' from channel "' + @name + '"').green
