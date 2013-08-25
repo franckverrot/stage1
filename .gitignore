@@ -21,6 +21,10 @@ app/Resources/boxes/
 
 # Node
 npm-debug.log
+node/node_modules/
+node/primus-channels.js
+node/websocket.js
+web/js/primus.js
 
 # Others
 *~

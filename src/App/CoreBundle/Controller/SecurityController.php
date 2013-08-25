@@ -17,6 +17,18 @@ use RuntimeException;
 
 class SecurityController extends Controller
 {
+    public function primusAuthAction(Request $request)
+    {
+        $sparkId = $request->request->get('spark_id');
+        $channel = $request->request->get('channel');
+
+        $signature = hash_hmac('sha256', $sparkId . ':' . $channel, 'ThisIsNotSoSecret');
+
+        $this->get('app_core.redis')->sadd('channel:' . $channel, $signature);
+
+        return new JsonResponse(json_encode(true));
+    }
+
     private function registerGithubUser(Request $request, $accessToken)
     {
         $result = file_get_contents($this->container->getParameter('github_api_base_url').'/user?access_token='.$accessToken);

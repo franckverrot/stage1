@@ -6,6 +6,10 @@
 
     <import resource="@AppCoreBundle/Resources/config/routing/project.xml" />
 
+    <route id="app_core_primus_auth" pattern="/primus/auth" methods="POST">
+        <default key="_controller">AppCoreBundle:Security:primusAuth</default>
+    </route>
+
     <route id="app_core_homepage" pattern="/" methods="GET">
         <default key="_controller">AppCoreBundle:Default:index</default>
     </route>

@@ -1,0 +1,14 @@
+{
+  "name": "stage1-ws-server",
+  "version": "0.0.1",
+  "author": "Geoffrey Bachelet <geoffrey@stage1.io>",
+  "description": "stage1.io's websocket server",
+  "scripts": {
+    "start": "./stage1-ws-server"
+  },
+  "dependencies": {
+    "primus": "~1.2.0",
+    "ws": "~0.4.29",
+    "redis": "~0.8.4"
+  }
+}
