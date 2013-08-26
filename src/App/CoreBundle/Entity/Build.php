@@ -54,6 +54,11 @@ class Build
 
     private $updatedAt;
 
+    public function appendOutput($data)
+    {
+        $this->output .= $data;
+    }
+
     public function hasContainer()
     {
         return $this->containerId !== null;

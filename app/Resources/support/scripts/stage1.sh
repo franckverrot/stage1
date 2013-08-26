@@ -65,9 +65,12 @@ fi
 cp /tmp/monit-monitrc /etc/monit/monitrc
 cp /tmp/monit-consumer-build /etc/monit/conf.d/consumer-build
 cp /tmp/monit-consumer-kill /etc/monit/conf.d/consumer-kill
-cp /tmp/monit-websocket-build /etc/monit/conf.d/websocket-build
-cp /tmp/monit-websocket-build-output /etc/monit/conf.d/websocket-build-output
+cp /tmp/monit-websockets /etc/monit/conf.d/websockets
 cp /tmp/monit-hipache /etc/monit/conf.d/hipache
+
+# install coffeescript
+
+npm install -g coffee-script
 
 # install composer
 

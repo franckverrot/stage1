@@ -6,7 +6,7 @@ env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
-env.processes = ['consumer-build', 'consumer-kill', 'websocket-build', 'websocket-build-output']
+env.processes = ['consumer-build', 'consumer-kill', 'websockets']
 
 def hipache_start():
     sudo('monit start hipache')

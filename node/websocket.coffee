@@ -1,11 +1,9 @@
 #!/usr/bin/coffee
 
-require 'coffee-script'
-
 Primus              = require 'primus'
 {PrimusChannels}    = require './primus-channels.coffee'
 http                = require 'http'
-amqp                = require 'amqp'
+amqp                = require 'amqplib'
 colors              = require 'colors'
 
 colors.setTheme
@@ -32,15 +30,35 @@ primus.use PrimusChannels
 primus.save(__dirname + '/../web/js/primus.js')
 
 primus.on 'connection', (spark) ->
-    console.log ('spark#' + spark.id + ' connected').yellow
+    console.log ('spark#' + spark.id + ' connected').info
+
+    spark.on 'data', (data) ->
+        if data.action == 'build.output.buffer' and buffer.length > 0
+            spark.write event: 'build.output.buffer', data: buffer
+
+buffer = []
 
 port = 8090
 server.listen port, ->
     console.log ('listening on port ' + port).info
 
-    conn = amqp.createConnection { host: 'localhost' }, { defaultExchangeName: 'amq.fanout' }
-    conn.on 'ready', ->
-        conn.queue 'websockets', (queue) ->
-            queue.bind 'amq.fanout', '#'
-            queue.subscribe (message, headers, deliveryInfo) ->
-                primus.write JSON.parse(message.data.toString('utf-8'))
+    amqp.connect('amqp://localhost').then (conn) ->
+        console.log 'amqp connected'
+        conn.createChannel().then (channel) ->
+            console.log '[x] channel created'
+            channel.assertQueue('websockets').then (queue) ->
+                console.log '[x] queue created', queue
+                channel.bindQueue(queue.queue, 'amq.fanout', '').then ->
+                    console.log '[x] bound queue', queue
+                    channel.consume queue.queue, (message) ->
+                        content = JSON.parse(message.content.toString('utf-8'))
+
+                        if content.event == 'build.output'
+                            buffer.push content
+
+                        if content.event == 'build.finished'
+                            buffer = []
+
+                        console.log '[x] broadcast event "' + content.event.yellow + '"'
+                        primus.write content                            
+                        channel.ack message

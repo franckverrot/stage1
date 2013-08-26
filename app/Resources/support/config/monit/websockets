@@ -1,0 +1,4 @@
+check process websockets with pidfile /tmp/run/websockets.pid
+    start program = "/vagrant/bin/process/websockets start"
+        as uid root and gid root
+    stop program = "/vagrant/bin/process/websockets stop"

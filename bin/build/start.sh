@@ -25,6 +25,25 @@ function error_handler {
 BUILD_INFO_FILE="/tmp/stage1-build-info"
 BUILD_JOB_FILE="/tmp/stage1-build-job"
 
+function dummy {
+    echo 'This is some dummy output'
+    echo 'This is some dummy error output'
+
+    for n in $(seq 1 $1); do
+        echo "line $n"
+        sleep 1
+    done
+
+    echo 'dummy-img' > $BUILD_INFO_FILE
+    echo 'dummy-container' >> $BUILD_INFO_FILE
+    echo '42' >> $BUILD_INFO_FILE
+    echo 'http://dummy.stage1.dev/' >> $BUILD_INFO_FILE
+
+    exit 0
+}
+
+# dummy 15
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CONSOLE=$(realpath $DIR/../../app/console) || false

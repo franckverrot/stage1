@@ -23,8 +23,7 @@
         { "type": "file", "source": "app/Resources/support/config/monit/monitrc", "destination": "/tmp/monit-monitrc" },
         { "type": "file", "source": "app/Resources/support/config/monit/consumer-build", "destination": "/tmp/monit-consumer-build" },
         { "type": "file", "source": "app/Resources/support/config/monit/consumer-kill", "destination": "/tmp/monit-consumer-kill" },
-        { "type": "file", "source": "app/Resources/support/config/monit/websocket-build", "destination": "/tmp/monit-websocket-build" },
-        { "type": "file", "source": "app/Resources/support/config/monit/websocket-build-output", "destination": "/tmp/monit-websocket-build-output" },
+        { "type": "file", "source": "app/Resources/support/config/monit/websockets", "destination": "/tmp/monit-websockets" },
 
         {
             "type": "shell",

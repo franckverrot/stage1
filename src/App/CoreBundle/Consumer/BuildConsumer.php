@@ -56,13 +56,7 @@ class BuildConsumer implements ConsumerInterface
 
     private function doBuild(Build $build)
     {
-        $outputFile = '/tmp/stage1-build-output';
-
         $buildFile = function($type) { return '/tmp/stage1-build-'.$type; };
-
-        if (file_exists($buildFile('output'))) {
-            unlink($buildFile('output'));
-        }
 
         $projectDir = realpath(__DIR__.'/../../../..');
         $builder = new ProcessBuilder([
@@ -73,12 +67,23 @@ class BuildConsumer implements ConsumerInterface
         // $builder->setEnv('STAGE1_DEBUG', 1);
 
         $process = $builder->getProcess();
-        $process->setCommandLine($process->getCommandLine().' > '.$buildFile('output').' 2>> '.$buildFile('output'));
+        $process->setCommandLine($process->getCommandLine());
 
         echo 'running '.$process->getCommandLine().PHP_EOL;
-        $process->run();
+        $producer = $this->producer;
+        $process->run(function($type, $data) use ($producer, $build) {
+            static $n = 0;
+            $producer->publish(json_encode([
+                'event' => 'build.output',
+                'data' => [
+                    'number' => $n++,
+                    'content' => $data,
+                ]
+            ]));
 
-        $build->setOutput(file_get_contents($buildFile('output')));
+            $build->appendOutput($data);
+        });
+
         $build->setExitCode($process->getExitCode());
         $build->setExitCodeText($process->getExitCodeText());
 

@@ -1,10 +1,51 @@
 (function($, window) {
     window.stream_build_output = function(container) {
-        var ws = new WebSocket('ws://' + document.location.hostname +':8888/');
+        var latestPart = -1;
+        var buffer = [];
 
-        ws.onmessage = function(message) {
-            container.append(ansi_up.ansi_to_html(message.data) + '\n');
+        primus.on('data', function(data) {
+            console.log(data);
+            if (data.event == 'build.output.buffer') {
+                for (i in data.data) {
+                    buffer.push(data.data[i].data)
+                }
+
+                for (i in buffer) {
+                    if (buffer[i].number == latestPart + 1) {
+                        return processPart(buffer[i]);
+                    }
+                }
+            }
+
+            if (data.event == 'build.output') {
+                return processPart(data.data);
+            }
+        });
+
+        primus.write({ action: 'build.output.buffer' });
+
+        function processPart(part) {
+            console.log('latest part was #' + latestPart);
+            console.log('processing part #' + part.number);
+
+            if (part.number != latestPart + 1) {
+                console.log('dismissing');
+                buffer.push(part)
+                return false;
+            }
+
+            container.append(ansi_up.ansi_to_html(part.content));
             container[0].scrollTop = container[0].scrollHeight;
-        };
+            latestPart = part.number;
+
+            for (i in buffer) {
+                if (buffer[i].number == part.number + 1) {
+                    console.log('processing next ', part.number + 1);
+                    return processPart(buffer.splice(i, 1)[0]);
+                }
+            }
+
+            return true;
+        }
     };
 })(jQuery, window);

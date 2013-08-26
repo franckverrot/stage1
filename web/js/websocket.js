@@ -2,12 +2,20 @@
     var primus = Primus.connect('http://' + document.location.hostname + ':8090/');
     var lastTimestamp = 0;
 
+    window.primus = primus;
+
     primus.on('open', function() {
         console.log('primus online');
     });
 
     primus.on('data', function(data) {
+        console.log(data);
         console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
+
+        if (!data.data) {
+            return;
+        }
+
         console.log(data.data);
 
         if (data.timestamp <= lastTimestamp) {

@@ -1,4 +1,0 @@
-check process websocket-build with pidfile /tmp/run/websocket-build.pid
-    start program = "/vagrant/bin/process/websocket start build 8889"
-        as uid root and gid root
-    stop program = "/vagrant/bin/process/websocket stop build"

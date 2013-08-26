@@ -1,4 +1,0 @@
-check process websocket-build-output with pidfile /tmp/run/websocket-build-output.pid
-    start program = "/vagrant/bin/process/websocket start build-output 8888"
-        as uid root and gid root
-    stop program = "/vagrant/bin/process/websocket stop build-output"
