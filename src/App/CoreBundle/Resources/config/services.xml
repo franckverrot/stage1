@@ -36,6 +36,13 @@
             <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
         </service>
 
+        <!-- doctrine listeners -->
+
+        <service id="app_core.listener.websocket_routing_table" class="App\CoreBundle\EventListener\WebsocketRoutingTableSubscriber">
+            <argument type="service" id="app_core.redis" />
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+
         <!-- controllers -->
 
         <service id="app_core.controller.configure" class="App\CoreBundle\Controller\ConfigureController">

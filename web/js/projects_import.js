@@ -24,6 +24,7 @@
                 .html('<i class="icon-remove"></i> ' + jqXHR.responseJSON.message)
                 .addClass('btn-danger');
         }).done(function(response) {
+            primus.subscribe(response.project.channel, response.websocket_auth_key);
             $('button', this)
                 .html('<i class="icon-ok"></i> Success')
                 .addClass('btn-success');

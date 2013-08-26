@@ -19,12 +19,12 @@ class SecurityController extends Controller
 {
     public function primusAuthAction(Request $request)
     {
-        $sparkId = $request->request->get('spark_id');
+        # @todo @channel_auth move channel auth to an authenticator service
         $channel = $request->request->get('channel');
 
         $token = uniqid(mt_rand(), true);
 
-        $this->get('app_core.redis')->sadd('channel:' . $channel, $token);
+        $this->get('app_core.redis')->sadd('channel:auth:' . $channel, $token);
 
         return new JsonResponse(json_encode(['token' => $token]));
     }

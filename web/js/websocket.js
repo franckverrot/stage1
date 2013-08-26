@@ -1,11 +1,15 @@
 (function($, window) {
-    var primus = Primus.connect('http://' + document.location.hostname + ':8090/');
+    var primus = Primus.connect('http://' + document.location.hostname + ':8090/', {
+        privatePattern: /(project|user)\.\d+/,
+        auth_url: websocket_auth_url,
+    });
+
     var lastTimestamp = 0;
 
     window.primus = primus;
 
     primus.on('open', function() {
-        console.log('primus online');
+        primus.subscribe('user.' + current_user_id);
     });
 
     primus.on('data', function(data) {

@@ -5,10 +5,11 @@ redis  = require 'redis'
 @PrimusChannels =
     name: 'channels'
     client: (primus, options) ->
+        console.log(options);
         primus.subscribe = (channel, token = null) ->
             subscribe = (token) -> primus.write action: 'subscribe', channel: channel, token: token
 
-            if token? or not channel.match /^(private|presence)\-/
+            if token? or not channel.match(options.privatePattern || /^(private|presence)\-/)
                 subscribe token
             else
                 $.post options.auth_url, { channel: channel }, (response) ->
@@ -21,14 +22,18 @@ redis  = require 'redis'
         primus.redis = redis.createClient()
 
         primus.Spark::subscribe = (channel, token) ->
-            unless channel in primus.channels
+            unless primus.channels[channel]?
                 primus.channels[channel] = new Channel(channel, primus.redis, options)
+
             primus.channels[channel].subscribe this, token
 
         primus.Spark::unsubscribe = (channel) ->
-            unless primus.channels[channel]?
-                return
-            primus.channels[channel].unsubscribe this
+            if channel?
+                if primus.channels[channel]?
+                    primus.channels[channel].unsubscribe this
+            else
+                for channel of primus.channels
+                    primus.channels[channel].unsubscribe this
 
         primus.on 'connection', (spark) ->
             spark.write id: spark.id
@@ -40,28 +45,49 @@ redis  = require 'redis'
                 if data.action == 'unsubscribe'
                     spark.unsubscribe data.channel
 
+        primus.on 'disconnection', (spark) ->
+            spark.unsubscribe()
 
 class Channel
     constructor: (@name, @redis, @options) ->
         @sparks = []
-        @isPrivate = @name.match /^(private|presence)\-/
+        @isPrivate = @name.match(@options.privatePattern || /^(private|presence)\-/)
 
     auth: (token, success, failure = ->) ->
-        if @isPrivate
-            @redis.sismember 'channel:' + @name, token, (err, result) ->
+        if @isPrivate and token != true
+            @redis.sismember 'channel:auth:' + @name, token, (err, result) ->
                 throw err if err
                 if result then success() else failure()
         else
             success()
 
+    has: (spark) ->
+        for s in @sparks
+            return true if s.id == spark.id
+
+        return false
+
     subscribe: (spark, token) ->
         @auth token,
             =>
-                @sparks.push spark
-                console.log ('subscribed spark#' + spark.id + ' to channel "' + @name + '"').green
+                if @has spark
+                    console.warn ('spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
+                else 
+                    @sparks.push spark
+                    console.log ('subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
+
+                # check if this is a meta channel
+                @redis.smembers 'channel:routing:' + @name, (err, results) =>
+                    throw err if err
+
+                    if results.length > 0
+                        for result in results
+                            spark.subscribe result, true
+
             =>
                 console.log ('spark#' + spark.id + ' failed authorization for channel "' + @name + '"').red
 
     unsubscribe: (spark) ->
-        @sparks = (_ for _ in @sparks when _.id != spark.id)
-        console.log ('unsubscribed spark#' + spark.id + ' from channel "' + @name + '"').green
+        if @has spark
+            @sparks = (_ for _ in @sparks when _.id != spark.id)
+            console.log ('unsubscribed spark#' + spark.id + ' from channel "' + @name + '" (clients: ' + @sparks.length + ')').green

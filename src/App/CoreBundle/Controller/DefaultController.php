@@ -390,11 +390,19 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($project);
 
+            $channel = 'project.'.$project->getId();
+
+            # @todo @channel_auth move channel auth to an authenticator service
+            $token = uniqid(mt_rand(), true);
+            $this->get('app_core.redis')->sadd('channel:auth:' . $channel, $token);
+
             return new JsonResponse([
                 'url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]),
+                'websocket_auth_key' => $token,
                 'project' => [
                     'name' => $project->getName(),
                     'full_name' => $project->getFullName(),
+                    'channel' => $channel,
                 ]
             ], 201);
         } catch (Exception $e) {
