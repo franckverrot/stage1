@@ -1,13 +1,14 @@
 (function($, window) {
-
-    var ws = new WebSocket('ws://' + document.location.hostname +':8889/');
+    var primus = Primus.connect('http://' + document.location.hostname + ':8090/');
     var lastTimestamp = 0;
 
-    ws.onmessage = function(message) {
-        var data = $.parseJSON(message.data);
+    primus.on('open', function() {
+        console.log('primus online');
+    });
 
-        // console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
-        // console.log(data.data);
+    primus.on('data', function(data) {
+        console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
+        console.log(data.data);
 
         if (data.timestamp <= lastTimestamp) {
             // outdated message, don't even bother
@@ -28,7 +29,7 @@
         if (typeof(callbacks[data.event]) == 'function') {
             callbacks[data.event](data.data);
         }
-    };
+    });
 
     var prepare = [
         'nb-pending-builds',

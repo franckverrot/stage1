@@ -1,12 +1,21 @@
 #!/usr/bin/coffee
 
 require 'coffee-script'
-require 'colors'
 
 Primus              = require 'primus'
 {PrimusChannels}    = require './primus-channels.coffee'
 http                = require 'http'
 amqp                = require 'amqp'
+colors              = require 'colors'
+
+colors.setTheme
+    verbose: 'cyan'
+    info: 'green'
+    data: 'grey'
+    help: 'cyan'
+    warn: 'yellow'
+    debug: 'blue'
+    error: 'red'
 
 server = http.createServer (req, res) ->
     res.writeHead 500
@@ -27,4 +36,11 @@ primus.on 'connection', (spark) ->
 
 port = 8090
 server.listen port, ->
-    console.log 'listening on port ' + port
+    console.log ('listening on port ' + port).info
+
+    conn = amqp.createConnection { host: 'localhost' }, { defaultExchangeName: 'amq.fanout' }
+    conn.on 'ready', ->
+        conn.queue 'websockets', (queue) ->
+            queue.bind 'amq.fanout', '#'
+            queue.subscribe (message, headers, deliveryInfo) ->
+                primus.write JSON.parse(message.data.toString('utf-8'))
