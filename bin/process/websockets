@@ -13,7 +13,7 @@ LOG_FILE="$LOG_DIR/websockets.log"
 
 ACTION=$1
 
-$NODE_PATH=$(realpath $DIR/../../node)
+NODE_PATH=$(realpath $DIR/../../node)
 
 case $ACTION in 
     start)
