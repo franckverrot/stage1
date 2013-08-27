@@ -111,7 +111,7 @@ def docker_build():
 
 def docker_clean():
     info('cleaning docker')
-    sudo('%s/bin/docker-clean.sh' % env.project_path)
+    sudo('%s/bin/docker/clean.sh' % env.project_path)
 
 def deploy():
     if needs_cold_deploy():
@@ -213,6 +213,7 @@ def services_restart():
     sudo('/etc/init.d/nginx restart')
     sudo('/etc/init.d/php5-fpm restart')
     sudo('/etc/init.d/rabbitmq-server restart')
+    sudo('/etc/init.d/monit reload')
 
 @runs_once
 def prepare_deploy(ref='HEAD'):
