@@ -13,14 +13,11 @@
     });
 
     primus.on('data', function(data) {
-        console.log(data);
-        console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
+        // console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
 
         if (!data.data) {
             return;
         }
-
-        console.log(data.data);
 
         if (data.timestamp <= lastTimestamp) {
             // outdated message, don't even bother
