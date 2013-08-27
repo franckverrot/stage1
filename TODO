@@ -101,6 +101,7 @@ TODO
 * websockets
     * update project access page when an ip is added to the access list
     * update project access page when a master password is set/unset
+    * buffered channels implementation is a terrible mess
 
 * VM / provisioning
     * use GNU parallel to speed up VM packing and provisioning
