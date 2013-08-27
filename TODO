@@ -5,29 +5,43 @@ BUGS
 ----
 * build failed: 2013/08/10 06:40:21 Unable to set up networking: ip failed: ip route add default via 172.17.42.1 (see https://github.com/dotcloud/docker/pull/1374)
 
-FEATURES
---------
-* production needs to have working error reporting
-* add a "thanks for signing up" email after signup
+TODO PRIVATE BETA
+-----------------
 
-* auth: pour les domaines custom: faire afficher la page de login par le middleware, mettre un cookie sur le domaine
+* global
+    * have contextual help everywhere it matters
+* production
+    * needs to have working error reporting
+    * needs to have proper monitoring
+* projects
+    * multi-owners
+    * revamp project import
+    * explain how the master password works
+    * delete access list on project deletion
+* dashboard
+    * list of running instances grouped by project and order by project.last_build_id
+* builds
+    * killing a build does not seem to kill its container
+    * disable auto log scroll when manually scrolled
+    * add a timeout on builds (5min for starters)
+* projects
+    * last_build_at + last_build_ref (last_build_id ?)
 
 TODO
 ====
 
 * REST API / webhooks
 
-* prod
+* production
     * everything needs to transit through SSL
 
 * user
     * explicitely ask github for the private emails 
 
-* dashboard
-    * list of running instances grouped by project and order by project.last_build_id
+* instances
+    * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
 
 * builds
-    * killing a build does not seem to kill its container
     * running and building status are confusing
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
@@ -40,7 +54,6 @@ TODO
     * disallow scheduling a build if a running instance for the same hash exists
     * log build time
     * log trigger source (manual / push)
-    * disable auto log scroll when manually scrolled
     * before build: check that the app is actually buildable (eg: there is a composer.json)
     * before starting a build, check the required docker image is present
     * need a way to update buildapp in runtime without re building the whole image
@@ -60,14 +73,12 @@ TODO
     * have a way to configure ENV variables in the container
     * export a few ENV var for easier configuration (see http://symfony.com/doc/current/cookbook/configuration/external_parameters.html)
     * support Procfiles
-    * add a timeout on builds (5min for starters)
 
 * projects
     * allow per-project docker image selection
         This should not be in the UI, it's an admin (as in, me) only feature for now
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
     * import should make ajax queries to stage1 instead of directly querying github
-    * last_build_at + last_build_ref (last_build_id ?)
     * access
         * implement "one-time-access-granting" URLs
         * implement "one-time" passwords
