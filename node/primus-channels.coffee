@@ -77,10 +77,10 @@ class Channel
         @auth token,
             =>
                 if @has spark
-                    console.warn ('spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
+                    console.warn ('   spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
                 else 
                     @sparks.push spark
-                    console.log ('subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
+                    console.log ('   subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
 
                 # check if this is a meta channel
                 @redis.smembers 'channel:routing:' + @name, (err, results) =>
@@ -91,9 +91,9 @@ class Channel
                             spark.subscribe result, true
 
             =>
-                console.log ('spark#' + spark.id + ' failed authorization for channel "' + @name + '"').red
+                console.log ('   spark#' + spark.id + ' failed authorization for channel "' + @name + '"').red
 
     unsubscribe: (spark) ->
         if @has spark
             @sparks = (_ for _ in @sparks when _.id != spark.id)
-            console.log ('unsubscribed spark#' + spark.id + ' from channel "' + @name + '" (clients: ' + @sparks.length + ')').green
+            console.log ('   unsubscribed spark#' + spark.id + ' from channel "' + @name + '" (clients: ' + @sparks.length + ')').green

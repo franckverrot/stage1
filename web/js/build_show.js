@@ -16,6 +16,7 @@
         primus.on('data', function(data) {
             if (data.event == 'build.output.buffer') {
                 for (i in data.data) {
+                    // console.log('buffering part ' + data.data[i].data.number);
                     buffer.push(data.data[i].data)
                 }
 
@@ -27,11 +28,14 @@
             }
 
             if (data.event == 'build.output') {
+                // console.log('received part ' + data.data.number);
                 return processPart(data.data);
             }
         });
 
-        primus.write({ action: 'build.output.buffer' });
+        // primus.on('open', function() {
+        //     primus.write({ action: 'build.output.buffer' });
+        // });
 
         function processPart(part) {
             if (part.number != latestPart + 1) {
