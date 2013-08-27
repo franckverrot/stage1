@@ -149,15 +149,7 @@ class ProjectController extends Controller
         $project = $this->findProjectBySlug($slug);
 
         if (password_verify($request->request->get('password'), $project->getMasterPassword())) {
-            $access = new ProjectAccess();
-
-            if ($this->container->getParamater('feature_ip_access_list')) {
-                $access->setIp($this->getClientIp());
-            }
-
-            if ($this->container->getParameter('feature_token_access_list')) {
-                $access->setToken($request->getSession()->getId());
-            }
+            $access = new ProjectAccess($this->getClientIp(), $request->getSession()->getId());
             
             $this->grantProjectAccess($project, $access);
 

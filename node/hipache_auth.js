@@ -7,10 +7,12 @@ module.exports = function(hipache, req, stack, next) {
 
     var cookies = {};
 
-    req.headers.cookie.split(';').forEach(function(cookie) {
-        var parts = cookie.split('=');
-        cookies[parts[0].trim()] = (parts[1] || '').trim();
-    });
+    if (req.headers.cookie) {
+        req.headers.cookie.split(';').forEach(function(cookie) {
+            var parts = cookie.split('=');
+            cookies[parts[0].trim()] = (parts[1] || '').trim();
+        });        
+    }
 
     var token = cookies[hipache.cache.config.server.config.cookie_name];
     var auth_url = hipache.cache.config.server.config.auth_url;

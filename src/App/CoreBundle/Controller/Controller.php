@@ -54,10 +54,17 @@ class Controller extends BaseController
 
     protected function grantProjectAccess(Project $project, ProjectAccess $access)
     {
-        $args = [$access->getIp(), $access->getToken()];
-        $args = array_filter($args, function($arg) { return null !== $arg; });
+        $args = ['auth:'.$project->getSlug()];
 
-        array_unshift($args, 'auth:'.$project->getSlug());
+        if ($this->container->getParameter('feature_ip_access_list') || $access->getIp() === '0.0.0.0') {
+            $args[] = $access->getIp();
+        }
+
+        if ($this->container->getParameter('feature_token_access_list')) {
+            $args[] = $access->getToken();
+        }
+
+        $args = array_filter($args, function($arg) { return strlen($arg) > 0; });
 
         return call_user_func_array([$this->get('app_core.redis'), 'sadd'], $args);
     }
