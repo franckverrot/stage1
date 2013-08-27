@@ -27,8 +27,8 @@ twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
     globals:
-        show_ip_access_list: %show_ip_access_list%
-        show_token_access_list: %show_token_access_list%
+        feature_ip_access_list: %feature_ip_access_list%
+        feature_token_access_list: %feature_token_access_list%
 
 # Assetic Configuration
 assetic:

@@ -30,7 +30,7 @@
         {{ form_end(master_password_form) }}
     </div>
     <div class="span6">
-    {% if show_ip_access_list %}
+    {% if feature_ip_access_list %}
     {% include 'AppCoreBundle:Project:_access_list.html.twig' with {
         access_list: access_list.ips,
         access_form: access_form,
@@ -42,7 +42,7 @@
     } %}
     {% endif %}
 
-    {% if show_token_access_list %}
+    {% if feature_token_access_list %}
     {% include 'AppCoreBundle:Project:_access_list.html.twig' with {
         access_list: access_list.tokens,
         access_form: null,
