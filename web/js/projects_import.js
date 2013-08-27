@@ -20,9 +20,17 @@
             data: data,
             context: $(this).parent().parent()
         }).fail(function(jqXHR, textStatus, errorThrown) {
+            try {
+                var message = jqXHR.responseJSON.message;
+            } catch (e) {
+                var message = 'An unexpected error has occured (' + e.message + ')';
+            }
+
+            console.log(message);
+
             $('button', this)
-                .html('<i class="icon-remove"></i> ' + jqXHR.responseJSON.message)
-                .addClass('btn-danger');
+                .html('<i class="icon-remove"></i> ' + message)
+                .addClass('btn-danger');                
         }).done(function(response) {
             primus.subscribe(response.project.channel, response.websocket_auth_key);
             $('button', this)

@@ -54,9 +54,12 @@ class Controller extends BaseController
 
     protected function grantProjectAccess(Project $project, ProjectAccess $access)
     {
-        return $this
-            ->get('app_core.redis')
-            ->sadd('auth:' . $project->getSlug(), $access->getIp(), $access->getToken());
+        $args = [$access->getIp(), $access->getToken()];
+        $args = array_filter($args, function($arg) { return null !== $arg; });
+
+        array_unshift($args, 'auth:'.$project->getSlug());
+
+        return call_user_func_array([$this->get('app_core.redis'), 'sadd'], $args);
     }
 
     protected function revokeProjectAccess(Project $project, ProjectAccess $access)
