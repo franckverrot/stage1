@@ -58,13 +58,19 @@ server.listen port, ->
                     console.log ''
                     channel.consume queue.queue, (message) ->
                         content = JSON.parse(message.content.toString('utf-8'))
+                        console.log 'received event "' + content.event + '" for channel "' + content.channel + '"'
 
-                        if content.event == 'build.output'
-                            buffer.push content
+                        if content.channel?
+                            if content.event == 'build.output'
+                                buffer.push content
 
-                        if content.event == 'build.finished'
-                            buffer = []
+                            if content.event in ['build.finished', 'build.started']
+                                buffer = []
 
-                        console.log '[x] broadcast event "' + content.event.yellow + '"'
-                        primus.write content                            
+                            if primus.channels[content.channel]?
+                                console.log '[x] broadcasting event "' + content.event.yellow + '" to channel "' + content.channel.yellow + '"'
+                                primus.channels[content.channel].write content
+                            else
+                                console.log '[ ] channel "' + content.channel.yellow + '" does not exist, skipping'
+
                         channel.ack message

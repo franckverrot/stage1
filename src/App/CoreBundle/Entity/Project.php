@@ -56,6 +56,11 @@ class Project
 
     protected $masterPassword;
 
+    public function getChannel()
+    {
+        return 'project.'.$this->getId();
+    }
+
     public function getFullName()
     {
         return $this->getGithubFullName();

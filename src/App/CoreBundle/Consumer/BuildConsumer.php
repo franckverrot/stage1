@@ -75,6 +75,7 @@ class BuildConsumer implements ConsumerInterface
             static $n = 0;
             $producer->publish(json_encode([
                 'event' => 'build.output',
+                'channel' => $build->getProject()->getChannel(),
                 'data' => [
                     'number' => $n++,
                     'content' => $data,
@@ -144,15 +145,20 @@ class BuildConsumer implements ConsumerInterface
         $build->setStatus(Build::STATUS_BUILDING);
         $this->persistAndFlush($build);
 
-        $this->producer->publish(json_encode(['event' => 'build.started', 'timestamp' => microtime(true), 'data' => [
-            'build' => array_replace([
-                'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
-            ], $build->asWebsocketMessage()),
-            'project' => [
-                'id' => $build->getProject()->getId(),
-                'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject())
+        $this->producer->publish(json_encode([
+            'event' => 'build.started',
+            'channel' => $build->getProject()->getChannel(),
+            'timestamp' => microtime(true),
+            'data' => [
+                'build' => array_replace([
+                    'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
+                ], $build->asWebsocketMessage()),
+                'project' => [
+                    'id' => $build->getProject()->getId(),
+                    'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject())
+                ]
             ]
-        ]]));
+        ]));
 
         try {
             $res = $this->doBuild($build);
@@ -170,14 +176,19 @@ class BuildConsumer implements ConsumerInterface
 
         $this->persistAndFlush($build);
 
-        $this->producer->publish(json_encode(['event' => 'build.finished', 'timestamp' => microtime(true), 'data' => [
-            'build' => array_replace([
-                'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
-                ], $build->asWebsocketMessage()),
-            'project' => [
-                'id' => $build->getProject()->getId(),
-                'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject()),
+        $this->producer->publish(json_encode([
+            'event' => 'build.finished',
+            'channel' => $build->getProject()->getChannel(),
+            'timestamp' => microtime(true),
+            'data' => [
+                'build' => array_replace([
+                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
+                    ], $build->asWebsocketMessage()),
+                'project' => [
+                    'id' => $build->getProject()->getId(),
+                    'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject()),
+                ]
             ]
-        ]]));
+        ]));
     }
 }

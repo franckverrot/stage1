@@ -53,7 +53,7 @@ class DefaultController extends Controller
 
             $buildData['schedule_url'] = $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]);
 
-            $this->publishWebsocket('build.canceled', [
+            $this->publishWebsocket('build.canceled', $project->getChannel(), [
                 'build' => $buildData,
                 'project' => $project->asWebsocketMessage()
             ]);
@@ -211,7 +211,7 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', [
+            $this->publishWebsocket('build.scheduled', $project->getChannel(), [
                 'build' => array_replace([
                     'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                     'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
@@ -390,7 +390,7 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($project);
 
-            $channel = 'project.'.$project->getId();
+            $channel = $project->getChannel();
 
             # @todo @channel_auth move channel auth to an authenticator service
             $token = uniqid(mt_rand(), true);
@@ -440,7 +440,7 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', [
+            $this->publishWebsocket('build.scheduled', $project->getChannel(), [
                 'build' => array_replace([
                     'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                 ], $build->asWebsocketMessage()),

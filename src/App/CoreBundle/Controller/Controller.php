@@ -132,10 +132,11 @@ class Controller extends BaseController
         return $qb->getQuery()->execute();
     }
 
-    protected function publishWebsocket($event, $data)
+    protected function publishWebsocket($event, $channel, $data)
     {
         $this->get('old_sound_rabbit_mq.websocket_producer')->publish(json_encode([
             'event' => $event,
+            'channel' => $channel,
             'timestamp' => microtime(true),
             'data' => $data,
         ]));

@@ -5,7 +5,9 @@ redis  = require 'redis'
 @PrimusChannels =
     name: 'channels'
     client: (primus, options) ->
-        console.log(options);
+        primus.unsubscribe = (channel) ->
+                primus.write action: 'unsubscribe', channel: channel
+
         primus.subscribe = (channel, token = null) ->
             subscribe = (token) -> primus.write action: 'subscribe', channel: channel, token: token
 
@@ -52,6 +54,10 @@ class Channel
     constructor: (@name, @redis, @options) ->
         @sparks = []
         @isPrivate = @name.match(@options.privatePattern || /^(private|presence)\-/)
+
+    write: (message) ->
+        for spark in @sparks
+            spark.write message
 
     auth: (token, success, failure = ->) ->
         if @isPrivate and token != true
