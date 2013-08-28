@@ -26,8 +26,6 @@
                 var message = 'An unexpected error has occured (' + e.message + ')';
             }
 
-            console.log(message);
-
             $('button', this)
                 .html('<i class="icon-remove"></i> ' + message)
                 .addClass('btn-danger');                
