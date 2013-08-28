@@ -22,7 +22,6 @@ TODO PRIVATE BETA
     * list of running instances grouped by project and order by project.last_build_id
 * builds
     * killing a build does not seem to kill its container
-    * disable auto log scroll when manually scrolled
     * add a timeout on builds (5min for starters)
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
