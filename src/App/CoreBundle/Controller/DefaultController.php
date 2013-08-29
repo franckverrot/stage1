@@ -257,7 +257,7 @@ class DefaultController extends Controller
         $builds = $this
             ->getDoctrine()
             ->getRepository('AppCoreBundle:Build')
-            ->findLastByRefs($this->getDoctrine()->getManager(), array_keys($branches));
+            ->findLastByRefs($project, array_keys($branches));
 
         foreach ($builds as $build) {
             $buildData = $build->asWebsocketMessage();

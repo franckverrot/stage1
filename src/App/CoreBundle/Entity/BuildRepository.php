@@ -24,13 +24,16 @@ class BuildRepository extends EntityRepository
         return (int) $query->getSingleScalarResult();
     }
 
-    public function findLastByRefs()
+    public function findLastByRefs(Project $project)
     {
-        $query = 'SELECT b.* FROM (SELECT * FROM build ORDER BY created_at DESC) b GROUP BY b.ref';
+        $query = 'SELECT b.* FROM (SELECT * FROM build WHERE build.project_id = ? ORDER BY created_at DESC) b GROUP BY b.ref';
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
         $rsm->addRootEntityFromClassMetadata('App\\CoreBundle\\Entity\\Build', 'b');
-        return $this->getEntityManager()->createNativeQuery($query, $rsm)->execute();
+        $query = $this->getEntityManager()->createNativeQuery($query, $rsm);
+        $query->setParameter(1, $project->getId());
+
+        return $query->execute();
     }
 
     public function findPreviousBuild(Build $build)

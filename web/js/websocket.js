@@ -28,7 +28,7 @@
         lastTimestamp = data.timestamp;
 
         if (data.data.build) {
-            callbacks.build(event, data.data.build);
+            callbacks.build(event, data.data.build, data.data.project);
         }
 
         if (data.data.project) {
@@ -60,7 +60,7 @@
             update_project_nb_pending_builds(project.id, parseInt(project.nb_pending_builds));
         },
         
-        'build': function(event, build) {
+        'build': function(event, build, project) {
             update_build(build.id, 'status', function(el) {
                 el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
             });
@@ -112,7 +112,9 @@
                 });
             }
 
-            do_update_ref(build);
+            if (project.id && current_project_id == project.id) {
+                do_update_ref(build);
+            }
         }
     };
 
