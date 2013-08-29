@@ -61,7 +61,7 @@ amqp.connect('amqp://localhost').then (conn) ->
                 console.log ''
                 channel.consume queue.queue, (message) ->
                     content = JSON.parse(message.content.toString('utf-8'))
-                    # console.log 'received event "' + content.event + '" for channel "' + content.channel + '"'
+                    console.log '<- received event "' + content.event + '" for channel "' + content.channel + '"'
 
                     if content.channel?
                         if content.event == 'build.output'

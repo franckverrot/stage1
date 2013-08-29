@@ -29,7 +29,7 @@ class SshKeys
 
         unlink($private);
 
-        $builder = new ProcessBuilder(['/usr/bin/ssh-keygen', '-q', '-t', 'rsa', '-f', $private, '-C', 'stage1 deploy key']);
+        $builder = new ProcessBuilder(['/usr/bin/ssh-keygen', '-q', '-N', '', '-t', 'rsa', '-f', $private, '-C', 'Stage1 Deploy Key']);
         $process = $builder->getProcess();
 
         $process->run();

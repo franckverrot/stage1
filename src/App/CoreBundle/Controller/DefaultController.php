@@ -310,104 +310,15 @@ class DefaultController extends Controller
 
     public function projectImportAction(Request $request)
     {
-        try {
-            $project = new Project();
-            # @todo @normalize
-            $project->setSlug(preg_replace('/[^a-z0-9\-]/', '-', strtolower($request->request->get('github_full_name'))));
+        $this->get('old_sound_rabbit_mq.project_import_producer')->publish(json_encode([
+            'request' => $request->request->all(),
+            'user_id' => $this->getUser()->getId(),
+            'websocket_channel' => $this->getUser()->getChannel(),
+            'session_id' => $request->getSession()->getId(),
+            'client_ip' => $this->getClientIp(),
+        ]));
 
-            # this is one special ip that cannot be revoked
-            # it is used to keep the access list "existing"
-            # thus activating auth on the staging areas
-            # yes, it's a bit hacky.
-            $this->grantProjectAccess($project, new ProjectAccess('0.0.0.0'));
-
-            # this, however, is perfectly legit.
-            $this->grantProjectAccess($project, new ProjectAccess($this->getClientIp(), $request->getSession()->getId()));
-
-            $project->setGithubId($request->request->get('github_id'));
-            $project->setGithubOwnerLogin($request->request->get('github_owner_login'));
-            $project->setGithubFullName($request->request->get('github_full_name'));
-            $project->setOwner($this->getUser());
-            $project->setName($request->request->get('name'));
-            $project->setCloneUrl($request->request->get('clone_url'));
-            $project->setSshUrl($request->request->get('ssh_url'));
-
-            $keys = SshKeys::generate();
-
-            $project->setPublicKey($keys['public']);
-            $project->setPrivateKey($keys['private']);
-
-            $now = new DateTime();
-            $project->setCreatedAt($now);
-            $project->setUpdatedAt($now);
-
-            $hooksUrl = $request->request->get('hooks_url');
-            $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
-
-            $githubHookUrl = str_replace('http://stage1.io', 'http://stage1:stage1@stage1.io', $githubHookUrl);
-
-            $hooks = $this->github_get($hooksUrl);
-
-            foreach ($hooks as $_) {
-                if ($_->name === 'web' && $_->config->url === $githubHookUrl) {
-                    $hook = $_;
-                    break;
-                }
-            }
-
-            if (!isset($hook)) {
-                $hook = $this->github_post($hooksUrl, [
-                    'name' => 'web',
-                    'active' => true,
-                    'events' => ['push'],
-                    'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
-                ]);                
-            }
-
-            $project->setGithubHookId($hook->id);
-
-            $keysUrl = str_replace('{/key_id}', '', $request->request->get('keys_url'));
-            $keys = $this->github_get($keysUrl);
-
-            $deployKey = $project->getPublicKey();
-            $deployKey = substr($deployKey, 0, strrpos($deployKey, ' '));
-
-            foreach ($keys as $_) {
-                if ($_->key === $deployKey) {
-                    $key = $_;
-                    break;
-                }
-            }
-
-            if (!isset($key)) {
-                $key = $this->github_post($keysUrl, [
-                    'key' => $deployKey,
-                    'title' => 'stage1 deploy key',
-                ]);
-            }
-
-            $project->setGithubDeployKeyId($key->id);
-
-            $this->persistAndFlush($project);
-
-            $channel = $project->getChannel();
-
-            # @todo @channel_auth move channel auth to an authenticator service
-            $token = uniqid(mt_rand(), true);
-            $this->get('app_core.redis')->sadd('channel:auth:' . $channel, $token);
-
-            return new JsonResponse([
-                'url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]),
-                'websocket_auth_key' => $token,
-                'project' => [
-                    'name' => $project->getName(),
-                    'full_name' => $project->getFullName(),
-                    'channel' => $channel,
-                ]
-            ], 201);
-        } catch (Exception $e) {
-            return new JsonResponse(['message' => $e->getMessage()], 500);
-        }
+        return new JsonResponse(json_encode(true));
     }
 
     public function hooksGithubAction(Request $request)

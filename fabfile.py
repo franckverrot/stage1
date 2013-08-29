@@ -6,7 +6,7 @@ env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
-env.processes = ['consumer-build', 'consumer-kill', 'websockets']
+env.processes = ['consumer-build', 'consumer-kill', 'consumer-project-import', 'websockets']
 
 def hipache_start():
     sudo('monit start hipache')
@@ -196,18 +196,21 @@ def git_branch():
 
 def processes_stop():
     info('stopping processes')
-    for process in env.processes:
-        sudo('monit stop %s' % process)
+    with settings(warn_only=True):
+        for process in env.processes:
+            sudo('monit stop %s' % process)
 
 def processes_start():
     info('starting processes')
-    for process in env.processes:
-        sudo('monit start %s' % process)
+    with settings(warn_only=True):
+        for process in env.processes:
+            sudo('monit start %s' % process)
 
 def processes_restart():
     info('restarting processes')
-    for process in env.processes:
-        sudo('monit restart %s' % process)
+    with settings(warn_only=True):
+        for process in env.processes:
+            sudo('monit restart %s' % process)
 
 def services_restart():
     sudo('/etc/init.d/nginx restart')

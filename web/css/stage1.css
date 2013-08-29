@@ -98,3 +98,35 @@ div.build-building-icon {
     display: inline-block;
     margin-bottom: 3px;
 }
+
+#steps {
+    list-style-type: none;
+}
+
+#steps li {
+    font-size: 1.5em;
+    line-height: 2em;
+}
+
+#steps li .icon-container {
+    display: inline-block;
+    width: 32px;
+}
+
+#steps .pending {
+    color: gray;
+}
+
+#steps .running {
+    color: black;
+}
+
+#steps .done {
+    color: green;
+}
+
+#progress {
+    position: fixed;
+    left: 838px;
+    width: 510px;
+}

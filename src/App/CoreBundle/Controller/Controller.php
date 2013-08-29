@@ -90,6 +90,9 @@ class Controller extends BaseController
         return (false !== array_search(true, $results));
     }
 
+    /**
+     * @todo @github refactor
+     */
     protected function github_post($url, $payload)
     {
         return json_decode(file_get_contents($url, false, stream_context_create([
@@ -102,6 +105,9 @@ class Controller extends BaseController
         ])));
     }
 
+    /**
+     * @todo @github refactor
+     */
     protected function github_get($url)
     {
         return json_decode(file_get_contents($url, false, stream_context_create([

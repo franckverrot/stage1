@@ -26,6 +26,11 @@ class User implements UserInterface
 
     private $projects;
 
+    public function getChannel()
+    {
+        return 'user.'.$this->getId();
+    }
+
     public function __toString()
     {
         return (string) $this->username;

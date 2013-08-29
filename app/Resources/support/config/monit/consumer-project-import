@@ -1,0 +1,4 @@
+check process consumer-project-import with pidfile /tmp/run/consumer-project_import.pid
+    start program = "/vagrant/bin/process/consumer start project_import"
+        as uid root and gid root
+    stop program = "/vagrant/bin/process/consumer stop project_import"

@@ -85,6 +85,9 @@ old_sound_rabbit_mq:
         kill:
             connection: default
             exchange_options: { name: 'kill', type: direct }
+        project_import:
+            connection: default
+            exchange_options: { name: 'project_import', type: direct }
         websocket:
             connection: default
             exchange_options: { name: 'amq.fanout', type: fanout }
@@ -99,3 +102,8 @@ old_sound_rabbit_mq:
             exchange_options: { name: 'kill', type: direct }
             queue_options:    { name: 'kill' }
             callback:         app_core.consumer.kill
+        project_import:
+            connection: default
+            exchange_options: { name: 'project_import', type: direct }
+            queue_options:    { name: 'project_import' }
+            callback:         app_core.consumer.project_import

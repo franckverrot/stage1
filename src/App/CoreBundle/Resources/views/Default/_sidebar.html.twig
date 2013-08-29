@@ -14,14 +14,20 @@
     {% endfor %}
 </ul>
 
+<hr />
+{% endif %}
+
 <script type="text/mustache" id="tpl-nb-pending-builds">
 {% verbatim %}
 <div id="nb-pending-builds-{{ project_id }}" class="pull-right"><span class="label label-nav">{{ nb_pending_builds }}</span></div>
 {% endverbatim %}
 </script>
 
+<script type="text/mustache" id="tpl-nav-projects">
+<ul class="nav nav-pills nav-stacked" id="nav-projects"></ul>
+
 <hr />
-{% endif %}
+</script>
 
 <ul class="nav nav-pills nav-stacked">
     <li{% if app.request.attributes.get('_route') == 'app_core_projects_import' %} class="active"{% endif %}>

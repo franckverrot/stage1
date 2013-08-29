@@ -1,7 +1,81 @@
 (function($, window) {
 
+    $(function() {
+        var tpl_import = Mustache.compile($('#tpl-import').text());
+        var tpl_nav_project = Mustache.compile($('#tpl-nav-projects').text());
+        var tpl_nav_project_item = Mustache.compile($('#tpl-project-nav').text());
+        var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
+
+        function on(event, callback) {
+            primus.on('data', function(data) {
+                console.log(data);
+                if (data.event == event) {
+                    callback(data.data);
+                }
+            });
+        }
+
+        on('project.import.start', function(data) {
+            console.log(data);
+            $('#candidate-' + data.project_github_id + ' button').addClass('btn-success');
+
+            $('#progress').html(tpl_import(data));
+        });
+
+        on('project.import.step', function(data) {
+            $('#steps li.running')
+                .removeClass('running')
+                .addClass('done')
+                .find('i')
+                    .removeClass()
+                    .addClass('icon-ok');
+
+            $('#steps li#' + data.step)
+                .removeClass('pending')
+                .addClass('running')
+                    .find('i')
+                        .removeClass()
+                        .addClass('icon-refresh icon-spin');
+        });
+
+        on('project.import.finished', function(data) {
+            $('#steps li.running')
+                .removeClass('running')
+                .addClass('done')
+                .find('i')
+                    .removeClass()
+                    .addClass('icon-ok');
+
+            $('#organisations button')
+                .not('#candidate-' + data.project_github_id + ' button')
+                .not('.btn-success')
+                .not('.btn-info')
+                .attr('disabled', false);
+
+            $('#candidate-' + data.project_github_id + ' button i').removeClass().addClass('icon-ok');
+
+            try {
+
+                primus.subscribe(data.websocket_channel, data.websocket_token);
+
+                var project_link = tpl_project_link({ url: data.project_url, name: data.project_full_name });
+
+                if ($('#nav-projects').length == 0) {
+                    $('#sidebar').prepend(tpl_nav_project());
+                }
+
+                $('#nav-projects').append(tpl_nav_project_item({ link: project_link }));
+            } catch (e) {
+                console.log(e);
+                console.log(e.message);
+                // throw e;
+            }
+        });
+    })
+
     $('#organisations').on('click', '.candidate button', function() {
         $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
+        $('#organisations button').attr('disabled', 'disabled');
 
         var inputs = $(this).parent().find('input:hidden');
         var data = {};
@@ -29,15 +103,6 @@
             $('button', this)
                 .html('<i class="icon-remove"></i> ' + message)
                 .addClass('btn-danger');                
-        }).done(function(response) {
-            primus.subscribe(response.project.channel, response.websocket_auth_key);
-            $('button', this)
-                .html('<i class="icon-ok"></i> Success')
-                .addClass('btn-success');
-            var project_link = tpl_project_link({ url: response.url, name: response.project.full_name });
-
-            $('.ctn-name', this).html(project_link);
-            $('#nav-projects').append(tpl_project_nav({ link: project_link }));
         });
     });
 
@@ -110,6 +175,7 @@
                         } else {
                             var project = tpl_project({
                                 name: this.full_name,
+                                github_id: this.id,
                                 data: [
                                     { name: 'name', value: this.name },
                                     { name: 'github_full_name', value: this.full_name },

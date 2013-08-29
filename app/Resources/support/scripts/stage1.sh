@@ -65,6 +65,7 @@ fi
 cp /tmp/monit-monitrc /etc/monit/monitrc
 cp /tmp/monit-consumer-build /etc/monit/conf.d/consumer-build
 cp /tmp/monit-consumer-kill /etc/monit/conf.d/consumer-kill
+cp /tmp/monit-consumer-project-import /etc/monit/conf.d/consumer-project-import
 cp /tmp/monit-websockets /etc/monit/conf.d/websockets
 cp /tmp/monit-hipache /etc/monit/conf.d/hipache
 
