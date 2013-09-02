@@ -8,7 +8,11 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
 RUN apt-get update -y
-RUN apt-get install -qy realpath vim curl git ruby1.9.1
+RUN apt-get install -qy realpath vim curl git ruby1.9.1 openssh-server
+
+ADD ./support/authorized_keys /root/.ssh/authorized_keys
+RUN chmod -R 600 /root/.ssh
+RUN mkdir /var/run/sshd
 
 RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
@@ -20,10 +24,10 @@ RUN apt-get update -y
 RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb
 RUN dpkg --install libicu44_4.4.2-2_amd64.deb
 
-RUN apt-get install -qy mysql-server php5-cli php5-mysqlnd php5-intl
+RUN apt-get install -qy nginx mysql-server php5-cli php5-fpm php5-mysqlnd php5-intl
 
-# ADD ./support/nginx.conf /etc/nginx/sites-available/default
-# ADD ./support/php.ini /etc/php5/fpm/php.ini
+ADD ./support/nginx.conf /etc/nginx/sites-available/default
+ADD ./support/php.ini /etc/php5/fpm/php.ini
 ADD ./support/php.ini /etc/php5/cli/php.ini
 ADD ./support/parameters.yml /etc/symfony/parameters.yml.dist
 
@@ -39,3 +43,6 @@ ADD ./support/lib/builder/ /usr/local/lib/builder/
 RUN chmod -R +x /usr/local/bin/buildapp /usr/local/bin/runapp /usr/local/lib/builder/
 
 RUN apt-get autoremove -qy vim curl
+
+EXPOSE 80
+EXPOSE 22

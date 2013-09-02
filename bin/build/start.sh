@@ -69,7 +69,7 @@ Host github.com
 EOF
 
 cat > $CONTEXT_DIR/Dockerfile <<EOF
-FROM symfony2
+FROM symfony2:latest
 ADD ${SSH_KEY_PATH} /root/.ssh/id_rsa
 ADD ${SSH_KEY_PATH}.pub /root/.ssh/id_rsa.pub
 ADD $(basename $SSH_CONFIG) /root/.ssh/config
@@ -100,7 +100,7 @@ rm $BUILD_JOB_FILE
 
 BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME $COMMIT_TAG) || false
 
-WEB_WORKER=$(docker run -d -p 80 ${COMMIT_NAME}:${COMMIT_TAG} runapp) || false
+WEB_WORKER=$(docker run -d -p 80 -p 22 ${COMMIT_NAME}:${COMMIT_TAG} runapp) || false
 
 PORT=$(docker port $WEB_WORKER 80) || false
 
