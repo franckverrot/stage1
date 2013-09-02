@@ -17,7 +17,10 @@ ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 
 RUN apt-get update -y
 
-RUN apt-get install -qy mysql-server php5-cli php5-mysqlnd
+RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb
+RUN dpkg --install libicu44_4.4.2-2_amd64.deb
+
+RUN apt-get install -qy mysql-server php5-cli php5-mysqlnd php5-intl
 
 # ADD ./support/nginx.conf /etc/nginx/sites-available/default
 # ADD ./support/php.ini /etc/php5/fpm/php.ini
