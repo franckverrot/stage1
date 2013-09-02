@@ -189,7 +189,7 @@ class ProjectImportConsumer implements ConsumerInterface
 
     public function doKeys(Project $project, $body)
     {
-        $keys = SshKeys::generate();
+        $keys = SshKeys::generate('Stage 1 - ' . $project->getFullName());
 
         $project->setPublicKey($keys['public']);
         $project->setPrivateKey($keys['private']);

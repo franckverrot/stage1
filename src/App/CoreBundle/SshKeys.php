@@ -22,14 +22,14 @@ class SshKeys
         return $file;
     }
 
-    static public function generate($comment = 'stage1 deploy key')
+    static public function generate($comment = 'Stage1 Deploy Key')
     {
         $private = tempnam(sys_get_temp_dir(), 'ssh-keygen-');
         $public  = $private.'.pub';
 
         unlink($private);
 
-        $builder = new ProcessBuilder(['/usr/bin/ssh-keygen', '-q', '-N', '', '-t', 'rsa', '-f', $private, '-C', 'Stage1 Deploy Key']);
+        $builder = new ProcessBuilder(['/usr/bin/ssh-keygen', '-q', '-N', '', '-t', 'rsa', '-f', $private, '-C', $comment]);
         $process = $builder->getProcess();
 
         $process->run();

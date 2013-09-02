@@ -21,6 +21,13 @@ $('#project_name').on('keyup', function(event) {
 {% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
+<fieldset>
+    <legend>Project's public key</legend>
+    <p>Use this key as a deploy key for your private dependencies.</p>
+
+    <pre>{{ project.publicKey }}</pre>
+</fieldset>
+
 <form id="form-delete" class="form-inline" method="post" action="{{ path('app_core_project_delete', { id: project.id }) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
     <fieldset>
