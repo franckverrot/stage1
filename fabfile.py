@@ -1,5 +1,6 @@
 from fabric.api import *
 from fabric.colors import *
+from time import sleep
 
 env.host_string = 'digitalocean'
 env.project_path = '/vagrant'
@@ -147,6 +148,7 @@ def cold_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     services_restart()
+    sleep(2) # give monit some time to be reachable
     processes_start()
     hipache_restart()
 
@@ -174,6 +176,7 @@ def hot_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     services_restart()
+    sleep(2) # give monit some time to be reachable
     processes_start()
     hipache_restart()
     run('chown -R www-data:www-data %s' % env.project_path)
