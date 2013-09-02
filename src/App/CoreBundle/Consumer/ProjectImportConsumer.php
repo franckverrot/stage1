@@ -226,6 +226,7 @@ class ProjectImportConsumer implements ConsumerInterface
         $hooksUrl = $body->request->hooks_url;
         $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
 
+        $githubHookUrl = str_replace('http://localhost', 'http://stage1.io', $githubHookUrl);
         $githubHookUrl = str_replace('http://stage1.io', 'http://stage1:stage1@stage1.io', $githubHookUrl);
 
         $hooks = $this->github_get($hooksUrl);
