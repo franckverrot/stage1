@@ -5,6 +5,8 @@ set -e
 trap 'error_handler $?' ERR
 trap cleanup SIGTERM EXIT
 
+# echo "------> starting build $1"
+
 function cleanup {
     if [ -f $BUILD_JOB_FILE ]; then
         docker stop $(cat $BUILD_JOB_FILE) > /dev/null
@@ -48,6 +50,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CONSOLE=$(realpath $DIR/../../app/console) || false
 
+# php $CONSOLE build:infos $1
+
 $(php $CONSOLE build:infos $1) || false
 
 BUILD_URL="http://$BUILD_DOMAIN/"
@@ -82,8 +86,8 @@ docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev
 rm -rf $CONTEXT_DIR
 
 # @todo use the new -cidfile option
-# echo docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN
-BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp $SSH_URL $REF $HASH $ACCESS_TOKEN) || false
+# echo docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
+BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM
 echo $BUILD_JOB > $BUILD_JOB_FILE

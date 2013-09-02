@@ -14,10 +14,10 @@ source $DIR/../lib/stage1.sh
     exit 1
 }
 
-[ -z "$3" ] && {
-    echo "Missing git hash"
-    exit 1
-}
+# [ -z "$3" ] && {
+#     echo "Missing git hash"
+#     exit 1
+# }
 
 [ -z "$4" ] && {
     echo "Github access token is missing"
@@ -56,7 +56,7 @@ stage1_exec git clone --depth 1 --branch $ref $ssh_url $app_root
 
 cd $app_root
 
-stage1_exec git reset --hard $hash
+# stage1_exec git reset --hard $hash
 
 builders_root=$(realpath $DIR/../lib/builder)
 builders=($builders_root/*)

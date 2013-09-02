@@ -8,7 +8,7 @@
 
         <field name="status" column="status" type="integer" />
         <field name="ref" column="ref" type="string" length="255" />
-        <field name="hash" column="hash" type="string" length="255" />
+        <field name="hash" column="hash" type="string" length="255" nullable="true" />
         <field name="port" column="port" type="string" length="5" nullable="true" />
         <field name="url" column="url" type="string" length="255" nullable="true" />
         <field name="containerId" column="container_id" type="string" length="255" nullable="true" />
