@@ -192,6 +192,17 @@ class Controller extends BaseController
         return $project;
     }
 
+    protected function findProjectsBySlug($slug)
+    {
+        $projects = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findBySlug($slug);
+
+        if (count($projects) === 0) {
+            throw $this->createNotFoundException();
+        }
+
+        return $projects;
+    }
+
     protected function findProjectBySlug($slug)
     {
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneBySlug($slug);

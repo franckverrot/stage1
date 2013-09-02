@@ -146,19 +146,27 @@ class ProjectController extends Controller
 
     public function authorizeAction(Request $request, $slug)
     {
-        $project = $this->findProjectBySlug($slug);
+        $projects = $this->findProjectsBySlug($slug);
+        $password = $request->request->get('password');
 
-        if (password_verify($request->request->get('password'), $project->getMasterPassword())) {
+        foreach ($projects as $project) {
+            if (!password_verify($password, $project->getMasterPassword())) {
+                continue;
+            }
+
             $access = new ProjectAccess($this->getClientIp(), $request->getSession()->getId());
             
             $this->grantProjectAccess($project, $access);
 
             if (strlen($return = $request->request->get('return')) > 0) {
-                return $this->redirect('http://' . $request->request->get('return'));
+                return $this->redirect('http://' . $return);
             }
 
             $this->addFlash('success', 'You have been authenticated');
+
+            break;
         }
+
 
         return $this->render('AppCoreBundle:Project:auth.html.twig', [
             'project' => $project,
