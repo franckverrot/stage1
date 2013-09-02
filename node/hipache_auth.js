@@ -48,6 +48,7 @@ module.exports = function(hipache, req, stack, next) {
                             throw err;
                         }
 
+                        console.log('[ip, token]');
                         console.log(rows);
 
                         if (-1 === rows.indexOf(1)) {
