@@ -38,8 +38,6 @@ class Project
 
     protected $githubDeployKeyId;
 
-    protected $owner;
-
     protected $builds;
 
     protected $createdAt;
@@ -152,29 +150,6 @@ class Project
     }
 
     /**
-     * Set owner
-     *
-     * @param \App\CoreBundle\Entity\User $owner
-     * @return Project
-     */
-    public function setOwner(\App\CoreBundle\Entity\User $owner = null)
-    {
-        $this->owner = $owner;
-    
-        return $this;
-    }
-
-    /**
-     * Get owner
-     *
-     * @return \App\CoreBundle\Entity\User 
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
@@ -271,6 +246,7 @@ class Project
     public function __construct()
     {
         $this->builds = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -534,5 +510,43 @@ class Project
     public function getMasterPassword()
     {
         return $this->masterPassword;
+    }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $users;
+
+
+    /**
+     * Add users
+     *
+     * @param \App\CoreBundle\Entity\User $users
+     * @return Project
+     */
+    public function addUser(\App\CoreBundle\Entity\User $users)
+    {
+        $this->users[] = $users;
+    
+        return $this;
+    }
+
+    /**
+     * Remove users
+     *
+     * @param \App\CoreBundle\Entity\User $users
+     */
+    public function removeUser(\App\CoreBundle\Entity\User $users)
+    {
+        $this->users->removeElement($users);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 }

@@ -22,9 +22,7 @@
         <field name="privateKey" column="private_key" type="text" />
         <field name="masterPassword" column="master_password" type="text" nullable="true" />
 
-        <many-to-one field="owner" target-entity="App\CoreBundle\Entity\User" inversed-by="projects">
-            <join-column name="user_id" referenced-column-name="id" />
-        </many-to-one>
+        <many-to-many field="users" target-entity="App\CoreBundle\Entity\User" mapped-by="projects" />
 
         <one-to-many field="builds" target-entity="App\CoreBundle\Entity\Build" mapped-by="project">
             <cascade><cascade-remove /></cascade>
