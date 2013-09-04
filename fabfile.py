@@ -9,6 +9,9 @@ env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
 env.processes = ['consumer-build', 'consumer-kill', 'consumer-project-import', 'websockets']
 
+def rm_cache():
+    sudo('rm -rf %s/app/cache/*' % env.project_path)
+
 def hipache_start():
     sudo('monit start hipache')
 
@@ -148,6 +151,7 @@ def cold_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     services_restart()
+    info('giving monit some time...')
     sleep(2) # give monit some time to be reachable
     processes_start()
     hipache_restart()
@@ -176,6 +180,7 @@ def hot_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     services_restart()
+    info('giving monit some time...')
     sleep(2) # give monit some time to be reachable
     processes_start()
     hipache_restart()
