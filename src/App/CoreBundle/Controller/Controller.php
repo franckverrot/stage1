@@ -126,7 +126,7 @@ class Controller extends BaseController
             throw $this->createNotFoundException();
         }
 
-        if ($build->getProject()->getOwner() != $this->getUser()) {
+        if (!$build->getProject()->getUsers()->contains($this->getUser())) {
             throw new AccessDeniedException();
         }
 
@@ -185,7 +185,7 @@ class Controller extends BaseController
             throw $this->createNotFoundException();
         }
 
-        if ($project->getOwner() != $this->getUser()) {
+        if (!$project->getUsers()->contains($this->getUser())) {
             throw new AccessDeniedException();
         }
 

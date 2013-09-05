@@ -28,10 +28,12 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
 
     private function getKeys(Project $entity)
     {
-        $userKey = sprintf('channel:routing:user.%d', $entity->getOwner()->getId());
-        $projectKey = sprintf('project.%d', $entity->getId());
-
-        return [$userKey, $projectKey];
+        return [
+            'project' => $entity->getChannel(),
+            'users' => $entity->getUsers()->map(function($user) {
+                return 'channel:routing:'.$user->getChannel();
+            })
+        ];
     }
 
     public function postPersist(LifecycleEventArgs $args)
@@ -42,9 +44,13 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
             return;
         }
 
-        list($userKey, $projectKey) = $this->getKeys($entity);
+        $keys = $this->getKeys($entity);
+        $projectKey = $keys['project'];
 
-        $this->redis->sadd($userKey, $projectKey);
+        foreach ($keys['users'] as $userKey) {
+            $this->redis->sadd($userKey, $projectKey);
+        }
+
     }
 
     public function preRemove(LifecycleEventArgs $args)
@@ -55,8 +61,11 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
             return;
         }
 
-        list($userKey, $projectKey) = $this->getKeys($entity);
+        $keys = $this->getKeys($entity);
+        $projectKey = $keys['project'];
 
-        $this->redis->srem($userKey, $projectKey);
+        foreach ($keys['users'] as $userKey) {
+            $this->redis->srem($userKey, $projectKey);
+        }
     }
 }

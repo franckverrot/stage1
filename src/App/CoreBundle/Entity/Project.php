@@ -54,6 +54,8 @@ class Project
 
     protected $masterPassword;
 
+    protected $users;
+
     public function getChannel()
     {
         return 'project.'.$this->getId();
@@ -511,11 +513,6 @@ class Project
     {
         return $this->masterPassword;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $users;
-
 
     /**
      * Add users

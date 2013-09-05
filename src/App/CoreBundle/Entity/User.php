@@ -243,7 +243,7 @@ class User implements UserInterface
     {
         $this->projects = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
     /**
      * Add projects
      *

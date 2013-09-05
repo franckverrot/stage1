@@ -35,7 +35,11 @@ class BuildInfosCommand extends ContainerAwareCommand
             $build->getRef(),
             $build->getHash(),
             $build->getProject()->getSshUrl(),
-            $build->getProject()->getOwner()->getAccessToken(),
+            # @todo there must be a way to avoid requiring a valid access token
+            #       I think the token is only used to avoid hitting github's
+            #       API limit through composer, so maybe there's a way to use a
+            #       stage1 specific token instead
+            $build->getProject()->getUsers()->first()->getAccessToken(),
             $build->getImageName(),
             $build->getImageTag(),
             sprintf($this->getContainer()->getParameter('build_url_mask'), $build->getBranchDomain()),

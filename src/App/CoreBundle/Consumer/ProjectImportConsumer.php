@@ -179,7 +179,7 @@ class ProjectImportConsumer implements ConsumerInterface
         $project->setCloneUrl($body->request->clone_url);
         $project->setSshUrl($body->request->ssh_url);
 
-        $project->setOwner($this->getUser());
+        $project->addUser($this->getUser());
 
         $now = new DateTime();
         $project->setCreatedAt($now);
