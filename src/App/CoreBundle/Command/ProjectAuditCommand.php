@@ -25,34 +25,53 @@ class ProjectAuditCommand extends ContainerAwareCommand
         $project = $input->getArgument('project');
         $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
 
-        $infos = array(
-            'name' => null,
-            'count' => 1,
-        );
+        $infos = [];
 
-        if (is_numeric($project)) {
-            $project = $repository->find((integer) $project);
-        } else {
-            $projects = $repository->findBySlug($project);
-
-            if (count($projects) > 0) {
-                $project = $projects[0];
-            }
-
-            $infos['count'] = count($projects);
-        }
-
-        if (!is_object($project)) {
-            $output->writeln('<error>Project not found</error>');
-            return 1;
-        }
+        $project = $this->findProject($input->getArgument('project'));
 
         $infos['name'] = $project->getFullName();
-
-        $max = max(array_map('strlen', array_keys($infos)));
+        $infos['users'] = $project->getUsers()->map(function($user) { return $user->getUsername(); })->toArray();
+        $infos['builds'] = array(
+            'total' => count($project->getBuilds()),
+            'running' => count($project->getRunningBuilds()),
+            'building' => count($project->getBuildingBuilds()),
+        );
 
         foreach ($infos as $key => $value) {
-            $output->writeln(sprintf('<comment>%- '.($max + 3).'s</comment> %s', $key, $value));
+            if (is_string($value)) {
+                $output->writeln(sprintf('<info>%s</info>: <comment>%s</comment>', $key, $value));
+            } elseif (is_array($value)) {
+                $output->writeln(sprintf('<info>%s</info>:', $key));
+
+                if (is_numeric(key($value))) {
+                    foreach ($value as $line) {
+                        $output->writeln('  - <comment>'.$line.'</comment>');
+                    }                    
+                } else {
+                    $m = max(array_map('strlen', array_keys($value)));
+
+                    foreach ($value as $k => $v) {
+                        $output->writeln(sprintf('  <info>%s</info>: <comment>%s</comment>', $k, $v));
+                    }
+                }
+            }
         }
+    }
+
+    private function findProject($spec)
+    {
+        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+
+        if (is_numeric($spec)) {
+            return $repository->find((integer) $spec);
+        }
+
+        $projects = $repository->findBySlug($spec);
+
+        if (count($projects) === 0) {
+            throw new InvalidArgumentException('Project not found');
+        }
+
+        return $projects[0];
     }
 }
