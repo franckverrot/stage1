@@ -14,7 +14,6 @@ TODO PRIVATE BETA
     * needs to have working error reporting
     * needs to have proper monitoring
 * projects
-    * multi-owners
     * explain how the master password works
     * delete access list on project deletion
 * dashboard
@@ -36,11 +35,6 @@ TODO
 
 * Commands
     * project:audit
-        * number of occurences in database
-        * number of builds
-        * number of building builds
-        * number of running instances
-        * owner(s)
         * is the deploy key configured?
         * is the webhook configured?
 
