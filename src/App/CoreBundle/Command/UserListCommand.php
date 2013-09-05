@@ -22,7 +22,7 @@ class UserListCommand extends ContainerAwareCommand
         $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
 
         foreach ($repository->findAll() as $user) {
-            $output->writeln($user->getUsername());
+            $output->writeln(sprintf('<info>%- 4d</info> %s', $user->getId(), $user->getUsername()));
         }
    }
 }
