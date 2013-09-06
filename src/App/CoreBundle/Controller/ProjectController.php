@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use App\CoreBundle\Value\ProjectAccess;
 use App\CoreBundle\Entity\Project;
@@ -23,6 +24,29 @@ class ProjectController extends Controller
             'action' => $this->generateUrl('app_core_project_master_password_update', ['id' => $project->getId()]),
             'method' => 'POST',
         ]);
+    }
+
+    public function discoverAction()
+    {
+        $discover = $this->container->get('app_core.discover.github');
+        $projects = $discover->discover($this->getUser());
+
+        $githubIds = array_values(array_map(function($p) { return $p['github_id']; }, $projects));
+
+        $queryBuilder = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->createQueryBuilder('p');
+        $queryBuilder->where('p.githubId IN(?1)');
+        $queryBuilder->setParameter(1, $githubIds);
+
+        $query = $queryBuilder->getQuery();
+
+        foreach ($query->execute() as $project) {
+            if (isset($projects[$project->getFullName()])) {
+                $projects[$project->getFullName()]['exists'] = true;
+                $projects[$project->getFullName()]['url'] = $this->generateUrl('app_core_project_show', ['id' => $project->getId()]);
+            }
+        }
+
+        return new JsonResponse(json_encode($projects));
     }
 
     public function accessDeleteAction(Request $request, $id)

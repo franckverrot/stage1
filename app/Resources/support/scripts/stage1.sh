@@ -29,6 +29,7 @@ apt-get -qy install \
     php5-cli \
     php5-mysqlnd \
     php5-redis \
+    php5-curl \
     redis-server \
     rabbitmq-server \
     mysql-client \

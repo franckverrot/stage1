@@ -14,6 +14,14 @@
             </call>
         </service>
 
+        <service id="app_core.client.github" class="Guzzle\Http\Client">
+            <argument>%github_api_base_url%</argument>
+        </service>
+
+        <service id="app_core.discover.github" class="App\CoreBundle\Discover\Github">
+            <argument type="service" id="app_core.client.github" />
+        </service>
+
         <!-- rabbitmq consumers -->
 
         <service id="app_core.consumer.build" class="App\CoreBundle\Consumer\BuildConsumer">

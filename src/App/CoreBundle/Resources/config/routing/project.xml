@@ -4,6 +4,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
+    <route id="app_core_discover" pattern="discover" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:discover</default>
+    </route>
+
     <route id="app_core_project_auth" pattern="/p/{slug}" methods="GET">
         <default key="_controller">AppCoreBundle:Project:auth</default>
     </route>

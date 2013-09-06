@@ -130,3 +130,7 @@ div.build-building-icon {
     left: 838px;
     width: 510px;
 }
+
+.table-candidates td {
+    vertical-align: inherit;
+}

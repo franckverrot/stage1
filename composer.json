@@ -19,7 +19,8 @@
         "sensio/framework-extra-bundle": "2.3.*",
         "sensio/generator-bundle": "2.3.*",
         "oldsound/rabbitmq-bundle": "dev-master@dev",
-        "ircmaxell/password-compat": "1.0.3"
+        "ircmaxell/password-compat": "1.0.3",
+        "guzzle/guzzle": "3.7.*"
     },
     "scripts": {
         "post-install-cmd": [

@@ -106,119 +106,68 @@
         });
     });
 
-    window.github = function(url) {
-        return $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json',
-            data: { 'access_token': github_access_token }
-        });
-    };
-
-    window.fetch_composer_json = function(repo) {
-        return $.ajax({
-            url: repo.contents_url.replace('{+path}', 'composer.json'),
-            context: repo,
-            type: 'GET',
-            dataType: 'json',
-            data: { 'access_token': github_access_token },
-            accepts: { json: 'application/vnd.github.VERSION.raw' }
-        });
-    };
-
-    var candidates_count = 0;
-    var organisations_count = 0;
-
-    window.inspect_repositories = function(repos) {
-        if (repos.length == 0) {
-            return;
-        }
-
-        var status = function(message) {
-            $('#projects_import_status').text(message);
-        }
-
+    window.find_repositories = function() {
         var tpl_project = Mustache.compile($('#tpl-project').text());
         var tpl_project_existing = Mustache.compile($('#tpl-project-existing').text());
         var tpl_organisation = Mustache.compile($('#tpl-organisation').text());
-        var projects_count = 0;
 
-        var add_candidate = function(owner, html) {
-            if ($('#org-' + owner.login).length == 0) {
-                organisations_count++;
-                $('#organisations').append(tpl_organisation({
-                    'name': owner.login,
-                    'avatar_url': owner.avatar_url
-                }));
-            }
-
-            $('#org-' + owner.login + '-candidates').append(html);
-        };
+        var candidates_count = 0;
+        var organisations_count = 0;
 
 
-        projects_count = repos.length;
-        for (i in repos) {
-            if (!repos[i].permissions.admin) {
-                continue;
-            }
+        $.get('/discover').then(function(data) {
+            data = JSON.parse(data);
 
-            fetch_composer_json(repos[i]).done(function(content) {
-                for (pkg in content.require) {
-                    if (pkg == 'symfony/symfony') {
-                        candidates_count++;
+            for (fullName in data) {
+                candidates_count++;
 
-                        if (undefined != existing_projects[this.full_name]) {
-                            var project = tpl_project_existing({
-                                name: this.full_name,
-                                url: existing_projects[this.full_name]
-                            });
-                        } else {
-                            var project = tpl_project({
-                                name: this.full_name,
-                                github_id: this.id,
-                                data: [
-                                    { name: 'name', value: this.name },
-                                    { name: 'github_full_name', value: this.full_name },
-                                    { name: 'github_owner_login', value: this.owner.login },
-                                    { name: 'github_id', value: this.id },
-                                    { name: 'clone_url', value: this.clone_url },
-                                    { name: 'ssh_url', value: this.ssh_url },
-                                    { name: 'hooks_url', value: this.hooks_url },
-                                    { name: 'keys_url', value: this.keys_url }
-                                ]
-                            });
-                        }
+                var project = data[fullName];
 
-                        add_candidate(this.owner, project);
-                    }
+                if ($('#org-' + project.github_owner_login).length == 0) {
+                    organisations_count++;
+
+                    $('#organisations').append(tpl_organisation({
+                        'name': project.github_owner_login,
+                        'avatar_url': project.github_owner_avatar_url
+                    }));
                 }
-            }).always(function() {
-                if (--projects_count == 0) {
-                    $('#projects_import_status')
-                        .removeClass('alert-info')
-                        .addClass('alert-success');
 
-                    $('#projects_import_status i')
-                        .removeClass('icon-refresh')
-                        .removeClass('icon-spin')
-                        .addClass('icon-ok');
-
-                    $('#projects_import_status span')
-                        .text('Found ' + candidates_count + ' Symfony project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');
+                if (project.exists) {
+                    var html = tpl_project_existing({
+                        name: project.github_full_name,
+                        url: project.url
+                    });
+                } else {
+                    var html = tpl_project({
+                        name: project.github_full_name,
+                        github_id: project.github_id,
+                        data: [
+                            { name: 'name', value: project.name },
+                            { name: 'github_full_name', value: project.github_full_name },
+                            { name: 'github_owner_login', value: project.github_owner_login },
+                            { name: 'github_id', value: project.github_id },
+                            { name: 'clone_url', value: project.clone_url },
+                            { name: 'ssh_url', value: project.ssh_url },
+                            { name: 'hooks_url', value: project.hooks_url },
+                            { name: 'keys_url', value: project.keys_url }
+                        ]
+                    });
                 }
-            });
-        }
-    };
 
-    window.find_repositories = function() {
-        github(window.github_api_base_url + '/user/orgs').then(function(orgs) {
-            orgs_count = orgs.length;
+                $('#org-' + project.github_owner_login + '-candidates').append(html);
 
-            for (i in orgs) {
-                github(orgs[i].repos_url).then(inspect_repositories);
+                $('#projects_import_status')
+                    .removeClass('alert-info')
+                    .addClass('alert-success');
+
+                $('#projects_import_status i')
+                    .removeClass('icon-refresh')
+                    .removeClass('icon-spin')
+                    .addClass('icon-ok');
+
+                $('#projects_import_status span')
+                    .text('Found ' + candidates_count + ' Symfony project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');
             }
         });
-
-        github(window.github_api_base_url + '/user/repos').then(inspect_repositories);
-    }
+    };
 })(jQuery, window);
