@@ -64,9 +64,9 @@ find_repositories();
 <script type="text/mustache" id="tpl-project">
 {% verbatim %}
 <tr class="candidate" id="candidate-{{ github_id }}">
-    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-name"><strong>{{ name }}</strong></td>
     <td class="ctn-button">
-        <button class="btn">import</button>
+        <button class="btn btn-import">import</button>
         {{#data}}
         <input type="hidden" name="{{ name }}" value="{{ value }}" />
         {{/data}}
@@ -75,12 +75,29 @@ find_repositories();
 {% endverbatim %}
 </script>
 
+<script type="text/mustache" id="tpl-project-joinable">
+{% verbatim %}
+<tr class="candidate">
+    <td class="ctn-name">
+        <strong>{{ name }}</strong>
+        <div class="help">users: {{ users }}</div>
+    </td>
+    <td class="ctn-button">
+        <button class="btn btn-join" data-join-url="{{ join_url }}">join</button>
+    </td>
+</tr>
+{% endverbatim %}
+</script>
+
 <script type="text/mustache" id="tpl-project-existing">
 {% verbatim %}
 <tr class="candidate">
-    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-name">
+        <strong>{{ name }}</strong>
+        <div class="help">users: {{ users }}</div>
+    </td>
     <td class="ctn-button">
-        <button class="btn btn-info" disabled="disabled"><i class="icon-ok"></i> Already imported</button>
+        <button class="btn btn-info" disabled="disabled"><i class="icon-ok"></i> imported</button>
     </td>
 </tr>
 {% endverbatim %}

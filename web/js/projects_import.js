@@ -1,10 +1,11 @@
 (function($, window) {
 
+    var tpl_nav_project = Mustache.compile($('#tpl-nav-projects').text());
+    var tpl_nav_project_item = Mustache.compile($('#tpl-project-nav').text());
+    var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
+
     $(function() {
         var tpl_import = Mustache.compile($('#tpl-import').text());
-        var tpl_nav_project = Mustache.compile($('#tpl-nav-projects').text());
-        var tpl_nav_project_item = Mustache.compile($('#tpl-project-nav').text());
-        var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
 
         function on(event, callback) {
             primus.on('data', function(data) {
@@ -46,7 +47,7 @@
                     .removeClass()
                     .addClass('icon-ok');
 
-            $('#organisations button')
+            $('#organisations button.btn-import')
                 .not('#candidate-' + data.project_github_id + ' button')
                 .not('.btn-success')
                 .not('.btn-info')
@@ -71,11 +72,44 @@
                 // throw e;
             }
         });
-    })
+    });
 
-    $('#organisations').on('click', '.candidate button', function() {
+    $('#organisations').on('click', '.candidate button.btn-join', function() {
         $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
-        $('#organisations button').attr('disabled', 'disabled');
+
+        $.ajax({
+            url: $(this).data('join-url'),
+            type: 'POST',
+            dataType: 'json',
+            context: $(this).parent().parent()
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            try {
+                var message = JSON.parse(jqXHR.responseJSON).message;
+            } catch (e) {
+                var message = 'An unexpected error has occured (' + e.message + ')';
+            }
+
+            $('button', this).html('<i class="icon-remove"></i> ' + message).addClass('btn-danger');
+        }).then(function(data) {
+            data = JSON.parse(data);
+
+            if (data.status == 'ok') {
+                $('button', this).addClass('btn-success').html('<i class="icon-ok"></i>');
+
+                var project_link = tpl_project_link({ url: data.project_url, name: data.project_full_name });
+
+                if ($('#nav-projects').length == 0) {
+                    $('#sidebar').prepend(tpl_nav_project());
+                }
+
+                $('#nav-projects').append(tpl_nav_project_item({ link: project_link }));
+            }
+        });
+    });
+
+    $('#organisations').on('click', '.candidate button.btn-import', function() {
+        $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
+        $('#organisations button.btn-import').attr('disabled', 'disabled');
 
         var inputs = $(this).parent().find('input:hidden');
         var data = {};
@@ -94,6 +128,7 @@
             data: data,
             context: $(this).parent().parent()
         }).fail(function(jqXHR, textStatus, errorThrown) {
+            // @todo restore disabled state on buttons
             try {
                 var message = jqXHR.responseJSON.message;
             } catch (e) {
@@ -109,6 +144,7 @@
     window.find_repositories = function() {
         var tpl_project = Mustache.compile($('#tpl-project').text());
         var tpl_project_existing = Mustache.compile($('#tpl-project-existing').text());
+        var tpl_project_joinable = Mustache.compile($('#tpl-project-joinable').text());
         var tpl_organisation = Mustache.compile($('#tpl-organisation').text());
 
         var candidates_count = 0;
@@ -117,6 +153,8 @@
 
         $.get('/discover').then(function(data) {
             data = JSON.parse(data);
+
+            console.log(data);
 
             for (fullName in data) {
                 candidates_count++;
@@ -133,10 +171,20 @@
                 }
 
                 if (project.exists) {
-                    var html = tpl_project_existing({
-                        name: project.github_full_name,
-                        url: project.url
-                    });
+                    if (project.is_in) {
+                        var html = tpl_project_existing({
+                            name: project.github_full_name,
+                            url: project.url,
+                            users: function users() { return project.users.join(', '); }
+                        });                        
+                    } else {
+                        var html = tpl_project_joinable({
+                            name: project.github_full_name,
+                            url: project.url,
+                            join_url: project.join_url,
+                            users: function users() { return project.users.join(', '); }
+                        });
+                    }
                 } else {
                     var html = tpl_project({
                         name: project.github_full_name,

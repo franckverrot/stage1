@@ -41,12 +41,44 @@ class ProjectController extends Controller
 
         foreach ($query->execute() as $project) {
             if (isset($projects[$project->getFullName()])) {
-                $projects[$project->getFullName()]['exists'] = true;
-                $projects[$project->getFullName()]['url'] = $this->generateUrl('app_core_project_show', ['id' => $project->getId()]);
+                $projects[$project->getFullName()] = array_replace($projects[$project->getFullName()], [
+                    'exists' => true,
+                    'url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]),
+                    'users' => $project->getUsers()->map(function($user) { return $user->getUsername(); })->toArray(),
+                    'is_in' => $project->getUsers()->contains($this->getUser()),
+                    'join_url' => $this->generateUrl('app_core_project_join', ['id' => $project->getId()]),
+                ]);
             }
         }
 
         return new JsonResponse(json_encode($projects));
+    }
+
+    public function joinAction(Request $request, $id)
+    {
+        $project = $this->findProject($id);
+
+        $client = $this->get('app_core.client.github');
+        $client->setDefaultOption('headers/Authorization', 'token '.$this->getUser()->getAccessToken());
+
+        $request = $client->get(['/repos/{owner}/{repo}/collaborators', ['owner' => $project->getGithubOwnerLogin(), 'repo' => $project->getName()]]);
+        $response = $request->send();
+        $users = $response->json();
+
+        foreach ($users as $user) {
+            if ($user['id'] === $this->getUser()->getGithubId()) {
+                $project->addUser($this->getUser());
+                $this->persistAndFlush($project);
+
+                return new JsonResponse(json_encode([
+                    'status' => 'ok',
+                    'project_url' => $this->generateUrl('app_core_project_show', ['id' => $project->getId()]),
+                    'project_full_name' => $project->getFullName(),
+                ]));
+            }
+        }
+
+        return new JsonResponse(json_encode(['status' => 'nok', 'message' => 'Not authorized']), 401);
     }
 
     public function accessDeleteAction(Request $request, $id)
