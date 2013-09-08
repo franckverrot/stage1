@@ -177,7 +177,7 @@ class Controller extends BaseController
         $this->get('request')->attributes->set('current_project_id', $id);
     }
 
-    protected function findProject($id)
+    protected function findProject($id, $checkAuth = true)
     {
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
 

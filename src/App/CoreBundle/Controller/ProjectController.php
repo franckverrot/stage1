@@ -56,7 +56,11 @@ class ProjectController extends Controller
 
     public function joinAction(Request $request, $id)
     {
-        $project = $this->findProject($id);
+        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
+
+        if (!$project) {
+            throw $this->createNotFoundException();
+        }
 
         $client = $this->get('app_core.client.github');
         $client->setDefaultOption('headers/Authorization', 'token '.$this->getUser()->getAccessToken());
