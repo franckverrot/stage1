@@ -22,7 +22,7 @@ def hipache_restart():
     sudo('monit restart hipache')
 
 def log():
-    sudo('tail -f /var/log/nginx/* /tmp/log/* /tmp/hipache/*')
+    sudo('tail -f /var/log/nginx/* /tmp/log/* /vagrant/app/logs/prod.log')
 
 def prepare_assets():
     info('preparing assets')
