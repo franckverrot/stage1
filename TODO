@@ -86,7 +86,6 @@ TODO
     * allow per-project docker image selection
         This should not be in the UI, it's an admin (as in, me) only feature for now
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
-    * import should make ajax queries to stage1 instead of directly querying github
     * access
         * implement "one-time-access-granting" URLs
         * implement "one-time" passwords
@@ -107,7 +106,6 @@ TODO
     * bundle to override container parameters per user
 
 * misc UI
-    * explain what exactly happens when importing a project (deploy key + webhooks setup)
     * show useful indicators of what's happening in the title bar when the window is out of focus
     * all "stateful buttons" should present an option to "retry" when failed
     * timeout long running ajax queries with a message like "uhoh, this is taking longer than expected"
