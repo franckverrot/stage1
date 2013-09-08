@@ -54,6 +54,8 @@ class Build
 
     private $updatedAt;
 
+    private $branch;
+
     public function appendOutput($data)
     {
         $this->output .= $data;
@@ -520,5 +522,28 @@ class Build
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Set branch
+     *
+     * @param \App\CoreBundle\Entity\Branch $branch
+     * @return Build
+     */
+    public function setBranch(\App\CoreBundle\Entity\Branch $branch = null)
+    {
+        $this->branch = $branch;
+    
+        return $this;
+    }
+
+    /**
+     * Get branch
+     *
+     * @return \App\CoreBundle\Entity\Branch 
+     */
+    public function getBranch()
+    {
+        return $this->branch;
     }
 }

@@ -9,12 +9,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
-
+use Guzzle\Http\Client;
 use Doctrine\Common\Util\Inflector;
 
 use App\CoreBundle\SshKeys;
 use App\CoreBundle\Entity\User;
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\Branch;
 use App\CoreBundle\Value\ProjectAccess;
 
 use DateTime;
@@ -22,6 +23,8 @@ use Redis;
 
 class ProjectImportConsumer implements ConsumerInterface
 {
+    private $client;
+
     private $doctrine;
 
     private $websocket;
@@ -40,8 +43,9 @@ class ProjectImportConsumer implements ConsumerInterface
 
     private $feature_token_access_list = true;
 
-    public function __construct(RegistryInterface $doctrine, Producer $websocket, Router $router, Redis $redis)
+    public function __construct(Client $client, RegistryInterface $doctrine, Producer $websocket, Router $router, Redis $redis)
     {
+        $this->client = $client;
         $this->doctrine = $doctrine;
         $this->websocket = $websocket;
         $this->router = $router;
@@ -162,12 +166,13 @@ class ProjectImportConsumer implements ConsumerInterface
             ['id' => 'keys', 'label' => 'Generating keys'],
             ['id' => 'deploy_key', 'label' => 'Adding deploy key'],
             ['id' => 'webhook', 'label' => 'Configuring webhook'],
-            // ['id' => 'branches', 'label' => 'Inspecting branches'],
+            ['id' => 'branches', 'label' => 'Importing branches'],
             ['id' => 'access', 'label' => 'Granting default access'],
         ];
     }
 
-    public function doInspect(Project $project, $body)
+    # @todo use github api instead of relying on request parameters
+    public function doInspect(Project $project, $body, Client $client)
     {
         # @todo @normalize
         $project->setSlug(preg_replace('/[^a-z0-9\-]/', '-', strtolower($body->request->github_full_name)));
@@ -187,7 +192,7 @@ class ProjectImportConsumer implements ConsumerInterface
 
     }
 
-    public function doKeys(Project $project, $body)
+    public function doKeys(Project $project, $body, Client $client)
     {
         $keys = SshKeys::generate('Stage 1 - ' . $project->getFullName());
 
@@ -195,7 +200,7 @@ class ProjectImportConsumer implements ConsumerInterface
         $project->setPrivateKey($keys['private']);
     }
 
-    public function doDeployKey(Project $project, $body)
+    public function doDeployKey(Project $project, $body, Client $client)
     {
         $keysUrl = str_replace('{/key_id}', '', $body->request->keys_url);
         $keys = $this->github_get($keysUrl);
@@ -221,7 +226,7 @@ class ProjectImportConsumer implements ConsumerInterface
 
     }
 
-    public function doWebhook(Project $project, $body)
+    public function doWebhook(Project $project, $body, Client $client)
     {
         $hooksUrl = $body->request->hooks_url;
         $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
@@ -250,12 +255,30 @@ class ProjectImportConsumer implements ConsumerInterface
         $project->setGithubHookId($hook->id);
     }
 
-    public function doBranches(Project $project, $body)
+    public function doBranches(Project $project, $body, Client $client)
     {
+        $request = $client->get(['/repos/{owner}/{repo}/branches', [
+            'owner' => $project->getGithubOwnerLogin(),
+            'repo' => $project->getName(),
+        ]]);
 
+        $response = $request->send();
+
+        foreach ($response->json() as $data) {
+            $branch = new Branch();
+            $branch->setName($data['name']);
+
+            $now = new DateTime();
+
+            $branch->setCreatedAt($now);
+            $branch->setUpdatedAt($now);
+            
+            $branch->setProject($project);
+            $project->addBranch($branch);
+        }
     }
 
-    public function doAccess(Project $project, $body)
+    public function doAccess(Project $project, $body, Client $client)
     {
         # this is one special ip that cannot be revoked
         # it is used to keep the access list "existing"
@@ -279,6 +302,9 @@ class ProjectImportConsumer implements ConsumerInterface
 
         $this->setUser($this->doctrine->getRepository('AppCoreBundle:User')->find($body->user_id));
 
+        $client = clone $this->client;
+        $client->setDefaultOption('headers/Authorization', 'token '.$this->getUser()->getAccessToken());
+
         echo '   found user #' . $this->getUser()->getId().PHP_EOL;
         echo '   user channel is "' . $this->getUser()->getChannel().'"'.PHP_EOL;
         echo '   using websocket channel "' . $this->getWebsocketChannel() . '"'.PHP_EOL;
@@ -294,7 +320,7 @@ class ProjectImportConsumer implements ConsumerInterface
         foreach ($this->getSteps() as $step) {
             $this->publish('project.import.step', ['step' => $step['id']]);
             $method = 'do'.Inflector::classify($step['id']);
-            $this->$method($project, $body);
+            $this->$method($project, $body, $client);
         }
 
         $em = $this->getDoctrine()->getManager();

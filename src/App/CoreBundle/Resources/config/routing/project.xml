@@ -4,6 +4,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
+    <!-- public project routing -->
+
     <route id="app_core_discover" pattern="/discover" methods="GET">
         <default key="_controller">AppCoreBundle:Project:discover</default>
     </route>
@@ -12,12 +14,18 @@
         <default key="_controller">AppCoreBundle:Project:auth</default>
     </route>
 
-    <route id="app_core_project_join" pattern="/project/{id}/join" methods="POST">
-        <default key="_controller">AppCoreBundle:Project:join</default>
-    </route>
-
     <route id="app_core_project_authorize" pattern="/p/{slug}" methods="POST">
         <default key="_controller">AppCoreBundle:Project:authorize</default>
+    </route>
+
+    <!-- private project routing -->
+
+    <route id="app_core_project_branches" pattern="/project/{id}/branches" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:branches</default>
+    </route>
+
+    <route id="app_core_project_join" pattern="/project/{id}/join" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:join</default>
     </route>
 
     <route id="app_core_project_access" pattern="/project/{id}/access" methods="GET">

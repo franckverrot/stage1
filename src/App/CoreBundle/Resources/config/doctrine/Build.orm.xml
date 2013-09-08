@@ -27,6 +27,10 @@
         <many-to-one field="initiator" target-entity="App\CoreBundle\Entity\User">
             <join-column name="user_id" referenced-column-name="id" />
         </many-to-one>
+
+        <many-to-one field="branch" target-entity="App\CoreBundle\Entity\Branch" inversed-by="builds">
+            <join-column name="branch_id" referenced-column-name="id" />
+        </many-to-one>
     </entity>
 
 </doctrine-mapping>

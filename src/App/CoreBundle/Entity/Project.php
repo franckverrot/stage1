@@ -56,6 +56,8 @@ class Project
 
     protected $users;
 
+    protected $branches;
+
     public function getChannel()
     {
         return 'project.'.$this->getId();
@@ -249,6 +251,7 @@ class Project
     {
         $this->builds = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->branches = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -545,5 +548,59 @@ class Project
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * Add branches
+     *
+     * @param \App\CoreBundle\Entity\Branch $branch
+     * @return Project
+     */
+    public function addBranch(\App\CoreBundle\Entity\Branch $branch)
+    {
+        return $this->addBranche($branch);
+    }
+
+    /**
+     * Remove branches
+     *
+     * @param \App\CoreBundle\Entity\Branch $branch
+     */
+    public function removeBranch(\App\CoreBundle\Entity\Branch $branch)
+    {
+        return $this->removeBranche($branch);
+    }
+
+    /**
+     * Get branches
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getBranches()
+    {
+        return $this->branches;
+    }
+
+    /**
+     * Add branches
+     *
+     * @param \App\CoreBundle\Entity\Branch $branches
+     * @return Project
+     */
+    public function addBranche(\App\CoreBundle\Entity\Branch $branches)
+    {
+        $this->branches[] = $branches;
+    
+        return $this;
+    }
+
+    /**
+     * Remove branches
+     *
+     * @param \App\CoreBundle\Entity\Branch $branches
+     */
+    public function removeBranche(\App\CoreBundle\Entity\Branch $branches)
+    {
+        $this->branches->removeElement($branches);
     }
 }

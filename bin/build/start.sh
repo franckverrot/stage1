@@ -5,7 +5,13 @@ set -e
 trap 'error_handler $?' ERR
 trap cleanup SIGTERM EXIT
 
-# echo "------> starting build $1"
+DEBUG=""
+
+function debug {
+    if [ -n "$DEBUG" ]; then
+        echo "$@"
+    fi
+}
 
 function cleanup {
     if [ -f $BUILD_JOB_FILE ]; then
@@ -18,10 +24,12 @@ function cleanup {
 
 function error_handler {
     echo
-    echo "---> Build failed ($(date))"
+    echo "------> Build failed ($(date))"
     cleanup
     exit $1    
 }
+
+debug "------> starting build $1 ($(date))"
 
 # @todo move that to the CONTEXT_DIR
 BUILD_INFO_FILE="/tmp/stage1-build-info"
@@ -50,12 +58,14 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CONSOLE=$(realpath $DIR/../../app/console) || false
 
-# php $CONSOLE build:infos $1
+debug php $CONSOLE build:infos $1
 
 $(php $CONSOLE build:infos $1) || false
 
 BUILD_URL="http://$BUILD_DOMAIN/"
 BUILD_REDIS_LIST="frontend:$BUILD_DOMAIN"
+
+debug '------> preparing building container'
 
 # insert ssh keys
 CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
@@ -81,12 +91,17 @@ RUN chmod -R 0600 /root/.ssh
 RUN chown -R root:root /root/.ssh
 EOF
 
+debug '------> building build container'
+debug "------> docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev/null"
+
 docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev/null
 
 rm -rf $CONTEXT_DIR
 
+debug '------> starting actual build'
+
 # @todo use the new -cidfile option
-# echo docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
+debug '------> ' docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
 BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM

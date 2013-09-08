@@ -1,0 +1,107 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+{% include 'AppCoreBundle:Default:_project_header.html.twig' %}
+<table class="table" id="project-{{ project.id }}-branches">
+    <thead>
+        <tr>
+            <th width="15%">Branch</th>
+            <th width="10%">Status</th>
+            <th width="15%">&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody id="branches">
+        {% for branch in project.branches %}
+            <tr class="branch" id="ref-{{ branch.normName }}">
+                <td class="ctn-name">{{ branch.name }}</td>
+                <td class="ctn-status">
+                    {% if branch.lastBuild %}
+                        <span
+                            id="ref-{{ branch.normName }}-status"
+                            data-status="{{ branch.lastBuild.status }}"
+                            class="label label-{{ branch.lastBuild.statusLabelClass }}"
+                        >{{ branch.lastBuild.statusLabel }}</span>
+                    {% endif %}
+                </td>
+                <td class="actions" id="ref-{{ branch.normName }}-form-container">
+                    {% if not branch.lastBuild or not branch.lastBuild.pending %}
+                        <form id="ref-{{ branch.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
+                            <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule</button>
+                            <input type="hidden" name="ref" value="{{ branch.name }}" />
+                        </form>
+                    {% endif %}
+
+                    {% if branch.lastBuild and branch.lastBuild.building %}
+                        <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: project.id }) }}">
+                            <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
+                        </form>
+                    {% endif %}
+
+                    {% if branch.lastBuild and branch.lastBuild.scheduled %}
+                        <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: project.id }) }}">
+                            <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
+                        </form>
+                    {% endif %}
+                </td>
+                <td class="actions" id="ref-{{ branch.normName }}-actions">
+
+                    <span id="ref-{{ branch.normName }}-link">
+                        {% if branch.lastBuild and branch.lastBuild.running %}
+                        <a href="{{ branch.lastBuild.url }}">{{ branch.lastBuild.url }}</a>
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<script type="text/mustache" id="tpl-ref-kill-form">
+{% verbatim %}
+<form id="ref-{{ normName }}-kill-form" method="post" action="{{ kill_url }}">
+    <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
+</form>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-ref-cancel-form">
+{% verbatim %}
+<form id="ref-{{ normName }}-cancel-form" method="post" action="{{ cancel_url }}">
+    <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
+</form>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-ref-schedule-form">
+{% verbatim %}
+<form id="ref-{{ normName }}-schedule-form" method="post" action="{{ schedule_build_url }}">
+    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule</button>
+    {{#data}}
+    <input type="hidden" name="{{ name }}" value="{{ value }}" />
+    {{/data}}
+</form>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-ref-status">
+{% verbatim %}
+<span id="ref-{{ normName }}-status" data-hash="{{ hash }}" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-branch">
+{% verbatim %}
+<tr class="branch" id="ref-{{ normName }}">
+    <td class="ctn-name">{{ name }}</td>
+    <td class="ctn-hash"><abbr title="{{ hash }}"><tt>{{ abbr_hash }}</tt></abbr></td>
+    <td class="ctn-status"></td>
+    <td class="actions" id="ref-{{ normName }}-form-container"></td>
+    <td class="actions" id="ref-{{ normName }}-actions">
+        <span id="ref-{{ normName }}-link"></span>
+    </td>
+</tr>
+{% endverbatim %}
+</script>
+{% endblock body %}

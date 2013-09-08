@@ -26,6 +26,29 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function branchesAction($id)
+    {
+        $this->setCurrentProjectId($id);
+        $project = $this->findProject($id);
+
+        $builds = $this
+            ->getDoctrine()
+            ->getRepository('AppCoreBundle:Build')
+            ->findLastByRefs($project);
+
+        foreach ($builds as $build) {     
+            foreach ($project->getBranches() as $branch) {
+                if ($branch->getName() == $build->getRef()) {
+                    $branch->setLastBuild($build);
+                }
+            }
+        }
+
+        return $this->render('AppCoreBundle:Project:branches.html.twig', [
+            'project' => $project,
+        ]);
+    }
+
     public function discoverAction()
     {
         $discover = $this->container->get('app_core.discover.github');

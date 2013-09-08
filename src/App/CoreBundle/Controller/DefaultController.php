@@ -119,28 +119,6 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('app_core_project_builds', ['id' => $id]));
     }
 
-    public function projectBranchesAction($id)
-    {
-        $this->setCurrentProjectId($id);
-
-        $project = $this->findProject($id);
-
-        $pendingBuilds = [];
-
-        foreach ($this->findPendingBuilds($project) as $build) {
-            $pendingBuilds[$build->getRef()] = [
-                'status' => $build->getStatus(),
-                'status_label' => $build->getStatusLabel(),
-                'status_label_class' => $build->getStatusLabelClass(),
-            ];
-        }
-
-        return $this->render('AppCoreBundle:Default:projectBranches.html.twig', [
-            'project' => $project,
-            'pending_builds' => $pendingBuilds,
-        ]);        
-    }
-
     public function projectBuildsAction($id)
     {
         $this->setCurrentProjectId($id);
@@ -229,70 +207,7 @@ class DefaultController extends Controller
         }
     }
 
-    public function projectDetectBranchesAction($id)
-    {
-        $project = $this->findProject($id);
-
-        $url = vsprintf('%s/repos/%s/%s/git/refs/heads', [
-            $this->container->getParameter('github_api_base_url'),
-            $project->getGithubOwnerLogin(),
-            $project->getName(),
-        ]);
-
-
-        $heads = $this->github_get($url);
-
-        $branches = array();
-
-        foreach ($heads as $head) {
-            $ref = substr($head->ref, 11);
-            $branches[$ref] = [
-                'ref' => $ref,
-                'hash' => $head->object->sha,
-            ];
-        }
-
-        ksort($branches);
-
-        $builds = $this
-            ->getDoctrine()
-            ->getRepository('AppCoreBundle:Build')
-            ->findLastByRefs($project, array_keys($branches));
-
-        foreach ($builds as $build) {
-            $buildData = $build->asWebsocketMessage();
-
-            if (!$build->isPending()) {
-                $buildData['schedule_url'] = $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]);
-            }
-
-            if ($build->isBuilding()) {
-                $buildData['kill_url'] = $this->generateUrl('app_core_build_kill', ['id' => $build->getId()]);
-            }
-
-            if ($build->isScheduled()) {
-                $buildData['cancel_url'] = $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]);
-            }
-
-            $branches[$build->getRef()]['last_build'] = $buildData;
-        }
-
-        foreach ($branches as $ref => $branch) {
-            if (!isset($branch['last_build'])) {
-                $branch['last_build'] = array(
-                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]),
-                    # @todo @normalize move to its own service
-                    'normRef' => preg_replace('/[^a-z0-9\-]/', '-', strtolower($ref)),
-                    'ref' => $ref,
-                );
-
-                $branches[$ref] = $branch;
-            }
-        }
-
-        return new JsonResponse(array_values($branches));
-    }
-
+    # @todo move to ProjectController
     public function projectsImportAction()
     {
         $existingProjects = [];
@@ -308,6 +223,7 @@ class DefaultController extends Controller
         ]);
     }
 
+    # @todo move to ProjectController
     public function projectImportAction(Request $request)
     {
         $this->get('old_sound_rabbit_mq.project_import_producer')->publish(json_encode([
