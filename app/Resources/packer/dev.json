@@ -1,69 +1,129 @@
 {
-    "builders": [
-        {
-            "type": "vmware",
-            "iso_url": "/Users/ash/ISO/ubuntu-12.04.2-server-amd64.iso",
-            "iso_checksum": "af5f788aee1b32c4b2634734309cc9e9",
-            "iso_checksum_type": "md5",
-            "disk_size": 10000,
-            "ssh_username": "vagrant",
-            "ssh_password": "vagrant",
-            "guest_os_type": "ubuntu-64",
-            "headless": false,
-            "http_directory": "app/Resources/support/preseed",
-            "boot_wait": "5s",
-            "boot_command": [
-                "<esc><esc><enter><wait>",
-                "/install/vmlinuz noapic preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu.seed <wait>",
-                "debian-installer=en_US auto=true locale=en_US kbd-chooser/method=us <wait>",
-                "hostname={{ .Name }} <wait>",
-                "fb=false debconf/frontend=noninteractive <wait>",
-                "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
-                "initrd=/install/initrd.gz -- <enter><wait>"
-            ],
-            "shutdown_command": "sudo halt -p",
-            "tools_upload_flavor": "linux",
-            "tools_upload_path": "/tmp/vmware-{{ .Flavor }}.iso"
-        }
-    ],
-
-    "provisioners": [
-        { "type": "file", "source": "app/Resources/support/config/apt/sources.list", "destination": "/tmp/apt-sources.list" },
-        { "type": "file", "source": "app/Resources/support/config/apt/rabbitmq.list", "destination": "/tmp/apt-rabbitmq.list" },
-        { "type": "file", "source": "app/Resources/support/config/apt/dotdeb.list", "destination": "/tmp/apt-dotdeb.list" },
-        { "type": "file", "source": "app/Resources/support/config/apt/docker.list", "destination": "/tmp/apt-docker.list" },
-        { "type": "file", "source": "app/Resources/support/config/nginx/dev/default", "destination": "/tmp/nginx-default" },
-        { "type": "file", "source": "app/Resources/support/config/php/dev.ini", "destination": "/tmp/php-php.ini" },
-        { "type": "file", "source": "app/Resources/support/config/rabbitmq/vm.config", "destination": "/tmp/rabbitmq-rabbitmq.config" },
-        { "type": "file", "source": "app/Resources/support/config/ssh/dev", "destination": "/tmp/ssh-config" },
-        { "type": "file", "source": "app/Resources/support/keys/stage1-vm", "destination": "/tmp/keys-stage1-vm" },    
-        { "type": "file", "source": "app/Resources/support/keys/stage1-vm.pub", "destination": "/tmp/keys-stage1-vm.pub" },
-        
-        { "type": "file", "source": "app/Resources/support/config/monit/monitrc", "destination": "/tmp/monit-monitrc" },
-        { "type": "file", "source": "app/Resources/support/config/monit/consumer-build", "destination": "/tmp/monit-consumer-build" },
-        { "type": "file", "source": "app/Resources/support/config/monit/consumer-kill", "destination": "/tmp/monit-consumer-kill" },
-        { "type": "file", "source": "app/Resources/support/config/monit/consumer-project-import", "destination": "/tmp/monit-consumer-project-import" },
-        { "type": "file", "source": "app/Resources/support/config/monit/websockets", "destination": "/tmp/monit-websockets" },
-        { "type": "file", "source": "app/Resources/support/config/monit/hipache", "destination": "/tmp/monit-hipache" },
-
-        {
-            "type": "shell",
-            "scripts": [
-                "app/Resources/support/scripts/stage1.sh",
-                "app/Resources/support/scripts/dev.sh",
-                "app/Resources/support/scripts/ssh.sh",
-                "app/Resources/support/scripts/vagrant.sh",
-                "app/Resources/support/scripts/vmware.sh",
-                "app/Resources/support/scripts/zerodisk.sh"
-            ],
-            "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
-        }
-    ],
-
-    "post-processors": [
-        {
-            "type": "vagrant",
-            "output": "app/Resources/boxes/dev.box"
-        }
-    ]
+  "builders": [
+    {
+      "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu.seed <wait>",
+        "debian-installer=en_US auto=true locale=en_US kbd-chooser/method=us <wait>",
+        "hostname={{ .Name }} <wait>",
+        "fb=false debconf/frontend=noninteractive <wait>",
+        "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
+        "initrd=/install/initrd.gz -- <enter><wait>"
+      ],
+      "boot_wait": "5s",
+      "disk_size": 10000,
+      "guest_os_type": "ubuntu-64",
+      "headless": false,
+      "http_directory": "app/Resources/support/preseed",
+      "iso_checksum": "af5f788aee1b32c4b2634734309cc9e9",
+      "iso_checksum_type": "md5",
+      "iso_url": "/Users/ash/ISO/ubuntu-12.04.2-server-amd64.iso",
+      "shutdown_command": "sudo halt -p",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "tools_upload_flavor": "linux",
+      "tools_upload_path": "/tmp/vmware-{{ .Flavor }}.iso",
+      "type": "vmware"
+    }
+  ],
+  "post-processors": [
+    {
+      "output": "app/Resources/boxes/dev.box",
+      "type": "vagrant"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/tmp/apt-sources.list",
+      "source": "app/Resources/support/config/apt/sources.list",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/apt-rabbitmq.list",
+      "source": "app/Resources/support/config/apt/rabbitmq.list",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/apt-dotdeb.list",
+      "source": "app/Resources/support/config/apt/dotdeb.list",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/apt-docker.list",
+      "source": "app/Resources/support/config/apt/docker.list",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/nginx-default",
+      "source": "app/Resources/support/config/nginx/dev/default",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/php-php.ini",
+      "source": "app/Resources/support/config/php/dev.ini",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/rabbitmq-rabbitmq.config",
+      "source": "app/Resources/support/config/rabbitmq/vm.config",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/ssh-config",
+      "source": "app/Resources/support/config/ssh/dev",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/keys-stage1-vm",
+      "source": "app/Resources/support/keys/stage1-vm",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/keys-stage1-vm.pub",
+      "source": "app/Resources/support/keys/stage1-vm.pub",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/monit-monitrc",
+      "source": "app/Resources/support/config/monit/monitrc",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/monit-consumer-build",
+      "source": "app/Resources/support/config/monit/consumer-build",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/monit-consumer-kill",
+      "source": "app/Resources/support/config/monit/consumer-kill",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/monit-consumer-project-import",
+      "source": "app/Resources/support/config/monit/consumer-project-import",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/monit-websockets",
+      "source": "app/Resources/support/config/monit/websockets",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/monit-hipache",
+      "source": "app/Resources/support/config/monit/hipache",
+      "type": "file"
+    },
+    {
+      "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+      "scripts": [
+        "app/Resources/support/scripts/stage1.sh",
+        "app/Resources/support/scripts/dev.sh",
+        "app/Resources/support/scripts/ssh.sh",
+        "app/Resources/support/scripts/vagrant.sh",
+        "app/Resources/support/scripts/vmware.sh",
+        "app/Resources/support/scripts/zerodisk.sh"
+      ],
+      "type": "shell"
+    }
+  ]
 }
