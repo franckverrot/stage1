@@ -61,7 +61,11 @@ class ProjectBranchImportCommand extends ContainerAwareCommand
                 ->getContainer()
                 ->get('doctrine')
                 ->getRepository('AppCoreBundle:Build')
-                ->findByRef($branch->getName());
+                ->createQueryBuilder('b')
+                ->where('b.ref = ?1 AND b.project = ?2')
+                ->setParameters([1 => $branch->getName(), 2 => $project->getId()])
+                ->getQuery()
+                ->execute();
 
             foreach ($builds as $build) {
                 $branch->addBuild($build);
