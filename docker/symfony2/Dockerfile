@@ -7,8 +7,12 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
+ADD ./support/sources.list /etc/apt/sources.list
+
 RUN apt-get update -y
-RUN apt-get install -qy realpath vim curl git ruby1.9.1 openssh-server
+RUN apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1
+
+RUN gem install --no-ri --no-rdoc foreman
 
 ADD ./support/authorized_keys /root/.ssh/authorized_keys
 RUN chmod -R 600 /root/.ssh
@@ -16,7 +20,6 @@ RUN mkdir /var/run/sshd
 
 RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
-ADD ./support/sources.list /etc/apt/sources.list
 ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 
 RUN apt-get update -y
@@ -42,7 +45,7 @@ ADD ./support/lib/builder/ /usr/local/lib/builder/
 
 RUN chmod -R +x /usr/local/bin/buildapp /usr/local/bin/runapp /usr/local/lib/builder/
 
-RUN apt-get autoremove -qy vim curl
+# RUN apt-get autoremove -qy vim curl
 
 EXPOSE 80
 EXPOSE 22

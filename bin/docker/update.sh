@@ -1,2 +1,2 @@
 #!/bin/bash -ex
-docker build -t symfony2 docker/
+docker build -t symfony2 docker/symfony2
