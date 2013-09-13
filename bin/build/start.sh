@@ -92,17 +92,17 @@ RUN chown -R root:root /root/.ssh
 EOF
 
 debug '------> building build container'
-debug "------> docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev/null"
+debug "------> docker build -q -t ${COMMIT_NAME} $CONTEXT_DIR > /dev/null 2> /dev/null"
 
-docker build -q -t ${COMMIT_NAME}:${COMMIT_TAG} $CONTEXT_DIR > /dev/null 2> /dev/null
+docker build -q -t ${COMMIT_NAME} $CONTEXT_DIR > /dev/null 2> /dev/null
 
 rm -rf $CONTEXT_DIR
 
 debug '------> starting actual build'
 
 # @todo use the new -cidfile option
-debug '------> ' docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
-BUILD_JOB=$(docker run -d ${COMMIT_NAME}:${COMMIT_TAG} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
+debug '------> ' docker run -d ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
+BUILD_JOB=$(docker run -d ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM
 echo $BUILD_JOB > $BUILD_JOB_FILE
@@ -117,14 +117,14 @@ fi
 
 rm $BUILD_JOB_FILE
 
-BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME $COMMIT_TAG) || false
+BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME) || false
 
-WEB_WORKER=$(docker run -d -p 80 -p 22 ${COMMIT_NAME}:${COMMIT_TAG} runapp) || false
+WEB_WORKER=$(docker run -d -p 80 -p 22 ${COMMIT_NAME} runapp) || false
 
 PORT=$(docker port $WEB_WORKER 80) || false
 
 redis-cli DEL $BUILD_REDIS_LIST > /dev/null
-redis-cli RPUSH $BUILD_REDIS_LIST ${COMMIT_NAME}:${COMMIT_TAG} "http://127.0.0.1:$PORT/" > /dev/null
+redis-cli RPUSH $BUILD_REDIS_LIST ${COMMIT_NAME} "http://127.0.0.1:$PORT/" > /dev/null
 
 echo
 echo "---> Build finished ($(date))"

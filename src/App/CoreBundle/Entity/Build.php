@@ -100,7 +100,7 @@ class Build
 
     public function getImageName()
     {
-        return sprintf('b/%d/%s', $this->getProject()->getId(), $this->getNormRef());
+        return sprintf('b/%d/%s/%d', $this->getProject()->getId(), $this->getNormRef(), $this->getId());
     }
 
     public function getImageTag()
