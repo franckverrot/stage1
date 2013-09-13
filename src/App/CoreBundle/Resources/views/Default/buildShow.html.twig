@@ -3,6 +3,16 @@
 {% block javascripts %}
 <script type="text/javascript">
 $('#output').html(ansi_up.ansi_to_html($('#output').text()));
+primus.on('data', function(data) {
+    console.log(data);
+
+    var container = $('pre#logs');
+    
+    if (data.event == 'build.log') {
+        container.append(data.content);
+        container[0].scrollTop = container[0].scrollHeight;
+    }
+});
 {% if build.building %}
 stream_build_output($('#output'));
 {% endif %}
@@ -52,20 +62,33 @@ stream_build_output($('#output'));
     </div>
 </fieldset>
 
-{% if build.building or build.output %}
-<div id="output-container">
-    {% if build.building %}
-    <div id="build-{{ build.id }}-progress" class="build-building-icon">
-        <i class="icon-refresh icon-spin icon-4x"></i>
+<ul class="nav nav-tabs">
+    <li><a href="#">Output</a></li>
+    <li><a href="#">Logs</a></li>
+</ul>
+
+<div id="build-logs">
+    <div id="logs-container">
+        <pre id="logs"></pre>
     </div>
-    {% endif %}
-<pre id="output">{% spaceless %}
-    {% if build.output %}
-        {{ build.output | raw }}
-    {% endif %}
-{% endspaceless %}</pre>
 </div>
-{% else %}
-<p class="lead">This build has no output.</p>
-{% endif %}
+
+<div id="build-output">
+    {% if build.building or build.output %}
+    <div id="output-container">
+        {% if build.building %}
+        <div id="build-{{ build.id }}-progress" class="build-building-icon">
+            <i class="icon-refresh icon-spin icon-4x"></i>
+        </div>
+        {% endif %}
+    <pre id="output">{% spaceless %}
+        {% if build.output %}
+            {{ build.output | raw }}
+        {% endif %}
+    {% endspaceless %}</pre>
+    </div>
+    {% else %}
+    <p class="lead">This build has no output.</p>
+    {% endif %}
+</div>
 {% endblock body %}

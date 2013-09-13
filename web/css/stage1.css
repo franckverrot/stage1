@@ -59,7 +59,7 @@ table.build-list tr.status-running td {
     color: black;
 }
 
-pre#output {
+pre#output, pre#logs {
     max-height: 35em;
     min-height: 35em;
     overflow: auto;
@@ -67,7 +67,7 @@ pre#output {
     color: lightgray;
 }
 
-#output-container {
+#output-container, #logs-container {
     position: relative;
 }
 

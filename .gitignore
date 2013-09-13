@@ -24,6 +24,7 @@ npm-debug.log
 node/node_modules/
 node/primus-channels.js
 node/websocket.js
+node/log_fetch.js
 web/js/primus.js
 
 # Others

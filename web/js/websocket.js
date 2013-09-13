@@ -13,7 +13,7 @@
     });
 
     primus.on('data', function(data) {
-        // console.log(data.event, '@', data.timestamp, 'vs', lastTimestamp);
+        console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
 
         if (!data.data) {
             return;

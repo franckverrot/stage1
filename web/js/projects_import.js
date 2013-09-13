@@ -9,7 +9,7 @@
 
         function on(event, callback) {
             primus.on('data', function(data) {
-                console.log(data);
+                // console.log(data);
                 if (data.event == event) {
                     callback(data.data);
                 }
@@ -17,7 +17,7 @@
         }
 
         on('project.import.start', function(data) {
-            console.log(data);
+            // console.log(data);
             $('#candidate-' + data.project_github_id + ' button').addClass('btn-success');
 
             $('#progress').html(tpl_import(data));
@@ -154,7 +154,7 @@
         $.get('/discover').then(function(data) {
             data = JSON.parse(data);
 
-            console.log(data);
+            // console.log(data);
 
             for (fullName in data) {
                 candidates_count++;

@@ -59,6 +59,9 @@ amqp.connect('amqp://localhost').then (conn) ->
             channel.bindQueue(queue.queue, 'amq.fanout', '').then ->
                 console.log '[x] queue bound'
                 console.log ''
+                # expected message content format:
+                # { event: <string>,
+                #   channel: <string> }
                 channel.consume queue.queue, (message) ->
                     content = JSON.parse(message.content.toString('utf-8'))
                     console.log '<- received event "' + content.event + '" for channel "' + content.channel + '"'

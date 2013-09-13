@@ -1,16 +1,14 @@
 {
-  "name": "stage1-ws-server",
+  "name": "stage1",
   "version": "0.0.1",
   "author": "Geoffrey Bachelet <geoffrey@stage1.io>",
-  "description": "stage1.io's websocket server",
-  "scripts": {
-    "start": "./stage1-ws-server"
-  },
+  "description": "stage1.io's node subsystem",
   "dependencies": {
+    "amqplib": "0.0.2",
     "primus": "~1.2.0",
     "ws": "~0.4.29",
     "redis": "~0.8.4",
     "colors": "~0.6.2",
-    "amqplib": "0.0.2"
+    "dockerode": "~0.1.3"
   }
 }

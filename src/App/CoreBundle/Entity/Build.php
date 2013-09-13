@@ -56,6 +56,16 @@ class Build
 
     private $branch;
 
+    public function getUsers()
+    {
+        return $this->getProject()->getUsers();
+    }
+
+    public function getChannel()
+    {
+        return 'build.' . $this->getId();
+    }
+
     public function appendOutput($data)
     {
         $this->output .= $data;

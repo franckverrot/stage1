@@ -26,10 +26,10 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
         ];
     }
 
-    private function getKeys(Project $entity)
+    private function getKeys($entity)
     {
         return [
-            'project' => $entity->getChannel(),
+            'entity' => $entity->getChannel(),
             'users' => $entity->getUsers()->map(function($user) {
                 return 'channel:routing:'.$user->getChannel();
             })
@@ -40,15 +40,15 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
     {
         $entity = $args->getEntity();
 
-        if (!$entity instanceof Project) {
+        if (!method_exists($entity, 'getChannel')) {
             return;
         }
 
         $keys = $this->getKeys($entity);
-        $projectKey = $keys['project'];
+        $entityKey = $keys['entity'];
 
         foreach ($keys['users'] as $userKey) {
-            $this->redis->sadd($userKey, $projectKey);
+            $this->redis->sadd($userKey, $entityKey);
         }
 
     }
@@ -62,10 +62,10 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
         }
 
         $keys = $this->getKeys($entity);
-        $projectKey = $keys['project'];
+        $entityKey = $keys['entity'];
 
         foreach ($keys['users'] as $userKey) {
-            $this->redis->srem($userKey, $projectKey);
+            $this->redis->srem($userKey, $entityKey);
         }
     }
 }

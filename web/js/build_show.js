@@ -14,6 +14,7 @@
         });
 
         primus.on('data', function(data) {
+
             if (data.event == 'build.output.buffer') {
                 for (i in data.data) {
                     // console.log('buffering part ' + data.data[i].data.number);
