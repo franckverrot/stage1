@@ -33,13 +33,13 @@
                     {% endif %}
 
                     {% if branch.lastBuild and branch.lastBuild.building %}
-                        <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: project.id }) }}">
+                        <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: branch.lastBuild.id }) }}">
                             <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
                         </form>
                     {% endif %}
 
                     {% if branch.lastBuild and branch.lastBuild.scheduled %}
-                        <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: project.id }) }}">
+                        <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: branch.lastBuild.id }) }}">
                             <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
                         </form>
                     {% endif %}
