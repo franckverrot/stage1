@@ -29,8 +29,8 @@ ref=$2
 hash=$3
 access_token=$4
 
-stage1_announce "starting MySQL server"
-stage1_exec /etc/init.d/mysql start
+# stage1_announce "starting MySQL server"
+stage1_exec /etc/init.d/mysql start 2>&1 > /dev/null
 
 # composer configuration to avoid hitting github's api rate limit
 # @todo this has to be moved to the symfony builder
