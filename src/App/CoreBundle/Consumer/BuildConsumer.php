@@ -138,7 +138,10 @@ class BuildConsumer implements ConsumerInterface
 
         $build = $this->getBuildRepository()->find($body->build_id);
 
+        echo '<- received build order';
+
         if (!$build || !$build->isScheduled()) {
+            echo '[x] build is not "scheduled", skipping';
             return;
         }
 
