@@ -26,6 +26,35 @@ attachOptions =
     stderr: true
 
 queue = 'websockets'
+pollInterval = 1000
+attached = []
+
+attach_containers = (docker, channel) ->
+    docker.listContainers null, (err, containers) ->
+
+        containers.forEach (data) ->
+            unless attached.indexOf(data.Id) == -1
+                return
+
+            unless data.Command.match /^runapp/
+                return
+
+            buildId = data.Image.match(/\/(\d+):/)[1]
+            routingKey = 'build.' + buildId
+
+            container = docker.getContainer(data.Id)
+            console.log ('attaching container ' + container.id).info
+            attached.push data.Id
+            container.attach attachOptions, (err, stream) ->
+                stream.on 'data', (line) ->
+                    console.log ('got data from ' + container.id).info
+                    message =
+                        event: 'build.log',
+                        channel: routingKey,
+                        content: line,
+                        timestamp: new Date().getTime()
+                        
+                    channel.sendToQueue 'websockets', new Buffer(JSON.stringify message, 'utf8')
 
 amqp.connect('amqp://localhost').then (conn) ->
     console.log '[x] amqp connected'
@@ -33,21 +62,6 @@ amqp.connect('amqp://localhost').then (conn) ->
         console.log '[x] channel created'
         channel.assertQueue 'websockets'
 
-        docker.listContainers null, (err, containers) ->
-
-            containers.forEach (data) ->
-                buildId = data.Image.match(/\/(\d+):/)[1]
-                routingKey = 'build.' + buildId
-
-                container = docker.getContainer(data.Id)
-                console.log ('attaching to container ' + container.id).info
-                container.attach attachOptions, (err, stream) ->
-                    stream.on 'data', (line) ->
-                        console.log ('got data from ' + container.id).info
-                        message =
-                            event: 'build.log',
-                            channel: routingKey,
-                            content: line,
-                            timestamp: new Date().getTime()
-                            
-                        channel.sendToQueue 'websockets', new Buffer(JSON.stringify message, 'utf8')
+        (monitor = ->
+            attach_containers docker, channel
+            setTimeout monitor, pollInterval)()
