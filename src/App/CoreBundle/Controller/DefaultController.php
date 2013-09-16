@@ -32,6 +32,8 @@ class DefaultController extends Controller
 
     public function buildShowAction($id)
     {
+        $this->setCurrentBuildId($id);
+        
         $build = $this->findBuild($id);
         $this->setCurrentProjectId($build->getProject()->getId());
 

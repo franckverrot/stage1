@@ -174,7 +174,12 @@ class Controller extends BaseController
 
     protected function setCurrentProjectId($id)
     {
-        $this->get('request')->attributes->set('current_project_id', $id);
+        $this->get('request')->attributes->set('current_project_id', (integer) $id);
+    }
+
+    protected function setCurrentBuildId($id)
+    {
+        $this->get('request')->attributes->set('current_build_id', (integer) $id);
     }
 
     protected function findProject($id, $checkAuth = true)
