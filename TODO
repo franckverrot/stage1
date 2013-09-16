@@ -8,6 +8,8 @@ BUGS
 TODO PRIVATE BETA
 -----------------
 
+* branches tab
+    * kill build, the websocket message has channel "undefined"
 * global
     * have contextual help everywhere it matters
 * production
