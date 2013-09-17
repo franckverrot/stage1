@@ -36,6 +36,7 @@ stream_build_output($('#output'));
         <li>{{ build.ref }}</li>
         <li id="build-{{ build.id }}-link" data-template="{{ '<span class="divider">/</span> <a href="{{ build_url }}">{{ build_url }}</a>' | e }}">
             {% if build.running and build.url %}
+            <span class="divider">/</span>
             <a href="{{ build.url }}">{{ build.url }}</a>
             {% endif %}
         </li>
