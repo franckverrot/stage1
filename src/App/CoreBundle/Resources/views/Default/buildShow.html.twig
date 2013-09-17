@@ -32,17 +32,13 @@ stream_build_output($('#output'));
 
 <fieldset id="build-metadata">
     <ul class="lead breadcrumb">
-        <li>{{ build.ref }}{% if build.hash %} <span class="divider">/</span>{% endif %}</li>
-        {% if build.hash %}
-        <li><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr></li>
-        {% endif %}
+        <li><a href="{{ path('app_core_build_show', { id: build.id }) }}">#{{ build.id }}</a> <span class="divider">/</span></li>
+        <li>{{ build.ref }}</li>
         <li id="build-{{ build.id }}-link" data-template="{{ '<span class="divider">/</span> <a href="{{ build_url }}">{{ build_url }}</a>' | e }}">
             {% if build.running and build.url %}
-            <span class="divider">/</span>
             <a href="{{ build.url }}">{{ build.url }}</a>
             {% endif %}
         </li>
-
     </ul>
     <div class="row-fluid">
         <dl class="span4">
