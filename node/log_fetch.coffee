@@ -46,6 +46,10 @@ attach_containers = (docker, channel) ->
             console.log ('attaching container ' + container.id).info
             attached.push data.Id
             container.attach attachOptions, (err, stream) ->
+                unless stream
+                    console.log ('failed attaching container ' + container.id).error
+                    return
+
                 stream.on 'data', (line) ->
                     console.log ('got data from ' + container.id).info
                     message =
