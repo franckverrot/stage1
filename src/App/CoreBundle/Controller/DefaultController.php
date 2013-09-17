@@ -30,15 +30,16 @@ class DefaultController extends Controller
         return $this->render('AppCoreBundle:Default:dashboard.html.twig');
     }
 
-    public function buildShowAction($id)
+    public function buildShowAction($id, $forceTab = null)
     {
         $this->setCurrentBuildId($id);
-        
+
         $build = $this->findBuild($id);
         $this->setCurrentProjectId($build->getProject()->getId());
 
         return $this->render('AppCoreBundle:Default:buildShow.html.twig', [
             'build' => $build,
+            'forceTab' => $forceTab,
         ]);
     }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="app_core_build_cancel" pattern="/build/{id}/cancel">
+        <default key="_controller">AppCoreBundle:Default:buildCancel</default>
+    </route>
+
+    <route id="app_core_build_kill" pattern="/build/{id}/kill">
+        <default key="_controller">AppCoreBundle:Default:buildKill</default>
+    </route>
+
+    <route id="app_core_build_output" pattern="/build/{id}/output" methods="GET">
+        <default key="_controller">AppCoreBundle:default:buildShow</default>
+        <default key="forceTab">output</default>
+    </route>
+
+    <route id="app_core_build_logs" pattern="/build/{id}/logs" methods="GET">
+        <default key="_controller">AppCoreBundle:default:buildShow</default>
+        <default key="forceTab">logs</default>
+    </route>
+
+    <route id="app_core_build_show" pattern="/build/{id}">
+        <default key="_controller">AppCoreBundle:Default:buildShow</default>
+    </route>
+</routes>

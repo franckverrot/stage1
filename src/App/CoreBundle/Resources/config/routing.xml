@@ -5,6 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <import resource="@AppCoreBundle/Resources/config/routing/project.xml" />
+    <import resource="@AppCoreBundle/Resources/config/routing/build.xml" />
 
     <route id="app_core_primus_auth" pattern="/primus/auth" methods="POST">
         <default key="_controller">AppCoreBundle:Security:primusAuth</default>
@@ -40,18 +41,6 @@
 
     <route id="app_core_project_show" pattern="/project/{id}" methods="GET">
         <default key="_controller">AppCoreBundle:Default:projectShow</default>
-    </route>
-
-    <route id="app_core_build_cancel" pattern="/build/{id}/cancel">
-        <default key="_controller">AppCoreBundle:Default:buildCancel</default>
-    </route>
-
-    <route id="app_core_build_show" pattern="/build/{id}">
-        <default key="_controller">AppCoreBundle:Default:buildShow</default>
-    </route>
-
-    <route id="app_core_build_kill" pattern="/build/{id}/kill">
-        <default key="_controller">AppCoreBundle:Default:buildKill</default>
     </route>
 
     <route id="app_core_hooks_github" pattern="/hooks/github">

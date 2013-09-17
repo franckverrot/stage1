@@ -3,6 +3,7 @@
 {% block javascripts %}
 <script type="text/javascript">
 $('#output').html(ansi_up.ansi_to_html($('#output').text()));
+
 primus.on('data', function(data) {
 
     var container = $('pre#logs');
@@ -69,14 +70,17 @@ stream_build_output($('#output'));
     </div>
 </fieldset>
 
-<ul class="nav nav-pills" id="output-logs-menu">
-    <li{% if build.building %} class="active"{% endif %}><a data-toggle="pill" href="#build-output">Build output</a></li>
-    <li{% if build.running %} class="active"{% endif %}><a data-toggle="pill" href="#build-logs">Application logs</a></li>
+<ul class="nav nav-pills">
+    <li{% if forceTab == 'output' or (build.building and not forceTab) %} class="active"{% endif %}>
+        <a href="{{ path('app_core_build_output', { id: build.id }) }}">Build output</a>
+    </li>
+    <li{% if forceTab == 'logs' or (build.running and not forceTab) %} class="active"{% endif %}>
+        <a href="{{ path('app_core_build_logs', { id: build.id }) }}">Application logs</a>
     </li>
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane{% if build.building %} active{% endif %}" id="build-output">
+    <div class="tab-pane{% if forceTab == 'output' or (build.building and not forceTab) %} active{% endif %}" id="build-output">
         {% if build.building or build.output %}
         <div id="output-container">
             {% if build.building %}
@@ -95,7 +99,7 @@ stream_build_output($('#output'));
         {% endif %}
     </div>
 
-    <div class="tab-pane{% if build.running %} active{% endif %}" id="build-logs">
+    <div class="tab-pane{% if forceTab == 'logs' or (build.running and not forceTab) %} active{% endif %}" id="build-logs">
         <div id="logs-container">
             <pre id="logs"></pre>
         </div>
