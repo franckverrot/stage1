@@ -1,0 +1,4 @@
+check process log_fetch with pidfile /tmp/run/log_fetch.pid
+    start program = "/vagrant/bin/process/log_fetch start"
+        as uid root and gid root
+    stop program = "/vagrant/bin/process/log_fetch stop"

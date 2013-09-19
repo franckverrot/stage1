@@ -7,7 +7,7 @@ env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
-env.processes = ['consumer-build', 'consumer-kill', 'consumer-project-import', 'websockets']
+env.processes = ['consumer-build', 'consumer-kill', 'consumer-project-import', 'websockets', 'log_fetch']
 
 def rm_cache():
     sudo('rm -rf %s/app/cache/*' % env.project_path)
@@ -22,7 +22,7 @@ def hipache_restart():
     sudo('monit restart hipache')
 
 def log():
-    sudo('tail -f /var/log/nginx/* /tmp/log/* /vagrant/app/logs/prod.log')
+    sudo('tail -f /var/log/nginx/*.log /tmp/log/*.log /vagrant/app/logs/prod.log')
 
 def prepare_assets():
     info('preparing assets')
@@ -111,7 +111,7 @@ def init_parameters():
 
 def docker_build():
     info('building docker')
-    sudo('docker build -t symfony2 %s/docker' % env.project_path)
+    sudo('docker build -t symfony2 %s/docker/symfony2' % env.project_path)
 
 def docker_clean():
     info('cleaning docker')
