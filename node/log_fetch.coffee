@@ -39,7 +39,14 @@ attach_containers = (docker, channel) ->
             unless data.Command.match /^runapp/
                 return
 
-            buildId = data.Image.match(/\/(\d+):/)[1]
+            match = data.Image.match(/\/(\d+):/)
+
+            unless match
+                console.log ('could not attach ' + data.Id).error
+                console.log data
+                return
+
+            buildId = match[1]
             routingKey = 'build.' + buildId
 
             container = docker.getContainer(data.Id)
