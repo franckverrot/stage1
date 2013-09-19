@@ -31,8 +31,8 @@ TODO*
 *.travis.*
 .editorconfig
 
-build.properties
-build.xml
+/vendor/*/build.properties
+/vendor/*/build.xml
 
 phpunit*
 
