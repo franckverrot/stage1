@@ -28,12 +28,16 @@ attachOptions =
 queue = 'websockets'
 pollInterval = 1000
 attached = []
+skipped = []
 
 attach_containers = (docker, channel) ->
     docker.listContainers null, (err, containers) ->
 
         containers.forEach (data) ->
             unless attached.indexOf(data.Id) == -1
+                return
+
+            unless skipped.indexOf(data.Id) == -1
                 return
 
             unless data.Command.match /^runapp/
@@ -44,6 +48,7 @@ attach_containers = (docker, channel) ->
             unless match
                 console.log ('could not attach ' + data.Id).error
                 console.log data
+                skipped.push data.Id
                 return
 
             buildId = match[1]
