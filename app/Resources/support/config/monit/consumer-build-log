@@ -1,0 +1,4 @@
+check process consumer-build-log with pidfile /tmp/run/consumer-build_log.pid
+    start program = "/vagrant/bin/process/consumer start build_log"
+        as uid root and gid root
+    stop program = "/vagrant/bin/process/consumer stop build_log"
