@@ -1,5 +1,7 @@
 (function($, window) {
     window.stream_build_logs = function(container) {
+        container[0].scrollTop = container[0].scrollHeight;
+
         var autoScroll = true;
 
         $(container).on('scroll', function(event) {
