@@ -19,13 +19,16 @@ colors.setTheme
     debug: 'blue'
     error: 'red'
 
+# by setting logs to false we risk losing the first second of log
+# but we avoid duplicating logs if for any reason the log_fetcher
+# daemon restarts. worth it imho.
 attachOptions =
-    logs: true
+    logs: false
     stream: true
     stdout: true
     stderr: true
 
-queue = 'websockets'
+queues = ['websockets', 'build_log']
 pollInterval = 1000
 attached = []
 skipped = []
@@ -67,16 +70,21 @@ attach_containers = (docker, channel) ->
                     message =
                         event: 'build.log',
                         channel: routingKey,
+                        build_id: buildId,
                         content: line,
                         timestamp: new Date().getTime()
-                        
-                    channel.sendToQueue 'websockets', new Buffer(JSON.stringify message, 'utf8')
+                    
+                    buffer = new Buffer(JSON.stringify message, 'utf8')
+
+                    queues.forEach (queue) ->
+                        channel.sendToQueue queue, buffer
 
 amqp.connect('amqp://localhost').then (conn) ->
     console.log '[x] amqp connected'
     conn.createChannel().then (channel) ->
         console.log '[x] channel created'
-        channel.assertQueue 'websockets'
+        queues.forEach (queue) ->
+            channel.assertQueue queue
 
         (monitor = ->
             attach_containers docker, channel

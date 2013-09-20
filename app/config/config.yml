@@ -107,3 +107,8 @@ old_sound_rabbit_mq:
             exchange_options: { name: 'project_import', type: direct }
             queue_options:    { name: 'project_import' }
             callback:         app_core.consumer.project_import
+        build_log:
+            connection: default
+            exchange_options: { name: 'build_log', type: direct }
+            queue_options:    { name: 'build_log' }
+            callback:         app_core.consumer.build_log

@@ -4,25 +4,10 @@
 <script type="text/javascript">
 $('#output').html(ansi_up.ansi_to_html($('#output').text()));
 
-primus.on('data', function(data) {
-
-    var container = $('pre#logs');
-    
-    if (data.event == 'build.log') {
-        var build_id = parseInt(data.channel.match(/^build\.(\d+)$/)[1]);
-
-        console.log(current_build_id, build_id);
-
-        if (build_id !== current_build_id) {
-            return;
-        }
-
-        container.append(data.content);
-        container[0].scrollTop = container[0].scrollHeight;
-    }
-});
 {% if build.building %}
 stream_build_output($('#output'));
+{% else %}
+stream_build_logs($('#logs'));
 {% endif %}
 </script>
 {% endblock javascripts %}
@@ -98,7 +83,7 @@ stream_build_output($('#output'));
 
     <div class="tab-pane{% if forceTab == 'logs' or (build.running and not forceTab) %} active{% endif %}" id="build-logs">
         <div id="logs-container">
-            <pre id="logs"></pre>
+            <pre id="logs">{% for log in build.logs %}{{ log.message }}{% endfor %}</pre>
         </div>
     </div>
 </div>

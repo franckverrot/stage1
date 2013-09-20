@@ -56,6 +56,22 @@ class Build
 
     private $branch;
 
+    private $logs;
+
+    public function __construct()
+    {
+        $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public function __call($method, $args)
+    {
+        if (defined($const = 'self::STATUS_'.(strtoupper(strpos($method, 'is') === 0 ? substr($method, 2) : $method)))) {
+            return $this->getStatus() === constant($const);
+        }
+
+        throw new BadMethodCallException(sprintf('Method "%s" does not exist in object "%s"', $method, __CLASS__));
+    }
+
     public function getUsers()
     {
         return $this->getProject()->getUsers();
@@ -116,15 +132,6 @@ class Build
     public function getImageTag()
     {
         return $this->getId();
-    }
-
-    public function __call($method, $args)
-    {
-        if (defined($const = 'self::STATUS_'.(strtoupper(strpos($method, 'is') === 0 ? substr($method, 2) : $method)))) {
-            return $this->getStatus() === constant($const);
-        }
-
-        throw new BadMethodCallException(sprintf('Method "%s" does not exist in object "%s"', $method, __CLASS__));
     }
 
     public function isPending()
@@ -555,5 +562,38 @@ class Build
     public function getBranch()
     {
         return $this->branch;
+    }
+    
+    /**
+     * Add logs
+     *
+     * @param \App\CoreBundle\Entity\BuildLog $logs
+     * @return Build
+     */
+    public function addLog(\App\CoreBundle\Entity\BuildLog $logs)
+    {
+        $this->logs[] = $logs;
+    
+        return $this;
+    }
+
+    /**
+     * Remove logs
+     *
+     * @param \App\CoreBundle\Entity\BuildLog $logs
+     */
+    public function removeLog(\App\CoreBundle\Entity\BuildLog $logs)
+    {
+        $this->logs->removeElement($logs);
+    }
+
+    /**
+     * Get logs
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLogs()
+    {
+        return $this->logs;
     }
 }

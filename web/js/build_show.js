@@ -1,10 +1,32 @@
 (function($, window) {
+    window.stream_build_logs = function(container) {
+        var autoScroll = true;
+
+        $(container).on('scroll', function(event) {
+            var t = event.target;
+            if (t.clientHeight + t.scrollTop == t.scrollHeight) {
+                autoScroll = true;
+            } else {
+                autoScroll = false;
+            }
+        });
+
+        primus.on('data', function(data) {
+            if (data.event == 'build.log' && data.build_id == current_build_id) {
+                container.append(data.content);
+                if (autoScroll) {
+                    container[0].scrollTop = container[0].scrollHeight;                    
+                }
+            }
+        });
+    };
+
     window.stream_build_output = function(container) {
         var latestPart = -1;
         var buffer = [];
         var autoScroll = true;
 
-        $(container).scroll(function(event) {
+        $(container).on('scroll', function(event) {
             var t = event.target;
             if (t.clientHeight + t.scrollTop == t.scrollHeight) {
                 autoScroll = true;

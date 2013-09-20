@@ -48,6 +48,10 @@
             </call>
         </service>
 
+        <service id="app_core.consumer.build_log" class="App\CoreBundle\Consumer\BuildLogConsumer">
+            <argument type="service" id="doctrine" />
+        </service>
+
         <!-- kernel listeners -->
 
         <service id="app_core.listener.configure" class="App\CoreBundle\EventListener\ConfigureListener">
