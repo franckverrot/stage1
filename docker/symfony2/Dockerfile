@@ -12,7 +12,7 @@ ADD ./support/sources.list /etc/apt/sources.list
 RUN apt-get update -y
 RUN apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1
 
-RUN gem install --no-ri --no-rdoc foreman
+# RUN gem install --no-ri --no-rdoc foreman
 
 ADD ./support/authorized_keys /root/.ssh/authorized_keys
 RUN chmod -R 600 /root/.ssh
