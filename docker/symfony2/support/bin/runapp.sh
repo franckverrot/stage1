@@ -9,4 +9,4 @@ function init {
 
 init 2>&1 > /dev/null
 
-tail -f /var/log/nginx/*.log /var/www/app/logs/*.log
+tail -f /var/log/nginx/*.log /var/www/app/logs/*.log /var/log/php5-fpm.log
