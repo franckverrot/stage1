@@ -8,6 +8,7 @@ BUGS
 TODO PRIVATE BETA
 -----------------
 
+* switch runtime to supervisor or something to make sure everything runs as it should
 * branches tab
     * kill build, the websocket message has channel "undefined"
 * global
