@@ -202,7 +202,7 @@ class Controller extends BaseController
         $projects = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findBySlug($slug);
 
         if (count($projects) === 0) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException(sprintf('Could not find projects with slug "%s"', $slug));
         }
 
         return $projects;
@@ -213,7 +213,7 @@ class Controller extends BaseController
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneBySlug($slug);
 
         if (!$project) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException(sprintf('Could not find project with slug "%s"', $slug));
         }
         
         return $project;
