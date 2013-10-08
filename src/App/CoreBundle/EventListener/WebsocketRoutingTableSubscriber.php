@@ -40,7 +40,7 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
     {
         $entity = $args->getEntity();
 
-        if (!method_exists($entity, 'getChannel')) {
+        if (!method_exists($entity, 'getChannel') || !method_exists($entity, 'getUsers')) {
             return;
         }
 
