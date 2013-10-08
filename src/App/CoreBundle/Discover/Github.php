@@ -9,16 +9,40 @@ class Github
 {
     private $client;
 
-    private $projects;
+    private $projectsCache = [];
+
+    private $importableProjects = [];
+
+    private $nonImportableProjects = [];
 
     public function __construct(Client $client)
     {
         $this->client = $client;
     }
 
+    public function addImportableProject($fullName)
+    {
+        $this->importableProjects[$fullName] = $this->getProjectInfo($fullName);
+    }
+
+    public function getImportableProjects()
+    {
+        return $this->importableProjects;
+    }
+
+    public function addNonImportableProject($fullName, $reason)
+    {
+        $this->nonImportableProjects[] = ['fullName' => $fullName, 'reason' => $reason];
+    }
+
+    public function getNonImportableProjects()
+    {
+        return $this->nonImportableProjects;
+    }
+
     private function cacheProjectInfo($data)
     {
-        $this->projects[$data['full_name']] = array(
+        $this->projectsCache[$data['full_name']] = array(
             'name' => $data['name'],
             'github_full_name' => $data['full_name'],
             'github_owner_login' => $data['owner']['login'],
@@ -34,7 +58,7 @@ class Github
 
     private function getProjectInfo($fullName)
     {
-        return $this->projects[$fullName];
+        return $this->projectsCache[$fullName];
     }
 
     public function discover(User $user)
@@ -62,6 +86,7 @@ class Github
 
             foreach ($data as $repo) {
                 if (!$repo['permissions']['admin']) {
+                    $this->addNonImportableProject($repo['full_name'], 'no admin rights on the project');
                     continue;
                 }
 
@@ -85,18 +110,20 @@ class Github
             $fullName = (string) $repoRequest->getHeader('x-full-name');
 
             if ($repoResponse->getStatusCode() !== 200) {
+                $this->addNonImportableProject($fullName, 'no composer.json found');
                 continue;
             }
 
             $data = $repoResponse->json();
 
             if (!isset($data['require']) || !isset($data['require']['symfony/symfony'])) {
+                $this->addNonImportableProject($fullName, 'symfony/symfony package not found in composer.json');
                 continue;
             }
 
-            $projects[$fullName] = $this->getProjectInfo($fullName);
+            $this->addImportableProject($fullName);
         }
 
-        return $projects;
+        return $this->getImportableProjects();
     }
 }

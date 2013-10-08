@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,7 +24,8 @@ class UserProjectDiscoverCommand extends ContainerAwareCommand
             ->setName('user:project:discover')
             ->setDescription('Discovers a user\'s projects')
             ->setDefinition([
-                new InputArgument('user_spec', InputArgument::REQUIRED, 'The user')
+                new InputArgument('user_spec', InputArgument::REQUIRED, 'The user'),
+                new InputOption('all', null, InputOption::VALUE_NONE, 'Also show non-importable projects'),
             ]);
     }
 
@@ -34,10 +36,22 @@ class UserProjectDiscoverCommand extends ContainerAwareCommand
         $output->writeln('using access token <info>'.$user->getAccessToken().'</info>');
 
         $discover = $this->getContainer()->get('app_core.discover.github');
-        $projects = $discover->discover($user);
+        $discover->discover($user);
 
-        foreach ($projects as $fullName => $project) {
+        $output->writeln('');
+        $output->writeln('<comment>Importable projects</comment>');
+
+        foreach ($discover->getImportableProjects() as $fullName => $project) {
             $output->writeln('found project <info>'.$fullName.'</info>');
+        }
+
+        if ($input->getOption('all')) {
+            $output->writeln('');
+            $output->writeln('<comment>Non importable projects</comment>');
+
+            foreach ($discover->getNonImportableProjects() as $project) {
+                $output->writeln('found non-importable project <info>'.$project['fullName'].'</info> ('.$project['reason'].')');
+            }
         }
     }
 
