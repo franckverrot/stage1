@@ -2,7 +2,8 @@ from fabric.api import *
 from fabric.colors import *
 from time import sleep
 
-env.host_string = 'digitalocean'
+env.host_string = 'stage1.io'
+env.user = 'root'
 env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
@@ -259,8 +260,9 @@ def reset_environment():
 
 def rsync():
     info('rsyncing to remote')
-    c = "rsync --verbose --rsh=ssh --exclude-from=%(exclude_from)s --progress -crDpLt --force --delete ./ %(host)s:%(remote)s" % {
+    c = "rsync --verbose --rsh=ssh --exclude-from=%(exclude_from)s --progress -crDpLt --force --delete ./ %(user)s@%(host)s:%(remote)s" % {
         'exclude_from': env.rsync_exclude_from,
+        'user': env.user,
         'host': env.host_string,
         'remote': env.project_path
     }
