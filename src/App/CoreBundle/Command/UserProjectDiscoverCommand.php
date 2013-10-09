@@ -36,7 +36,6 @@ class UserProjectDiscoverCommand extends ContainerAwareCommand
         $output->writeln('using access token <info>'.$user->getAccessToken().'</info>');
 
         $discover = $this->getContainer()->get('app_core.discover.github');
-        $discover->setLogger($this->getContainer()->get('logger'));
         $discover->discover($user);
 
         $output->writeln('');

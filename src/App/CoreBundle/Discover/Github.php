@@ -21,14 +21,9 @@ class Github
 
     private $logger;
 
-    public function __construct(Client $client, LoggerInterface $logger = null)
+    public function __construct(Client $client, LoggerInterface $logger)
     {
         $this->client = $client;
-        $this->logger = $logger;
-    }
-
-    public function setLogger(LoggerInterface $logger)
-    {
         $this->logger = $logger;
     }
 
@@ -114,9 +109,7 @@ class Github
         $orgRequests = [$client->get('/user/repos')];
 
         foreach ($data as $org) {
-            if (null !== $this->logger) {
-                $this->logger->debug(sprintf('adding "'.$org['repos_url'].'" for crawl'));
-            }
+            $this->logger->debug(sprintf('adding "'.$org['repos_url'].'" for crawl'));
 
             $orgRequests[] = $client->get($org['repos_url']);
         }
@@ -135,9 +128,7 @@ class Github
                     $pagesRequests = [];
 
                     for ($i = 2; $i <= $matches[2]; $i++) {
-                        if (null !== $this->logger) {
-                            $this->logger->debug(sprintf('adding "'.($matches[1].'?page='.$i).'" for crawl'));
-                        }
+                        $this->logger->debug(sprintf('adding "'.($matches[1].'?page='.$i).'" for crawl'));
 
                         $pagesRequests[] = $client->get($matches[1].'?page='.$i);
                     }
