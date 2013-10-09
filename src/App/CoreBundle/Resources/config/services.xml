@@ -61,6 +61,12 @@
             <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
         </service>
 
+        <service id="app_core.listener.project_access_table" class="App\CoreBundle\EventListener\ProjectAccessTableListener">
+            <argument type="service" id="app_core.redis" />
+            <argument type="service" id="session" />
+            <tag name="kernel.event_listener" event="security.interactive_login" method="onLogin" />
+        </service>
+
         <!-- doctrine listeners -->
 
         <service id="app_core.listener.websocket_routing_table" class="App\CoreBundle\EventListener\WebsocketRoutingTableSubscriber">
