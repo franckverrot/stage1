@@ -83,7 +83,7 @@ class Github
 
             $this->cacheProjectInfo($repo);
 
-            $requests[] = $client->get(
+            $request = $client->get(
                 [$repo['contents_url'], ['path' => 'composer.json']],
                 [
                     'Accept' => 'application/vnd.github.VERSION.raw',
@@ -91,6 +91,8 @@ class Github
                 ],
                 ['exceptions' => false]
             );
+
+            $requests[] = $request;
         }
 
         return $requests;
@@ -111,19 +113,13 @@ class Github
         foreach ($data as $org) {
             $this->logger->debug(sprintf('adding "'.$org['repos_url'].'" for crawl'));
 
-            if (php_sapi_name() === 'cli') {
-                printf('adding "'.$org['repos_url'].'" for crawl'.PHP_EOL);
-            }
-
             $orgRequests[] = $client->get($org['repos_url']);
         }
 
         $orgResponses = $client->send($orgRequests);
 
-        $composerRequests = [];
-
         foreach ($orgResponses as $orgResponse) {
-            $composerRequests += $this->getComposerRequests($client, $orgResponse);
+            $composerRequests = $this->getComposerRequests($client, $orgResponse);
 
             if ($orgResponse->hasHeader('link')) {
                 $link = $orgResponse->getHeader('link');
@@ -134,17 +130,13 @@ class Github
                     for ($i = 2; $i <= $matches[2]; $i++) {
                         $this->logger->debug(sprintf('adding "'.($matches[1].'?page='.$i).'" for crawl'));
 
-                        if (php_sapi_name() === 'cli') {
-                            printf('adding "'.($matches[1].'?page='.$i).'" for crawl'.PHP_EOL);
-                        }
-
                         $pagesRequests[] = $client->get($matches[1].'?page='.$i);
                     }
 
                     $pagesResponses = $client->send($pagesRequests);
 
                     foreach ($pagesResponses as $pagesResponse) {
-                        $composerRequests += $this->getComposerRequests($client, $pagesResponse);
+                        $composerRequests = array_merge($composerRequests, $this->getComposerRequests($client, $pagesResponse));
                     }
                 }
             }
@@ -153,8 +145,8 @@ class Github
         $client->send($composerRequests);
 
         foreach ($composerRequests as $repoRequest) {
-            $repoResponse = $repoRequest->getResponse();
             $fullName = (string) $repoRequest->getHeader('x-full-name');
+            $repoResponse = $repoRequest->getResponse();
 
             if ($repoResponse->getStatusCode() !== 200) {
                 $this->addNonImportableProject($fullName, 'no composer.json found');
