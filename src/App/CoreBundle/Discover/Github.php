@@ -3,6 +3,8 @@
 namespace App\CoreBundle\Discover;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Message\Response;
+
 use App\CoreBundle\Entity\User;
 
 class Github
@@ -32,7 +34,10 @@ class Github
 
     public function addNonImportableProject($fullName, $reason)
     {
-        $this->nonImportableProjects[] = ['fullName' => $fullName, 'reason' => $reason];
+        $this->nonImportableProjects[] = [
+            'fullName' => $fullName,
+            'reason' => $reason
+        ];
     }
 
     public function getNonImportableProjects()
@@ -61,6 +66,31 @@ class Github
         return $this->projectsCache[$fullName];
     }
 
+    private function getComposerRequests(Client $client, Response $response)
+    {
+        $requests = [];
+
+        foreach ($response->json() as $repo) {
+            if (!$repo['permissions']['admin']) {
+                $this->addNonImportableProject($repo['full_name'], 'no admin rights on the project');
+                continue;
+            }
+
+            $this->cacheProjectInfo($repo);
+
+            $requests[] = $client->get(
+                [$repo['contents_url'], ['path' => 'composer.json']],
+                [
+                    'Accept' => 'application/vnd.github.VERSION.raw',
+                    'X-Full-Name' => $repo['full_name']
+                ],
+                ['exceptions' => false]
+            );
+        }
+
+        return $requests;
+    }
+
     public function discover(User $user)
     {
         $client = clone $this->client;
@@ -79,33 +109,32 @@ class Github
 
         $orgResponses = $client->send($orgRequests);
 
-        $repoRequests = array();
+        $composerRequests = [];
 
         foreach ($orgResponses as $orgResponse) {
-            $data = $orgResponse->json();
+            $composerRequests += $this->getComposerRequests($client, $orgResponse);
 
-            foreach ($data as $repo) {
-                if (!$repo['permissions']['admin']) {
-                    $this->addNonImportableProject($repo['full_name'], 'no admin rights on the project');
-                    continue;
+            if ($orgResponse->hasHeader('link')) {
+                $link = $orgResponse->getHeader('link');
+
+                if (preg_match('/.* <(.+?)\?page=(\d+)>; rel="last"$/', $link, $matches)) {
+                    $pagesRequests = [];
+                    for ($i = 2; $i <= $matches[2]; $i++) {
+                        $pagesRequests[] = $client->get($matches[1].'?page='.$i);
+                    }
+
+                    $pagesResponses = $client->send($pagesRequests);
+
+                    foreach ($pagesResponses as $pagesResponse) {
+                        $composerRequests += $this->getComposerRequests($client, $pagesResponse);
+                    }
                 }
-
-                $this->cacheProjectInfo($repo);
-
-                $repoRequests[] = $client->get(
-                    [$repo['contents_url'], ['path' => 'composer.json']],
-                    [
-                        'Accept' => 'application/vnd.github.VERSION.raw',
-                        'X-Full-Name' => $repo['full_name']
-                    ],
-                    ['exceptions' => false]
-                );
             }
         }
 
-        $repoResponses = $client->send($repoRequests);
+        $client->send($composerRequests);
 
-        foreach ($repoRequests as $repoRequest) {
+        foreach ($composerRequests as $repoRequest) {
             $repoResponse = $repoRequest->getResponse();
             $fullName = (string) $repoRequest->getHeader('x-full-name');
 
