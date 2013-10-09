@@ -5,6 +5,8 @@ namespace App\CoreBundle\Discover;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
 
+use Psr\Log\LoggerInterface;
+
 use App\CoreBundle\Entity\User;
 
 class Github
@@ -17,9 +19,17 @@ class Github
 
     private $nonImportableProjects = [];
 
-    public function __construct(Client $client)
+    private $logger;
+
+    public function __construct(Client $client, LoggerInterface $logger = null)
     {
         $this->client = $client;
+        $this->logger = $logger;
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     public function addImportableProject($fullName)
@@ -104,6 +114,10 @@ class Github
         $orgRequests = [$client->get('/user/repos')];
 
         foreach ($data as $org) {
+            if (null !== $this->logger) {
+                $this->logger->debug(sprintf('adding "'.$org['repos_url'].'" for crawl'));
+            }
+
             $orgRequests[] = $client->get($org['repos_url']);
         }
 
@@ -119,7 +133,12 @@ class Github
 
                 if (preg_match('/.* <(.+?)\?page=(\d+)>; rel="last"$/', $link, $matches)) {
                     $pagesRequests = [];
+
                     for ($i = 2; $i <= $matches[2]; $i++) {
+                        if (null !== $this->logger) {
+                            $this->logger->debug(sprintf('adding "'.($matches[1].'?page='.$i).'" for crawl'));
+                        }
+
                         $pagesRequests[] = $client->get($matches[1].'?page='.$i);
                     }
 
