@@ -118,8 +118,10 @@ class Github
 
         $orgResponses = $client->send($orgRequests);
 
+        $composerRequests = [];
+
         foreach ($orgResponses as $orgResponse) {
-            $composerRequests = $this->getComposerRequests($client, $orgResponse);
+            $composerRequests = array_merge($composerRequests, $this->getComposerRequests($client, $orgResponse));
 
             if ($orgResponse->hasHeader('link')) {
                 $link = $orgResponse->getHeader('link');
