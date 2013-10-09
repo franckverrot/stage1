@@ -111,6 +111,10 @@ class Github
         foreach ($data as $org) {
             $this->logger->debug(sprintf('adding "'.$org['repos_url'].'" for crawl'));
 
+            if (php_sapi_name() === 'cli') {
+                printf('adding "'.$org['repos_url'].'" for crawl'.PHP_EOL);
+            }
+
             $orgRequests[] = $client->get($org['repos_url']);
         }
 
@@ -129,6 +133,10 @@ class Github
 
                     for ($i = 2; $i <= $matches[2]; $i++) {
                         $this->logger->debug(sprintf('adding "'.($matches[1].'?page='.$i).'" for crawl'));
+
+                        if (php_sapi_name() === 'cli') {
+                            printf('adding "'.($matches[1].'?page='.$i).'" for crawl'.PHP_EOL);
+                        }
 
                         $pagesRequests[] = $client->get($matches[1].'?page='.$i);
                     }
