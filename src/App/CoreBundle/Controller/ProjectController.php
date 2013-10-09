@@ -210,6 +210,11 @@ class ProjectController extends Controller
         $access = new ProjectAccess($this->getClientIp(), $request->getSession()->getId());
         $isAllowed = $this->isProjectAccessGranted($project, $access);
 
+        if (!$isAllowed && $project->getUsers()->contains($this->getUser())) {
+            $this->container->get('app_core.redis')->sadd('auth:'.$project->getSlug(), $request->getSession()->getId());
+            $isAllowed = true;
+        }
+
         if (!$isAllowed && !$project->hasMasterPassword()) {
             # assume owner don't want existence of this project to leak
             throw $this->createNotFoundException();
