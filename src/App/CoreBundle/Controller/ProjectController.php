@@ -210,7 +210,7 @@ class ProjectController extends Controller
         $access = new ProjectAccess($this->getClientIp(), $request->getSession()->getId());
         $isAllowed = $this->isProjectAccessGranted($project, $access);
 
-        if (!$isAllowed && strlen($project->getMasterPassword()) == 0) {
+        if (!$isAllowed && !$project->hasMasterPassword()) {
             # assume owner don't want existence of this project to leak
             throw $this->createNotFoundException();
         }

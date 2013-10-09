@@ -518,6 +518,14 @@ class Project
     }
 
     /**
+     * @return boolean
+     */
+    public function hasMasterPassword()
+    {
+        return strlen($this->getMasterPassword()) > 0;
+    }
+
+    /**
      * Add users
      *
      * @param \App\CoreBundle\Entity\User $users
