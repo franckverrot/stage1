@@ -23,6 +23,10 @@ class ProjectAccessTableListener
         $token = $this->session->getId();
         $user = $event->getAuthenticationToken()->getUser();
 
+        if (count($user->getProjects()) === 0) {
+            return;
+        }
+
         $project = $user->getProjects()->first();
 
         if ($this->redis->sismember('auth:'.$project->getSlug(), $token)) {
