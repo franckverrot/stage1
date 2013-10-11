@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+
+{% set sidebar = false %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$('#output').html(ansi_up.ansi_to_html($('#output').text()));
+</script>
+{% endblock javascripts %}
+
+{% block body %}
+
+<ul class="lead breadcrumb">
+    <li><a href="{{ path('app_admin_dashboard') }}">Admin</a> <span class="divider">/</span></li>
+    <li>{{ build.project.fullName }} <span class="divider">/</span></li>
+    <li>{{ build.ref }} <span class="divider">/</span></li>
+    <li>#{{ build.id }}</li>
+</ul>
+
+{% if build.building or build.output %}
+<div id="output-container">
+    <pre id="output">{% spaceless %}
+        {% if build.output %}
+            {{ build.output | raw }}
+        {% endif %}
+    {% endspaceless %}</pre>
+</div>
+{% else %}
+<p class="lead">This build has no output.</p>
+{% endif %}
+
+</div>
+{% endblock body %}

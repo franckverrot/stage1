@@ -75,7 +75,7 @@
     <tbody>
         {% for build in builds %}
         <tr>
-            <td>#{{ build.id }}</td>
+            <td><a href="{{ path('app_admin_build_output', { id: build.id }) }}">#{{ build.id }}</a></td>
             <td>{{ build.project.fullName}} (#{{ build.project.id }})</td>
             <td>{{ build.ref }}</td>
             <td><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></td>

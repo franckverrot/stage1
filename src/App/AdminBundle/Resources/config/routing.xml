@@ -4,8 +4,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="admin_dashboard" pattern="/" methods="GET">
+    <route id="app_admin_dashboard" pattern="/" methods="GET">
         <default key="_controller">AppAdminBundle:Default:index</default>
+    </route>
+
+    <route id="app_admin_build_output" pattern="/build/{id}/output">
+        <default key="_controller">AppAdminBundle:Build:output</default>
     </route>
 
 </routes>
