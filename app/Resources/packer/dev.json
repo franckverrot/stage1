@@ -104,6 +104,11 @@
       "type": "file"
     },
     {
+      "destination": "/tmp/monit-log-fetch",
+      "source": "app/Resources/support/config/monit/log-fetch",
+      "type": "file"
+    },
+    {
       "destination": "/tmp/monit-websockets",
       "source": "app/Resources/support/config/monit/websockets",
       "type": "file"

@@ -1,3 +1,4 @@
+/output-vmware/
 github.json
 rsync-exclude.txt
 rsync.log
