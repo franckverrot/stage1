@@ -34,7 +34,7 @@
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span3" id="sidebar">
-                    {% if is_granted('ROLE_USER') %}
+                    {% if is_granted('ROLE_USER') and (sidebar is not defined or sidebar) %}
                     {% include 'AppCoreBundle:Default:_sidebar.html.twig' %}
                     {% endif %}
                 </div>

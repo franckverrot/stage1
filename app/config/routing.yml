@@ -2,3 +2,6 @@ app_core:
     resource: "@AppCoreBundle/Resources/config/routing.xml"
     prefix:   /
 
+app_admin:
+    resource: "@AppAdminBundle/Resources/config/routing.xml"
+    prefix:   /admin

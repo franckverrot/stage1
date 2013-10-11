@@ -1,0 +1,90 @@
+{% extends '::base.html.twig' %}
+
+{% set sidebar = false %}
+
+{% block body %}
+<div class="row-fluid">
+    <div class="span6">
+        <div id="last-projects">
+            <h3>Projects</h3>
+            <hr />
+            {% if projects | length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="2">Id</th>
+                        <th>Full Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td>#{{ project.id }}</td>
+                        <td>{{ project.fullName }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No projects yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="span6">
+        <div id="last-users">
+            <h3>Users</h3>
+            <hr />
+            {% if users | length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="2">Id</th>
+                        <th>Username</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>#{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No users yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<h3>Builds</h3>
+<hr />
+
+{% if builds | length > 0 %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th width="2">Id</th>
+            <th>Project</th>
+            <th>Ref.</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for build in builds %}
+        <tr>
+            <td>#{{ build.id }}</td>
+            <td>{{ build.project.fullName}} (#{{ build.project.id }})</td>
+            <td>{{ build.ref }}</td>
+            <td><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></td>
+            <td><span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No builds yet.</p>
+{% endif %}
+{% endblock body %}
