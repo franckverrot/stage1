@@ -49,7 +49,7 @@ class SecurityController extends Controller
         $em->persist($user);
         $em->flush();
 
-        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles();
+        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
         $this->get('security.context')->setToken($token);
 
         $loginEvent = new InteractiveLoginEvent($request, $token);
