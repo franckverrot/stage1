@@ -177,3 +177,4 @@ IDEES DE OUF
 * stage1 enregistre les actions des clients (clic la, clic la, tape ca, clic la)
     * faire gaffe aux infos sensibles (numeros de CB, telephone)
 * multiplexage de la session (tu vois ce que le client fait en live)
+* feature de "touring" sur la preprod
