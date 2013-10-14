@@ -4,10 +4,8 @@ BUILD_ID=$1
 BUILD_JOB_FILE=/tmp/stage1-build-job
 BUILD_INFO_FILE=/tmp/stage1-build-info
 
-# pgrep+pkill would be nice, but its regexp support is shitty
-
 function get_pid {
-    ps auxwww | grep -E "build\.sh.+ $1\$" | awk '{print $2}'
+    cat /tmp/run/build/$1.pid 2> /dev/null
 }
 
 PID=$(get_pid $BUILD_ID)
@@ -31,7 +29,9 @@ if [ ! -z "$PID" ]; then
     echo 'Tired of your shit, sending SIGKILL.'
     kill -9 $PID
 
-    if [ -f $JOB_FILE ]; then
+    rm -f /tmp/run/build/$1.pid
+
+    if [ -f $BUILD_JOB_FILE ]; then
         BUILD_JOB=$(cat $BUILD_JOB_FILE)
         docker stop $BUILD_JOB
         docker rm $BUILD_JOB

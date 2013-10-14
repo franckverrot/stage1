@@ -5,6 +5,8 @@ set -e
 trap 'error_handler $?' ERR
 trap cleanup SIGTERM EXIT
 
+echo $$ > /tmp/run/build/$1.pid
+
 DEBUG=""
 
 function debug {
@@ -20,6 +22,8 @@ function cleanup {
 
         rm -f $BUILD_JOB_FILE
     fi
+
+    rm -f /tmp/run/build/$1.pid
 }
 
 function error_handler {
@@ -52,7 +56,7 @@ function dummy {
     exit 0
 }
 
-# dummy 15
+# dummy 3600
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

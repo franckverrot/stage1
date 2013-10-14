@@ -36,7 +36,7 @@ stage1_exec /etc/init.d/mysql start 2>&1 > /dev/null
 # @todo this has to be moved to the symfony builder
 # but it must be ran even when the project provides a custom builder
 # so maybe a $builder/bin/before script could be useful
-stage1_announce "configuring composer"
+stage1_announce "configuring composer with token $access_token"
 
 stage1_exec mkdir -p /.composer
 stage1_exec cat > /.composer/config.json <<EOF
@@ -51,7 +51,7 @@ EOF
 
 app_root=/var/www
 
-stage1_announce "cloning repository"
+stage1_announce "cloning repository $ssh_url"
 stage1_exec git clone --depth 1 --branch $ref $ssh_url $app_root
 
 cd $app_root
