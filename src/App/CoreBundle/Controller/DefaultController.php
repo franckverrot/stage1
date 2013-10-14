@@ -37,6 +37,14 @@ class DefaultController extends Controller
         $build = $this->findBuild($id);
         $this->setCurrentProjectId($build->getProject()->getId());
 
+        if (null === $forceTab) {
+            if ($build->isRunning()) {
+                $forceTab = 'logs';
+            } else {
+                $forceTab = 'output';
+            }
+        }
+
         return $this->render('AppCoreBundle:Default:buildShow.html.twig', [
             'build' => $build,
             'forceTab' => $forceTab,
