@@ -8,6 +8,12 @@ use stdClass;
 
 class User implements UserInterface
 {
+    const STATUS_DISABLED = 0;
+
+    const STATUS_ENABLED = 1;
+
+    const STATUS_WAITING_LIST = 2;
+
     private $id;
 
     private $githubId;
@@ -25,6 +31,8 @@ class User implements UserInterface
     private $lastLoginAt;
 
     private $projects;
+
+    private $status = 1;
 
     public function getChannel()
     {
@@ -275,5 +283,28 @@ class User implements UserInterface
     public function getProjects()
     {
         return $this->projects;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     * @return User
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return integer 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

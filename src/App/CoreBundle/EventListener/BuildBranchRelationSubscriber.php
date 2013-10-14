@@ -12,6 +12,11 @@ use App\CoreBundle\Entity\Branch;
 
 use DateTime;
 
+/**
+ * Whenever a build is created, checks if there exists a corresponding
+ * branch record. If not create it. in any case, create a relation between
+ * the build and the branch records.
+ */
 class BuildBranchRelationSubscriber implements EventSubscriber
 {
     private $doctrine;

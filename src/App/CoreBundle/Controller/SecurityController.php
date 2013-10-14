@@ -40,6 +40,7 @@ class SecurityController extends Controller
             $user = User::fromGithubResponse($result);
             $user->setCreatedAt($now);
             $user->setUpdatedAt($now);
+            $user->setStatus(User::STATUS_WAITING_LIST);
         }
 
         $user->setLastLoginAt($now);
