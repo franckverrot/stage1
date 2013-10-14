@@ -21,7 +21,19 @@ monolog:
             type:         fingers_crossed
             action_level: error
             handler:      nested
-        nested:
+        grouped:
+            type:    group
+            members: [streamed, buffered]
+        streamed:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
+        buffered:
+            type:    buffer
+            handler: swift
+        swift:
+            type:       swift_mailer
+            from_email: logs@stage1.io
+            to_email:   geoffrey@stage1.io
+            subject:    stage1.io logs
+            level:      debug
