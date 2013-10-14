@@ -103,9 +103,16 @@ class SecurityController extends Controller
         $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
 
         $user = $this->registerGithubUser($request, $response->access_token);
-        $redirectRoute = (count($user->getProjects()) == 0) ? 'app_core_projects_import' : 'app_core_homepage';
 
-        return $this->redirect($this->generateUrl($redirectRoute));
+        if ($request->getSession()->has('_security.main.target_path')) {
+            $redirectUrl = $request->getSession()->get('_security.main.target_path');
+            $request->getSession()->remove('_security.main.target_path');
+        } else {
+            $redirectRoute = (count($user->getProjects()) == 0) ? 'app_core_projects_import' : 'app_core_homepage';
+            $redirectUrl = $this->generateUrl($redirectRoute);
+        }
+
+        return $this->redirect($redirectUrl);
     }
 
     public function logoutAction()
