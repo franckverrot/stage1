@@ -86,7 +86,7 @@ class Github
             $request = $client->get(
                 [$repo['contents_url'], ['path' => 'composer.json']],
                 [
-                    'Accept' => 'application/vnd.github.VERSION.raw',
+                    'Accept' => 'application/vnd.github.v3.raw',
                     'X-Full-Name' => $repo['full_name']
                 ],
                 ['exceptions' => false]

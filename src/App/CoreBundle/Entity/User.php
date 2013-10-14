@@ -69,7 +69,10 @@ class User implements UserInterface
         $user = new static();
         $user->setGithubId($response->id);
         $user->setUsername($response->login);
-        $user->setEmail($response->email);
+
+        if (isset($response->email) && strlen($response->email) > 0) {
+            $user->setEmail($response->email);
+        }
 
         return $user;
     }

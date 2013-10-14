@@ -93,14 +93,17 @@ class Controller extends BaseController
     /**
      * @todo @github refactor
      */
-    protected function github_post($url, $payload)
+    protected function github_post($url, $payload, $accessToken = null)
     {
+        $accessToken = $accessToken ?: $this->getUser()->getAccessToken();
+
         return json_decode(file_get_contents($url, false, stream_context_create([
             'http' => [
                 'method' => 'POST',
                 'content' => json_encode($payload),
-                'header' => 'Authorization: token '.$this->getUser()->getAccessToken()."\r\n".
-                            "Content-Type: application/json\r\n"
+                'header' => 'Authorization: token '.$accessToken."\r\n".
+                            "Content-Type: application/json\r\n".
+                            "Accept: application/vnd.github.v3\r\n"
             ],
         ])));
     }
@@ -108,12 +111,15 @@ class Controller extends BaseController
     /**
      * @todo @github refactor
      */
-    protected function github_get($url)
+    protected function github_get($url, $accessToken = null)
     {
+        $accessToken = $accessToken ?: $this->getUser()->getAccessToken();
+
         return json_decode(file_get_contents($url, false, stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => 'Authorization: token '.$this->getUser()->getAccessToken()."\r\n"
+                'header' => 'Authorization: token '.$accessToken."\r\n".
+                            "Accept: application/vnd.github.v3\r\n"
             ],
         ])));
     }

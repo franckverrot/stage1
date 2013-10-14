@@ -31,8 +31,9 @@ class SecurityController extends Controller
 
     private function registerGithubUser(Request $request, $accessToken)
     {
-        $result = file_get_contents($this->container->getParameter('github_api_base_url').'/user?access_token='.$accessToken);
-        $result = json_decode($result);
+        $githubApiBaseUrl = $this->container->getParameter('github_api_base_url');
+
+        $result = $this->github_get($githubApiBaseUrl.'/user', $accessToken);
 
         $now = new DateTime();
 
@@ -41,6 +42,16 @@ class SecurityController extends Controller
             $user->setCreatedAt($now);
             $user->setUpdatedAt($now);
             $user->setStatus(User::STATUS_WAITING_LIST);
+        }
+
+        # always check if we have a new primary email
+        $result = $this->github_get($githubApiBaseUrl.'/user/emails', $accessToken);
+
+        foreach ($result as $email) {
+            if ($email->primary && $email->verified) {
+                $user->setEmail($email->email);
+                break;
+            }
         }
 
         $user->setLastLoginAt($now);
@@ -67,7 +78,7 @@ class SecurityController extends Controller
         $payload = [
             'client_id' => $this->container->getParameter('github_client_id'),
             'redirect_uri' => $this->generateUrl('app_core_auth_github_callback', [], true),
-            'scope' => 'repo',
+            'scope' => 'repo,user:email',
             'state' => $token,
         ];
 
@@ -101,6 +112,7 @@ class SecurityController extends Controller
             ]
         ]);
 
+        # @todo error management
         $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
 
         $user = $this->registerGithubUser($request, $response->access_token);
