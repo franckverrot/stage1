@@ -20,5 +20,9 @@ parameters:
     redis_host:             127.0.0.1
     redis_port:             6379
 
-    feature_ip_access_list:    false
-    feature_token_access_list: true
+    # features switches
+    feature_ip_access_list:     false
+    feature_token_access_list:  true
+
+    # build timeout, in seconds
+    stage1_build_timeout:       10

@@ -13,6 +13,8 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
 
+use Psr\Log\LoggerInterface;
+
 use InvalidArgumentException;
 use RuntimeException;
 use Exception;
@@ -25,11 +27,18 @@ class BuildConsumer implements ConsumerInterface
 
     private $router;
 
+    private $buildTimeout = 0;
+
     public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router)
     {
         $this->doctrine = $doctrine;
         $this->producer = $producer;
         $this->router = $router;
+    }
+
+    public function setBuildTimeout($buildTimeout)
+    {
+        $this->buildTimeout = (integer) $buildTimeout;
     }
 
     public function getDoctrine()
@@ -63,14 +72,19 @@ class BuildConsumer implements ConsumerInterface
             $projectDir.'/bin/build/start.sh',
             $build->getId()
         ]);
-        $builder->setTimeout(0);
+
+        # @todo add a Build::STATUS_TIMEOUT status
+        $builder->setTimeout($this->buildTimeout);
         // $builder->setEnv('STAGE1_DEBUG', 1);
 
         $process = $builder->getProcess();
         $process->setCommandLine($process->getCommandLine());
 
-        echo 'running '.$process->getCommandLine().PHP_EOL;
+        echo 'running '.$process->getCommandLine().' with timeout '.$this->buildTimeout.PHP_EOL;
+        
         $producer = $this->producer;
+
+        # @todo check php version for $this binding in closures
         $process->run(function($type, $data) use ($producer, $build) {
             static $n = 0;
             $producer->publish(json_encode([
@@ -85,9 +99,6 @@ class BuildConsumer implements ConsumerInterface
             $build->appendOutput($data);
         });
 
-        $build->setExitCode($process->getExitCode());
-        $build->setExitCodeText($process->getExitCodeText());
-
         if (!$process->isSuccessful()) {
             if (in_array($process->getExitCode(), [137, 143])) {
                 return Build::STATUS_KILLED;
@@ -95,6 +106,9 @@ class BuildConsumer implements ConsumerInterface
 
             return false;
         }
+
+        $build->setExitCode($process->getExitCode());
+        $build->setExitCodeText($process->getExitCodeText());
 
         $buildInfo = explode(PHP_EOL, trim(file_get_contents($buildFile('info'))));
         unlink($buildFile('info'));
@@ -165,6 +179,7 @@ class BuildConsumer implements ConsumerInterface
 
         try {
             $res = $this->doBuild($build);
+
             if (true === $res) {
                 $res = Build::STATUS_RUNNING;
             } elseif (false === $res) {
