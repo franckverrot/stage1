@@ -8,8 +8,15 @@
         <default key="_controller">AppAdminBundle:Default:index</default>
     </route>
 
+    <route id="app_admin_hipache" pattern="/hipache" methods="GET">
+        <default key="_controller">AppAdminBundle:Hipache:index</default>
+    </route>
+
+    <route id="app_admin_hipache_frontend" pattern="/hipache/{frontend}" methods="GET">
+        <default key="_controller">AppAdminBundle:Hipache:frontend</default>
+    </route>
+
     <route id="app_admin_build_output" pattern="/build/{id}/output">
         <default key="_controller">AppAdminBundle:Build:output</default>
     </route>
-
 </routes>

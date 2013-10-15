@@ -1,0 +1,28 @@
+{% extends '::admin.html.twig' %}
+
+{% block body %}
+
+{% if frontends | length == 0 %}
+<p>No frontends configured in hipache.</p>
+{% else %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>URL</th>
+            <th>Description</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for frontend, description in frontends %}
+        {% set url = frontend[9:] %}
+        <tr>
+            <td><a href="http://{{ url }}">{{ url }}</a></td>
+            <td>{{ description }}</td>
+            <td>&nbsp;</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock body %}

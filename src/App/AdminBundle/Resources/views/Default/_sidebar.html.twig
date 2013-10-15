@@ -1,0 +1,12 @@
+{% set routes = {
+    app_admin_dashboard: "Dashboard",
+    app_admin_hipache: "Hipache"
+} %}
+
+<ul class="nav nav-pills nav-stacked" id="nav-projects">
+    {% for route, label in routes %}
+    <li{% if app.request.attributes.get('_route') == route %} class="active"{% endif %}>
+        <a href="{{ path(route) }}">{{ label }}</a>
+    </li>
+    {% endfor %}
+</ul>

@@ -15,15 +15,13 @@
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
-                    <a class="brand" href="{{ path('app_core_homepage') }}">Stage1</a>
+                    <a class="brand" href="{{ path('app_core_homepage') }}">Stage1 Admin</a>
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             {% if is_granted('ROLE_USER') %}
-                            <li><a href="#">Logged in as {{ app.user }}</a></li>
-                            {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="#">Logged in {{ app.user }}</a></li>
                             <li class="divider-vertical"></li>
-                            <li><a href="{{ path('app_admin_dashboard') }}">Admin</a></li>
-                            {% endif %}
+                            <li><a href="{{ path('app_core_homepage') }}">Stage1</a></li>
                             <li class="divider-vertical"></li>
                             <li><a href="{{ path('app_core_logout') }}"><i class="icon-off"></i></a></li>
                             {% else %}
@@ -37,12 +35,10 @@
 
         <div class="container-fluid">
             <div class="row-fluid">
-                <div class="span3" id="sidebar">
-                    {% if is_granted('ROLE_USER') %}
-                    {% include 'AppCoreBundle:Default:_sidebar.html.twig' %}
-                    {% endif %}
+                <div class="span2" id="sidebar">
+                    {% include 'AppAdminBundle:Default:_sidebar.html.twig' %}
                 </div>
-                <div class="span9">
+                <div class="span10">
                     {% for message in app.session.flashbag.get('success') %}
                         <div class="alert alert-success">
                             <i class="icon-ok"></i>
@@ -61,9 +57,6 @@
         </div>
         {% if is_granted('ROLE_USER') %}
         <script type="text/javascript">
-        var current_user_id = {{ app.user.id }};
-        var current_project_id = {{ app.request.attributes.get('current_project_id') | default('undefined') }};
-        var current_build_id = {{ app.request.attributes.get('current_build_id') | default('undefined') }};
         var websocket_auth_url = '{{ path("app_core_primus_auth") }}';
         </script>
         {% endif %}
