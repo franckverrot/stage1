@@ -16,11 +16,9 @@ TODO PRIVATE BETA
     * needs to have proper monitoring
 * projects
     * explain how the master password works
-    * delete access list on project deletion
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
 * builds
-    * killing a build does not seem to kill its container
     * add a timeout on builds (5min for starters)
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
@@ -92,6 +90,9 @@ TODO
         * implement "one-time" passwords
         * implement auto-expiring accesses
         * implement "access-granting-referers" (automatically gain access if you come from the project's github for example)
+    * on remove
+        * remove deploy key
+        * remove hook
 
 * public admin
     * public dashboard
