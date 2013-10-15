@@ -239,6 +239,10 @@ def prepare_deploy(ref='HEAD'):
         if (1 == local('git diff --quiet --ignore-submodules -- remotes/origin/%s' % ref)):
             error('Please merge origin before deploying')
 
+def diff():
+    last_tag = local('git describe --tags $(git rev-list --tags --max-count=1)', capture=True)
+    local('git log --pretty=oneline --color %s..' % last_tag)
+
 @runs_once
 def tag_release():
     if is_release_tagged():
