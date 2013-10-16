@@ -66,12 +66,6 @@
             <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
         </service>
 
-        <service id="app_core.listener.waiting_list" class="App\CoreBundle\EventListener\WaitingListListener">
-            <argument type="service" id="app_core.controller.waiting_list" />
-            <argument type="service" id="security.context" />
-            <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
-        </service>
-
         <service id="app_core.listener.project_access_table" class="App\CoreBundle\EventListener\ProjectAccessTableListener">
             <argument type="service" id="app_core.redis" />
             <argument type="service" id="session" />
@@ -105,12 +99,6 @@
         <!-- controllers -->
 
         <service id="app_core.controller.configure" class="App\CoreBundle\Controller\ConfigureController">
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-        </service>
-
-        <service id="app_core.controller.waiting_list" class="App\CoreBundle\Controller\WaitingListController">
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>

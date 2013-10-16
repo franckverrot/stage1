@@ -34,6 +34,8 @@ class User implements UserInterface
 
     private $status = 1;
 
+    private $waitingList = 0;
+
     public function getChannel()
     {
         return 'user.'.$this->getId();
@@ -309,5 +311,28 @@ class User implements UserInterface
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set waitingList
+     *
+     * @param integer $waitingList
+     * @return User
+     */
+    public function setWaitingList($waitingList)
+    {
+        $this->waitingList = $waitingList;
+    
+        return $this;
+    }
+
+    /**
+     * Get waitingList
+     *
+     * @return integer 
+     */
+    public function getWaitingList()
+    {
+        return $this->waitingList;
     }
 }

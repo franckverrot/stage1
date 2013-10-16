@@ -44,6 +44,10 @@ class SecurityController extends Controller
             $user->setStatus(User::STATUS_WAITING_LIST);
         }
 
+        if ($user->getStatus() === User::STATUS_WAITING_LIST) {
+            $user->setWaitingList($user->getWaitingList() + 1);
+        }
+
         # always check if we have a new primary email
         $result = $this->github_get($githubApiBaseUrl.'/user/emails', $accessToken);
 
@@ -60,12 +64,6 @@ class SecurityController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
         $em->flush();
-
-        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-        $this->get('security.context')->setToken($token);
-
-        $loginEvent = new InteractiveLoginEvent($request, $token);
-        $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
 
         return $user;
     }
@@ -116,6 +114,18 @@ class SecurityController extends Controller
         $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
 
         $user = $this->registerGithubUser($request, $response->access_token);
+
+        if ($user->getStatus() === User::STATUS_WAITING_LIST) {
+            $request->getSession()->set('waiting_list', $user->getWaitingList());
+
+            return $this->redirect($this->generateUrl('app_core_waiting_list'));
+        }
+
+        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+        $this->get('security.context')->setToken($token);
+
+        $loginEvent = new InteractiveLoginEvent($request, $token);
+        $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
 
         if ($request->getSession()->has('_security.main.target_path')) {
             $redirectUrl = $request->getSession()->get('_security.main.target_path');

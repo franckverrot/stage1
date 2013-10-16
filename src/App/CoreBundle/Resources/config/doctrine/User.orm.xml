@@ -15,6 +15,7 @@
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="lastLoginAt" column="last_login_at" type="datetime" />
         <field name="status" column="status" type="integer" />
+        <field name="waitingList" column="waiting_list" type="integer" />
 
         <many-to-many field="projects" target-entity="App\CoreBundle\Entity\Project" mapped-by="users" />
     </entity>

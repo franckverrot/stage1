@@ -3,11 +3,14 @@
 namespace App\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
+use Symfony\Component\HttpFoundation\Request;
 
 class WaitingListController extends BaseController
 {
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        return $this->render('AppCoreBundle:WaitingList:index.html.twig');
+        return $this->render('AppCoreBundle:WaitingList:index.html.twig', [
+            'waiting_list' => $request->getSession()->get('waiting_list', 0),
+        ]);
     }
 }
