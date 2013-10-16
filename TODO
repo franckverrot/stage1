@@ -18,8 +18,6 @@ TODO PRIVATE BETA
     * explain how the master password works
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
-* builds
-    * add a timeout on builds (5min for starters)
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
 
@@ -41,9 +39,6 @@ TODO
 
 * production
     * everything needs to transit through SSL
-
-* user
-    * explicitely ask github for the private emails 
 
 * instances
     * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
