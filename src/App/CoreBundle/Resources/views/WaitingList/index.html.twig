@@ -10,8 +10,8 @@
 
 {% else %}
 <p>Yes, thank you for {% spaceless %}
-    {% if waiting_list is defined and waiting_list > 0 and waiting_list < 10 %}
-        {% for i in range(0, waiting_list - 1) %}re-{% endfor %}
+    {% if waiting_list is defined and waiting_list > 1 and waiting_list < 10 %}
+        {% for i in range(1, waiting_list - 1) %}re-{% endfor %}
     {% endif %}
 {% endspaceless %}registering to Stage1's waiting list.</p>
 {% endif %}
