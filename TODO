@@ -9,17 +9,30 @@ TODO PRIVATE BETA
 -----------------
 
 * switch runtime to supervisor or something to make sure everything runs as it should
+
 * global
     * have contextual help everywhere it matters
+    * commands to empty redis
 * production
     * needs to have working error reporting
     * needs to have proper monitoring
 * projects
     * explain how the master password works
+    * update project access when an user joins the project
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
+    * import: show "go to project" link in lieu of import ok button
+* builds
+    * check that the runtime container was successfuly built
+    * check the desired branch is available
+* websocket routing
+    * do not subscribe a user to all sub-channels he's allowed to, but rather
+      check if an incoming message is going through a channel that's a sub-channel
+      of a currently subscribed channel
+* github hook
+    * log requests (there has been a strange request on a non-existant branch in c2is/seh)
 
 SCALING
 =======
@@ -29,6 +42,9 @@ SCALING
 
 TODO
 ====
+
+* Github
+    * periodically check for access_token validity and warn user if it expired
 
 * Commands
     * project:audit
@@ -44,6 +60,7 @@ TODO
     * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
 
 * builds
+    * handle build.output through the log_fetch server
     * running and building status are confusing
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
