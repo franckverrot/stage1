@@ -9,6 +9,7 @@ TODO PRIVATE BETA
 -----------------
 
 * switch runtime to supervisor or something to make sure everything runs as it should
+
 * global
     * have contextual help everywhere it matters
 * production
@@ -20,6 +21,8 @@ TODO PRIVATE BETA
     * list of running instances grouped by project and order by project.last_build_id
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
+* builds
+    * check that the runtime container was successfuly built
 
 SCALING
 =======
@@ -29,6 +32,9 @@ SCALING
 
 TODO
 ====
+
+* Github
+    * periodically check for access_token validity and warn user if it expired
 
 * Commands
     * project:audit
@@ -44,6 +50,7 @@ TODO
     * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
 
 * builds
+    * handle build.output through the log_fetch server
     * running and building status are confusing
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
