@@ -65,7 +65,15 @@ class BuildConsumer implements ConsumerInterface
 
     private function doBuild(Build $build)
     {
-        $buildFile = function($type) { return '/tmp/stage1-build-'.$type; };
+        $buildFile = function($type) use ($build) {
+            $path = '/tmp/stage1/build/'.$build->getId().'/'.$type;
+
+            if (!file_exists(dirname($path))) {
+                mkdir($path, 0777, true);
+            }
+
+            return $path;
+        };
 
         $projectDir = realpath(__DIR__.'/../../../..');
         $builder = new ProcessBuilder([
@@ -89,8 +97,10 @@ class BuildConsumer implements ConsumerInterface
             static $n = 0;
             $producer->publish(json_encode([
                 'event' => 'build.output',
-                'channel' => $build->getProject()->getChannel(),
+                'channel' => $build->getChannel(),
                 'data' => [
+                    'build' => $build->asWebsocketMessage(),
+                    'project' => $build->getProject()->asWebsocketMessage(),
                     'number' => $n++,
                     'content' => $data,
                 ]
@@ -164,7 +174,7 @@ class BuildConsumer implements ConsumerInterface
 
         $this->producer->publish(json_encode([
             'event' => 'build.started',
-            'channel' => $build->getProject()->getChannel(),
+            'channel' => $build->getChannel(),
             'timestamp' => microtime(true),
             'data' => [
                 'build' => array_replace([
@@ -196,7 +206,7 @@ class BuildConsumer implements ConsumerInterface
 
         $this->producer->publish(json_encode([
             'event' => 'build.finished',
-            'channel' => $build->getProject()->getChannel(),
+            'channel' => $build->getChannel(),
             'timestamp' => microtime(true),
             'data' => [
                 'build' => array_replace([

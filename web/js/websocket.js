@@ -15,7 +15,7 @@
     });
 
     primus.on('data', function(data) {
-        console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
+        // console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
 
         if (!data.data) {
             return;
@@ -28,6 +28,10 @@
         }
 
         lastTimestamp = data.timestamp;
+
+        if (data.event == 'build.output' || data.event == 'data.output.buffer') {
+            return;
+        }
 
         if (data.data.build) {
             callbacks.build(event, data.data.build, data.data.project);

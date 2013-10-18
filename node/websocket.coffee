@@ -37,18 +37,19 @@ primus.save(__dirname + '/../web/js/primus.js')
 primus.on 'connection', (spark) ->
     console.log ('<- spark#' + spark.id + ' connected').info
 
-    spark.on 'data', (data) ->
-        console.log '<- received ' + data.action.yellow + ' from spark#' + spark.id
-        # if data.action == 'build.output.buffer' and buffer.length > 0
-        #     console.log '-> sending event "' + 'build.output.buffer'.yellow + '" to spark#' + spark.id
-        #     spark.write event: 'build.output.buffer', data: buffer
-
-        if data.action == 'subscribe' and buffer.length > 0
+    spark.on 'subscribed', (channel) ->
+        if buffer[channel.name] and buffer[channel.name].length > 0
             console.log '-> sending event "' + 'build.output.buffer'.yellow + '" to spark#' + spark.id
-            spark.write event: 'build.output.buffer', data: buffer
+            spark.write event: 'build.output.buffer', data: buffer[channel.name]
 
+    spark.on 'data', (data) ->
 
-buffer = []
+        if data.action == 'subscribe'
+            console.log '<- received ' + data.action.yellow + ' on channel ' + data.channel.yellow + ' from spark#' + spark.id
+        else
+            console.log '<- received ' + data.action.yellow + ' from spark#' + spark.id
+
+buffer = {}
 
 amqp.connect('amqp://localhost').then (conn) ->
     console.log '[x] amqp connected'
@@ -68,10 +69,22 @@ amqp.connect('amqp://localhost').then (conn) ->
 
                     if content.channel?
                         if content.event == 'build.output'
-                            buffer.push content
+                            unless buffer[content.channel]
+                                buffer[content.channel] = []
 
-                        if content.event in ['build.finished', 'build.started']
-                            buffer = []
+                            buffer[content.channel].push(content)
+
+                        # if content.event == 'build.started'
+                        #     buffer[content.channel] = []
+
+                        # if content.event == 'build.finished'
+                        #     delete buffer[content.channel]
+
+                        if content.event == 'build.finished' and buffer[content.channel]
+                            console.log 'cleaning mess in channel ' + content.channel.yellow
+                            for m, i in buffer[content.channel]
+                                if !m or (m.data and m.data.build.id == content.data.build.id)
+                                    buffer[content.channel].splice(i, 1)
 
                         if primus.channels[content.channel]?
                             console.log '-> broadcasting event "' + content.event.yellow + '" to channel "' + content.channel.yellow + '"'

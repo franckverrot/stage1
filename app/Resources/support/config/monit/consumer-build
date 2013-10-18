@@ -1,4 +1,9 @@
-check process consumer-build with pidfile /tmp/run/consumer-build.pid
-    start program = "/vagrant/bin/process/consumer start build"
+check process consumer-build-0 with pidfile /tmp/run/consumer-build.0.pid
+    start program = "/vagrant/bin/process/consumer start build 0"
         as uid root and gid root
-    stop program = "/vagrant/bin/process/consumer stop build"
+    stop program = "/vagrant/bin/process/consumer stop build 0"
+
+check process consumer-build-1 with pidfile /tmp/run/consumer-build.1.pid
+    start program = "/vagrant/bin/process/consumer start build 1"
+        as uid root and gid root
+    stop program = "/vagrant/bin/process/consumer stop build 1"

@@ -40,29 +40,32 @@
         primus.on('data', function(data) {
 
             if (data.event == 'build.output.buffer') {
+                console.log('processing buffered data');
                 for (i in data.data) {
-                    // console.log('buffering part ' + data.data[i].data.number);
-                    buffer.push(data.data[i].data)
-                }
-
-                for (i in buffer) {
-                    if (buffer[i].number == latestPart + 1) {
-                        return processPart(buffer[i]);
-                    }
+                    processPart(data.data[i].data);
                 }
             }
 
             if (data.event == 'build.output') {
-                // console.log('received part ' + data.data.number);
-                return processPart(data.data);
+                processPart(data.data);
             }
         });
 
-        // primus.on('open', function() {
-        //     primus.write({ action: 'build.output.buffer' });
-        // });
-
         function processPart(part) {
+            console.log(part);
+
+            if (!part.build) {
+                console.log('no build information');
+                return;
+            }
+
+            if (part.build.id != current_build_id) {
+                console.log('expected build.id #' + current_build_id + ', got ' + part.build.id);
+                return;
+            }
+
+            console.log('processing part #' + part.number + ' for build #' + part.build.id);
+
             if (part.number != latestPart + 1) {
                 buffer.push(part)
                 return false;

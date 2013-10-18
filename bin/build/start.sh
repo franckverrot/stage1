@@ -5,9 +5,13 @@ set -e
 trap 'error_handler $?' ERR
 trap cleanup SIGTERM EXIT
 
+if [ ! -d /tmp/run/build ]; then
+    mkdir -p /tmp/run/build
+fi
+
 echo $$ > /tmp/run/build/$1.pid
 
-DEBUG=""
+DEBUG="1"
 
 function debug {
     if [ -n "$DEBUG" ]; then
@@ -35,9 +39,6 @@ function error_handler {
 
 debug "------> starting build $1 ($(date))"
 
-# @todo move that to the CONTEXT_DIR
-BUILD_INFO_FILE="/tmp/stage1-build-info"
-BUILD_JOB_FILE="/tmp/stage1-build-job"
 
 function dummy {
     echo 'This is some dummy output'
@@ -56,8 +57,6 @@ function dummy {
     exit 0
 }
 
-# dummy 3600
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 CONSOLE=$(realpath $DIR/../../app/console) || false
@@ -66,14 +65,21 @@ debug php $CONSOLE build:infos $1
 
 $(php $CONSOLE build:infos $1) || false
 
+BUILD_INFO_FILE="/tmp/stage1/build/$BUILD_ID/info"
+BUILD_JOB_FILE="/tmp/stage1/build/$BUILD_ID/job"
+
 BUILD_URL="http://$BUILD_DOMAIN/"
 BUILD_REDIS_LIST="frontend:$BUILD_DOMAIN"
+
+# CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
+CONTEXT_DIR="/tmp/stage1/build/$BUILD_ID/context"
+mkdir -p $CONTEXT_DIR
+
+dummy 5
 
 debug '------> preparing building container'
 
 # insert ssh keys
-CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
-mkdir -p $CONTEXT_DIR
 
 SSH_KEY_PATH=$(basename $(php $CONSOLE build:keys:dump $BUILD_ID -f $CONTEXT_DIR/id_rsa)) || false
 SSH_CONFIG=$(tempfile --directory=$CONTEXT_DIR) || false
