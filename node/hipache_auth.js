@@ -2,6 +2,12 @@
 'use strict';
 
 module.exports = function(hipache, req, stack, next) {
+
+    if (req.headers.host.match(/[a-z0-9-]+\.[a-z0-9-]{2,3}/)) {
+        console.log('regular domain detected (' + req.headers.host + '), not checking auth');
+        return next();
+    }
+
     var project = req.headers.host.split(/\./)[1];
     var ip = req.connection.remoteAddress
 

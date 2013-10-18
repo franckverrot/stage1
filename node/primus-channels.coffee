@@ -1,6 +1,7 @@
 require 'colors'
 
 redis  = require 'redis'
+events = require 'events'
 
 @PrimusChannels =
     name: 'channels'
@@ -50,9 +51,11 @@ redis  = require 'redis'
         primus.on 'disconnection', (spark) ->
             spark.unsubscribe()
 
-class Channel
+class Channel extends events.EventEmitter
     constructor: (@name, @redis, @options) ->
         @sparks = []
+        @children = []
+        @buffer = []
         @isPrivate = @name.match(@options.privatePattern || /^(private|presence)\-/)
 
     write: (message) ->
@@ -80,6 +83,7 @@ class Channel
                     console.warn ('   spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
                 else 
                     @sparks.push spark
+                    spark.emit 'subscribed', this
                     console.log ('   subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
 
                 # check if this is a meta channel
@@ -88,7 +92,11 @@ class Channel
 
                     if results.length > 0
                         for result in results
+                            console.log '   subscribing spark to children channel ' + result.yellow
                             spark.subscribe result, true
+                            @children.push result
+
+                    @emit 'subscribed'
 
             =>
                 console.log ('   spark#' + spark.id + ' failed authorization for channel "' + @name + '"').red

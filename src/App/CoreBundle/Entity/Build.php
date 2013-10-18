@@ -79,7 +79,7 @@ class Build
 
     public function getChannel()
     {
-        return 'build.' . $this->getId();
+        return $this->getProject()->getChannel();
     }
 
     public function appendOutput($data)

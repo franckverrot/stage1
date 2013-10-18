@@ -5,11 +5,13 @@ if [ -f /etc/environment ]; then
     source /etc/environment
 fi
 
+PIDX=${3-0}
+
 PID_DIR="/tmp/run"
-PID_FILE="$PID_DIR/consumer-$2.pid"
+PID_FILE="$PID_DIR/consumer-$2.$PIDX.pid"
 
 LOG_DIR="/tmp/log"
-LOG_FILE="$LOG_DIR/consumer-$2.log"
+LOG_FILE="$LOG_DIR/consumer-$2.$PIDX.log"
 
 ACTION=$1
 CONSUMER=$2
