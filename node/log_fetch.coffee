@@ -30,7 +30,13 @@ attachOptions =
 
 queues = ['websockets', 'build_log']
 pollInterval = 1000
+filterCommand = /^runapp/
+
+# list of already attached containers
 attached = []
+
+# containers that could should not be attached because
+# the image name could not be parsed into something we know
 skipped = []
 
 attach_containers = (docker, channel) ->
@@ -43,7 +49,7 @@ attach_containers = (docker, channel) ->
             unless skipped.indexOf(data.Id) == -1
                 return
 
-            unless data.Command.match /^runapp/
+            unless data.Command.match filterCommand
                 return
 
             match = data.Image.match(/\/(\d+):/)
