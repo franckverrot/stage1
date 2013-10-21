@@ -74,12 +74,6 @@ amqp.connect('amqp://localhost').then (conn) ->
 
                             buffer[content.channel].push(content)
 
-                        # if content.event == 'build.started'
-                        #     buffer[content.channel] = []
-
-                        # if content.event == 'build.finished'
-                        #     delete buffer[content.channel]
-
                         if content.event == 'build.finished' and buffer[content.channel]
                             console.log 'cleaning mess in channel ' + content.channel.yellow
                             for m, i in buffer[content.channel]
