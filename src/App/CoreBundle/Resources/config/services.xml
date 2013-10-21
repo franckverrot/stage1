@@ -90,7 +90,7 @@
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
 
-        <service id="app_core.subscriber.project_routing_table" class="App\CoreBundle\EventListener\ProjectRoutingTableSubscriber">
+        <service id="app_core.subscriber.hipache_routing_table" class="App\CoreBundle\EventListener\HipacheRoutingTableSubscriber">
             <argument type="service" id="app_core.redis" />
             <argument type="service" id="logger" />
             <tag name="doctrine.event_subscriber" connection="default" />

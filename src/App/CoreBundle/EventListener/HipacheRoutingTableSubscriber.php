@@ -15,7 +15,7 @@ use Redis;
  * This subscriber removes a project's hipache routing information
  * on project's removal
  */
-class ProjectRoutingTableSubscriber implements EventSubscriber
+class HipacheRoutingTableSubscriber implements EventSubscriber
 {
     private $redis;
 
