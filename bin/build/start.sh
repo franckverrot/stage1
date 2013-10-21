@@ -42,7 +42,7 @@ debug "------> starting build $1 ($(date))"
 
 function dummy {
     echo 'This is some dummy output'
-    echo 'This is some dummy error output'
+    echo 'This is some dummy error output' >&2
 
     for n in $(seq 1 $1); do
         echo "line $n"
