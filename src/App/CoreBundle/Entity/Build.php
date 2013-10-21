@@ -21,6 +21,10 @@ class Build
     const STATUS_DELETED = 7;
 
     const STATUS_OBSOLETE = 8;
+
+    const LOG_OUTPUT = 'output';
+
+    const LOG_APPLICATION = 'application';
     
     private $id;
 
@@ -75,6 +79,22 @@ class Build
     public function __toString()
     {
         return json_encode($this->asWebsocketMessage());
+    }
+
+    /**
+     * @return array
+     */
+    public function getOutputLogs()
+    {
+        return $this->getLogs(self::LOG_OUTPUT);
+    }
+
+    /**
+     * @return array
+     */
+    public function getApplicationLogs()
+    {
+        return $this->getLogs(self::LOG_APPLICATION);
     }
 
     public function getUsers()
@@ -444,29 +464,6 @@ class Build
     }
 
     /**
-     * Set output
-     *
-     * @param string $output
-     * @return Build
-     */
-    public function setOutput($output)
-    {
-        $this->output = $output;
-    
-        return $this;
-    }
-
-    /**
-     * Get output
-     *
-     * @return string 
-     */
-    public function getOutput()
-    {
-        return $this->output;
-    }
-
-    /**
      * Set exitCode
      *
      * @param integer $exitCode
@@ -609,8 +606,14 @@ class Build
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getLogs()
+    public function getLogs($type = null)
     {
-        return $this->logs;
+        if (null === $type) {
+            return $this->logs;
+        }
+
+        return array_filter($this->logs->toArray(), function($log) use ($type) {
+            return $log->getType() === $type;
+        });
     }
 }

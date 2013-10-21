@@ -21,6 +21,11 @@ class BuildLog
      */
     private $build;
 
+    public function __toString()
+    {
+        return $this->getMessage();
+    }
+
     /**
      * Set message
      *
