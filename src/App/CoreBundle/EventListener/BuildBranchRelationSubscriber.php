@@ -56,11 +56,6 @@ class BuildBranchRelationSubscriber implements EventSubscriber
             $branch->setName($build->getRef());
             $branch->setProject($build->getProject());
 
-            $now = new DateTime();
-
-            $branch->setCreatedAt($now);
-            $branch->setUpdatedAt($now);
-
             $em->persist($branch);
 
             $build->getProject()->addBranch($branch);

@@ -61,10 +61,6 @@ class BuildScheduleCommand extends ContainerAwareCommand
         $build->setStatus(Build::STATUS_SCHEDULED);
         $build->setRef($input->getArgument('ref'));
 
-        $now = new DateTime();
-        $build->setCreatedAt($now);
-        $build->setUpdatedAt($now);
-
         $em = $doctrine->getManager();
         $em->persist($build);
         $em->flush();

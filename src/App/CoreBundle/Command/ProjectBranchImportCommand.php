@@ -48,11 +48,6 @@ class ProjectBranchImportCommand extends ContainerAwareCommand
 
             $branch = new Branch();
             $branch->setName($data['name']);
-
-            $now = new DateTime();
-
-            $branch->setCreatedAt($now);
-            $branch->setUpdatedAt($now);
             
             $branch->setProject($project);
             $project->addBranch($branch);

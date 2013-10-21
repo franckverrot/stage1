@@ -187,11 +187,6 @@ class ProjectImportConsumer implements ConsumerInterface
         $project->setSshUrl($body->request->ssh_url);
 
         $project->addUser($this->getUser());
-
-        $now = new DateTime();
-        $project->setCreatedAt($now);
-        $project->setUpdatedAt($now);
-
     }
 
     public function doKeys(Project $project, $body, Client $client)
@@ -270,11 +265,6 @@ class ProjectImportConsumer implements ConsumerInterface
             $branch = new Branch();
             $branch->setName($data['name']);
 
-            $now = new DateTime();
-
-            $branch->setCreatedAt($now);
-            $branch->setUpdatedAt($now);
-            
             $branch->setProject($project);
             $project->addBranch($branch);
         }
