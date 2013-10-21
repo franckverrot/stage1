@@ -1,0 +1,54 @@
+{% extends '::admin.html.twig' %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(function() {
+    $('table#tables').on('click', 'a[data-channel]', function(event) {
+        var channel = $(event.target).data('channel');
+        $('tr#destinations-' + channel).toggle();
+        event.preventDefault();
+    });
+});
+</script>
+{% endblock %}
+
+{% block body %}
+
+<h3>Websocket routing</h3>
+
+<hr />
+
+{% if tables | length == 0 %}
+<p>No websocket routing tables configured.</p>
+{% else %}
+<table id="tables" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Routing key</th>
+            <th>Destinations</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for name, table in tables %}
+        {% set channel = name[16:] %}
+        {% set normChannel = channel | replace({ '.': '-'}) %}
+        <tr id="channel-{{ name }}">
+            <td><a data-channel="{{ normChannel }}" href="#">{{ channel }}</a></td>
+            <td>{{ table | length }}
+            <td>&nbsp;</td>
+        </tr>
+        <tr class="destinations" id="destinations-{{ normChannel }}">
+            <td colspan="3">
+                <table class="table table-striped">
+                    {% for destination in table %}
+                    <tr><td>{{ destination }}</td></tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock body %}

@@ -19,4 +19,8 @@
     <route id="app_admin_build_output" pattern="/build/{id}/output">
         <default key="_controller">AppAdminBundle:Build:output</default>
     </route>
+
+    <route id="app_admin_websocket_routing" pattern="/websocket/routing">
+        <default key="_controller">AppAdminBundle:Websocket:routing</default>
+    </route>
 </routes>
