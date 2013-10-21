@@ -87,9 +87,21 @@ class Build
         return $this->getProject()->getChannel();
     }
 
-    public function appendOutput($data)
+    /**
+     * @param string $message
+     * @param string $type      log|output
+     */
+    public function appendLog($message, $type, $stream = null)
     {
-        $this->output .= $data;
+        $this->output .= $message;
+        
+        $log = new BuildLog();
+        $log->setBuild($this);
+        $log->setType($type);
+        $log->setMessage(trim($message));
+        $log->setStream($stream);
+        
+        return $log;
     }
 
     public function hasContainer()
