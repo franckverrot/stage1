@@ -22,6 +22,7 @@
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="builds">
             <join-column name="project_id" referenced-column-name="id" />
+            <cascade><persist /></cascade>
         </many-to-one>
 
         <many-to-one field="initiator" target-entity="App\CoreBundle\Entity\User">
