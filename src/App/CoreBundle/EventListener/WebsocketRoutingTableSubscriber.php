@@ -9,6 +9,10 @@ use App\CoreBundle\Entity\Project;
 
 use Redis;
 
+/**
+ * This subscriber updates the websocket routing table whenever
+ * a new Project or Build is saved or removed
+ */
 class WebsocketRoutingTableSubscriber implements EventSubscriber
 {
     private $redis;
