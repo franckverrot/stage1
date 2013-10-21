@@ -34,6 +34,8 @@ class BuildConsumer implements ConsumerInterface
         $this->doctrine = $doctrine;
         $this->producer = $producer;
         $this->router = $router;
+
+        echo '== initializing BuildConsumer'.PHP_EOL;
     }
 
     public function setBuildTimeout($buildTimeout)
@@ -162,10 +164,10 @@ class BuildConsumer implements ConsumerInterface
 
         $build = $this->getBuildRepository()->find($body->build_id);
 
-        echo '<- received build order';
+        echo '<- received build order'.PHP_EOL;
 
         if (!$build || !$build->isScheduled()) {
-            echo '[x] build is not "scheduled", skipping';
+            echo '[x] build is not "scheduled", skipping'.PHP_EOL;
             return;
         }
 
@@ -198,6 +200,10 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus($res);
         } catch (Exception $e) {
+            echo 'got exception "'.get_class($e).PHP_EOL.PHP_EOL;
+            echo $e->getMessage();
+            echo PHP_EOL.PHP_EOL;
+
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage($e->getMessage());
         }
