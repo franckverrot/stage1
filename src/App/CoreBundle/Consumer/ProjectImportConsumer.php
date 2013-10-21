@@ -50,6 +50,8 @@ class ProjectImportConsumer implements ConsumerInterface
         $this->websocket = $websocket;
         $this->router = $router;
         $this->redis = $redis;
+
+        echo '== initializing ProjectImportConsumer'.PHP_EOL;
     }
 
     public function getDoctrine()
