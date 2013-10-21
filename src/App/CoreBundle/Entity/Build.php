@@ -72,6 +72,11 @@ class Build
         throw new BadMethodCallException(sprintf('Method "%s" does not exist in object "%s"', $method, __CLASS__));
     }
 
+    public function __toString()
+    {
+        return json_encode($this->asWebsocketMessage());
+    }
+
     public function getUsers()
     {
         return $this->getProject()->getUsers();

@@ -58,6 +58,11 @@ class Project
 
     protected $branches;
 
+    public function __toString()
+    {
+        return json_encode($this->asWebsocketMessage());
+    }
+
     public function getChannel()
     {
         return 'project.'.$this->getId();
