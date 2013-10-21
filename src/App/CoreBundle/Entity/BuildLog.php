@@ -12,6 +12,10 @@ class BuildLog
 
     protected $updatedAt;
 
+    protected $type;
+
+    protected $stream;
+
     /**
      * @var \App\CoreBundle\Entity\Build
      */
@@ -117,5 +121,51 @@ class BuildLog
     public function getBuild()
     {
         return $this->build;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return BuildLog
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set stream
+     *
+     * @param string $stream
+     * @return BuildLog
+     */
+    public function setStream($stream)
+    {
+        $this->stream = $stream;
+    
+        return $this;
+    }
+
+    /**
+     * Get stream
+     *
+     * @return string 
+     */
+    public function getStream()
+    {
+        return $this->stream;
     }
 }
