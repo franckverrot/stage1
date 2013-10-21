@@ -6,6 +6,7 @@ sudo /etc/init.d/monit restart
 sudo docker build -t symfony2 /vagrant/docker/symfony2
 cd /vagrant
 composer install
+/vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
 EOF
@@ -37,6 +38,11 @@ Vagrant.configure("2") do |config|
         dev.hostmanager.aliases = %w(stage1.dev feature-checkout.acmemuda-acmeshop.stage1.dev, master.acmemuda-acmeshop.stage1.dev)
 
         dev.vm.provision :shell, :inline => $script
+
+        dev.vm.provider 'vmware_fusion' do |v|
+            v.vmx['memsize'] = 1024
+            # v.vmx['numvcpus'] = 2
+        end
     end
 
     config.vm.define :prod do |prod|
