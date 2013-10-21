@@ -206,6 +206,10 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage($e->getMessage());
+
+            if (!$this->getDoctrine()->getManager()->isOpen()) {
+                $this->getDoctrine()->resetManager();
+            }
         }
 
         $this->persistAndFlush($build);
