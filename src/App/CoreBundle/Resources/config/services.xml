@@ -96,6 +96,10 @@
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
 
+        <service id="app_core.subscriber.timestampable" class="App\CoreBundle\EventListener\TimestampableSubscriber">
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+
         <!-- controllers -->
 
         <service id="app_core.controller.configure" class="App\CoreBundle\Controller\ConfigureController">

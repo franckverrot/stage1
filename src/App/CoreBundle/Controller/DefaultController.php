@@ -191,10 +191,6 @@ class DefaultController extends Controller
             $build->setRef($ref);
             $build->setHash($hash);
 
-            $now = new DateTime();
-            $build->setCreatedAt($now);
-            $build->setUpdatedAt($now);
-
             $this->persistAndFlush($build);
 
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
@@ -268,10 +264,6 @@ class DefaultController extends Controller
             $build->setStatus(Build::STATUS_SCHEDULED);
             $build->setRef($ref);
             $build->setHash($hash);
-
-            $now = new DateTime();
-            $build->setCreatedAt($now);
-            $build->setUpdatedAt($now);
 
             $this->persistAndFlush($build);
 

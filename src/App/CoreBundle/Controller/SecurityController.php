@@ -35,12 +35,8 @@ class SecurityController extends Controller
 
         $result = $this->github_get($githubApiBaseUrl.'/user', $accessToken);
 
-        $now = new DateTime();
-
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result->id))) {
             $user = User::fromGithubResponse($result);
-            $user->setCreatedAt($now);
-            $user->setUpdatedAt($now);
             $user->setStatus(User::STATUS_WAITING_LIST);
         }
 
@@ -58,7 +54,7 @@ class SecurityController extends Controller
             }
         }
 
-        $user->setLastLoginAt($now);
+        $user->setLastLoginAt(new DateTime());
         $user->setAccessToken($accessToken);
 
         $em = $this->getDoctrine()->getManager();

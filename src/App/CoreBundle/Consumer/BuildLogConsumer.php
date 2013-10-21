@@ -47,11 +47,6 @@ class BuildLogConsumer implements ConsumerInterface
         $buildLog->setMessage($body->content);
         $buildLog->setBuild($build);
 
-        $now = new DateTime();
-
-        $buildLog->setCreatedAt($now);
-        $buildLog->setUpdatedAt($now);
-
         $build->addLog($buildLog);
 
         $em = $this->getDoctrine()->getManager();
