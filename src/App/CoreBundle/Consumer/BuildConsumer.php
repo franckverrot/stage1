@@ -93,9 +93,10 @@ class BuildConsumer implements ConsumerInterface
         echo 'running '.$process->getCommandLine().' with timeout '.$this->buildTimeout.PHP_EOL;
         
         $producer = $this->producer;
+        $entityManager = $this->getDoctrine()->getManager();
 
         # @todo check php version for $this binding in closures
-        $process->run(function($type, $data) use ($producer, $build) {
+        $process->run(function($type, $data) use ($producer, $build, $entityManager) {
             static $n = 0;
             $producer->publish(json_encode([
                 'event' => 'build.output',
@@ -108,8 +109,11 @@ class BuildConsumer implements ConsumerInterface
                 ]
             ]));
 
-            $build->appendOutput($data);
+            $log = $build->appendLog($data, 'output', $type);
+            $entityManager->persist($log);
         });
+
+        $entityManager->flush();
 
         if (!$process->isSuccessful()) {
             if (in_array($process->getExitCode(), [137, 143])) {
