@@ -1,4 +1,4 @@
-check process consumer-kill with pidfile /tmp/run/consumer-kill.pid
+check process consumer-kill with pidfile /tmp/run/consumer-kill.0.pid
     start program = "/vagrant/bin/process/consumer start kill"
         as uid root and gid root
     stop program = "/vagrant/bin/process/consumer stop kill"
