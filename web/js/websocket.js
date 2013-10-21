@@ -1,4 +1,6 @@
 (function($, window) {
+    if (typeof(current_user_id) === 'undefined') { return; }
+
     var primus = Primus.connect('http://' + document.location.hostname + ':8090/', {
         privatePattern: /(project|user)\.\d+/,
         auth_url: websocket_auth_url,
