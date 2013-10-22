@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Stage1</title>
 
-    {% stylesheets output="assets/all.css"
+    {% stylesheets output="assets/public.css"
         'css/vendor/*'
         'css/stage1.css'
         'css/public.css'
@@ -23,8 +23,7 @@
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
           <li><a href="{{ path('app_core_auth_github_authorize') }}">Signin</a></li>
-          <li><a href="{{ path('app_core_privacy') }}">Privacy</a></li>
-          <li><a href="{{ path('app_core_terms') }}">Terms</a></li>
+          <li><a href="{{ path('app_core_demo') }}">Demo</a><li>
         </ul>
         <h3 class="muted">Stage1</h3>
       </div>
@@ -66,7 +65,11 @@
       <hr>
 
       <div class="footer">
-        <p>&copy; Autostack 2013</p>
+        <ul class="breadcrumb">
+            <li>&copy; Autostack 2013 <span class="divider">/</separator></li>
+            <li><a href="{{ path('app_core_privacy') }}">Privacy</a> <span class="divider">/</separator></li>
+            <li><a href="{{ path('app_core_terms') }}">Terms</a></li>
+        </ul>
       </div>
 
     </div> <!-- /container -->
