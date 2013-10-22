@@ -75,7 +75,7 @@ BUILD_REDIS_LIST="frontend:$BUILD_DOMAIN"
 CONTEXT_DIR="/tmp/stage1/build/$BUILD_ID/context"
 mkdir -p $CONTEXT_DIR
 
-dummy 5
+# dummy 5
 
 debug '------> preparing building container'
 
