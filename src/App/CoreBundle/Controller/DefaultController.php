@@ -130,7 +130,7 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('app_core_project_builds', ['id' => $id]));
     }
 
-    public function projectBuildsAction($id)
+    public function projectBuildsAction($id, $all = false)
     {
         $this->setCurrentProjectId($id);
 
@@ -154,7 +154,8 @@ class DefaultController extends Controller
             'other_builds' => $other_builds,
             'running_builds' => $running_builds,
             'pending_builds' => $pending_builds,
-            'has_builds' => count($builds) > 0
+            'has_builds' => count($builds) > 0,
+            'all' => (bool) $all,
         ]);
     }
 
