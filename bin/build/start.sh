@@ -11,7 +11,7 @@ fi
 
 echo $$ > /tmp/run/build/$1.pid
 
-DEBUG="1"
+DEBUG="0"
 
 function debug {
     if [ -n "$DEBUG" ]; then
