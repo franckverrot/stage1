@@ -17,6 +17,8 @@ curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 cp /tmp/apt-docker.list /etc/apt/sources.list.d/docker.list
 curl http://get.docker.io/gpg | apt-key add -
 
+apt-get update
+
 apt-get install -qy python-software-properties
 
 add-apt-repository -y ppa:chris-lea/node.js
