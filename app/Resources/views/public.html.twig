@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Stage1</title>
+
+    {% stylesheets output="assets/all.css"
+        'css/vendor/*'
+        'css/stage1.css'
+        'css/public.css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
+          <li><a href="{{ path('app_core_auth_github_authorize') }}">Signin</a></li>
+          <li><a href="{{ path('app_core_privacy') }}">Privacy</a></li>
+          <li><a href="{{ path('app_core_terms') }}">Terms</a></li>
+        </ul>
+        <h3 class="muted">Stage1</h3>
+      </div>
+
+      <hr>
+
+      <div class="jumbotron">
+        <h1>We do staging.</h1>
+        <p class="lead"><strong>Stage1</strong> streamlines communication between developpers and product owners by enabling automatic and frictionless staging environments.</p>
+        <a class="btn btn-large btn-success" href="{{ path('app_core_auth_github_authorize') }}">
+            Sign up today<br />
+            <small>You will need a GitHub account.</small>
+        </a>
+        <br /><br />
+
+        <p><a href="{{ path('app_core_demo') }}">You could also get a demo. It's free!</a></p>
+      </div>
+
+      <hr>
+
+      <div class="row-fluid marketing">
+        <div class="span6">
+          <h4>Staging environments</h4>
+          <p>Effortlessly deploy disposable staging environments, just by pushing your code. How could that be simpler?</p>
+
+          <h4>Multiple branches</h4>
+          <p>Need to show your client several different branches at once? We got you covered. <strong>Stage1</strong> provides one environment per branch, just like that.</p>
+        </div>
+
+        <div class="span6">
+          <h4>Integrated with GitHub</h4>
+          <p><strong>Stage1</strong> integrates with GitHub. Chose which projects you want to integrate continuously and sit back, we take care of the rest.</p>
+
+          <h4>Get more feedback</h4>
+          <p>Just finished that new awesome feature and can't wait to get your product owner's feedback? Don't wait, the staging is already there.</p>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="footer">
+        <p>&copy; Autostack 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+  </body>
+</html>

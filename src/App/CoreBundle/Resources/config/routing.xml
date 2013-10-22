@@ -7,6 +7,18 @@
     <import resource="@AppCoreBundle/Resources/config/routing/project.xml" />
     <import resource="@AppCoreBundle/Resources/config/routing/build.xml" />
 
+    <route id="app_core_privacy" pattern="/privacy">
+        <default key="_controller">AppCoreBundle:Static:privacy</default>
+    </route>
+
+    <route id="app_core_terms" pattern="/terms">
+        <default key="_controller">AppCoreBundle:Static:terms</default>
+    </route>
+
+    <route id="app_core_demo" pattern="/demo">
+        <default key="_controller">AppCoreBundle:Demo:index</default>
+    </route>
+
     <route id="app_core_waiting_list" pattern="/landing" methods="GET">
         <default key="_controller">AppCoreBundle:WaitingList:index</default>
     </route>
