@@ -1,12 +1,12 @@
 (function($, window) {
 
-    if (typeof(primus) === 'undefined') { return; }
-
     var tpl_nav_project = Mustache.compile($('#tpl-nav-projects').text());
     var tpl_nav_project_item = Mustache.compile($('#tpl-project-nav').text());
     var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
 
     $(function() {
+        if (typeof(primus) === 'undefined') { return; }
+
         var tpl_import = Mustache.compile($('#tpl-import').text());
 
         function on(event, callback) {
