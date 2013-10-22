@@ -23,6 +23,10 @@ TODO PRIVATE BETA
     * last_build_at + last_build_ref (last_build_id ?)
 * builds
     * check that the runtime container was successfuly built
+* websocket routing
+    * do not subscribe a user to all sub-channels he's allowed to, but rather
+      check if an incoming message is going through a channel that's a sub-channel
+      of a currently subscribed channel
 
 SCALING
 =======
