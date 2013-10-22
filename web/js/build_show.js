@@ -40,7 +40,7 @@
         primus.on('data', function(data) {
 
             if (data.event == 'build.output.buffer') {
-                console.log('processing buffered data');
+                // console.log('processing buffered data');
                 for (i in data.data) {
                     processPart(data.data[i].data);
                 }
@@ -52,19 +52,19 @@
         });
 
         function processPart(part) {
-            console.log(part);
+            // console.log(part);
 
             if (!part.build) {
-                console.log('no build information');
+                // console.log('no build information');
                 return;
             }
 
             if (part.build.id != current_build_id) {
-                console.log('expected build.id #' + current_build_id + ', got ' + part.build.id);
+                // console.log('expected build.id #' + current_build_id + ', got ' + part.build.id);
                 return;
             }
 
-            console.log('processing part #' + part.number + ' for build #' + part.build.id);
+            // console.log('processing part #' + part.number + ' for build #' + part.build.id);
 
             if (part.number != latestPart + 1) {
                 buffer.push(part)
