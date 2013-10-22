@@ -17,7 +17,7 @@ class Controller extends BaseController
 
     protected function addFlash($type, $message)
     {
-        $request->getSession()->getFlashBag()->add($type, $message);
+        $this->getRequest()->getSession()->getFlashBag()->add($type, $message);
     }
 
     /**

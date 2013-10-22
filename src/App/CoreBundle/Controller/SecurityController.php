@@ -109,6 +109,11 @@ class SecurityController extends Controller
         # @todo error management
         $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
 
+        if (isset($response->error)) {
+            $this->addFlash('error', 'An error occured during authentication, please try again later.');
+            return $this->redirect($this->generateUrl('app_core_homepage'));
+        }
+
         $user = $this->registerGithubUser($request, $response->access_token);
 
         if ($user->getStatus() === User::STATUS_WAITING_LIST) {
