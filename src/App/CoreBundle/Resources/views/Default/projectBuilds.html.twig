@@ -25,12 +25,22 @@
     {% endif %}
 
     {% if other_builds | length > 0 %}
-        <p class="lead">Found <strong>{{ other_builds | length }}</strong>  other build{% if other_builds | length != 1 %}s{% endif %}.</p>
+        <p class="lead">
+            Found <strong>{{ other_builds | length }}</strong>  other build{% if other_builds | length != 1 %}s{% endif %} ({% spaceless %}
+            {% if all %}
+                <a href="{{ path('app_core_project_builds', { id: project.id }) }}">hide</a>
+            {% else %}
+                <a href="{{ path('app_core_project_builds_all', { id: project.id }) }}">show</a>
+            {% endif %}
+            {% endspaceless %}).
+        </p>
+        {% if all %}
         {% include 'AppCoreBundle:Default:_build_list.html.twig' with {
             builds: other_builds,
             show_headers: false,
             id: 'other-builds'
         } %}
+        {% endif %}
     {% endif %}
 {% else %}
     <p class="lead">No builds?! Come on, get to work and push some code!</p>

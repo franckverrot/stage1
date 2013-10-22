@@ -43,6 +43,11 @@
         <default key="_controller">AppCoreBundle:Default:projectBuilds</default>
     </route>
 
+    <route id="app_core_project_builds_all" pattern="/project/{id}/builds/all" methods="GET">
+        <default key="_controller">AppCoreBundle:Default:projectBuilds</default>
+        <default key="all">1</default>
+    </route>
+
     <route id="app_core_project_schedule_build" pattern="/project/{id}/build" methods="POST">
         <default key="_controller">AppCoreBundle:Default:projectScheduleBuild</default>
     </route>
