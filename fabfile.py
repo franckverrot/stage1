@@ -8,7 +8,14 @@ env.project_path = '/vagrant'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
-env.processes = ['consumer-build', 'consumer-kill', 'consumer-project-import', 'websockets', 'log-fetch'] #, 'consumer-build-log']
+env.processes = [
+    'consumer-build-0',
+    'consumer-build-1',
+    'consumer-kill',
+    'consumer-project-import',
+    'websockets',
+    'log-fetch'
+]
 
 def rm_cache():
     sudo('rm -rf %s/app/cache/*' % env.project_path)
