@@ -11,7 +11,8 @@ fi
 
 echo $$ > /tmp/run/build/$1.pid
 
-DEBUG="0"
+# set empty to disable debug
+DEBUG=""
 
 function debug {
     if [ -n "$DEBUG" ]; then
