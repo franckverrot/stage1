@@ -184,7 +184,8 @@ class BuildConsumer implements ConsumerInterface
             'timestamp' => microtime(true),
             'data' => [
                 'build' => array_replace([
-                    'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
+                    'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()]),
+                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                 ], $build->asWebsocketMessage()),
                 'project' => [
                     'id' => $build->getProject()->getId(),

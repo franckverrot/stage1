@@ -93,13 +93,6 @@
                 }
             });
 
-            // if (null != build.port && build.port.length > 0) {
-            //     update_build(build.id, 'link', function(el) {
-            //         var url = 'http://' + document.location.hostname + ':' + build.port + '/';
-            //         el.html('<a href="' + url + '">' + url + '</a>');
-            //     });
-            // }
-
             if (null != build.url && build.url.length > 0) {
                 update_build(build.id, 'link', function(el) {
                     if (el.data('template')) {

@@ -28,6 +28,38 @@ class Branch
         $this->builds = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
+    public function hasBuildingBuild()
+    {
+        return null !== $this->getBuildingBuild();
+    }
+
+    public function getBuildingBuild()
+    {
+        foreach ($this->getBuilds() as $build) {
+            if ($build->isBuilding()) {
+                return $build;
+            }
+        }
+
+        return null;
+    }
+
+    public function hasRunningBuild()
+    {
+        return null !== $this->getRunningBuild();
+    }
+
+    public function getRunningBuild()
+    {
+        foreach ($this->getBuilds() as $build) {
+            if ($build->isRunning()) {
+                return $build;
+            }
+        }
+
+        return null;
+    }
+
     public function getNormName()
     {
         return preg_replace('/[^a-z0-9\-]/', '-', strtolower($this->getName()));

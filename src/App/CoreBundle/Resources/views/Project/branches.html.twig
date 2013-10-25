@@ -2,6 +2,7 @@
 
 {% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
+
 <table class="table" id="project-{{ project.id }}-branches">
     <thead>
         <tr>
@@ -14,7 +15,13 @@
     <tbody id="branches">
         {% for branch in project.branches %}
             <tr class="branch" id="ref-{{ branch.normName }}">
-                <td class="ctn-name">{{ branch.name }}</td>
+                <td class="ctn-name">
+                    {% if branch.hasRunningBuild %}
+                    <a href="{{ branch.runningBuild.url }}">{{ branch.name }}</a>
+                    {% else %}
+                    {{ branch.name }}
+                    {% endif %}
+                </td>
                 <td class="ctn-status">
                     {% if branch.lastBuild %}
                         <span
@@ -46,9 +53,9 @@
                 </td>
                 <td class="actions" id="ref-{{ branch.normName }}-actions">
 
-                    <span id="ref-{{ branch.normName }}-link">
-                        {% if branch.lastBuild and branch.lastBuild.running %}
-                        <a href="{{ branch.lastBuild.url }}">{{ branch.lastBuild.url }}</a>
+                    <span id="ref-{{ branch.normName }}-show-link">
+                        {% if branch.hasBuildingBuild %}
+                        <a href="{{ path('app_core_build_show', { id: branch.buildingBuild.id }) }}">Show build</a>
                         {% endif %}
                     </span>
                 </td>
@@ -88,6 +95,12 @@
 <script type="text/mustache" id="tpl-ref-status">
 {% verbatim %}
 <span id="ref-{{ normName }}-status" data-hash="{{ hash }}" data-status="{{ status }}" class="label label-{{ status_label_class }}">{{ status_label }}</span>
+{% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-ref-show-link">
+{% verbatim %}
+<a href="{{ show_url }}">{{ label }}</a>
 {% endverbatim %}
 </script>
 
