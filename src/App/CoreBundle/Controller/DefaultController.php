@@ -127,7 +127,7 @@ class DefaultController extends Controller
 
     public function projectShowAction($id)
     {
-        return $this->redirect($this->generateUrl('app_core_project_builds', ['id' => $id]));
+        return $this->redirect($this->generateUrl('app_core_project_branches', ['id' => $id]));
     }
 
     public function projectBuildsAction($id, $all = false)

@@ -1,9 +1,9 @@
 <ul class="nav nav-tabs">
-    <li{% if app.request.attributes.get('_route') == 'app_core_project_builds' %} class="active"{% endif %}>
-        <a href="{{ path('app_core_project_builds', { id: project.id }) }}">Builds</a>
-    </li>
     <li{% if app.request.attributes.get('_route') == 'app_core_project_branches' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_branches', { id: project.id }) }}">Branches</a>
+    </li>
+    <li{% if app.request.attributes.get('_route') == 'app_core_project_builds' %} class="active"{% endif %}>
+        <a href="{{ path('app_core_project_builds', { id: project.id }) }}">Builds</a>
     </li>
     <li{% if app.request.attributes.get('_route') == 'app_core_project_access' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_access', { id: project.id }) }}">Access</a>

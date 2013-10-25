@@ -27,7 +27,7 @@
                 <td class="actions" id="ref-{{ branch.normName }}-form-container">
                     {% if not branch.lastBuild or not branch.lastBuild.pending %}
                         <form id="ref-{{ branch.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
-                            <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule</button>
+                            <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">build</button>
                             <input type="hidden" name="ref" value="{{ branch.name }}" />
                         </form>
                     {% endif %}
@@ -77,7 +77,7 @@
 <script type="text/mustache" id="tpl-ref-schedule-form">
 {% verbatim %}
 <form id="ref-{{ normName }}-schedule-form" method="post" action="{{ schedule_build_url }}">
-    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">schedule</button>
+    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">build</button>
     {{#data}}
     <input type="hidden" name="{{ name }}" value="{{ value }}" />
     {{/data}}
