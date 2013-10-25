@@ -143,6 +143,7 @@ class DefaultController extends Controller
             ->orderBy('b.createdAt', 'DESC')
             ->setParameter(':project', $project->getId())
             ->getQuery()
+            ->setMaxResults(100)
             ->execute();
 
         $running_builds = array_filter($builds, function($build) { return $build->isRunning(); });

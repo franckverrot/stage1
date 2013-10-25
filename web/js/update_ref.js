@@ -108,7 +108,6 @@
         if (build.show_url && tpl['ref-show-link']) {
             update_ref(build.normRef, 'show-link', function(el) {
                 el.html(tpl['ref-show-link']({
-                    label: 'show build',
                     show_url: build.show_url
                 }));
             });
