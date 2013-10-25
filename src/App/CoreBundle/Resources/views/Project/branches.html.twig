@@ -54,8 +54,8 @@
                 <td class="actions" id="ref-{{ branch.normName }}-actions">
 
                     <span id="ref-{{ branch.normName }}-show-link">
-                        {% if branch.hasBuildingBuild %}
-                        <a href="{{ path('app_core_build_show', { id: branch.buildingBuild.id }) }}">Show build</a>
+                        {% if branch.lastBuild %}
+                        <a href="{{ path('app_core_build_show', { id: branch.lastBuild.id }) }}">Show build</a>
                         {% endif %}
                     </span>
                 </td>
