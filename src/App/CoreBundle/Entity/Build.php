@@ -616,4 +616,27 @@ class Build
             return $log->getType() === $type;
         });
     }
+
+    /**
+     * Set output
+     *
+     * @param string $output
+     * @return Build
+     */
+    public function setOutput($output)
+    {
+        $this->output = $output;
+    
+        return $this;
+    }
+
+    /**
+     * Get output
+     *
+     * @return string 
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
 }

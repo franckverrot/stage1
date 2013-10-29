@@ -28,6 +28,10 @@ class Project
 
     protected $sshUrl;
 
+    protected $keysUrl;
+
+    protected $hooksUrl;
+
     protected $githubId;
 
     protected $githubFullName;
@@ -615,5 +619,51 @@ class Project
     public function removeBranche(\App\CoreBundle\Entity\Branch $branches)
     {
         $this->branches->removeElement($branches);
+    }
+
+    /**
+     * Set keysUrl
+     *
+     * @param string $keysUrl
+     * @return Project
+     */
+    public function setKeysUrl($keysUrl)
+    {
+        $this->keysUrl = $keysUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get keysUrl
+     *
+     * @return string 
+     */
+    public function getKeysUrl()
+    {
+        return $this->keysUrl;
+    }
+
+    /**
+     * Set hooksUrl
+     *
+     * @param string $hooksUrl
+     * @return Project
+     */
+    public function setHooksUrl($hooksUrl)
+    {
+        $this->hooksUrl = $hooksUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get hooksUrl
+     *
+     * @return string 
+     */
+    public function getHooksUrl()
+    {
+        return $this->hooksUrl;
     }
 }

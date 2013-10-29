@@ -7,13 +7,13 @@
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>
-        <field name="githubId" column="github_id" type="integer" />
+        <field name="githubId" column="github_id" type="integer" nullable="true" />
         <field name="username" column="username" type="string" length="255" />
         <field name="email" column="email" type="string" length="255" nullable="true" />
-        <field name="accessToken" column="access_token" type="string" length="255" />
+        <field name="accessToken" column="access_token" type="string" length="255" nullable="true" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
-        <field name="lastLoginAt" column="last_login_at" type="datetime" />
+        <field name="lastLoginAt" column="last_login_at" type="datetime" nullable="true" />
         <field name="status" column="status" type="integer" />
         <field name="waitingList" column="waiting_list" type="integer" />
 

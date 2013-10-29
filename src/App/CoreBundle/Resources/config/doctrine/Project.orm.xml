@@ -12,8 +12,10 @@
         <field name="githubOwnerLogin" type="string" column="github_owner_login" length="255" nullable="true" />
         <field name="githubHookId" type="integer" column="github_hook_id" nullable="true" />
         <field name="githubDeployKeyId" type="integer" column="github_deploy_key_id" nullable="true" />
-        <field name="cloneUrl" type="string" column="clone_url" length="255"/>
-        <field name="sshUrl" type="string" column="ssh_url" length="255"/>
+        <field name="cloneUrl" type="string" column="clone_url" length="255" />
+        <field name="sshUrl" type="string" column="ssh_url" length="255" />
+        <field name="keysUrl" type="string" column="keys_url" length="255" />
+        <field name="hooksUrl" type="string" column="hooks_url" length="255" />
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="lastBuildAt" column="last_build_at" type="datetime" nullable="true" />
