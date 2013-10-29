@@ -26,3 +26,11 @@ stage1_exec() {
     # also, it makes some of composer lines too long for the web term
     "$@" # | sed -ue 's/^/        /'
 }
+
+stage1_websocket_step() {
+    stage1_websocket_message "build.step" "{ 'step': '$1' }"
+}
+
+stage1_websocket_message() {
+    echo "[websocket:$1:$2]"
+}

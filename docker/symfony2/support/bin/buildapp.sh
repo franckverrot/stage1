@@ -52,6 +52,7 @@ EOF
 app_root=/var/www
 
 stage1_announce "cloning repository $ssh_url"
+stage1_websocket_step "clone_repository"
 stage1_exec git clone --depth 1 --branch $ref $ssh_url $app_root
 
 cd $app_root
@@ -61,6 +62,8 @@ cd $app_root
 builders_root=$(realpath $DIR/../lib/builder)
 builders=($builders_root/*)
 selected_builder=
+
+stage1_websocket_step "select_builder"
 
 if [ -n "$(stage1_get_config_script)" ]; then
     builder="$STAGE1_CONFIG_PATH"

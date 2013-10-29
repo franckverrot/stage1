@@ -98,19 +98,28 @@ class BuildConsumer implements ConsumerInterface
         # @todo check php version for $this binding in closures
         $process->run(function($type, $data) use ($producer, $build, $entityManager) {
             static $n = 0;
-            $producer->publish(json_encode([
-                'event' => 'build.output',
-                'channel' => $build->getChannel(),
-                'data' => [
-                    'build' => $build->asWebsocketMessage(),
-                    'project' => $build->getProject()->asWebsocketMessage(),
-                    'number' => $n++,
-                    'content' => $data,
-                ]
-            ]));
 
-            $log = $build->appendLog($data, 'output', $type);
-            $entityManager->persist($log);
+            if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $data, $matches)) {
+                $producer->publish(json_encode([
+                    'event' => $matches[1],
+                    'channel' => $build->getChannel(),
+                    'data' => json_decode($matches[2]),
+                ]));
+            } else {
+                $producer->publish(json_encode([
+                    'event' => 'build.output',
+                    'channel' => $build->getChannel(),
+                    'data' => [
+                        'build' => $build->asWebsocketMessage(),
+                        'project' => $build->getProject()->asWebsocketMessage(),
+                        'number' => $n++,
+                        'content' => $data,
+                    ]
+                ]));
+
+                $log = $build->appendLog($data, 'output', $type);
+                $entityManager->persist($log);                
+            }
         });
 
         $entityManager->flush();

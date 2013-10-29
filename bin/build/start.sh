@@ -14,6 +14,14 @@ echo $$ > /tmp/run/build/$1.pid
 # set empty to disable debug
 DEBUG=""
 
+function stage1_websocket_step {
+    stage1_websocket_message "build.step" "{ \"step\": \"$1\" }"
+}
+
+function stage1_websocket_message {
+    echo "[websocket:$1:$2]"
+}
+
 function debug {
     if [ -n "$DEBUG" ]; then
         echo "$@"
@@ -79,6 +87,7 @@ mkdir -p $CONTEXT_DIR
 # dummy 5
 
 debug '------> preparing building container'
+stage1_websocket_step "prepare_build_container"
 
 # insert ssh keys
 
@@ -104,6 +113,7 @@ EOF
 
 debug '------> building build container'
 debug "------> docker build -q -t ${COMMIT_NAME} $CONTEXT_DIR > /dev/null 2> /dev/null"
+
 
 docker build -q -t ${COMMIT_NAME} $CONTEXT_DIR > /dev/null 2> /dev/null
 
