@@ -80,11 +80,11 @@ class Channel extends events.EventEmitter
         @auth token,
             =>
                 if @has spark
-                    console.warn ('   spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
+                    # console.warn ('   spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
                 else 
                     @sparks.push spark
                     spark.emit 'subscribed', this
-                    console.log ('   subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
+                    # console.log ('   subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
 
                 # check if this is a meta channel
                 @redis.smembers 'channel:routing:' + @name, (err, results) =>
@@ -92,7 +92,7 @@ class Channel extends events.EventEmitter
 
                     if results.length > 0
                         for result in results
-                            console.log '   subscribing spark to children channel ' + result.yellow
+                            # console.log '   subscribing spark to children channel ' + result.yellow
                             spark.subscribe result, true
                             @children.push result
 
@@ -104,4 +104,4 @@ class Channel extends events.EventEmitter
     unsubscribe: (spark) ->
         if @has spark
             @sparks = (_ for _ in @sparks when _.id != spark.id)
-            console.log ('   unsubscribed spark#' + spark.id + ' from channel "' + @name + '" (clients: ' + @sparks.length + ')').green
+            # console.log ('   unsubscribed spark#' + spark.id + ' from channel "' + @name + '" (clients: ' + @sparks.length + ')').green
