@@ -9,6 +9,7 @@ composer install
 /vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
+/vagrant/app/console assetic:dump
 EOF
 
 Vagrant.configure("2") do |config|
@@ -40,8 +41,8 @@ Vagrant.configure("2") do |config|
         dev.vm.provision :shell, :inline => $script
 
         dev.vm.provider 'vmware_fusion' do |v|
-            v.vmx['memsize'] = 1024
-            # v.vmx['numvcpus'] = 2
+            v.vmx['memsize'] = 2028
+            v.vmx['numvcpus'] = 2
         end
     end
 
