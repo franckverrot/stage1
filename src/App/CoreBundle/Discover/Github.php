@@ -1,5 +1,7 @@
 <?php
 
+# @todo move to App\CoreBundle\Github\Discover
+
 namespace App\CoreBundle\Discover;
 
 use Guzzle\Http\Client;
