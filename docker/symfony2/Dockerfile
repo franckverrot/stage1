@@ -38,6 +38,9 @@ RUN apt-get install -qy \
     php5-intl \
     php5-curl
 
+# need to build phpupet correctly
+RUN apt-get install -qy zip
+
 ADD ./support/nginx.conf /etc/nginx/sites-available/default
 ADD ./support/php.ini /etc/php5/fpm/php.ini
 ADD ./support/php.ini /etc/php5/cli/php.ini
