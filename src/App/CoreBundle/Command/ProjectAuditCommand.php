@@ -10,6 +10,8 @@ use Symfony\Component\Yaml\Yaml;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
+use InvalidArgumentException;
+
 class ProjectAuditCommand extends ContainerAwareCommand
 {
     public function configure()
