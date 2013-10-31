@@ -1,4 +1,4 @@
-{% if app.user.projects | length > 0 %}
+{% if app.user and app.user.projects | length > 0 %}
 <ul class="nav nav-pills nav-stacked" id="nav-projects">
     {% for project in app.user.projects %}
     <li{% if app.request.attributes.get('current_project_id') == project.id %} class="active"{% endif %}>

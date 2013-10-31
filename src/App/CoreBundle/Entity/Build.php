@@ -129,7 +129,7 @@ class Build
         return $this->containerId !== null;
     }
 
-    # @todo @normalize move to its own service
+    # @todo @slug move to its own service
     private function normalize($string)
     {
         return preg_replace('/[^a-z0-9\-]/', '-', strtolower($string));

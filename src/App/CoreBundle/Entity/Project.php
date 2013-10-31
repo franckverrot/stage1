@@ -81,6 +81,7 @@ class Project
     {
         return [
             'id' => $this->getId(),
+            'name' => $this->getName(),
             'nb_pending_builds' => count($this->getPendingBuilds()),
         ];
     }

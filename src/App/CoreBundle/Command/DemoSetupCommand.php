@@ -29,13 +29,13 @@ class DemoSetupCommand extends ContainerAwareCommand
 
         $userRepo = $em->getRepository('AppCoreBundle:User');
 
-        if (null === $user = $userRepo->findOneByUsername('Demo')) {
+        if (null === $user = $userRepo->findOneByUsername($config['username'])) {
             $user = new User();
-            $user->setUsername('Demo');
+            $user->setUsername($config['username']);
 
             $em->persist($user);
 
-            $output->writeln('user <info>demo</info> not found, creating one');
+            $output->writeln('user <info>'.$config['username'].'</info> not found, creating one');
         }
 
         $user->setAccessToken($config['access_token']);
@@ -55,10 +55,14 @@ class DemoSetupCommand extends ContainerAwareCommand
                 }
             } else {
                 $output->writeln('importing demo project <info>'.$fullName.'</info>');
-                $importer->import($fullName, function($step) use ($output) {
+                $project = $importer->import($fullName, function($step) use ($output) {
                     $output->writeln('  - '.$step['label'].' ('.$step['id'].')');
                 });                
             }
+
+            $em->persist($project);
         }
+
+        $em->flush();
     }
 }

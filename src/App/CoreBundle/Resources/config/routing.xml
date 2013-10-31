@@ -15,8 +15,12 @@
         <default key="_controller">AppCoreBundle:Static:terms</default>
     </route>
 
-    <route id="app_core_demo" pattern="/demo">
+    <route id="app_core_demo" pattern="/demo" methods="GET">
         <default key="_controller">AppCoreBundle:Demo:index</default>
+    </route>
+
+    <route id="app_core_demo_build" pattern="/demo" methods="POST">
+        <default key="_controller">AppCoreBundle:Demo:build</default>
     </route>
 
     <route id="app_core_waiting_list" pattern="/landing" methods="GET">

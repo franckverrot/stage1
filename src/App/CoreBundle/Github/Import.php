@@ -189,7 +189,7 @@ class Import
 
         $infos = $response->json();
 
-        # @todo @normalize
+        # @todo @slug
         $project->setSlug(preg_replace('/[^a-z0-9\-]/', '-', strtolower($infos['full_name'])));
 
         $project->setGithubId($infos['id']);
