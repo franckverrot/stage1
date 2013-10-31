@@ -17,6 +17,12 @@ use RuntimeException;
 
 class SecurityController extends Controller
 {
+    /**
+     * @todo
+     * 
+     * Right now this implementation allows anyone to subscribe to any channel
+     * just by "asking" for it.
+     */
     public function primusAuthAction(Request $request)
     {
         # @todo @channel_auth move channel auth to an authenticator service
@@ -36,6 +42,7 @@ class SecurityController extends Controller
         $result = $this->github_get($githubApiBaseUrl.'/user', $accessToken);
 
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result->id))) {
+            die('user not found');
             $user = User::fromGithubResponse($result);
             $user->setStatus(User::STATUS_WAITING_LIST);
         }
@@ -44,14 +51,15 @@ class SecurityController extends Controller
             $user->setWaitingList($user->getWaitingList() + 1);
         }
 
-        # always check if we have a new primary email
-        $result = $this->github_get($githubApiBaseUrl.'/user/emails', $accessToken);
+        if (strlen($user->getEmail()) === 0) {
+            $result = $this->github_get($githubApiBaseUrl.'/user/emails', $accessToken);
 
-        foreach ($result as $email) {
-            if ($email->primary && $email->verified) {
-                $user->setEmail($email->email);
-                break;
-            }
+            foreach ($result as $email) {
+                if ($email->primary && $email->verified) {
+                    $user->setEmail($email->email);
+                    break;
+                }
+            }            
         }
 
         $user->setLastLoginAt(new DateTime());
@@ -107,7 +115,8 @@ class SecurityController extends Controller
         ]);
 
         # @todo error management
-        $response = json_decode(file_get_contents($this->container->getParameter('github_base_url').'/login/oauth/access_token', false, $context));
+        $accessTokenUrl = $this->container->getParameter('github_base_url').'/login/oauth/access_token';
+        $response = json_decode(file_get_contents($accessTokenUrl, false, $context));
 
         if (isset($response->error)) {
             $this->addFlash('error', 'An error occured during authentication, please try again later.');

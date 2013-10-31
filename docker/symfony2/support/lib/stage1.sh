@@ -27,8 +27,8 @@ stage1_exec() {
     "$@" # | sed -ue 's/^/        /'
 }
 
-stage1_websocket_step() {
-    stage1_websocket_message "build.step" "{ 'step': '$1' }"
+function stage1_websocket_step {
+    stage1_websocket_message "build.step" "{ \"step\": \"$1\" }"
 }
 
 stage1_websocket_message() {

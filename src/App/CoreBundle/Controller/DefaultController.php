@@ -168,22 +168,7 @@ class DefaultController extends Controller
             $ref = $request->request->get('ref');
 
             if (null === $hash = $request->request->get('hash')) {
-                $url = vsprintf('%s/repos/%s/%s/git/refs/heads', [
-                    $this->container->getParameter('github_api_base_url'),
-                    $project->getGithubOwnerLogin(),
-                    $project->getName(),
-                ]);
-
-
-                $refs = $this->github_get($url);
-
-                $branches = array();
-
-                foreach ($refs as $_) {
-                    if ('refs/heads/'.$ref === $_->ref) {
-                        $hash = $_->object->sha;
-                    }
-                }
+                $hash = $this->getHashFromRef($project, $ref);
             }
 
             $build = new Build();

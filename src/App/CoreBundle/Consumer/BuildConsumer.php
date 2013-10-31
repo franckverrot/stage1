@@ -100,10 +100,17 @@ class BuildConsumer implements ConsumerInterface
             static $n = 0;
 
             if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $data, $matches)) {
+                echo '-> got websocket message'.PHP_EOL;
+                echo '   event: '.$matches[1].PHP_EOL;
+                echo '   data:  '.$matches[2].PHP_EOL;
+
                 $producer->publish(json_encode([
                     'event' => $matches[1],
                     'channel' => $build->getChannel(),
-                    'data' => json_decode($matches[2]),
+                    'data' => [
+                        'build' => $build->asWebsocketMessage(),
+                        'announce' => json_decode($matches[2], true),
+                    ]
                 ]));
             } else {
                 $producer->publish(json_encode([

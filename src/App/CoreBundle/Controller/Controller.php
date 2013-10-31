@@ -15,6 +15,28 @@ class Controller extends BaseController
 {
     const REGEXP_IP = '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
 
+    protected function getHashFromRef(Project $project, $ref, $accessToken = null)
+    {
+        $url = vsprintf('%s/repos/%s/%s/git/refs/heads', [
+            $this->container->getParameter('github_api_base_url'),
+            $project->getGithubOwnerLogin(),
+            $project->getName(),
+        ]);
+
+
+        $refs = $this->github_get($url, $accessToken);
+
+        $branches = array();
+
+        foreach ($refs as $_) {
+            if ('refs/heads/'.$ref === $_->ref) {
+                $hash = $_->object->sha;
+            }
+        }
+
+        return $hash;
+    }
+
     protected function addFlash($type, $message)
     {
         $this->getRequest()->getSession()->getFlashBag()->add($type, $message);
@@ -188,15 +210,26 @@ class Controller extends BaseController
         $this->get('request')->attributes->set('current_build_id', (integer) $id);
     }
 
+    protected function findUserByUsername($username)
+    {
+        $user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        return $user;
+    }
+
     protected function findProject($id, $checkAuth = true)
     {
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
 
         if (!$project) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Project not found');
         }
 
-        if (!$project->getUsers()->contains($this->getUser())) {
+        if ($checkAuth && !$project->getUsers()->contains($this->getUser())) {
             throw new AccessDeniedException();
         }
 

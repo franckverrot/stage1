@@ -1,4 +1,11 @@
-access_token: 3b689379987ec47eb3015ca56600310d7b10235e
+# @todo move to a standard configuration file
+
+enabled:            true
+
+access_token:       3b689379987ec47eb3015ca56600310d7b10235e
+username:           Demo
+
+default_build_ref:  master
 
 projects:
     - ubermuda/puphpet
