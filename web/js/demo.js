@@ -1,4 +1,4 @@
-function demo_websocket_listen(websocket_channel, websocket_token, current_build_id) {
+function demo_websocket_listen(websocket_channel) {
 
     console.log('listening for demo build on channel "' + websocket_channel + '"');
 
@@ -10,17 +10,30 @@ function demo_websocket_listen(websocket_channel, websocket_token, current_build
     var lastTimestamp = 0;
 
     primus.on('open', function() {
-        primus.subscribe(websocket_channel, websocket_token);
+        primus.subscribe(websocket_channel);
     });
 
     primus.on('data', function(message) {
         console.log(message);
 
-        if (!message.data.build || message.data.build.id !== current_build_id) {
+        if (!message.data.build) { //} || message.data.build.id !== current_build_id) {
+            console.log('invalid message', message);
             return;
         }
 
         console.log('received event "' + message.event + '"');
+
+        if (message.event === 'build.scheduled') {
+            var content = Mustache.render($('#tpl-steps').text(), { 'steps': message.data.steps });
+            $('#build-steps').html(content);
+
+            var content = Mustache.render($('#tpl-meta').text(), { 'project': message.data.project.name });
+            $('#build-meta').html(content);
+
+            $('#form-build').hide();
+
+            return;
+        }
 
         if (message.event === 'build.started') {
             $('#steps li.pending:first')

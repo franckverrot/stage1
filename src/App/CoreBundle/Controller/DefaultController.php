@@ -183,7 +183,7 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', $project->getChannel(), [
+            $this->publishWebsocket('build.scheduled', $build->getChannel(), [
                 'build' => array_replace([
                     'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                     'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),

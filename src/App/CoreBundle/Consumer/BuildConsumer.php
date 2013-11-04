@@ -104,6 +104,13 @@ class BuildConsumer implements ConsumerInterface
                 echo '   event: '.$matches[1].PHP_EOL;
                 echo '   data:  '.$matches[2].PHP_EOL;
 
+                // if (!$build->getStreamSteps()) {
+                //     echo PHP_EOL.'   step skipped because stream_steps is false';
+                //     return;
+                // } else {
+                //     echo '<- routing step'.PHP_EOL;
+                // }
+                
                 $producer->publish(json_encode([
                     'event' => $matches[1],
                     'channel' => $build->getChannel(),
@@ -113,6 +120,13 @@ class BuildConsumer implements ConsumerInterface
                     ]
                 ]));
             } else {
+                // if (!$build->getStreamOutput()) {
+                //     echo PHP_EOL.'   output skipped because stream_output is false';
+                //     return;
+                // } else {
+                //     echo '<- routing output'.PHP_EOL;
+                // }
+
                 $producer->publish(json_encode([
                     'event' => 'build.output',
                     'channel' => $build->getChannel(),

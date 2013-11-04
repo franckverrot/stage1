@@ -68,11 +68,15 @@ class DemoController extends Controller
         return $this->render('AppCoreBundle:Demo:disabled.html.twig');
     }
 
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         if (false === $this->getDemoConfig('enabled')) {
             return $this->disabledAction();
         }
+
+        $channel = 'demo-'.uniqid(mt_rand(), true);
+
+        $request->getSession()->set('channel', $channel);
 
         $config = $this->getDemoConfig();
 
@@ -83,8 +87,21 @@ class DemoController extends Controller
 
         $projects = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findBySlug($slugs);
 
+        $websocketChannels = [];
+
+        foreach ($projects as $project) {
+            $websocketChannels[] = $project->getChannel();
+        }
+
+        $redis = $this->container->get('app_core.redis');
+        $redis->del('channel:routing:'.$channel);
+
+        array_unshift($websocketChannels, 'channel:routing:'.$channel);
+        call_user_func_array(array($redis, 'sadd'), $websocketChannels);
+
         return $this->render('AppCoreBundle:Demo:index.html.twig', [
             'projects' => $projects,
+            'channel' => $channel,
         ]);
     }
 
@@ -110,8 +127,17 @@ class DemoController extends Controller
         $build->setStatus(Build::STATUS_SCHEDULED);
         $build->setRef($ref);
         $build->setHash($hash);
+        $build->setChannel($request->getSession()->get('channel'));
+        $build->setStreamOutput(true);
+        $build->setStreamSteps(true);
 
         $this->persistAndFlush($build);
+
+        $this->publishWebsocket('build.scheduled', $build->getChannel(), [
+            'build' => $build->asWebsocketMessage(),
+            'steps' => $this->getSteps($project),
+            'project' => $project->asWebsocketMessage(),
+        ]);
 
         $producer = $this->get('old_sound_rabbit_mq.build_producer');
         $producer->publish(json_encode(['build_id' => $build->getId()]));
@@ -120,12 +146,6 @@ class DemoController extends Controller
         $websocket_token = uniqid(mt_rand(), true);
         $this->get('app_core.redis')->sadd('channel:auth:' . $build->getChannel(), $websocket_token);
 
-        return new JsonResponse(json_encode([
-            'project' => $project->asWebsocketMessage(),
-            'build' => $build->asWebsocketMessage(),
-            'steps' => $this->getSteps($project),
-            'websocket_channel' => $build->getChannel(),
-            'websocket_token' => $websocket_token,
-        ]));
+        return new JsonResponse(json_encode(true), 200);
     }
 }

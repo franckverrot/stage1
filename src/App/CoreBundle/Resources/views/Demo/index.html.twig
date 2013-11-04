@@ -2,6 +2,11 @@
 
 {% block javascripts %}
 <script type="text/javascript">
+
+var demo_websocket_channel = '{{ channel }}';
+
+demo_websocket_listen(demo_websocket_channel);
+
 $('form#form-build').on('submit', function(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -12,21 +17,7 @@ $('form#form-build').on('submit', function(event) {
 
         $(this).find('button').html('<i class="icon-refresh icon-spin"></i>').attr('disabled', true);
 
-        var form = this;
-
-        $.post(url, data, function(data) {
-            data = JSON.parse(data);
-
-            var content = Mustache.render($('#tpl-steps').text(), { 'steps': data.steps });
-            $('#build-steps').html(content);
-
-            var content = Mustache.render($('#tpl-meta').text(), { 'project': data.project.name });
-            $('#build-meta').html(content);
-
-            $(form).hide();
-
-            demo_websocket_listen(data.websocket_channel, data.websocket_token, data.build.id);
-        });
+        $.post(url, data);
     } catch (e) {
         console.dir(e);
     }

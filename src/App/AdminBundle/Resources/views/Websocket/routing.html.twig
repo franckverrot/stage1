@@ -34,7 +34,7 @@ $(function() {
         {% set channel = name[16:] %}
         {% set normChannel = channel | replace({ '.': '-'}) %}
         <tr id="channel-{{ name }}">
-            <td><a data-channel="{{ normChannel }}" href="#">{{ channel }}</a></td>
+            <td><abbr title="{{ name }}"><a data-channel="{{ normChannel }}" href="#">{{ channel }}</a></abbr></td>
             <td>{{ table | length }}
             <td>&nbsp;</td>
         </tr>
