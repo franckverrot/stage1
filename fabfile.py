@@ -117,6 +117,9 @@ def init_parameters():
     run('cp %s/app/config/parameters.yml.dist %s/app/config/parameters.yml' % (env.project_path, env.project_path))
     run('cp %s/app/config/github.yml.dist %s/app/config/github.yml' % (env.project_path, env.project_path))
 
+def docker_update():
+    docker_build()
+
 def docker_build():
     info('building docker')
     sudo('docker build -t symfony2 %s/docker/symfony2' % env.project_path)
