@@ -62,6 +62,12 @@ class Build
 
     private $logs;
 
+    private $channel;
+
+    private $streamOutput = true;
+
+    private $streamSteps = false;
+
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -104,7 +110,16 @@ class Build
 
     public function getChannel()
     {
+        if (null !== $this->channel) {
+            return $this->channel;
+        }
+
         return $this->getProject()->getChannel();
+    }
+
+    public function setChannel($channel)
+    {
+        $this->channel = $channel;
     }
 
     /**
@@ -638,5 +653,51 @@ class Build
     public function getOutput()
     {
         return $this->output;
+    }
+
+    /**
+     * Set streamOutput
+     *
+     * @param boolean $streamOutput
+     * @return Build
+     */
+    public function setStreamOutput($streamOutput)
+    {
+        $this->streamOutput = $streamOutput;
+    
+        return $this;
+    }
+
+    /**
+     * Get streamOutput
+     *
+     * @return boolean 
+     */
+    public function getStreamOutput()
+    {
+        return $this->streamOutput;
+    }
+
+    /**
+     * Set streamSteps
+     *
+     * @param boolean $streamSteps
+     * @return Build
+     */
+    public function setStreamSteps($streamSteps)
+    {
+        $this->streamSteps = $streamSteps;
+    
+        return $this;
+    }
+
+    /**
+     * Get streamSteps
+     *
+     * @return boolean 
+     */
+    public function getStreamSteps()
+    {
+        return $this->streamSteps;
     }
 }

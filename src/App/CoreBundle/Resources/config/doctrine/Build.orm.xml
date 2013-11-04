@@ -11,6 +11,9 @@
         <field name="hash" column="hash" type="string" length="255" nullable="true" />
         <field name="port" column="port" type="string" length="5" nullable="true" />
         <field name="url" column="url" type="string" length="255" nullable="true" />
+        <field name="channel" column="channel" type="string" length="255" nullable="true" />
+        <field name="streamOutput" column="stream_output" type="boolean" />
+        <field name="streamSteps" column="stream_steps" type="boolean" />
         <field name="containerId" column="container_id" type="string" length="255" nullable="true" />
         <field name="imageId" column="image_id" type="string" length="255" nullable="true" />
         <field name="message" column="message" type="text" nullable="true" />
