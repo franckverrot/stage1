@@ -8,6 +8,16 @@ $(function() {
         $('tr#destinations-' + channel).toggle();
         event.preventDefault();
     });
+
+    $('#tables').on('submit', '.form-delete', function(event) {
+        var channel = $(event.target).find('input').val();
+
+        if (!confirm('Do you want to delete the "' + channel + '" websocket channel?')) {
+            event.preventDefault();
+        }
+
+        $(event.target).find('button').blur();
+    });
 });
 </script>
 {% endblock %}
@@ -36,7 +46,12 @@ $(function() {
         <tr id="channel-{{ name }}">
             <td><abbr title="{{ name }}"><a data-channel="{{ normChannel }}" href="#">{{ channel }}</a></abbr></td>
             <td>{{ table | length }}
-            <td>&nbsp;</td>
+            <td>
+                <form class="form-delete" method="post" action="{{ path('app_admin_websocket_routing_delete') }}">
+                    <input type="hidden" name="channel" value="{{ name }}" />
+                    <button class="btn btn-danger btn-small">delete</button>
+                </form>
+            </td>
         </tr>
         <tr class="destinations" id="destinations-{{ normChannel }}">
             <td colspan="3">

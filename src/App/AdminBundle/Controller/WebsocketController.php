@@ -2,6 +2,8 @@
 
 namespace App\AdminBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class WebsocketController extends Controller
 {
     public function routingAction()
@@ -26,5 +28,17 @@ class WebsocketController extends Controller
         return $this->render('AppAdminBundle:Websocket:routing.html.twig', [
             'tables' => $tables,
         ]);
+    }
+
+    public function routingDeleteAction(Request $request)
+    {
+        $redis = $this->container->get('app_core.redis');
+        $channel = $request->get('channel');
+
+        $redis->del($channel);
+
+        $this->addFlash('success', 'Channel deleted');
+
+        return $this->redirect($this->generateUrl('app_admin_websocket_routing'));
     }
 }
