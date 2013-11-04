@@ -42,9 +42,13 @@ class SecurityController extends Controller
         $result = $this->github_get($githubApiBaseUrl.'/user', $accessToken);
 
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result->id))) {
-            die('user not found');
             $user = User::fromGithubResponse($result);
-            $user->setStatus(User::STATUS_WAITING_LIST);
+
+            if ($user->getUsername() === 'ubermuda') {
+                $user->setStatus(User::STATUS_ENABLED);
+            } else {
+                $user->setStatus(User::STATUS_WAITING_LIST);
+            }
         }
 
         if ($user->getStatus() === User::STATUS_WAITING_LIST) {
