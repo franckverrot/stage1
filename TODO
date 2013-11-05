@@ -1,5 +1,15 @@
-TODO URGENT
-===========
+TODO
+====
+
+DEMO
+----
+
+* ask the user for its email
+    * use it in the build url
+    * add a mention "or use this link" under the "visit your build" button
+    * send an email when the build is ready
+* add an indication of time until the build is ready
+* add the place of the build in the builds queue
 
 BUGS
 ----
