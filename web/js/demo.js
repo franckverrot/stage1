@@ -32,6 +32,8 @@ function demo_websocket_listen(websocket_channel) {
 
             $('#form-build').hide();
 
+            $('#steps li').tooltip();
+
             return;
         }
 
@@ -52,6 +54,10 @@ function demo_websocket_listen(websocket_channel) {
                 .find('i')
                     .removeClass()
                     .addClass('icon-ok');
+
+            var url = Mustache.render($('#tpl-url').text(), { 'url': message.data.build.url });
+            $('#build-url').html(url);
+            
             return;
         }
 
