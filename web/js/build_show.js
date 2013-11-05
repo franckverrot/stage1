@@ -42,8 +42,10 @@
             if (data.event == 'build.output.buffer') {
                 // console.log('processing buffered data');
                 for (i in data.data) {
-                    if (data.event && data.event == 'build.output') {
+                    if (data.data[i].event && data.data[i].event == 'build.output') {
                         processPart(data.data[i].data);
+                    } else {
+                        console.log('skipping buffered event "' + data.data[i].event + '"');
                     }
                 }
             }
@@ -73,7 +75,7 @@
                 return false;
             }
 
-            container.append(ansi_up.ansi_to_html(part.content));
+            container.append(ansi_up.ansi_to_html(part.content) + '\n');
 
             if (autoScroll) {
                 container[0].scrollTop = container[0].scrollHeight;
