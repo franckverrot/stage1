@@ -82,7 +82,7 @@ function demo_websocket_listen(websocket_channel) {
         $('#steps li.running')
             .not('#' + message.data.announce.step)
             .removeClass('running')
-            .prevAll()
+            .prevAll('li')
                 .removeClass()
             .addBack()
                 .addClass('done')
