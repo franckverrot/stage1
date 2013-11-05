@@ -29,11 +29,14 @@ class BuildConsumer implements ConsumerInterface
 
     private $buildTimeout = 0;
 
-    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router)
+    private $buildHostMask;
+
+    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router, $buildHostMask)
     {
         $this->doctrine = $doctrine;
         $this->producer = $producer;
         $this->router = $router;
+        $this->buildHostMask = $buildHostMask;
 
         echo '== initializing BuildConsumer'.PHP_EOL;
     }
@@ -224,7 +227,7 @@ class BuildConsumer implements ConsumerInterface
         $build->setStatus(Build::STATUS_BUILDING);
 
         if (strlen($build->getHost()) === 0) {
-            $build->setHost(sprintf($this->getContainer()->getParameter('build_host_mask'), $build->getBranchDomain()));
+            $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
         }
 
         $this->persistAndFlush($build);

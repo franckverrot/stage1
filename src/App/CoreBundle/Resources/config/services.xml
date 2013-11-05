@@ -41,6 +41,7 @@
             <argument type="service" id="doctrine" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
             <argument type="service" id="router" />
+            <argument>%build_host_mask%</argument>
 
             <call method="setBuildTimeout">
                 <argument>%stage1_build_timeout%</argument>
