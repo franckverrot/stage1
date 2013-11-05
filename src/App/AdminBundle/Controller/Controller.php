@@ -8,6 +8,6 @@ class Controller extends BaseController
 {
     protected function findBuild($id, $checkAuth = false)
     {
-        return $this->findBuild($id, $checkAuth);
+        return parent::findBuild($id, $checkAuth);
     }
 }
