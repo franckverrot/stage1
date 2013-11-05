@@ -10,6 +10,7 @@ use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Project;
 
 use Exception;
+use RuntimeException;
 
 class DemoController extends Controller
 {
@@ -90,6 +91,10 @@ class DemoController extends Controller
         }
 
         $projects = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findBySlug($slugs);
+
+        if (count($projects) === 0) {
+            throw new RuntimeException('No demo projects found');
+        }
 
         $websocketChannels = [];
 
