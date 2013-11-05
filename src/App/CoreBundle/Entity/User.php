@@ -48,7 +48,22 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return ($this->getUsername() === 'ubermuda') ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+        $roles = ['ROLE_USER'];
+
+        if ($this->getUsername() === 'ubermuda') {
+            $roles[] = 'ROLE_ADMIN';
+            $roles[] = 'ROLE_DEMO';
+        }
+
+        if ($this->getUsername() === 'lvictorino') {
+            $roles[] = 'ROLE_DEMO';
+        }
+
+        if ($this->getUsername() === 'pmz') {
+            $roles[] = 'ROLE_DEMO';
+        }
+
+        return $roles;
     }
 
     public function getPassword()
