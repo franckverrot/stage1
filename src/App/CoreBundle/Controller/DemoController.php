@@ -79,11 +79,24 @@ class DemoController extends Controller
             return $this->disabledAction();
         }
 
-        $channel = 'demo-'.uniqid(mt_rand(), true);
+        $session = $request->getSession();
+        $channel = $session->get('demo_build_channel', 'demo-'.uniqid(mt_rand(), true));
 
-        $request->getSession()->set('channel', $channel);
+        $build_id = $session->get('demo_build_id');
+
+        if (null !== $build_id) {
+            $build = $this->findBuild($build_id);
+
+            if (!$build->isBuilding()) {
+                $session->remove('demo_build_id');
+                $channel = 'demo-'.uniqid(mt_rand(), true);
+            }
+        }
+
+        $session->set('demo_build_channel', $channel);
 
         $config = $this->getDemoConfig();
+
 
         foreach ($this->getDemoConfig('projects') as $project) {
             # @todo @slug
@@ -120,6 +133,8 @@ class DemoController extends Controller
             return $this->disabledAction();
         }
 
+        $session = $request->getSession();
+
         # find project without checking user
         $project = $this->findProject($request->get('project_id'), false);
 
@@ -137,12 +152,15 @@ class DemoController extends Controller
         $build->setStatus(Build::STATUS_SCHEDULED);
         $build->setRef($ref);
         $build->setHash($hash);
-        $build->setChannel($request->getSession()->get('channel'));
+        $build->setChannel($session->get('demo_build_channel'));
         $build->setStreamOutput(true);
         $build->setStreamSteps(true);
         $build->setHost(sprintf($this->container->getParameter('build_url_mask'), $subdomain.'.demo.'.$project->getSlug()));
+        $build->setIsDemo(true);
 
         $this->persistAndFlush($build);
+
+        $request->getSession()->set('demo_build_id', $build->getId());
 
         $this->publishWebsocket('build.scheduled', $build->getChannel(), [
             'build' => $build->asWebsocketMessage(),

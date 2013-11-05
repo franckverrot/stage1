@@ -16,12 +16,23 @@ function demo_websocket_listen(websocket_channel) {
     primus.on('data', function(message) {
         console.log(message);
 
-        if (!message.data.build) { //} || message.data.build.id !== current_build_id) {
+        if (!message.data.build && message.event !== 'build.output.buffer') { //} || message.data.build.id !== current_build_id) {
             console.log('invalid message', message);
             return;
         }
 
         console.log('received event "' + message.event + '"');
+
+        processMessage(message);
+    });
+
+
+    function processMessage(message) {
+        if (message.event === 'build.output.buffer') {
+            for (i in message.data) {
+                processMessage(message.data[i]);
+            }
+        }
 
         if (message.event === 'build.scheduled') {
             var content = Mustache.render($('#tpl-steps').text(), { 'steps': message.data.steps });
@@ -85,6 +96,5 @@ function demo_websocket_listen(websocket_channel) {
                 .find('i')
                     .removeClass()
                     .addClass('icon-refresh icon-spin');
-    });
-
+    }
 }

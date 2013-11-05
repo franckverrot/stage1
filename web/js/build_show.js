@@ -42,7 +42,9 @@
             if (data.event == 'build.output.buffer') {
                 // console.log('processing buffered data');
                 for (i in data.data) {
-                    processPart(data.data[i].data);
+                    if (data.event && data.event == 'build.output') {
+                        processPart(data.data[i].data);
+                    }
                 }
             }
 
