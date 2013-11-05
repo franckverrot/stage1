@@ -63,6 +63,10 @@ class User implements UserInterface
             $roles[] = 'ROLE_DEMO';
         }
 
+        if ($this->getUsername() === 'quantumecanique') {
+            $roles[] = 'ROLE_DEMO';
+        }
+
         return $roles;
     }
 
