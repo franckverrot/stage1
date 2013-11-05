@@ -21,3 +21,11 @@ server {
                 fastcgi_param   SERVER_PORT        80;
         }
 }
+
+server {
+        listen 127.0.0.1:9000;
+
+        location / {
+                proxy_pass http://unix:/var/run/docker.sock:/;
+        }
+}
