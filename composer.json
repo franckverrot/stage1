@@ -20,7 +20,8 @@
         "sensio/generator-bundle": "2.3.*",
         "oldsound/rabbitmq-bundle": "dev-master@dev",
         "ircmaxell/password-compat": "1.0.3",
-        "guzzle/guzzle": "3.7.*"
+        "guzzle/guzzle": "3.7.*",
+        "drak/native-session": "*"
     },
     "scripts": {
         "post-install-cmd": [

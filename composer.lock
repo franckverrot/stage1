@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "057c5be69d73664cffb10c7e58a84695",
+    "hash": "abb8f46a1e2078a1fefa9b85bae8dbbd",
     "packages": [
         {
             "name": "doctrine/common",
@@ -276,6 +276,43 @@
                 "orm"
             ],
             "time": "2013-05-11 07:51:12"
+        },
+        {
+            "name": "drak/native-session",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/drak/NativeSession.git",
+                "reference": "d8de65190488d26720c122c40b12382d881db421"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/drak/NativeSession/zipball/d8de65190488d26720c122c40b12382d881db421",
+                "reference": "d8de65190488d26720c122c40b12382d881db421",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/http-foundation": ">=2.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Drak": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karma Dordrak",
+                    "email": "drak@zikula.org"
+                }
+            ],
+            "description": "Native session handlers for Symfony2",
+            "time": "2012-12-13 15:40:15"
         },
         {
             "name": "guzzle/guzzle",

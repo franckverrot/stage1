@@ -6,6 +6,10 @@
 
     <services>
         <!-- misc services -->
+
+        <service id="session.handler.redis" class="Drak\NativeSession\NativeRedisSessionHandler">
+            <argument>tcp://%redis_host%:%redis_port%?timeout=2</argument>
+        </service>
         
         <service id="app_core.redis" class="Redis">
             <call method="connect">
@@ -16,6 +20,10 @@
 
         <service id="app_core.client.github" class="Guzzle\Http\Client">
             <argument>%github_api_base_url%</argument>
+        </service>
+
+        <service id="app_core.client.docker" class="Guzzle\Http\Client">
+            <argument>%docker_api_base_url%</argument>
         </service>
 
         <service id="app_core.discover.github" class="App\CoreBundle\Discover\Github">
