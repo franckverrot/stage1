@@ -155,7 +155,7 @@ class DemoController extends Controller
         $build->setChannel($session->get('demo_build_channel'));
         $build->setStreamOutput(true);
         $build->setStreamSteps(true);
-        $build->setHost(sprintf($this->container->getParameter('build_url_mask'), $subdomain.'.demo.'.$project->getSlug()));
+        $build->setHost(sprintf($this->container->getParameter('build_host_mask'), $subdomain.'.demo.'.$project->getSlug()));
         $build->setIsDemo(true);
 
         $this->persistAndFlush($build);
