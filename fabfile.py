@@ -32,6 +32,9 @@ def hipache_restart():
 def log():
     sudo('tail -f /var/log/nginx/*.log /tmp/log/*.log /vagrant/app/logs/prod.log')
 
+def log_build():
+    sudo('tail -f /tmp/log/consumer-build.*.log')
+
 def prepare_assets():
     info('preparing assets')
     local('app/console assetic:dump --env=prod --no-debug')
