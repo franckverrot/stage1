@@ -6,14 +6,8 @@ use App\CoreBundle\Controller\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    protected function findBuild($id)
+    protected function findBuild($id, $checkAuth = false)
     {
-        $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
-
-        if (!$build) {
-            throw $this->createNotFoundException('Could not find build #'.$id);
-        }
-
-        return $build;
+        return $this->findBuild($id, $checkAuth);
     }
 }
