@@ -1,0 +1,34 @@
+{% extends '::admin.html.twig' %}
+
+{% block body %}
+<h3>Docker Containers</h3>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Image</th>
+            <th>Command</th>
+            <th>Created</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for container in containers %}
+        {% set ShortId = container.Id[0:12] %}
+        <tr>
+            <td><tt><a href="{{ path('app_admin_docker_container_top', { id: ShortId }) }}">{{ ShortId }}</a></tt></td>
+            <td><tt>{{ container.Image }}</tt></td>
+            <td><tt>{{ container.Command }}</tt></td>
+            <td><abbr class="timeago" title="{{ container.Created | date('c') }}">{{ container.Created | date('Y-m-d H:i:s') }}</abbr></td>
+            <td>{{ container.Status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr />
+
+<pre>{{ containers | json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+{% endblock body %}

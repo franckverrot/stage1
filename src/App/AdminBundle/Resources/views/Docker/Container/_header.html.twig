@@ -1,0 +1,21 @@
+{% set ShortId = container.ID[0:12] %}
+
+{% set routes = {
+    app_admin_docker_container: "Inspect",
+    app_admin_docker_container_top: "Top"
+} %}
+
+<ul class="lead breadcrumb">
+    <li><a href="{{ path('app_admin_docker_containers') }}">Containers</a> <span class="divider">/</span></li>
+    <li>{{ container.ID[0:12] }} <span class="divider">/</span></li>
+    <li>{{ routes[app.request.attributes.get('_route')] }}</li>
+</ul>
+
+
+<ul class="nav nav-tabs" id="nav-container">
+    {% for route, label in routes %}
+    <li{% if app.request.attributes.get('_route') == route %} class="active"{% endif %}>
+        <a href="{{ path(route, { id: ShortId }) }}">{{ label }}</a>
+    </li>
+    {% endfor %}
+</ul>

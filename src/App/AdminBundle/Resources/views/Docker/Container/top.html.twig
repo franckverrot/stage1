@@ -1,0 +1,26 @@
+{% extends '::admin.html.twig' %}
+
+
+{% block body %}
+
+{% include 'AppAdminBundle:Docker/Container:_header.html.twig' with { container: container } %}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+        {% for title in top.Titles %}
+            <th>{{ title }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for process in top.Processes %}
+        <tr>
+            {% for value in process %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock body %}

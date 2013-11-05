@@ -1,0 +1,10 @@
+{% extends '::admin.html.twig' %}
+
+
+{% block body %}
+
+{% include 'AppAdminBundle:Docker/Container:_header.html.twig' with { container: container } %}
+
+<pre>{{ container | json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+
+{% endblock body %}
