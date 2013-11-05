@@ -39,7 +39,9 @@ primus.on 'connection', (spark) ->
 
     spark.on 'subscribed', (channel) ->
         if buffer[channel.name] and buffer[channel.name].length > 0
-            console.log '-> sending event "' + 'build.output.buffer'.yellow + '" to spark#' + spark.id
+            console.log '-> sending event "' + 'build.output.buffer'.yellow + '" for channel "' + channel.name.yellow + '" to spark#' + spark.id
+            console.log '   buffer contains ' + (new String(buffer[channel.name].length).yellow) + ' items'
+            
             spark.write event: 'build.output.buffer', data: buffer[channel.name]
 
     spark.on 'data', (data) ->
