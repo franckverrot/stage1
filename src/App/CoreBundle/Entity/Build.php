@@ -68,6 +68,8 @@ class Build
 
     private $streamSteps = false;
 
+    private $isDemo = false;
+
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -709,5 +711,28 @@ class Build
     public function getHost()
     {
         return $this->host;
+    }
+
+    /**
+     * Set isDemo
+     *
+     * @param boolean $isDemo
+     * @return Build
+     */
+    public function setIsDemo($isDemo)
+    {
+        $this->isDemo = $isDemo;
+    
+        return $this;
+    }
+
+    /**
+     * Get isDemo
+     *
+     * @return boolean 
+     */
+    public function getIsDemo()
+    {
+        return $this->isDemo;
     }
 }

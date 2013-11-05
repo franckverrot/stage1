@@ -174,24 +174,35 @@ class BuildConsumer implements ConsumerInterface
         $build->setImageId($imageId);
         $build->setPort($port);
 
-        $previousBuild = $this->getBuildRepository()->findPreviousBuild($build);
+        if (!$build->isDemo()) {
+            $producer->publish(json_encode([
+                'event' => 'build.step',
+                'channel' => $build->getChannel(),
+                'data' => [
+                    'build' => $build->asWebsocketMessage(),
+                    'announce' => ['step' => 'stop_previous'],
+                ]
+            ]));
 
-        if (null !== $previousBuild && $previousBuild->hasContainer()) {
-            $builder = new ProcessBuilder([
-                $projectDir.'/bin/build/stop.sh',
-                $previousBuild->getContainerId(),
-                $previousBuild->getImageId(),
-                $previousBuild->getImageTag(),
-            ]);
-            $process = $builder->getProcess();
+            $previousBuild = $this->getBuildRepository()->findPreviousBuild($build);
 
-            echo 'stopping previous build container'.PHP_EOL;
-            echo 'running '.$process->getCommandLine().PHP_EOL;
+            if (null !== $previousBuild && $previousBuild->hasContainer()) {
+                $builder = new ProcessBuilder([
+                    $projectDir.'/bin/build/stop.sh',
+                    $previousBuild->getContainerId(),
+                    $previousBuild->getImageId(),
+                    $previousBuild->getImageTag(),
+                ]);
+                $process = $builder->getProcess();
 
-            $process->run();
+                echo 'stopping previous build container'.PHP_EOL;
+                echo 'running '.$process->getCommandLine().PHP_EOL;
 
-            $previousBuild->setStatus(Build::STATUS_OBSOLETE);
-            $this->persistAndFlush($previousBuild);
+                $process->run();
+
+                $previousBuild->setStatus(Build::STATUS_OBSOLETE);
+                $this->persistAndFlush($previousBuild);
+            }
         }
 
         return true;
