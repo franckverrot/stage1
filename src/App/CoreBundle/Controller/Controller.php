@@ -146,7 +146,7 @@ class Controller extends BaseController
         ])));
     }
 
-    protected function findBuild($id)
+    protected function findBuild($id, $checkAuth = true)
     {
         $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
 
@@ -154,7 +154,7 @@ class Controller extends BaseController
             throw $this->createNotFoundException();
         }
 
-        if (!$build->getProject()->getUsers()->contains($this->getUser())) {
+        if ($checkAuth && !$build->getProject()->getUsers()->contains($this->getUser())) {
             throw new AccessDeniedException();
         }
 
