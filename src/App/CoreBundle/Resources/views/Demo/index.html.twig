@@ -26,14 +26,23 @@ $('form#form-build').on('submit', function(event) {
 {% endblock javascripts %}
 
 {% block body %}
-<form id="form-build" class="form-inline" method="post" action="{{ path('app_core_demo_build') }}">
-    <select name="project_id" id="project_id">
+<form id="form-build" method="post" action="{{ path('app_core_demo_build') }}">
+    <p class="lead">The demo allows you to build <strong>your very own container</strong>. It will be built with love just for you, and you will be given a <strong>unique url</strong> to access it.</p>
+    <p class="lead">You can choose any of the following demo projects to build:</p>
+
+    <select name="project_id" id="project_id" class="btn-large">
         {% for project in projects %}
         <option value="{{ project.id }}">{{ project.name }}</option>
         {% endfor %}
     </select>
 
-    <button class="btn btn-primary btn-small" id="launch-build">build</button>
+    <br />
+
+    <button class="btn btn-success btn-large" id="launch-build"><strong>Get my very own build</strong></button>
+
+    <br /><br />
+
+    <p><small>Please note all demo containers are deleted every night.</small></p>
 </form>
 
 <div id="build-meta">
@@ -45,8 +54,13 @@ $('form#form-build').on('submit', function(event) {
 <div id="build-url">
 </div>
 
+<hr />
+
+{% include 'AppCoreBundle:Default:_marketing.html.twig' %}
+
 <script type="text/mustache" id="tpl-url">{% verbatim %}
-<a href="{{ url }}">{{ url }}</a>
+<p class="lead">Your build is ready!</p>
+<a class="btn btn-large btn-success" href="{{ url }}"><strong>visit my build</strong></a>
 {% endverbatim %}</script>
 
 <script type="text/mustache" id="tpl-meta">{% verbatim %}
