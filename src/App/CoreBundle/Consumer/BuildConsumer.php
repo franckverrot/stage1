@@ -102,7 +102,7 @@ class BuildConsumer implements ConsumerInterface
         $process->run(function($type, $data) use ($producer, $build, $entityManager) {
             static $n = 0;
 
-            $data = trim($data);
+            $data = rtrim($data);
             $data = explode(PHP_EOL, $data);
 
             foreach ($data as $line) {
