@@ -99,47 +99,52 @@ class BuildConsumer implements ConsumerInterface
         $process->run(function($type, $data) use ($producer, $build, $entityManager) {
             static $n = 0;
 
-            if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $data, $matches)) {
-                echo '-> got websocket message'.PHP_EOL;
-                echo '   event: '.$matches[1].PHP_EOL;
-                echo '   data:  '.$matches[2].PHP_EOL;
+            $data = trim($data);
+            $data = explode(PHP_EOL, $data);
 
-                // if (!$build->getStreamSteps()) {
-                //     echo PHP_EOL.'   step skipped because stream_steps is false';
-                //     return;
-                // } else {
-                //     echo '<- routing step'.PHP_EOL;
-                // }
-                
-                $producer->publish(json_encode([
-                    'event' => $matches[1],
-                    'channel' => $build->getChannel(),
-                    'data' => [
-                        'build' => $build->asWebsocketMessage(),
-                        'announce' => json_decode($matches[2], true),
-                    ]
-                ]));
-            } else {
-                // if (!$build->getStreamOutput()) {
-                //     echo PHP_EOL.'   output skipped because stream_output is false';
-                //     return;
-                // } else {
-                //     echo '<- routing output'.PHP_EOL;
-                // }
+            foreach ($data as $line) {
+                if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $line, $matches)) {
+                    echo '-> got websocket message'.PHP_EOL;
+                    echo '   event: '.$matches[1].PHP_EOL;
+                    echo '   data:  '.$matches[2].PHP_EOL;
 
-                $producer->publish(json_encode([
-                    'event' => 'build.output',
-                    'channel' => $build->getChannel(),
-                    'data' => [
-                        'build' => $build->asWebsocketMessage(),
-                        'project' => $build->getProject()->asWebsocketMessage(),
-                        'number' => $n++,
-                        'content' => $data,
-                    ]
-                ]));
+                    // if (!$build->getStreamSteps()) {
+                    //     echo PHP_EOL.'   step skipped because stream_steps is false';
+                    //     return;
+                    // } else {
+                    //     echo '<- routing step'.PHP_EOL;
+                    // }
+                    
+                    $producer->publish(json_encode([
+                        'event' => $matches[1],
+                        'channel' => $build->getChannel(),
+                        'data' => [
+                            'build' => $build->asWebsocketMessage(),
+                            'announce' => json_decode($matches[2], true),
+                        ]
+                    ]));
+                } else {
+                    // if (!$build->getStreamOutput()) {
+                    //     echo PHP_EOL.'   output skipped because stream_output is false';
+                    //     return;
+                    // } else {
+                    //     echo '<- routing output'.PHP_EOL;
+                    // }
 
-                $log = $build->appendLog($data, 'output', $type);
-                $entityManager->persist($log);                
+                    $producer->publish(json_encode([
+                        'event' => 'build.output',
+                        'channel' => $build->getChannel(),
+                        'data' => [
+                            'build' => $build->asWebsocketMessage(),
+                            'project' => $build->getProject()->asWebsocketMessage(),
+                            'number' => $n++,
+                            'content' => $line,
+                        ]
+                    ]));
+
+                    $log = $build->appendLog($line, 'output', $type);
+                    $entityManager->persist($log);                
+                }
             }
         });
 
