@@ -33,7 +33,7 @@ $('form#form-build').on('submit', function(event) {
         {% endfor %}
     </select>
 
-    <button class="btn btn-primary" id="launch-build">build</button>
+    <button class="btn btn-primary btn-small" id="launch-build">build</button>
 </form>
 
 <div id="build-meta">
@@ -42,6 +42,13 @@ $('form#form-build').on('submit', function(event) {
 <div id="build-steps">
 </div>
 
+<div id="build-url">
+</div>
+
+<script type="text/mustache" id="tpl-url">{% verbatim %}
+<a href="{{ url }}">{{ url }}</a>
+{% endverbatim %}</script>
+
 <script type="text/mustache" id="tpl-meta">{% verbatim %}
 <h2>Building project {{project}}</h2>
 {% endverbatim %}</script>
@@ -49,7 +56,7 @@ $('form#form-build').on('submit', function(event) {
 <script type="text/mustache" id="tpl-steps">{% verbatim %}
 <ul id="steps">
     {{#steps}}
-    <li class="pending" id="{{ id }}"><div class="icon-container"><i></i></div> {{ label }}</li>
+    <li class="pending" id="{{ id }}" data-toggle="tooltip" title="{{ tooltip }}" data-placement="right"><div class="icon-container"><i></i></div> {{ label }}</li>
     {{/steps}}
 </ul>
 {% endverbatim %}</script>
