@@ -44,6 +44,7 @@ class BuildRepository extends EntityRepository
                 ->where('b.project = ?1')
                 ->andWhere('b.ref = ?2')
                 ->andWhere('b.status = ?3')
+                ->andWhere('is_demo = 0')
                 ->setParameters([
                     1 => $build->getProject()->getId(),
                     2 => $build->getRef(),
