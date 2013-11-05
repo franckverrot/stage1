@@ -40,7 +40,7 @@ class Build
 
     private $port;
 
-    private $url;
+    private $host;
 
     private $containerId;
 
@@ -152,7 +152,7 @@ class Build
 
     public function getBranchDomain()
     {
-        return sprintf('%s.%s', $this->getNormRef(), $this->normalize($this->getProject()->getFullName()));
+        return sprintf('%s.%s', $this->getNormRef(), $this->getProject()->getSlug());
     }
 
     public function getNormRef()
@@ -548,26 +548,13 @@ class Build
     }
 
     /**
-     * Set url
-     *
-     * @param string $url
-     * @return Build
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    
-        return $this;
-    }
-
-    /**
      * Get url
      *
      * @return string 
      */
     public function getUrl()
     {
-        return $this->url;
+        return sprintf('http://%s/', $this->getHost());
     }
 
     /**
@@ -699,5 +686,28 @@ class Build
     public function getStreamSteps()
     {
         return $this->streamSteps;
+    }
+
+    /**
+     * Set host
+     *
+     * @param string $host
+     * @return Build
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+    
+        return $this;
+    }
+
+    /**
+     * Get host
+     *
+     * @return string 
+     */
+    public function getHost()
+    {
+        return $this->host;
     }
 }

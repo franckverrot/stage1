@@ -77,8 +77,7 @@ $(php $CONSOLE build:infos $1) || false
 BUILD_INFO_FILE="/tmp/stage1/build/$BUILD_ID/info"
 BUILD_JOB_FILE="/tmp/stage1/build/$BUILD_ID/job"
 
-BUILD_URL="http://$BUILD_DOMAIN/"
-BUILD_REDIS_LIST="frontend:$BUILD_DOMAIN"
+BUILD_REDIS_LIST="frontend:$BUILD_HOST"
 
 # CONTEXT_DIR="/tmp/stage1/build-${COMMIT_NAME}-${COMMIT_TAG}/"
 CONTEXT_DIR="/tmp/stage1/build/$BUILD_ID/context"
@@ -144,6 +143,7 @@ WEB_WORKER=$(docker run -d -p 80 -p 22 ${COMMIT_NAME} runapp) || false
 
 PORT=$(docker port $WEB_WORKER 80) || false
 
+# @todo this should be done by the BuildConsumer
 redis-cli DEL $BUILD_REDIS_LIST > /dev/null
 redis-cli RPUSH $BUILD_REDIS_LIST ${COMMIT_NAME} "http://127.0.0.1:$PORT/" > /dev/null
 
@@ -153,4 +153,3 @@ echo "---> Build finished ($(date))"
 echo $BUILD_IMG > $BUILD_INFO_FILE
 echo $WEB_WORKER >> $BUILD_INFO_FILE
 echo $PORT >> $BUILD_INFO_FILE
-echo $BUILD_URL >> $BUILD_INFO_FILE

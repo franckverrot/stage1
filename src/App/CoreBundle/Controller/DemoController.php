@@ -129,6 +129,7 @@ class DemoController extends Controller
 
         $ref = $this->getDemoConfig('default_build_ref');
         $hash = $this->getHashFromRef($project, $ref, $this->getDemoConfig('access_token'));
+        $subdomain = substr(md5($request->getSession()->get('channel')), 0, 8);
 
         $build = new Build();
         $build->setProject($project);
@@ -139,6 +140,7 @@ class DemoController extends Controller
         $build->setChannel($request->getSession()->get('channel'));
         $build->setStreamOutput(true);
         $build->setStreamSteps(true);
+        $build->setHost(sprintf($this->container->getParameter('build_url_mask'), $subdomain.'.demo.'.$project->getSlug()));
 
         $this->persistAndFlush($build);
 

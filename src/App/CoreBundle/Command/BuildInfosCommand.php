@@ -30,7 +30,7 @@ class BuildInfosCommand extends ContainerAwareCommand
             throw new InvalidArgumentException(sprintf('Could not find build #%d', $input->getArgument('build_id')));
         }
 
-        $infos = vsprintf('declare BUILD_ID=%s REF=%s HASH=%s SSH_URL=%s ACCESS_TOKEN=%s COMMIT_NAME=%s COMMIT_TAG=%s BUILD_DOMAIN=%s', [
+        $infos = vsprintf('declare BUILD_ID=%s REF=%s HASH=%s SSH_URL=%s ACCESS_TOKEN=%s COMMIT_NAME=%s COMMIT_TAG=%s BUILD_HOST=%s', [
             $build->getId(),
             $build->getRef(),
             $build->getHash(),
@@ -42,7 +42,7 @@ class BuildInfosCommand extends ContainerAwareCommand
             $build->getProject()->getUsers()->first()->getAccessToken(),
             $build->getImageName(),
             $build->getImageTag(),
-            sprintf($this->getContainer()->getParameter('build_url_mask'), $build->getBranchDomain()),
+            $build->getHost(),
         ]);
 
         $output->writeln($infos);

@@ -164,20 +164,19 @@ class BuildConsumer implements ConsumerInterface
         $buildInfo = explode(PHP_EOL, trim(file_get_contents($buildFile('info'))));
         unlink($buildFile('info'));
 
-        if (count($buildInfo) !== 4) {
+        if (count($buildInfo) !== 3) {
             throw new InvalidArgumentException('Malformed build info: '.var_export($buildInfo, true));
         }
 
-        list($imageId, $containerId, $port, $url) = $buildInfo;
+        list($imageId, $containerId, $port) = $buildInfo;
 
         $build->setContainerId($containerId);
         $build->setImageId($imageId);
         $build->setPort($port);
-        $build->setUrl($url);
 
-        $queryBuilder = $this->doctrine->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
+        $previousBuild = $this->getBuildRepository()->findPreviousBuild($build);
 
-        if (null !== ($previousBuild = $this->getBuildRepository()->findPreviousBuild($build)) && $previousBuild->hasContainer()) {
+        if (null !== $previousBuild && $previousBuild->hasContainer()) {
             $builder = new ProcessBuilder([
                 $projectDir.'/bin/build/stop.sh',
                 $previousBuild->getContainerId(),
@@ -186,6 +185,7 @@ class BuildConsumer implements ConsumerInterface
             ]);
             $process = $builder->getProcess();
 
+            echo 'stopping previous build container'.PHP_EOL;
             echo 'running '.$process->getCommandLine().PHP_EOL;
 
             $process->run();
@@ -211,6 +211,11 @@ class BuildConsumer implements ConsumerInterface
         }
 
         $build->setStatus(Build::STATUS_BUILDING);
+
+        if (strlen($build->getHost()) === 0) {
+            $build->setHost(sprintf($this->getContainer()->getParameter('build_host_mask'), $build->getBranchDomain()));
+        }
+
         $this->persistAndFlush($build);
 
         $this->producer->publish(json_encode([
