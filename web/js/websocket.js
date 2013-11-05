@@ -71,9 +71,11 @@
                 el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
             });
 
-            update_build(build.id, 'progress', function(el) {
-                el.remove();
-            });
+            if (build.status !== 'building') {
+                update_build(build.id, 'progress', function(el) {
+                    el.remove();
+                });                
+            }
 
             update_build(build.id, 'kill-form', function(el) {
                 if ($('button i', el).hasClass('icon-refresh')) {

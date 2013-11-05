@@ -713,6 +713,11 @@ class Build
         return $this->host;
     }
 
+    public function isDemo()
+    {
+        return $this->getIsDemo();
+    }
+
     /**
      * Set isDemo
      *
