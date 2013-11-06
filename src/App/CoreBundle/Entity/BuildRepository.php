@@ -38,6 +38,9 @@ class BuildRepository extends EntityRepository
 
     /**
      * @todo a "previous build" is actually any build with the same host and with a status of "running"
+     *       or not: we might need to be able to find a previousBuild by multiple criterias. For example
+     *       when we want to approximate the time a build will take based on previous builds, a previous
+     *       build is actually the previous build "running" or "obsolete" with the same branch and project
      */
     public function findPreviousBuild(Build $build)
     {
@@ -46,12 +49,12 @@ class BuildRepository extends EntityRepository
                 ->select()
                 ->where('b.project = ?1')
                 ->andWhere('b.ref = ?2')
-                ->andWhere('b.status = ?3')
-                ->andWhere('is_demo = 0')
+                ->andWhere('b.status IN(?3)')
+                // ->andWhere('is_demo = 0')
                 ->setParameters([
                     1 => $build->getProject()->getId(),
                     2 => $build->getRef(),
-                    3 => Build::STATUS_RUNNING,
+                    3 => [Build::STATUS_RUNNING, Build::STATUS_OBSOLETE],
                 ])
                 ->getQuery()
                 ->getSingleResult();

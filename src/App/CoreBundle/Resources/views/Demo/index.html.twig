@@ -68,12 +68,23 @@ $('form#form-build').on('submit', function(event) {
 <h2>Building project {{project}}</h2>
 {% endverbatim %}</script>
 
+<script type="text/mustache" id="tpl-failed">{% verbatim %}
+<h2>:-(</h2>
+<p class="lead">For some reason, the build failed.</p>
+{% endverbatim %}</script>
+
 <script type="text/mustache" id="tpl-steps">{% verbatim %}
 <ul id="steps">
     {{#steps}}
     <li class="pending" id="{{ id }}" data-toggle="tooltip" title="{{ tooltip }}" data-placement="right"><div class="icon-container"><i></i></div> {{ label }}</li>
     {{/steps}}
 </ul>
+
+<br /><br />
+
+<div id="build-progress" class="progress progress-striped active">
+    <div class="bar" style="width: 0%;"></div>
+</div>
 {% endverbatim %}</script>
 
 {% endblock body %}

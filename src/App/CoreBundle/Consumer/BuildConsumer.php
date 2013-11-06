@@ -31,6 +31,8 @@ class BuildConsumer implements ConsumerInterface
 
     private $buildHostMask;
 
+    private $expectedMessages = 0;
+
     public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router, $buildHostMask)
     {
         $this->doctrine = $doctrine;
@@ -61,6 +63,11 @@ class BuildConsumer implements ConsumerInterface
         $em = $this->getDoctrine()->getManager();
         $em->persist($entity);
         $em->flush();
+    }
+
+    private function findPreviousBuild(Build $build)
+    {
+        return $this->getBuildRepository()->findPreviousBuild($build);
     }
 
     public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
@@ -97,13 +104,18 @@ class BuildConsumer implements ConsumerInterface
         
         $producer = $this->producer;
         $entityManager = $this->getDoctrine()->getManager();
+        $expectedMessages = $this->expectedMessages;
 
         # @todo check php version for $this binding in closures
-        $process->run(function($type, $data) use ($producer, $build, $entityManager) {
-            static $n = 0;
+        $process->run(function($type, $data) use ($producer, $build, $entityManager, $expectedMessages) {
+            static $n = 0, $totalMessages = 0;
 
             $data = rtrim($data);
             $data = explode(PHP_EOL, $data);
+
+            $totalMessages++;
+
+            $progress = ($expectedMessages > 0) ? floor(($totalMessages / $expectedMessages) * 100) : null;
 
             foreach ($data as $line) {
                 if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $line, $matches)) {
@@ -124,6 +136,7 @@ class BuildConsumer implements ConsumerInterface
                         'data' => [
                             'build' => $build->asWebsocketMessage(),
                             'announce' => json_decode($matches[2], true),
+                            'progress' => $progress,
                         ]
                     ]));
                 } else {
@@ -142,6 +155,7 @@ class BuildConsumer implements ConsumerInterface
                             'project' => $build->getProject()->asWebsocketMessage(),
                             'number' => $n++,
                             'content' => $line,
+                            'progress' => $progress,
                         ]
                     ]));
 
@@ -187,7 +201,7 @@ class BuildConsumer implements ConsumerInterface
                 ]
             ]));
 
-            $previousBuild = $this->getBuildRepository()->findPreviousBuild($build);
+            $previousBuild = $this->findPreviousBuild($build);
 
             if (null !== $previousBuild && $previousBuild->hasContainer()) {
                 $builder = new ProcessBuilder([
@@ -231,6 +245,15 @@ class BuildConsumer implements ConsumerInterface
         }
 
         $this->persistAndFlush($build);
+
+        $previousBuild = $this->findPreviousBuild($build);
+
+        if (null !== $previousBuild) {
+            echo '   found previous build (#'.$previousBuild->getId().')'.PHP_EOL;
+            $this->expectedMessages = count($previousBuild->getLogs());
+        }
+
+        echo '   expecting '.$this->expectedMessages.' messages'.PHP_EOL;
 
         $this->producer->publish(json_encode([
             'event' => 'build.started',
@@ -278,6 +301,7 @@ class BuildConsumer implements ConsumerInterface
             'channel' => $build->getChannel(),
             'timestamp' => microtime(true),
             'data' => [
+                'progress' => 100,
                 'build' => array_replace([
                     'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
                     ], $build->asWebsocketMessage()),

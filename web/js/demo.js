@@ -34,6 +34,14 @@ function demo_websocket_listen(websocket_channel) {
             }
         }
 
+        if (message.data.progress) {
+            progress = message.data.progress;
+        } else {
+            progress = 100;
+        }
+
+        $('#build-progress .bar').css('width', progress + '%');
+
         if (message.event === 'build.scheduled') {
             var content = Mustache.render($('#tpl-steps').text(), { 'steps': message.data.steps });
             $('#build-steps').html(content);
@@ -59,15 +67,20 @@ function demo_websocket_listen(websocket_channel) {
         }
 
         if (message.event === 'build.finished') {
-            $('#steps li.running')
-                .removeClass('running')
-                .addClass('done')
-                .find('i')
-                    .removeClass()
-                    .addClass('icon-ok');
+            if (message.data.build.status_label === 'failed') {
+                $('#build-meta').html(Mustache.render($('#tpl-failed').text()));
+                $('#build-steps').remove();
+            } else {
+                $('#steps li.running')
+                    .removeClass('running')
+                    .addClass('done')
+                    .find('i')
+                        .removeClass()
+                        .addClass('icon-ok');
 
-            var url = Mustache.render($('#tpl-url').text(), { 'url': message.data.build.url });
-            $('#build-url').html(url);
+                var url = Mustache.render($('#tpl-url').text(), { 'url': message.data.build.url });
+                $('#build-url').html(url);                
+            }
             
             return;
         }

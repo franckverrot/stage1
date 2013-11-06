@@ -85,7 +85,7 @@ class DemoController extends Controller
         $build_id = $session->get('demo_build_id');
 
         if (null !== $build_id) {
-            $build = $this->findBuild($build_id);
+            $build = $this->findBuild($build_id, false);
 
             if (!$build->isBuilding()) {
                 $session->remove('demo_build_id');
