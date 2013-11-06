@@ -6,7 +6,6 @@
 
     <services>
         <!-- misc services -->
-
         <service id="session.handler.redis" class="Drak\NativeSession\NativeRedisSessionHandler">
             <argument>tcp://%redis_host%:%redis_port%?timeout=2</argument>
         </service>
@@ -135,6 +134,12 @@
 
         <service id="app_core.form.type.project_master_password" class="App\CoreBundle\Form\Type\ProjectMasterPasswordType">
             <tag name="form.type" alias="project_master_password" />
+        </service>
+
+        <!-- twig extension -->
+
+        <service id="twig.extension.text" class="Twig_Extensions_Extension_Text">
+            <tag name="twig.extension" />
         </service>
     </services>
 </container>

@@ -20,7 +20,7 @@
         <tr>
             <td><tt><a href="{{ path('app_admin_docker_container_top', { id: ShortId }) }}">{{ ShortId }}</a></tt></td>
             <td><tt>{{ container.Image }}</tt></td>
-            <td><tt>{{ container.Command }}</tt></td>
+            <td><tt>{{ container.Command | truncate(32) }}</tt></td>
             <td><abbr class="timeago" title="{{ container.Created | date('c') }}">{{ container.Created | date('Y-m-d H:i:s') }}</abbr></td>
             <td>{{ container.Status }}</td>
         </tr>
