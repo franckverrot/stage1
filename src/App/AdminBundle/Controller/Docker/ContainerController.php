@@ -34,8 +34,14 @@ class ContainerController extends Controller
 
     public function topAction($id)
     {
+        $top = $this->fetch(['/containers/{id}/top?{query*}', ['id' => $id, 'query' => ['ps_args' => 'aux']]]);
+
+        foreach ($top['Processes'] as &$entry) {
+            $entry[10] = implode(' ', array_splice($entry, 10));
+        }
+
         return $this->render('AppAdminBundle:Docker/Container:top.html.twig', [
-            'top' => $this->fetch(['/containers/{id}/top', ['id' => $id]]),
+            'top' => $top,
             'container' => $this->fetch(['/containers/{id}/json', ['id' => $id]]),
         ]);
     }

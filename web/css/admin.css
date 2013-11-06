@@ -1,3 +1,11 @@
 .destinations {
     display: none;
 }
+
+.value-USER {
+    white-space: nowrap;
+}
+
+td.value-PID, td.value-CPI, td.value-MEM, td.value-VSZ, td.value-RSS {
+    text-align: right;
+}

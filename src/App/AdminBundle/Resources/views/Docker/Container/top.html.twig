@@ -1,6 +1,5 @@
 {% extends '::admin.html.twig' %}
 
-
 {% block body %}
 
 {% include 'AppAdminBundle:Docker/Container:_header.html.twig' with { container: container } %}
@@ -9,18 +8,22 @@
     <thead>
         <tr>
         {% for title in top.Titles %}
-            <th>{{ title }}</th>
+            <th id="head-{{ title | replace({ '%': ''}) }}">{{ title }}</th>
         {% endfor %}
         </tr>
     </thead>
     <tbody>
         {% for process in top.Processes %}
         <tr>
-            {% for value in process %}
-            <td>{{ value }}</td>
+            {% for i, value in process %}
+            <td class="value-{{ top.Titles[i] | replace({ '%': '' }) }}"><tt>{{ value }}</tt></td>
             {% endfor %}
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<hr />
+
+<pre>{{ top | json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
 {% endblock body %}
