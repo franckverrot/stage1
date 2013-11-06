@@ -30,7 +30,7 @@ def hipache_restart():
     sudo('monit restart hipache')
 
 def log():
-    sudo('tail -f /var/log/nginx/*.log /tmp/log/*.log /vagrant/app/logs/prod.log')
+    sudo('tail -f /var/log/nginx/*.log /tmp/log/*.log /vagrant/app/logs/prod.log /var/log/syslog')
 
 def log_build():
     sudo('tail -f /tmp/log/consumer-build.*.log')
