@@ -92,6 +92,7 @@ amqp.connect('amqp://localhost').then (conn) ->
         queues.forEach (queue) ->
             channel.assertQueue queue
 
+        # @todo there is no need to poll! http://docs.docker.io/en/latest/api/docker_remote_api_v1.6/#get--events
         (monitor = ->
             attach_containers docker, channel
             setTimeout monitor, pollInterval)()
