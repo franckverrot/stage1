@@ -7,6 +7,8 @@ app/check.php
 app/config/parameters.yml
 app/config/github.yml
 app/Resources/samples/
+app/cache/
+app/logs/
 Vagrantfile
 .vagrant
 /packer_cache/
