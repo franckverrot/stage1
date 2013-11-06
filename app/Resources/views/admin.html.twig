@@ -23,6 +23,10 @@
                             <li><a href="#">Logged in {{ app.user }}</a></li>
                             <li class="divider-vertical"></li>
                             <li><a href="{{ path('app_core_homepage') }}">Stage1</a></li>
+                            {% if is_granted('ROLE_DEMO') %}
+                            <li class="divider-vertical"></li>
+                            <li><a href="{{ path('app_core_demo') }}">Demo</a></li>
+                            {% endif %}
                             <li class="divider-vertical"></li>
                             <li><a href="{{ path('app_core_logout') }}"><i class="icon-off"></i></a></li>
                             {% else %}

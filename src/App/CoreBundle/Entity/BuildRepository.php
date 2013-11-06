@@ -36,6 +36,9 @@ class BuildRepository extends EntityRepository
         return $query->execute();
     }
 
+    /**
+     * @todo a "previous build" is actually any build with the same host and with a status of "running"
+     */
     public function findPreviousBuild(Build $build)
     {
         try {
