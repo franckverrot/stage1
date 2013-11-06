@@ -34,10 +34,10 @@ function demo_websocket_listen(websocket_channel) {
             }
         }
 
-        if (message.data.progress) {
-            progress = message.data.progress;
-        } else {
+        if (null === message.data.progress) {
             progress = 100;
+        } else {
+            progress = message.data.progress;
         }
 
         $('#build-progress .bar').css('width', progress + '%');

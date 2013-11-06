@@ -117,6 +117,8 @@ class BuildConsumer implements ConsumerInterface
 
             $progress = ($expectedMessages > 0) ? floor(($totalMessages / $expectedMessages) * 100) : null;
 
+            echo '   got message '.$totalMessages.' / '.$expectedMessages.' ('.$progress.'%)'.PHP_EOL;
+
             foreach ($data as $line) {
                 if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $line, $matches)) {
                     echo '-> got websocket message'.PHP_EOL;
@@ -260,6 +262,7 @@ class BuildConsumer implements ConsumerInterface
             'channel' => $build->getChannel(),
             'timestamp' => microtime(true),
             'data' => [
+                'progress' => 0,
                 'build' => array_replace([
                     'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()]),
                     'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),

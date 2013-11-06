@@ -163,6 +163,7 @@ class DemoController extends Controller
         $request->getSession()->set('demo_build_id', $build->getId());
 
         $this->publishWebsocket('build.scheduled', $build->getChannel(), [
+            'progress' => 0,
             'build' => $build->asWebsocketMessage(),
             'steps' => $this->getSteps($project),
             'project' => $project->asWebsocketMessage(),

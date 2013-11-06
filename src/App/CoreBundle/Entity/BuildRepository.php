@@ -44,22 +44,20 @@ class BuildRepository extends EntityRepository
      */
     public function findPreviousBuild(Build $build)
     {
-        try {
-            return $this->createQueryBuilder('b')
-                ->select()
-                ->where('b.project = ?1')
-                ->andWhere('b.ref = ?2')
-                ->andWhere('b.status IN(?3)')
-                // ->andWhere('is_demo = 0')
-                ->setParameters([
-                    1 => $build->getProject()->getId(),
-                    2 => $build->getRef(),
-                    3 => [Build::STATUS_RUNNING, Build::STATUS_OBSOLETE],
-                ])
-                ->getQuery()
-                ->getSingleResult();
-        } catch (Exception $e) {
-            return null;
-        }
+        return $this->createQueryBuilder('b')
+            ->select()
+            ->where('b.project = ?1')
+            ->andWhere('b.ref = ?2')
+            ->andWhere('b.status IN(?3)')
+            ->setParameters([
+                1 => $build->getProject()->getId(),
+                2 => $build->getRef(),
+                3 => [Build::STATUS_RUNNING, Build::STATUS_OBSOLETE],
+            ])
+            ->setMaxResults(1)
+            ->orderBy('b.createdAt', 'DESC')
+            ->getQuery()
+            ->getSingleResult();
+            // ->getSingleResult();
     }
 }
