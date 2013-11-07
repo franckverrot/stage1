@@ -4,6 +4,10 @@
 <h3>Docker Containers</h3>
 <hr />
 
+{% if containers | length == 0 %}
+<p class="lead">No running containers.</p>
+{% else %}
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -12,6 +16,7 @@
             <th>Command</th>
             <th>Created</th>
             <th>Status</th>
+            <th>&nbsp;</th>
         </tr>
     </thead>
     <tbody>
@@ -23,10 +28,17 @@
             <td><tt>{{ container.Command | truncate(32) }}</tt></td>
             <td><abbr class="timeago" title="{{ container.Created | date('c') }}">{{ container.Created | date('Y-m-d H:i:s') }}</abbr></td>
             <td>{{ container.Status }}</td>
+            <td>
+                <form method="post" action="{{ path('app_admin_docker_container_stop', { id: ShortId }) }}">
+                    <button class="btn btn-danger btn-small">stop</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+{% endif %}
 
 <hr />
 

@@ -16,6 +16,10 @@
         <default key="_controller">AppAdminBundle:Docker\Container:top</default>
     </route>
 
+    <route id="app_admin_docker_container_stop" pattern="/docker/container/{id}/stop" methods="POST">
+        <default key="_controller">AppAdminBundle:Docker\Container:stop</default>
+    </route>
+
     <route id="app_admin_dashboard" pattern="/" methods="GET">
         <default key="_controller">AppAdminBundle:Default:index</default>
     </route>

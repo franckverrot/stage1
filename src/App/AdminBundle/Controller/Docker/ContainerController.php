@@ -25,6 +25,18 @@ class ContainerController extends Controller
         ]);
     }
 
+    public function stopAction($id)
+    {
+        $client = $this->getClient();
+
+        $request = $client->post(['/containers/{id}/stop', ['id' => $id]]);
+        $response = $request->send();
+
+        $this->addFlash('success', 'The container has been stopped');
+
+        return $this->redirect($this->generateUrl('app_admin_docker_containers'));
+    }
+
     public function inspectAction($id)
     {
         return $this->render('AppAdminBundle:Docker/Container:inspect.html.twig', [
