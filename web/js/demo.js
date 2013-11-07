@@ -67,14 +67,15 @@ function demo_websocket_listen(websocket_channel) {
         }
 
         if (message.event === 'build.finished') {
-            $('#build-progress').removeClass('active');
-            
             if (message.data.build.status_label === 'failed') {
                 $('#build-meta').html(Mustache.render($('#tpl-failed').text()));
                 $('#build-steps').remove();
             } else {
-                $('#steps li.running')
-                    .removeClass('running')
+                $('#build-progress').removeClass('active');
+                $('#build-progress .bar').css('width', '100%');
+            
+                $('#steps li')
+                    .removeClass()
                     .addClass('done')
                     .find('i')
                         .removeClass()
@@ -92,6 +93,11 @@ function demo_websocket_listen(websocket_channel) {
         }
 
         console.log('received step "' + message.data.announce.step + '"');
+
+        if ($('#' + message.data.announce.step).length == 0) {
+            console.log('unrecognized step, skipping');
+            return;
+        }
 
 
         $('#steps li.running')
