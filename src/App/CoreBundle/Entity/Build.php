@@ -48,8 +48,6 @@ class Build
 
     private $message;
 
-    private $output;
-
     private $exitCode;
 
     private $exitCodeText;
@@ -130,8 +128,6 @@ class Build
      */
     public function appendLog($message, $type, $stream = null)
     {
-        $this->output .= $message;
-        
         $log = new BuildLog();
         $log->setBuild($this);
         $log->setType($type);
@@ -619,29 +615,6 @@ class Build
         return array_filter($this->logs->toArray(), function($log) use ($type) {
             return $log->getType() === $type;
         });
-    }
-
-    /**
-     * Set output
-     *
-     * @param string $output
-     * @return Build
-     */
-    public function setOutput($output)
-    {
-        $this->output = $output;
-    
-        return $this;
-    }
-
-    /**
-     * Get output
-     *
-     * @return string 
-     */
-    public function getOutput()
-    {
-        return $this->output;
     }
 
     /**
