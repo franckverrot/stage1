@@ -67,6 +67,8 @@ function demo_websocket_listen(websocket_channel) {
         }
 
         if (message.event === 'build.finished') {
+            $('#build-progress').removeClass('active');
+            
             if (message.data.build.status_label === 'failed') {
                 $('#build-meta').html(Mustache.render($('#tpl-failed').text()));
                 $('#build-steps').remove();
