@@ -61,7 +61,6 @@ function dummy {
     echo 'dummy-img' > $BUILD_INFO_FILE
     echo 'dummy-container' >> $BUILD_INFO_FILE
     echo '42' >> $BUILD_INFO_FILE
-    echo 'http://dummy.stage1.dev/' >> $BUILD_INFO_FILE
 
     exit 0
 }

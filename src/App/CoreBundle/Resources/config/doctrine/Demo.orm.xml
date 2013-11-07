@@ -15,7 +15,7 @@
             <join-column name="project_id" referenced-column-name="id" />
         </many-to-one>
 
-        <one-to-one field="build" target-entity="App\CoreBundle\Entity\Build">
+        <one-to-one field="build" target-entity="App\CoreBundle\Entity\Build" inversed-by="demo">
             <join-column name="build_id" reference-column-name="id" />
         </one-to-one>
 

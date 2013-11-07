@@ -19,6 +19,9 @@ use InvalidArgumentException;
 use RuntimeException;
 use Exception;
 
+use Swift_Mailer;
+use Swift_Message;
+
 class BuildConsumer implements ConsumerInterface
 {
     private $doctrine;
@@ -33,11 +36,12 @@ class BuildConsumer implements ConsumerInterface
 
     private $expectedMessages = 0;
 
-    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router, $buildHostMask)
+    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router, Swift_Mailer $mailer, $buildHostMask)
     {
         $this->doctrine = $doctrine;
         $this->producer = $producer;
         $this->router = $router;
+        $this->mailer = $mailer;
         $this->buildHostMask = $buildHostMask;
 
         echo '== initializing BuildConsumer'.PHP_EOL;
@@ -298,6 +302,37 @@ class BuildConsumer implements ConsumerInterface
         }
 
         $this->persistAndFlush($build);
+
+        if ($build->isRunning() && $build->isDemo()) {
+            $buildUrl = $build->getUrl();
+
+            echo '   sending demo build email to "'.$build->getDemo()->getEmail().'"'.PHP_EOL;
+
+            $message = Swift_Message::newInstance()
+                ->setSubject('Your Stage1 demo build is ready')
+                ->setFrom('geoffrey@stage1.io')
+                ->setTo($build->getDemo()->getEmail())
+                ->setBody(<<<EOM
+Your demo build is ready and you can access it through the following url:
+
+$buildUrl
+
+-- 
+Geoffrey
+EOM
+);
+            $failed = [];
+            $res = $this->mailer->send($message, $failed);
+
+            echo '   sent '.$res.' emails'.PHP_EOL;
+
+            if (count($failed) > 0) {
+                echo '   failed '.count($failed).' recipients:'.PHP_EOL;
+                foreach ($failed as $recipient) {
+                    echo '    - '.$recipient.PHP_EOL;
+                }
+            }
+        }
 
         $this->producer->publish(json_encode([
             'event' => 'build.finished',

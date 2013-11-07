@@ -68,6 +68,8 @@ class Build
 
     private $isDemo = false;
 
+    private $demo;
+
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -712,5 +714,28 @@ class Build
     public function getIsDemo()
     {
         return $this->isDemo;
+    }
+
+    /**
+     * Set demo
+     *
+     * @param \App\CoreBundle\Entity\Demo $demo
+     * @return Build
+     */
+    public function setDemo(\App\CoreBundle\Entity\Demo $demo = null)
+    {
+        $this->demo = $demo;
+    
+        return $this;
+    }
+
+    /**
+     * Get demo
+     *
+     * @return \App\CoreBundle\Entity\Demo 
+     */
+    public function getDemo()
+    {
+        return $this->demo;
     }
 }

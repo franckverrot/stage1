@@ -39,6 +39,8 @@
         <one-to-many field="logs" target-entity="App\CoreBundle\Entity\BuildLog" mapped-by="build">
             <cascade><cascade-remove /></cascade>
         </one-to-many>
+
+        <one-to-one field="demo" target-entity="App\CoreBundle\Entity\Demo" mapped-by="build" />
     </entity>
 
 </doctrine-mapping>
