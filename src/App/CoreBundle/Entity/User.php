@@ -55,6 +55,10 @@ class User implements UserInterface
             $roles[] = 'ROLE_DEMO';
         }
 
+        if ($this->getUsername() === 'ratibus') {
+            $roles[] = 'ROLE_DEMO';
+        }
+
         if ($this->getUsername() === 'lvictorino') {
             $roles[] = 'ROLE_DEMO';
         }
