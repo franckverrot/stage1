@@ -193,10 +193,12 @@ class Controller extends BaseController
         $em->flush();
     }
 
-    protected function persistAndFlush($entity)
+    protected function persistAndFlush()
     {
+        $entities = func_get_args();
+
         $em = $this->getDoctrine()->getManager();
-        $em->persist($entity);
+        array_walk($entities, [$em, 'persist']);
         $em->flush();
     }
 

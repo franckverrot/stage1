@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\Demo;
 
 use Exception;
 use RuntimeException;
@@ -80,6 +81,8 @@ class DemoController extends Controller
         }
 
         $session = $request->getSession();
+        $session->set('demo_key', $session->get('demo_key', md5(uniqid(mt_rand(), true))));
+
         $channel = $session->get('demo_build_channel', 'demo-'.uniqid(mt_rand(), true));
 
         $build_id = $session->get('demo_build_id');
@@ -133,13 +136,31 @@ class DemoController extends Controller
             return $this->disabledAction();
         }
 
+        $email = $request->get('email');
+
+        $errors = [];
+
+        if (strlen($email) === 0) {
+            $errors['email'] = 'Your e-mail is required.';
+        }
+
         $session = $request->getSession();
+        $session->set('demo_key', $session->get('demo_key', md5(uniqid(mt_rand(), true))));
 
         # find project without checking user
         $project = $this->findProject($request->get('project_id'), false);
 
-        if (!$project->getUsers()->contains($this->getDemoUser())) {
-            throw new Exception('Not a Demo project');
+        if (!$project || !$project->getUsers()->contains($this->getDemoUser())) {
+            $errors['project_id'] = 'Invalid demo project.';
+        }
+
+        $echo = [
+            'project_id' => var_export($request->get('project_id'), true),
+            'email' => var_export($request->get('email'), true),
+        ];
+
+        if (count($errors) > 0) {
+            return new JsonResponse(json_encode(['status' => 400, 'errors' => $errors, 'echo' => $echo]), 200);
         }
 
         $ref = $this->getDemoConfig('default_build_ref');
@@ -158,7 +179,13 @@ class DemoController extends Controller
         $build->setHost(sprintf($this->container->getParameter('build_host_mask'), $subdomain.'.demo.'.$project->getSlug()));
         $build->setIsDemo(true);
 
-        $this->persistAndFlush($build);
+        $demo = new Demo();
+        $demo->setEmail($email);
+        $demo->setProject($project);
+        $demo->setBuild($build);
+        $demo->setDemoKey($session->get('demo_key'));
+
+        $this->persistAndFlush($demo, $build);
 
         $request->getSession()->set('demo_build_id', $build->getId());
 
@@ -176,6 +203,6 @@ class DemoController extends Controller
         $websocket_token = uniqid(mt_rand(), true);
         $this->get('app_core.redis')->sadd('channel:auth:' . $build->getChannel(), $websocket_token);
 
-        return new JsonResponse(json_encode(true), 200);
+        return new JsonResponse(json_encode(['status' => 200, 'echo' => $echo]), 200);
     }
 }

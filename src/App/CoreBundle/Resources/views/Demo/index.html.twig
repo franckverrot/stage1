@@ -3,6 +3,9 @@
 {% block javascripts %}
 <script type="text/javascript">
 
+$('[data-toggle=tooltip]').tooltip();
+$('input#email').focus();
+
 var demo_websocket_channel = '{{ channel }}';
 
 demo_websocket_listen(demo_websocket_channel);
@@ -11,38 +14,72 @@ $('form#form-build').on('submit', function(event) {
     event.preventDefault();
     event.stopPropagation();
 
-    try {
-        var url = $(this).attr('action');
-        var data = { 'project_id': $('#project_id option:selected').attr('value') };
+    var url = $(this).attr('action');
+    var data = {
+        'project_id': $('#project_id option:selected').attr('value'),
+        'email': $('#email').val()
+    };
 
-        $(this).find('button').html('<i class="icon-refresh icon-spin"></i>').attr('disabled', true);
+    console.log(data);
 
-        $.post(url, data);
-    } catch (e) {
-        console.dir(e);
-    }
+    $(this).find('button').html('<i class="icon-refresh icon-spin"></i>').attr('disabled', true);
+
+    $('#form-build .control-group').removeClass('error').find('.help-block').hide();
+
+    $.post(url, data, function(data, textStatus, jqXHR) {
+        var data = JSON.parse(data);
+
+        console.log(data);
+
+        if (data.status == 400) {
+            for (i in data.errors) {
+                $('#' + i).parents('.control-group').addClass('error').find('.help-block').html(data.errors[i]).show();
+            }
+
+            $('#launch-build').attr('disabled', false).html('Get my build!');
+        }
+    });
 });
 </script>
 {% endblock javascripts %}
 
 {% block body %}
-<form id="form-build" method="post" action="{{ path('app_core_demo_build') }}">
-    <p class="lead">The demo allows you to build <strong>your very own container</strong>. It will be built with love just for you, and you will be given a <strong>unique url</strong> to access it.</p>
-    <p class="lead">You can choose any of the following demo projects to build:</p>
+<p id="demo-intro" class="lead">The demo allows you to build <strong>your very own container</strong>. It will be built with love just for you, and you will be given a <strong>unique url</strong> to access it.</p>
+<hr />
+<!-- <p class="lead">You can choose any of the following demo projects to build:</p> -->
 
-    <select name="project_id" id="project_id" class="btn-large">
-        {% for project in projects %}
-        <option value="{{ project.id }}">{{ project.name }}</option>
-        {% endfor %}
-    </select>
+<form id="form-build" class="form-horizontal" method="post" action="{{ path('app_core_demo_build') }}">
 
-    <br />
+    <div class="control-group">
+        <label class="control-label">Your e-mail address</label>
+        <div class="controls">
+            <input type="text" name="email" id="email" placeholder="john.doe@gmail.com" title="We will use your email to send you a link to your build once it's finished, and maybe to ask you for some feedback later." data-toggle="tooltip" data-placement="right" />
+            <span class="help-block"></span>
+        </div>
+    </div>
 
-    <button class="btn btn-success btn-large" id="launch-build"><strong>Get my very own build</strong></button>
+    <div class="control-group">
+        <label class="control-label">What project to build</label>
+        <div class="controls">
+            <select name="project_id" id="project_id">
+                {% for project in projects %}
+                <option value="{{ project.id }}">{{ project.name }}</option>
+                {% endfor %}
+            </select>
+            <span class="help-block"></span>
+        </div>
+    </div>
 
     <br /><br />
 
-    <p><small>Please note all demo containers are deleted every night.</small></p>
+    <div class="actions">
+
+        <button class="btn btn-success btn-large" id="launch-build"><strong>Get my build!</strong></button>
+
+        <br /><br />
+
+        <p><small>Please note all demo containers are deleted every night.</small></p>
+    </div>
 </form>
 
 <div id="build-meta">
