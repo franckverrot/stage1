@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xe
+set -e
 
 trap 'error_handler $?' ERR
 trap cleanup SIGTERM EXIT
@@ -14,7 +14,7 @@ PID=$$
 echo $PID > /tmp/run/build/$1.pid
 
 # set empty to disable debug
-DEBUG="1"
+DEBUG=""
 
 function stage1_websocket_step {
     stage1_websocket_message "build.step" "{ \"step\": \"$1\" }"
