@@ -7,11 +7,15 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
+# trick to avoid df error messages
+RUN grep -v rootfs /proc/mounts > /etc/mtab
+
 ADD ./support/sources.list /etc/apt/sources.list
 
 RUN apt-get update -y
-RUN apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1
+RUN apt-get install -qy realpath vim curl git openssh-server vim
 
+# RUN apt-get install ruby1.9.1
 # RUN gem install --no-ri --no-rdoc foreman
 
 ADD ./support/authorized_keys /root/.ssh/authorized_keys
@@ -26,6 +30,7 @@ ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 
 RUN apt-get update -y
 
+# needed for php5-intl
 RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb
 RUN dpkg --install libicu44_4.4.2-2_amd64.deb
 
@@ -38,13 +43,14 @@ RUN apt-get install -qy \
     php5-intl \
     php5-curl
 
-# need to build phpupet correctly
+# needed to build phpupet correctly
 RUN apt-get install -qy zip
 
 ADD ./support/nginx.conf /etc/nginx/sites-available/default
 ADD ./support/php.ini /etc/php5/fpm/php.ini
 ADD ./support/php.ini /etc/php5/cli/php.ini
 ADD ./support/parameters.yml /etc/symfony/parameters.yml.dist
+ADD ./support/my.cnf /etc/mysql/my.cnf
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
