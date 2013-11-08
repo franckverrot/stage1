@@ -38,6 +38,9 @@ def hipache_stop():
 def hipache_restart():
     sudo('monit restart hipache')
 
+def llog():
+    local('sudo tail -f %s' % ' '.join(env.log_files))
+
 def log():
     sudo('tail -f %s' % ' '.join(env.log_files))
 
