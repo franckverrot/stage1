@@ -44,6 +44,10 @@ class BuildRepository extends EntityRepository
      */
     public function findPreviousBuild(Build $build)
     {
+        if ($build->isDemo()) {
+            return $this->findPreviousDemoBuild($build);
+        }
+
         return $this->createQueryBuilder('b')
             ->select()
             ->where('b.project = ?1')
@@ -53,6 +57,22 @@ class BuildRepository extends EntityRepository
                 1 => $build->getProject()->getId(),
                 2 => $build->getRef(),
                 3 => [Build::STATUS_RUNNING, Build::STATUS_OBSOLETE],
+            ])
+            ->setMaxResults(1)
+            ->orderBy('b.createdAt', 'DESC')
+            ->getQuery()
+            ->getSingleResult();
+    }
+
+    public function findPreviousDemoBuild(Build $build)
+    {
+        return $this->createQueryBuilder('b')
+            ->select()
+            ->where('b.host = ?1')
+            ->andWhere('b.status IN(?2)')
+            ->setParameters([
+                1 => $build->getHost(),
+                2 => [Build::STATUS_RUNNING, Build::STATUS_OBSOLETE]
             ])
             ->setMaxResults(1)
             ->orderBy('b.createdAt', 'DESC')

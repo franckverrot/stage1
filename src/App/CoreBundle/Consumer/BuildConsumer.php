@@ -205,35 +205,33 @@ class BuildConsumer implements ConsumerInterface
         $build->setImageId($imageId);
         $build->setPort($port);
 
-        if (!$build->isDemo()) {
-            $producer->publish(json_encode([
-                'event' => 'build.step',
-                'channel' => $build->getChannel(),
-                'data' => [
-                    'build' => $build->asWebsocketMessage(),
-                    'announce' => ['step' => 'stop_previous'],
-                ]
-            ]));
+        $producer->publish(json_encode([
+            'event' => 'build.step',
+            'channel' => $build->getChannel(),
+            'data' => [
+                'build' => $build->asWebsocketMessage(),
+                'announce' => ['step' => 'stop_previous'],
+            ]
+        ]));
 
-            $previousBuild = $this->findPreviousBuild($build);
+        $previousBuild = $this->findPreviousBuild($build);
 
-            if (null !== $previousBuild && $previousBuild->hasContainer()) {
-                $builder = new ProcessBuilder([
-                    $projectDir.'/bin/build/stop.sh',
-                    $previousBuild->getContainerId(),
-                    $previousBuild->getImageId(),
-                    $previousBuild->getImageTag(),
-                ]);
-                $process = $builder->getProcess();
+        if (null !== $previousBuild && $previousBuild->hasContainer()) {
+            $builder = new ProcessBuilder([
+                $projectDir.'/bin/build/stop.sh',
+                $previousBuild->getContainerId(),
+                $previousBuild->getImageId(),
+                $previousBuild->getImageTag(),
+            ]);
+            $process = $builder->getProcess();
 
-                echo 'stopping previous build container'.PHP_EOL;
-                echo 'running '.$process->getCommandLine().PHP_EOL;
+            echo 'stopping previous build container'.PHP_EOL;
+            echo 'running '.$process->getCommandLine().PHP_EOL;
 
-                $process->run();
+            $process->run();
 
-                $previousBuild->setStatus(Build::STATUS_OBSOLETE);
-                $this->persistAndFlush($previousBuild);
-            }
+            $previousBuild->setStatus(Build::STATUS_OBSOLETE);
+            $this->persistAndFlush($previousBuild);
         }
 
         return true;
