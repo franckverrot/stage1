@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+if [ ! -z "$DEBUG" ]; then
+    set -x
+fi
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source $DIR/../lib/stage1.sh

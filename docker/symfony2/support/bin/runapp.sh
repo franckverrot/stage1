@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ ! -z "$DEBUG" ]; then
+    set -x
+fi
+
 function init {
     /etc/init.d/mysql start
     /etc/init.d/php5-fpm start

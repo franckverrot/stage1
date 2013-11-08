@@ -1,6 +1,6 @@
-#!/bin/bash +x
+#!/bin/bash
 
-set -e
+set -xe
 
 trap 'error_handler $?' ERR
 trap cleanup SIGTERM EXIT
@@ -9,10 +9,12 @@ if [ ! -d /tmp/run/build ]; then
     mkdir -p /tmp/run/build
 fi
 
-echo $$ > /tmp/run/build/$1.pid
+PID=$$
+
+echo $PID > /tmp/run/build/$1.pid
 
 # set empty to disable debug
-DEBUG=""
+DEBUG="1"
 
 function stage1_websocket_step {
     stage1_websocket_message "build.step" "{ \"step\": \"$1\" }"
@@ -42,7 +44,7 @@ function cleanup {
 function error_handler {
     echo
     echo "------> Build failed ($(date))"
-    cleanup
+    cleanup $PID
     exit $1    
 }
 
@@ -151,7 +153,7 @@ redis-cli DEL $BUILD_REDIS_LIST > /dev/null
 redis-cli RPUSH $BUILD_REDIS_LIST ${COMMIT_NAME} "http://127.0.0.1:$PORT/" > /dev/null
 
 echo
-echo "---> Build finished ($(date))"
+echo "------> Build finished ($(date))"
 
 echo $BUILD_IMG > $BUILD_INFO_FILE
 echo $WEB_WORKER >> $BUILD_INFO_FILE
