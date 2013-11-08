@@ -17,6 +17,15 @@ env.processes = [
     'log-fetch'
 ]
 
+env.log_files = [
+    '/var/log/nginx/symfony.*.log',
+    '/tmp/log/*.log',
+    '/vagrant/app/logs/prod.log',
+    '/var/log/syslog',
+    '/var/log/php5-fpm.log',
+    '/var/log/mysql/error.log',
+]
+
 def rm_cache():
     sudo('rm -rf %s/app/cache/*' % env.project_path)
 
@@ -30,7 +39,7 @@ def hipache_restart():
     sudo('monit restart hipache')
 
 def log():
-    sudo('tail -f /var/log/nginx/*.log /tmp/log/*.log /vagrant/app/logs/prod.log /var/log/syslog')
+    sudo('tail -f %s' % ' '.join(env.log_files))
 
 def log_build():
     sudo('tail -f /tmp/log/consumer-build.*.log')
