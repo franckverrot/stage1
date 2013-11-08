@@ -82,6 +82,10 @@ BUILD_REDIS_LIST="frontend:$BUILD_HOST"
 CONTEXT_DIR="/tmp/stage1/build/$BUILD_ID/context"
 mkdir -p $CONTEXT_DIR
 
+# resources limitations
+MEMORY_LIMIT=$((64*1024*1024))
+CPU_SHARES=1
+
 # dummy 5
 
 debug '------> preparing building container'
@@ -121,7 +125,7 @@ debug '------> starting actual build'
 
 # @todo use the new -cidfile option
 debug '------> ' docker run -d ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
-BUILD_JOB=$(docker run -d ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
+BUILD_JOB=$(docker run -d -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM
 echo $BUILD_JOB > $BUILD_JOB_FILE
@@ -138,7 +142,7 @@ rm $BUILD_JOB_FILE
 
 BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME) || false
 
-WEB_WORKER=$(docker run -d -p 80 -p 22 ${COMMIT_NAME} runapp) || false
+WEB_WORKER=$(docker run -d -p 80 -p 22 -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} runapp) || false
 
 PORT=$(docker port $WEB_WORKER 80) || false
 
