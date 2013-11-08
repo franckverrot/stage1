@@ -8,6 +8,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
+use Doctrine\ORM\NoResultException;
+
 class BuildPreviousCommand extends ContainerAwareCommand
 {
     public function configure()
@@ -33,12 +35,10 @@ class BuildPreviousCommand extends ContainerAwareCommand
         $output->writeln('  Project: <info>'.$build->getProject()->getFullName().'</info>');
         $output->writeln('  Ref: <info>'.$build->getRef().'</info>');
 
-        $previousBuild = $repo->findPreviousBuild($build);
-
-        if (!$previousBuild) {
-            var_dump($previousBuild);
+        try {
+            $previousBuild = $repo->findPreviousBuild($build);
+        } catch (NoResultException $e) {
             $output->writeln('No previous build found.');
-
             return;
         }
 

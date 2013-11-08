@@ -58,6 +58,5 @@ class BuildRepository extends EntityRepository
             ->orderBy('b.createdAt', 'DESC')
             ->getQuery()
             ->getSingleResult();
-            // ->getSingleResult();
     }
 }

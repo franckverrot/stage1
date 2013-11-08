@@ -22,6 +22,8 @@ use Exception;
 use Swift_Mailer;
 use Swift_Message;
 
+use Doctrine\ORM\NoResultException;
+
 class BuildConsumer implements ConsumerInterface
 {
     private $doctrine;
@@ -71,7 +73,13 @@ class BuildConsumer implements ConsumerInterface
 
     private function findPreviousBuild(Build $build)
     {
-        return $this->getBuildRepository()->findPreviousBuild($build);
+        try {
+            return $this->getBuildRepository()->findPreviousBuild($build);
+        } catch (NoResultException $e) {
+            printf('[x] Could not find a previous build for %s@%s', $build->getProject()->getFullName(), $build->getRef());
+        }
+
+        return null;
     }
 
     public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
