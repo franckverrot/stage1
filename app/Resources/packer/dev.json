@@ -119,6 +119,11 @@
       "type": "file"
     },
     {
+      "destination": "/tmp/grub-default",
+      "source": "app/Resources/support/config/grub/default",
+      "type": "file"
+    },
+    {
       "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
       "scripts": [
         "app/Resources/support/scripts/stage1.sh",

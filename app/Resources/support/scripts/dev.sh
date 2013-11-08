@@ -1,6 +1,11 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 
+if [ -f /tmp/grub-default ]; then
+    mv /tmp/grub-default /etc/default/grub
+    update-grub
+fi
+
 redis-cli RPUSH frontend:stage1.dev stage1 http://127.0.0.1:8080/
 
 apt-get -qy install \
