@@ -67,7 +67,7 @@ function demo_websocket_listen(websocket_channel) {
         }
 
         if (message.event === 'build.finished') {
-            if (message.data.build.status_label === 'failed') {
+            if (['failed', 'killed'].indexOf(message.data.build.status_label) != -1) {
                 $('#build-meta').html(Mustache.render($('#tpl-failed').text()));
                 $('#build-steps').remove();
             } else {
