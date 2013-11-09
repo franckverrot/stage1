@@ -1,19 +1,20 @@
 TODO
 ====
 
+RAPIDO
+------
+
+* configure nginx to also try /index.php (see http://wiki.nginx.org/HttpCoreModule#try_files)
+
 DEMO
 ----
 
 * add an indication of time until the build is ready
-* add the place of the build in the builds queue
+* add the place of the build in the builds queue (?)
 
 * delete demo containers after 6h
 * limit number of demo build to 1 per email
 * if someone tries to launch a demo build with an already used email, try some marketing
-
-BUGS
-----
-* build failed: 2013/08/10 06:40:21 Unable to set up networking: ip failed: ip route add default via 172.17.42.1 (see https://github.com/dotcloud/docker/pull/1374)
 
 DEMO PROJECTS
 -------------
@@ -21,7 +22,7 @@ DEMO PROJECTS
 * symfony cmf / sulu cmf / sonata sandbox
 * orocrm
 * sylius
-* puphpet
+* puphpet (to remove, too confusing)
 * akeneo
 * ekino cms ?
 
@@ -73,6 +74,7 @@ TODO
     * project:audit
         * is the deploy key configured?
         * is the webhook configured?
+    * project:import
 
 * REST API / webhooks
 
@@ -94,10 +96,9 @@ TODO
             * mongodb/couchdb
             * redis/memcached
     * disallow scheduling a build if a running instance for the same hash exists
-    * log build time
     * log trigger source (manual / push)
     * before build: check that the app is actually buildable (eg: there is a composer.json)
-    * before starting a build, check the required docker image is present
+    * before starting a build, check that the required docker image is present
     * need a way to update buildapp in runtime without re building the whole image
     * rewrite the build system, with extensibility in mind
         * build steps could be infered at import time (or pre-build time)
@@ -137,8 +138,6 @@ TODO
         * number of running instances
 
 * admin
-    * monitor all running docker container
-    * ability to kill / top any running docker container
     * manually schedule builds for any project/branch
     * bundle to override container parameters per user
 
@@ -174,8 +173,6 @@ THE DISTANT FUTURE
     * log queue time
     * separate builds and jobs
     * "build now", premium option to bypass all queuing rules and have your project built now, as in, NOW.
-    * add option to specify a build script
-        * SECURITY WARNING
     * Support for build systems like make, ant, phing, etc
 
 * instances
@@ -198,6 +195,7 @@ THE DISTANT FUTURE
 
 * runtimes
     * premium option to allow a user to build his own docker image and then assign it to his projects
+    * internal docker registry where users can push their own runtimes
     * support buildpacks, packer, chef, puppet
 
 
