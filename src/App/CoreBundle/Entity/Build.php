@@ -70,6 +70,8 @@ class Build
 
     private $demo;
 
+    private $duration = 0;
+
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -737,5 +739,28 @@ class Build
     public function getDemo()
     {
         return $this->demo;
+    }
+
+    /**
+     * Set duration
+     *
+     * @param integer $duration
+     * @return Build
+     */
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
+    
+        return $this;
+    }
+
+    /**
+     * Get duration
+     *
+     * @return integer 
+     */
+    public function getDuration()
+    {
+        return $this->duration;
     }
 }

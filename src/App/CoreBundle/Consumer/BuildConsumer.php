@@ -241,9 +241,12 @@ class BuildConsumer implements ConsumerInterface
     {
         $body = json_decode($message->body);
 
+        $build_start = time();
+
         $build = $this->getBuildRepository()->find($body->build_id);
 
         echo '<- received build order'.PHP_EOL;
+        echo '   build started at '.$build_start.PHP_EOL;
 
         if (!$build || !$build->isScheduled()) {
             echo '[x] build is not "scheduled", skipping'.PHP_EOL;
@@ -306,6 +309,13 @@ class BuildConsumer implements ConsumerInterface
                 $this->getDoctrine()->resetManager();
             }
         }
+
+        $build_end = time();
+
+        echo '   build finished at '.$build_end.PHP_EOL;
+        echo '   build duration: '.($build_end - $build_start).PHP_EOL;
+
+        $build->setDuration($build_end - $build_start);
 
         $this->persistAndFlush($build);
 
