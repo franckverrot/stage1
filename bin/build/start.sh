@@ -103,7 +103,7 @@ CONTEXT_DIR="/tmp/stage1/build/$BUILD_ID/context"
 mkdir -p $CONTEXT_DIR
 
 # resources limitations
-MEMORY_LIMIT=$((64*1024*1024))
+MEMORY_LIMIT=$((128*1024*1024))
 CPU_SHARES=1
 
 # dummy 5
