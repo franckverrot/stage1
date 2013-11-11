@@ -34,11 +34,11 @@
         }
 
         if (data.data.build) {
-            callbacks.build(event, data.data.build, data.data.project);
+            callbacks.build(data.event, data.data.build, data.data.project);
         }
 
         if (data.data.project) {
-            callbacks.project(event, data.data.project);
+            callbacks.project(data.event, data.data.project);
         }
 
         if (typeof(callbacks[data.event]) == 'function') {
@@ -71,7 +71,7 @@
                 el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
             });
 
-            if (build.status !== 'building') {
+            if (event === 'build.finished') {
                 update_build(build.id, 'progress', function(el) {
                     el.remove();
                 });                
