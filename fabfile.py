@@ -20,7 +20,7 @@ env.processes = [
 env.log_files = [
     '/var/log/nginx/symfony.*.log',
     '/tmp/log/*.log',
-    '/vagrant/app/logs/prod.log',
+    '/vagrant/app/logs/*.log',
     '/var/log/syslog',
     '/var/log/php5-fpm.log',
     '/var/log/mysql/error.log',
