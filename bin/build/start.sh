@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# set empty to disable debug
+DEBUG=""
+
+if [ ! -z "$DEBUG" ]; then
+    set -x
+fi
+
 set -e
 
 trap 'error_handler $?' ERR
@@ -12,9 +19,6 @@ fi
 PID=$$
 
 echo $PID > /tmp/run/build/$1.pid
-
-# set empty to disable debug
-DEBUG=""
 
 function stage1_websocket_step {
     stage1_websocket_message "build.step" "{ \"step\": \"$1\" }"
@@ -127,7 +131,7 @@ debug '------> starting actual build'
 
 # @todo use the new -cidfile option
 debug '------> ' docker run -d ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN"
-BUILD_JOB=$(docker run -d -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
+BUILD_JOB=$(docker run -e DEBUG=${DEBUG} -d -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} buildapp "$SSH_URL" "$REF" "$HASH" "$ACCESS_TOKEN") || false
 
 # BUILD_JOB_FILE is used in case we trap a SIGTERM
 echo $BUILD_JOB > $BUILD_JOB_FILE
@@ -142,9 +146,13 @@ fi
 
 rm $BUILD_JOB_FILE
 
+# sometimes docker needs a short delay before being able to commit
+# see https://github.com/progrium/buildstep/pull/23
+sleep 5
+
 BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME) || false
 
-WEB_WORKER=$(docker run -d -p 80 -p 22 -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} runapp) || false
+WEB_WORKER=$(docker run -e DEBUG=${DEBUG} -d -p 80 -p 22 -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} runapp) || false
 
 PORT=$(docker port $WEB_WORKER 80) || false
 
