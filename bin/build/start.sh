@@ -28,6 +28,20 @@ function stage1_websocket_message {
     echo "[websocket:$1:$2]"
 }
 
+function stage1_retry {
+  local result=0
+  local count=1
+  while [ $count -le 20 ]; do
+    "$@"
+    result=$?
+    [ $result -eq 0 ] && break
+    count=$(($count + 1))
+    sleep 5
+  done
+
+  return $result
+}
+
 function debug {
     if [ -n "$DEBUG" ]; then
         echo "$@"
@@ -148,9 +162,9 @@ rm $BUILD_JOB_FILE
 
 # sometimes docker needs a short delay before being able to commit
 # see https://github.com/progrium/buildstep/pull/23
-sleep 5
+# sleep 5
 
-BUILD_IMG=$(docker commit $BUILD_JOB $COMMIT_NAME) || false
+BUILD_IMG=$(stage1_retry docker commit $BUILD_JOB $COMMIT_NAME) || false
 
 WEB_WORKER=$(docker run -e DEBUG=${DEBUG} -d -p 80 -p 22 -c ${CPU_SHARES} -m ${MEMORY_LIMIT} ${COMMIT_NAME} runapp) || false
 
