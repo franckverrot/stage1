@@ -240,7 +240,7 @@ class DefaultController extends Controller
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
 
         if (!$project) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Unknown Github project');
         }
 
         try {
