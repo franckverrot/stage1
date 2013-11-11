@@ -23,9 +23,10 @@ ADD ./support/sources.list /etc/apt/sources.list
 # RUN apt-get update -y
 # RUN apt-get install -qy realpath vim curl git openssh-server vim
 
-RUN apt-get update -y; apt-get install -qy realpath vim curl git openssh-server vim
+RUN apt-get update -y; apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1
 #####################################################
 
+# ruby is need to read yaml
 # RUN apt-get install ruby1.9.1
 # RUN gem install --no-ri --no-rdoc foreman
 
