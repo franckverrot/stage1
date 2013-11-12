@@ -44,9 +44,9 @@ class BuildRepository extends EntityRepository
      *       when we want to approximate the time a build will take based on previous builds, a previous
      *       build is actually the previous build "running" or "obsolete" with the same branch and project
      */
-    public function findPreviousBuild(Build $build)
+    public function findPreviousBuild(Build $build, $demo = false)
     {
-        if ($build->isDemo()) {
+        if ($build->isDemo() && $demo) {
             return $this->findPreviousDemoBuild($build);
         }
 
@@ -65,7 +65,7 @@ class BuildRepository extends EntityRepository
             ->getQuery();
 
         try {
-            $query->getSingleResult();
+            return $query->getSingleResult();
         } catch (NoResultException $e) {
             return null;
         }

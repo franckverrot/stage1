@@ -71,10 +71,10 @@ class BuildConsumer implements ConsumerInterface
         $em->flush();
     }
 
-    private function findPreviousBuild(Build $build)
+    private function findPreviousBuild(Build $build, $demo = false)
     {
         try {
-            return $this->getBuildRepository()->findPreviousBuild($build);
+            return $this->getBuildRepository()->findPreviousBuild($build, $demo);
         } catch (NoResultException $e) {
             printf('[x] Could not find a previous build for %s@%s', $build->getProject()->getFullName(), $build->getRef());
         }
@@ -214,7 +214,7 @@ class BuildConsumer implements ConsumerInterface
             ]
         ]));
 
-        $previousBuild = $this->findPreviousBuild($build);
+        $previousBuild = $this->findPreviousBuild($build, true);
 
         if (null !== $previousBuild && $previousBuild->hasContainer()) {
             $builder = new ProcessBuilder([
@@ -261,7 +261,7 @@ class BuildConsumer implements ConsumerInterface
 
         $this->persistAndFlush($build);
 
-        $previousBuild = $this->findPreviousBuild($build);
+        $previousBuild = $this->findPreviousBuild($build, false);
 
         if (null !== $previousBuild) {
             echo '   found previous build (#'.$previousBuild->getId().')'.PHP_EOL;

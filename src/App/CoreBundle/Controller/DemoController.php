@@ -181,7 +181,7 @@ class DemoController extends Controller
         $build->setHost(sprintf($this->container->getParameter('build_host_mask'), $subdomain.'.demo'));
         $build->setIsDemo(true);
 
-        $previousBuild = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->findPreviousBuild($build);
+        $previousBuild = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->findPreviousBuild($build, false);
 
         $demo = new Demo();
         $demo->setEmail($email);
