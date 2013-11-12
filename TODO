@@ -1,11 +1,6 @@
 TODO
 ====
 
-RAPIDO
-------
-
-* configure nginx to also try /index.php (see http://wiki.nginx.org/HttpCoreModule#try_files)
-
 DEMO
 ----
 
