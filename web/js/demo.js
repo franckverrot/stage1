@@ -81,7 +81,6 @@ function demo_websocket_listen(websocket_channel) {
         if (message.event === 'build.finished') {
             if (['failed', 'killed'].indexOf(message.data.build.status_label) != -1) {
                 $('#build-meta').html(Mustache.render($('#tpl-failed').text()));
-                $('#build-steps').remove();
             } else {
                 $('#build-progress').removeClass('active');
                 $('#build-progress .bar').css('width', '100%');
@@ -93,10 +92,16 @@ function demo_websocket_listen(websocket_channel) {
                         .removeClass()
                         .addClass('icon-ok');
 
-                var url = Mustache.render($('#tpl-url').text(), { 'url': message.data.build.url });
-                $('#build-url').html(url);                
+                var url = Mustache.render($('#tpl-url').text(), {
+                    url: message.data.build.url,
+                    project: message.data.project.name
+                });
+
+                $('#build-url').html(url);
+                $('#build-meta').hide();
             }
             
+            $('#build-steps').hide();
             return;
         }
 
