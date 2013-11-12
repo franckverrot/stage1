@@ -361,6 +361,7 @@ EOM
                     ], $build->asWebsocketMessage()),
                 'project' => [
                     'id' => $build->getProject()->getId(),
+                    'name' => $build->getProject()->getName(),
                     'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject()),
                 ]
             ]
