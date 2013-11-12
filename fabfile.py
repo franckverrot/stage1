@@ -4,7 +4,7 @@ from time import sleep
 
 env.host_string = 'stage1.io'
 env.user = 'root'
-env.project_path = '/vagrant'
+env.project_path = '/var/www'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
@@ -20,7 +20,7 @@ env.processes = [
 env.log_files = [
     '/var/log/nginx/symfony.*.log',
     '/tmp/log/*.log',
-    '/vagrant/app/logs/*.log',
+    '%s/app/logs/*.log' % env.project_path,
     '/var/log/syslog',
     '/var/log/php5-fpm.log',
     '/var/log/mysql/error.log',
@@ -90,12 +90,12 @@ def redis_flushall():
 
 def hipache_init_redis():
     info('initializing redis for hipache')
-    run('redis-cli DEL frontend:stage1.io')
-    run('redis-cli RPUSH frontend:stage1.io stage1 http://127.0.0.1:8080/')
+    run('redis-cli DEL frontend:%s' % env.host_string)
+    run('redis-cli RPUSH frontend:%s stage1 http://127.0.0.1:8080/' % env.host_string)
 
 def fix_permissions():
     with settings(warn_only=True):
-        if run('test -d /vagrant/app/cache').succeeded:
+        if run('test -d %s/app/cache' % env.project_path).succeeded:
             info('fixing cache and logs permissions')
             www_user = run('ps aux | grep -E \'nginx\' | grep -v root | head -1 | cut -d\  -f1')
             sudo('setfacl -R -m u:%(www_user)s:rwX -m u:$(whoami):rwX %(project_path)s/app/cache %(project_path)s/app/logs' % { 'www_user': www_user, 'project_path': env.project_path })
