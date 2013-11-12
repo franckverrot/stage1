@@ -7,6 +7,7 @@ $('[data-toggle=tooltip]').tooltip();
 $('input#email').focus();
 
 var demo_websocket_channel = '{{ channel }}';
+var is_building = {{ is_building ? 'true' : 'false' }};
 
 demo_websocket_listen(demo_websocket_channel);
 
@@ -105,6 +106,10 @@ $('form#form-build').on('submit', function(event) {
 
 <script type="text/mustache" id="tpl-meta">{% verbatim %}
 <h2>Building project {{project}}</h2>
+{% endverbatim %}</script>
+
+<script type="text/mustache" id="tpl-duration">{% verbatim %}
+<p><small>Based on previous builds, this will take approximately <strong>{{duration}} {{unit}}</strong>.</small></p>
 {% endverbatim %}</script>
 
 <script type="text/mustache" id="tpl-failed">{% verbatim %}

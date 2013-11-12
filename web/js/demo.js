@@ -28,7 +28,7 @@ function demo_websocket_listen(websocket_channel) {
 
 
     function processMessage(message) {
-        if (message.event === 'build.output.buffer') {
+        if (message.event === 'build.output.buffer' && is_building) {
             for (i in message.data) {
                 processMessage(message.data[i]);
             }
@@ -46,9 +46,21 @@ function demo_websocket_listen(websocket_channel) {
             var content = Mustache.render($('#tpl-steps').text(), { 'steps': message.data.steps });
             $('#build-steps').html(content);
 
-            var content = Mustache.render($('#tpl-meta').text(), { 'project': message.data.project.name });
+            var content = Mustache.render($('#tpl-meta').text(), { project: message.data.project.name });
             $('#build-meta').html(content);
 
+            if (message.data.previousBuild && message.data.previousBuild.duration) {
+                console.log('rendering duration', message.data.previousBuild.duration);
+                var duration = Math.ceil(message.data.previousBuild.duration / 60);
+                var content = Mustache.render($('#tpl-duration').text(), {
+                    duration: duration,
+                    unit: (duration == 1 ? 'minute' : 'minutes')
+                });
+                $('#build-meta').append(content);
+                console.log('rendered duration');
+            }
+
+            console.log('hiding form');
             $('#form-build').hide();
 
             $('#steps li').tooltip();

@@ -174,6 +174,7 @@ class Build
             'status_label_class' => $this->getStatusLabelClass(),
             'url' => $this->getUrl(),
             'port' => $this->getPort(),
+            'duration' => $this->getDuration(),
         ];
 
     }

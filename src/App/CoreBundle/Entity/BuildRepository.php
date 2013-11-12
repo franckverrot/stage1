@@ -7,6 +7,8 @@ use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 use Exception;
 
+use Doctrine\ORM\NoResultException;
+
 class BuildRepository extends EntityRepository
 {
     public function countPendingBuildsByProject(Project $project)
@@ -48,7 +50,7 @@ class BuildRepository extends EntityRepository
             return $this->findPreviousDemoBuild($build);
         }
 
-        return $this->createQueryBuilder('b')
+        $query = $this->createQueryBuilder('b')
             ->select()
             ->where('b.project = ?1')
             ->andWhere('b.ref = ?2')
@@ -60,13 +62,18 @@ class BuildRepository extends EntityRepository
             ])
             ->setMaxResults(1)
             ->orderBy('b.createdAt', 'DESC')
-            ->getQuery()
-            ->getSingleResult();
+            ->getQuery();
+
+        try {
+            $query->getSingleResult();
+        } catch (NoResultException $e) {
+            return null;
+        }
     }
 
     public function findPreviousDemoBuild(Build $build)
     {
-        return $this->createQueryBuilder('b')
+        $query = $this->createQueryBuilder('b')
             ->select()
             ->where('b.host = ?1')
             ->andWhere('b.status IN(?2)')
@@ -76,7 +83,12 @@ class BuildRepository extends EntityRepository
             ])
             ->setMaxResults(1)
             ->orderBy('b.createdAt', 'DESC')
-            ->getQuery()
-            ->getSingleResult();
+            ->getQuery();
+
+        try {
+            return $query->getSingleResult();
+        } catch (NoResultException $e) {
+            return null;
+        }
     }
 }

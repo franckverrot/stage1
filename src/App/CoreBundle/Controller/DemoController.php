@@ -127,6 +127,7 @@ class DemoController extends Controller
         return $this->render('AppCoreBundle:Demo:index.html.twig', [
             'projects' => $projects,
             'channel' => $channel,
+            'is_building' => (isset($build) && $build->isBuilding()),
         ]);
     }
 
@@ -180,6 +181,8 @@ class DemoController extends Controller
         $build->setHost(sprintf($this->container->getParameter('build_host_mask'), $subdomain.'.demo'));
         $build->setIsDemo(true);
 
+        $previousBuild = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->findPreviousBuild($build);
+
         $demo = new Demo();
         $demo->setEmail($email);
         $demo->setProject($project);
@@ -195,6 +198,7 @@ class DemoController extends Controller
             'build' => $build->asWebsocketMessage(),
             'steps' => $this->getSteps($project),
             'project' => $project->asWebsocketMessage(),
+            'previousBuild' => $previousBuild ? $previousBuild->asWebsocketMessage() : null,
         ]);
 
         $producer = $this->get('old_sound_rabbit_mq.build_producer');
