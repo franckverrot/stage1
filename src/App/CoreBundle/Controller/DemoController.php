@@ -151,6 +151,10 @@ class DemoController extends Controller
             $errors['email'] = 'Your e-mail is required.';
         }
 
+        if (false === filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Your e-mail seems to be invalid.';
+        }
+
         $session = $request->getSession();
         $session->set('demo_key', $session->get('demo_key', md5(uniqid(mt_rand(), true))));
 
