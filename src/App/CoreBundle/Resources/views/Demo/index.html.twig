@@ -45,7 +45,7 @@ $('form#form-build').on('submit', function(event) {
 {% endblock javascripts %}
 
 {% block body %}
-<p id="demo-intro" class="lead">The demo allows you to build <strong>your very own container</strong>. It will be built with love just for you, and you will be given a <strong>unique url</strong> to access it.</p>
+<p id="demo-intro" class="lead">The demo allows you to build <strong>your very own staging environment</strong>. It will be built with love just for you, and you will be given a <strong>unique url</strong> to access it.</p>
 <hr />
 <!-- <p class="lead">You can choose any of the following demo projects to build:</p> -->
 
@@ -97,8 +97,7 @@ $('form#form-build').on('submit', function(event) {
 {% include 'AppCoreBundle:Default:_marketing.html.twig' %}
 
 <script type="text/mustache" id="tpl-url">{% verbatim %}
-<hr />
-<p class="lead">Your build is ready!</p>
+<h2>Your {{project}} build is ready!</h2>
 <a class="btn btn-large btn-success" href="{{ url }}" target="_blank"><strong>Visit my build</strong></a>
 <br /><br />
 <p><small>You can also use this URL: <a href="{{ url }}" target="_blank">{{ url }}</a></small></p>
