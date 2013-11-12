@@ -338,15 +338,21 @@ Geoffrey
 EOM
 );
             $failed = [];
-            $res = $this->mailer->send($message, $failed);
 
-            echo '   sent '.$res.' emails'.PHP_EOL;
+            try {
+                $res = $this->mailer->send($message, $failed);
 
-            if (count($failed) > 0) {
-                echo '   failed '.count($failed).' recipients:'.PHP_EOL;
-                foreach ($failed as $recipient) {
-                    echo '    - '.$recipient.PHP_EOL;
+                echo '   sent '.$res.' emails'.PHP_EOL;
+
+                if (count($failed) > 0) {
+                    echo '   failed '.count($failed).' recipients:'.PHP_EOL;
+                    foreach ($failed as $recipient) {
+                        echo '    - '.$recipient.PHP_EOL;
+                    }
                 }
+            } catch (Swift_TransportException $e) {
+                echo '   exception while trying to send an email'.PHP_EOL;
+                echo '     '.$e->getMessage().PHP_EOL;
             }
         }
 
