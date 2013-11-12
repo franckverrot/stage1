@@ -151,7 +151,7 @@ class Controller extends BaseController
         $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
 
         if (!$build) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Build not found');
         }
 
         if ($checkAuth && !$build->getProject()->getUsers()->contains($this->getUser())) {
