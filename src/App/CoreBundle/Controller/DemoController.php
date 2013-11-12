@@ -6,6 +6,8 @@ use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Demo;
@@ -88,11 +90,15 @@ class DemoController extends Controller
         $build_id = $session->get('demo_build_id');
 
         if (null !== $build_id) {
-            $build = $this->findBuild($build_id, false);
+            try {
+                $build = $this->findBuild($build_id, false);
 
-            if (!$build->isBuilding()) {
-                $session->remove('demo_build_id');
-                $channel = 'demo-'.uniqid(mt_rand(), true);
+                if (!$build->isBuilding()) {
+                    $session->remove('demo_build_id');
+                    $channel = 'demo-'.uniqid(mt_rand(), true);
+                }                
+            } catch (NotFoundHttpException $e) {
+
             }
         }
 
