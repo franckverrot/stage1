@@ -29,7 +29,7 @@ case $1 in
         fi
         
         echo $$ > $PID_FILE
-        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer -vvv -w $2 >> $LOG_FILE 2>> $LOG_FILE
+        exec 2>&1 /usr/bin/php $CONSOLE rabbitmq:consumer -vvv -w -m 1 $2 >> $LOG_FILE 2>> $LOG_FILE
         ;;
     stop)
         kill $(cat $PID_FILE)
