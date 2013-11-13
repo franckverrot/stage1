@@ -204,3 +204,5 @@ IDEES DE OUF
     * faire gaffe aux infos sensibles (numeros de CB, telephone)
 * multiplexage de la session (tu vois ce que le client fait en live)
 * feature de "touring" sur la preprod
+* integration avec mailcatcher
+* integration avec gor (https://github.com/buger/gor)
