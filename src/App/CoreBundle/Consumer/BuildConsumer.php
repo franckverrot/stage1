@@ -21,6 +21,7 @@ use Exception;
 
 use Swift_Mailer;
 use Swift_Message;
+use Swift_TransportException;
 
 use Doctrine\ORM\NoResultException;
 
