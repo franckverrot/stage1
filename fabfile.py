@@ -278,7 +278,7 @@ def tag_release():
     local('git tag %s' % tag)
     info('tagged version %s' % tag)
 
-    local('git push --tags')
+    local('git push origin --tags')
 
 @runs_once
 def reset_environment():
