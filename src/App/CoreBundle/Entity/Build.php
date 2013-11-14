@@ -22,6 +22,8 @@ class Build
 
     const STATUS_OBSOLETE = 8;
 
+    const STATUS_STOPPED = 9;
+
     const LOG_OUTPUT = 'output';
 
     const LOG_APPLICATION = 'application';
@@ -232,6 +234,8 @@ class Build
                 return 'deleted';
             case self::STATUS_OBSOLETE:
                 return 'obsolete';
+            case self::STATUS_SOPPED:
+                return 'stopped';
             default:
                 return 'unknown';
         }
