@@ -10,3 +10,4 @@ default_ttl:        6 hours
 
 projects:
     - ubermuda/puphpet
+    - ubermuda/cmf-sandbox
