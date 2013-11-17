@@ -30,6 +30,8 @@ twig:
     globals:
         feature_ip_access_list: %feature_ip_access_list%
         feature_token_access_list: %feature_token_access_list%
+        google_analytics_tracking_code: %google_analytics_tracking_code%
+        google_analytics_site: %google_analytics_site%
 
 # Assetic Configuration
 assetic:
