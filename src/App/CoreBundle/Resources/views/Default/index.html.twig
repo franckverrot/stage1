@@ -4,14 +4,33 @@
 <div class="jumbotron">
     <h1>We do staging.</h1>
     <p class="lead"><strong>Stage1</strong> streamlines communication between developpers and product owners by enabling <b>automatic</b> and <b>frictionless</b> staging environments.</p>
+
+    {#
     <a class="btn btn-large btn-success" href="{{ path('app_core_auth_github_authorize') }}">
         Sign up today<br />
         <small>You will need a GitHub account</small>
     </a>
+    #}
     
+
+    <hr />
+
     <br /><br />
 
-    <p><a href="{{ path('app_core_demo') }}">You can also try the demo, it's free!</a></p>
+    <p>Don't be let behind, signup now for the private beta!</p>
+
+    <form method="post" action="{{ path('app_core_beta_signup') }}">
+        <div class="input-append">
+            <input type="text" name="email" placeholder="john.doe@gmail.com" />
+            <button class="btn btn-success">Go</button>
+        </div>
+    </form>
+
+    <br />
+
+    <p><a href="#">You also can fill-in our quick survey!</a></p>
+
+    {# <p><a href="{{ path('app_core_demo') }}">You can also try the demo, it's free!</a></p> #}
 </div>
 
 <hr />

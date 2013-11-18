@@ -1,0 +1,19 @@
+{% extends '::public.html.twig' %}
+
+{% block body %}
+<div class="jumbotron">
+    <h1>Thank you!</h1>
+
+    {% if beta.tries >= 10 %}
+    <p class="lead">Ok we get it, you REALLY want to use <strong>Stage1</strong>, thanks!</p>
+
+    {% else %}
+    <p class="lead">Yes, thank you for {% spaceless %}
+        {% if beta.tries > 1 and beta.tries < 10 %}
+            {% for i in range(1, beta.tries - 1) %}re-{% endfor %}
+        {% endif %}
+    {% endspaceless %}registering to <strong>Stage1</strong>'s private beta.</p>
+    {% endif %}
+    <p><a href="https://docs.google.com/forms/d/1_aFC4iYo6z6mLstgXKGrL07nRs-08l6mYD5et0uTZDo/viewform">You can still fill in our quick survey!</a></p>
+</div>
+{% endblock body %}

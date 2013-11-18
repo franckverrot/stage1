@@ -22,7 +22,7 @@ body {
   line-height: 1;
 }
 
-.jumbotron .btn {
+.jumbotron .btn-large {
   width: 210px;
   padding: 14px 24px;
 }
