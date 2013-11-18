@@ -9,7 +9,7 @@
 
     <route id="app_core_blog" pattern="/blog" />
 
-    <route id="app_core_blog_post" pattern="/blog/{slug}" />
+    <route id="app_core_blog_post" pattern="/blog/{slug}/" />
 
     <route id="app_core_survey" pattern="/survey">
         <default key="_controller">FrameworkBundle:Redirect:urlRedirect</default>
