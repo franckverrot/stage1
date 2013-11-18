@@ -36,8 +36,12 @@ class BetaController extends Controller
     {
         $email = $request->getSession()->get('beta_email');
 
-        return $this->render('AppCoreBundle:Beta:landing.html.twig', [
-            'beta' => $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email),
-        ]);
+        if (null === $email) {
+            return $this->render('AppCoreBundle:Default:index.html.twig');
+        } else {
+            return $this->render('AppCoreBundle:Beta:landing.html.twig', [
+                'beta' => $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email),
+            ]);            
+        }
     }
 }
