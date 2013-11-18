@@ -17,7 +17,7 @@
 
     <br /><br />
 
-    <p>Don't be let behind, signup now for the private beta!</p>
+    <p>Don't be let behind, <strong>signup now</strong> for the private beta!</p>
 
     <form method="post" action="{{ path('app_core_beta_signup') }}">
         <div class="input-append">
@@ -29,7 +29,8 @@
     <br />
 
     <p><a href="{{ path('app_core_survey') }}">You also can fill-in our quick survey!</a></p>
-    <p><a href="http://stage1.io/blog/redesigning-the-staging-experience/">What's this all about?</a></p>
+
+    <p><a href="{{ path('app_core_blog_post', { slug: 'redesigning-the-staging-experience' }) }}">What's this all about?</a></p>
 
     {# <p><a href="{{ path('app_core_demo') }}">You can also try the demo, it's free!</a></p> #}
 </div>

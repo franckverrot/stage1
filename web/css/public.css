@@ -3,6 +3,10 @@ body {
   padding-bottom: 40px;
 }
 
+.footer {
+  text-align: center;
+}
+
 /* Custom container */
 .container-narrow {
   margin: 0 auto;
