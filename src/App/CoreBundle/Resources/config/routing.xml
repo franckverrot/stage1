@@ -7,17 +7,21 @@
     <import resource="@AppCoreBundle/Resources/config/routing/project.xml" />
     <import resource="@AppCoreBundle/Resources/config/routing/build.xml" />
 
+    <route id="app_core_blog" pattern="/blog" />
+
     <route id="app_core_survey" pattern="/survey">
         <default key="_controller">FrameworkBundle:Redirect:urlRedirect</default>
         <default key="path">https://docs.google.com/forms/d/1_aFC4iYo6z6mLstgXKGrL07nRs-08l6mYD5et0uTZDo/viewform</default>
     </route>
 
     <route id="app_core_privacy" pattern="/privacy">
-        <default key="_controller">AppCoreBundle:Static:privacy</default>
+        <default key="_controller">FrameworkBundle:Template:template</default>
+        <default key="template">AppCoreBundle:Static:privacy.html.twig</default>
     </route>
 
     <route id="app_core_terms" pattern="/terms">
-        <default key="_controller">AppCoreBundle:Static:terms</default>
+        <default key="_controller">FrameworkBundle:Template:template</default>
+        <default key="template">AppCoreBundle:Static:terms.html.twig</default>
     </route>
 
     <route id="app_core_demo" pattern="/demo" methods="GET">
