@@ -234,7 +234,7 @@ class Build
                 return 'deleted';
             case self::STATUS_OBSOLETE:
                 return 'obsolete';
-            case self::STATUS_SOPPED:
+            case self::STATUS_STOPPED:
                 return 'stopped';
             default:
                 return 'unknown';

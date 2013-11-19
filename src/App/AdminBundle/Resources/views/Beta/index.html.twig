@@ -1,0 +1,29 @@
+{% extends '::admin.html.twig' %}
+
+{% block body %}
+<h3>Beta Signups</h3>
+<hr />
+
+<p class="lead">Found <strong>{{ signups | length }}</strong> beta signups.</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Key</th>
+            <th>Tries</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for signup in signups %}
+        <tr>
+            <td><a href="mailto:{{ signup.email }}">{{ signup.email }}</a></td>
+            <td><tt>{{ signup.betaKey }}</tt></td>
+            <td>{{ signup.tries }}</td>
+            <td><abbr class="timeago" title="{{ signup.createdAt | date('c') }}">{{ signup.createdAt | date('Y-m-d H:i:s') }}</abbr></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock body %}
