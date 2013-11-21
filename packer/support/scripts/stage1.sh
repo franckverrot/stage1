@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# sleep 1d
-
 export DEBIAN_FRONTEND=noninteractive
+
+# sleep 1d
 
 apt-get install -qy vim git curl
 
@@ -36,7 +36,6 @@ apt-get -qy install \
     rabbitmq-server \
     mysql-client \
     mysql-server \
-    monit \
     amqp-tools \
     realpath \
     htop \
@@ -64,14 +63,6 @@ cp /tmp/php-php.ini /etc/php5/fpm/php.ini
 if [ -f /tmp/rabbitmq-rabbitmq.config ]; then
     cp /tmp/rabbitmq-rabbitmq.config /etc/rabbitmq/rabbitmq.config
 fi
-
-cp /tmp/monit-monitrc /etc/monit/monitrc
-cp /tmp/monit-consumer-build /etc/monit/conf.d/consumer-build
-cp /tmp/monit-consumer-kill /etc/monit/conf.d/consumer-kill
-cp /tmp/monit-consumer-project-import /etc/monit/conf.d/consumer-project-import
-cp /tmp/monit-log-fetch /etc/monit/conf.d/log-fetch
-cp /tmp/monit-websockets /etc/monit/conf.d/websockets
-cp /tmp/monit-hipache /etc/monit/conf.d/hipache
 
 # install coffeescript
 

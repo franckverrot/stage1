@@ -17,7 +17,7 @@ app/check.php
 
 # Vagrant
 .vagrant
-app/Resources/boxes/
+boxes/
 
 # Node
 npm-debug.log

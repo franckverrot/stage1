@@ -9,8 +9,9 @@ chmod 0600 /home/vagrant/.ssh/id_rsa
 chmod 0644 /home/vagrant/.ssh/id_rsa.pub
 chmod 0600 /home/vagrant/.ssh/authorized_keys
 
-cp /tmp/ssh-config /home/vagrant/.ssh/config
-
-chmod 0600 /home/vagrant/.ssh/config
-
 chown -R vagrant /home/vagrant
+
+cp /tmp/ssh-config /etc/ssh/ssh_config
+
+chmod 0644 /etc/ssh/ssh_config
+chown root:root /etc/ssh/ssh_config

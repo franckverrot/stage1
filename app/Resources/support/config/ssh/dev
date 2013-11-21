@@ -1,6 +1,0 @@
-Host stage1-prod
-    Hostname 192.168.215.43
-    User vagrant
-    IdentityFile ~/.ssh/id_rsa
-    StrictHostKeyChecking no
-    # UserKnownHostsFile /dev/null

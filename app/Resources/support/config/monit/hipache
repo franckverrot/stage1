@@ -1,4 +1,0 @@
-check process hipache with pidfile /tmp/run/hipache.pid
-    start program = "/vagrant/bin/process/hipache start"
-        as uid root and gid root
-    stop program = "/vagrant/bin/process/hipache stop"

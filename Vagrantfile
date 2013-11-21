@@ -1,15 +1,15 @@
 # -*- mode: ruby -*-
-# vi: set ft=ruby :
+# vim:set ft=ruby:
 
 $script = <<EOF
-sudo /etc/init.d/monit restart
-sudo docker build -t symfony2 /vagrant/docker/symfony2
 cd /vagrant
 composer install
 /vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
 /vagrant/app/console assetic:dump
+export STAGE1_ENV=dev SYMFONY_ENV=dev
+sudo restart stage1
 EOF
 
 Vagrant.configure("2") do |config|
@@ -17,46 +17,23 @@ Vagrant.configure("2") do |config|
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
 
-    config.vm.provider :digital_ocean do |provider, override|
-        override.ssh.private_key_path = '~/.ssh/id_rsa'
-        override.vm.box = 'digital_ocean'
-        override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+    config.vm.box = "stage1-dev"
+    config.vm.box_url = "packer/boxes/dev.box"
 
-        provider.client_id = 'xlylJ0GKfaX5pXDL5JN4z'
-        provider.api_key = '0988Y84XvmEIlQa11MhuuVEeo1bUsqdiyWMMA71Ur'
-        provider.region = 2
-        provider.size = 66
-        provider.image = 'stage1.1376112242'
-    end
+    config.vm.hostname = 'stage1-dev'
+    config.vm.network :private_network, ip: '192.168.215.42'
+    config.vm.synced_folder ".", "/vagrant", :nfs => true
+    config.hostmanager.aliases = %w(
+        stage1.dev
+        feature-checkout.acmemuda-acmeshop.stage1.dev
+        master.acmemuda-acmeshop.stage1.dev
+        master.ubermuda-puphpet.stage1.dev
+    )
 
-    config.vm.define :dev do |dev|
-        dev.vm.box = "stage1-dev"
-        dev.vm.box_url = "app/Resources/boxes/dev.box"
+    config.vm.provision :shell, :inline => $script
 
-        dev.vm.hostname = 'stage1-dev'
-        dev.vm.network :private_network, ip: '192.168.215.42'
-        dev.vm.synced_folder ".", "/vagrant", :nfs => true
-        dev.hostmanager.aliases = %w(
-            stage1.dev
-            feature-checkout.acmemuda-acmeshop.stage1.dev
-            master.acmemuda-acmeshop.stage1.dev
-            master.ubermuda-puphpet.stage1.dev
-        )
-
-        dev.vm.provision :shell, :inline => $script
-
-        dev.vm.provider 'vmware_fusion' do |v|
-            v.vmx['memsize'] = 2028
-            v.vmx['numvcpus'] = 2
-        end
-    end
-
-    config.vm.define :prod do |prod|
-        prod.vm.box = "stage1-prod"
-        prod.vm.box_url = "app/Resources/boxes/ubuntu.box"
-
-        prod.vm.hostname = 'stage1-prod'
-        prod.vm.network :private_network, ip: '192.168.215.43'
-        prod.vm.synced_folder ".", "/vagrant", disabled: true
+    config.vm.provider 'vmware_fusion' do |v|
+        v.vmx['memsize'] = 2048
+        v.vmx['numvcpus'] = 2
     end
 end

@@ -1,0 +1,10 @@
+Host *
+    SendEnv LANG LC_*
+    HashKnownHosts yes
+    GSSAPIAuthentication yes
+    GSSAPIDelegateCredentials no
+    StrictHostKeyChecking no
+
+Host bitbucket.org
+    User git
+    IdentityFile /home/vagrant/.ssh/id_rsa
