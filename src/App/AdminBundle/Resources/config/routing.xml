@@ -4,6 +4,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
+    <route id="app_admin_beta_signups" pattern="/beta" methods="GET">
+        <default key="_controller">AppAdminBundle:Beta:index</default>
+    </route>
+
     <route id="app_admin_docker_containers" pattern="/docker/containers" methods="GET">
         <default key="_controller">AppAdminBundle:Docker\Container:index</default>
     </route>

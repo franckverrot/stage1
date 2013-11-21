@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Stage1</title>
-
+    <link rel="icon" type="image/png" href="/cog.png" />
     {% stylesheets output="assets/public.css"
         'css/vendor/*'
         'css/stage1.css'
@@ -22,8 +22,9 @@
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
+          <li><a href="{{ path('app_core_blog') }}">Blog</a></li>
           <li><a href="{{ path('app_core_auth_github_authorize') }}">Signin</a></li>
-          <li><a href="{{ path('app_core_demo') }}">Demo</a><li>
+          {# <li><a href="{{ path('app_core_demo') }}">Demo</a><li> #}
         </ul>
         <h3 class="muted"><a href="{{ path('app_core_homepage') }}">Stage1</a></h3>
       </div>
@@ -36,9 +37,7 @@
 
       <div class="footer">
         <ul class="breadcrumb">
-            <li>&copy; Stage1 2013 <span class="divider">/</separator></li>
-            <li><a href="{{ path('app_core_privacy') }}">Privacy</a> <span class="divider">/</separator></li>
-            <li><a href="{{ path('app_core_terms') }}">Terms</a></li>
+          <li>&copy; <a href="http://stage1.io/">Stage1</a> 2013</li>
         </ul>
       </div>
 
