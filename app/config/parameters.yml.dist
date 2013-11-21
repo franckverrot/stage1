@@ -26,3 +26,11 @@ parameters:
 
     # build timeout, in seconds
     stage1_build_timeout:       10
+
+    # docker
+    docker_api_base_url: http://127.0.0.1:9000/
+
+    # google analytics
+    # google_analytics_tracking_code: UA-45690665-2
+    google_analytics_tracking_code: ~
+    google_analytics_site: stage1.io
