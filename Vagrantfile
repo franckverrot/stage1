@@ -2,14 +2,15 @@
 # vim:set ft=ruby:
 
 $script = <<EOF
+sudo stop stage1
 cd /vagrant
 composer install
 /vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
 /vagrant/app/console assetic:dump
-export STAGE1_ENV=dev SYMFONY_ENV=dev
-sudo restart stage1
+/vagrant/app/console demo:setup
+sudo start stage1
 EOF
 
 Vagrant.configure("2") do |config|
