@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# @todo add locale configuration
-
 export DEBIAN_FRONTEND=noninteractive
 
 # sleep 1d
+
+echo LANG=en_US.UTF-8 > /etc/default/locale
+rm -f /var/lib/locales/supported.d/*
+echo en_US.UTF-8 UTF-8 > /var/lib/locales/supported.d/
+
+export LANG=en_US.UTF-8
+
+locale-gen
 
 apt-get install -qy vim git curl
 
