@@ -2,6 +2,10 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+usermod -aG docker vagrant
+cp /etc/ssh/ssh_config /home/vagrant/.ssh/config
+chmod 0600 /home/vagrant/.ssh/config
+
 if [ -f /tmp/grub-default ]; then
     mv /tmp/grub-default /etc/default/grub
     update-grub

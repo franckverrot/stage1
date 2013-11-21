@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# @todo add locale configuration
+
 export DEBIAN_FRONTEND=noninteractive
 
 # sleep 1d
@@ -41,8 +43,8 @@ apt-get -qy install \
     htop \
     acl \
     nodejs \
-    linux-image-generic-lts-raring \
-    lxc-docker
+    lxc-docker \
+    linux-image-generic-lts-raring
 
 # enable ACL on /
 
@@ -50,12 +52,7 @@ sed -e 's/errors=remount-ro/&,acl/' -i /etc/fstab
 mount -o remount /
 
 # install configuration
-
 cp /tmp/nginx-default /etc/nginx/sites-available/default
-
-if [ -f /tmp/nginx-htpasswd ]; then
-    cp /tmp/nginx-htpasswd /etc/nginx/htpasswd
-fi
 
 cp /tmp/php-php.ini /etc/php5/cli/php.ini
 cp /tmp/php-php.ini /etc/php5/fpm/php.ini
@@ -64,8 +61,12 @@ if [ -f /tmp/rabbitmq-rabbitmq.config ]; then
     cp /tmp/rabbitmq-rabbitmq.config /etc/rabbitmq/rabbitmq.config
 fi
 
-# install coffeescript
+if [ -f /tmp/grub-default ]; then
+    mv /tmp/grub-default /etc/default/grub
+    update-grub
+fi
 
+# install coffeescript
 npm install -g coffee-script
 
 # install composer
@@ -73,19 +74,9 @@ npm install -g coffee-script
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 
-# prepare directories
-
-mkdir -p /tmp/run
-chown vagrant /tmp/run
-
 # docker specific stuff
-
 docker pull ubuntu:precise
-groupadd docker
-usermod -G docker vagrant
 
 # hipache
-
-# npm install -g hipache
 npm install -g git://github.com/ubermuda/hipache.git
 mkdir -p /var/log/hipache
