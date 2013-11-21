@@ -25,6 +25,7 @@ node/node_modules/
 node/primus-channels.js
 node/websocket.js
 node/log_fetch.js
+node/aldis.js
 web/js/primus.js
 
 # Others
