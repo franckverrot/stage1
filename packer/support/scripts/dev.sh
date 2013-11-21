@@ -27,7 +27,7 @@ apt-get install -q -y ruby rubygems
 gem install --no-ri --no-rdoc bundler
 
 # prepare a few thing that we won't have to do during vagrant up
-git clone git@bitbucket.org:ubermuda/stage1.git --branch feature/procfile /vagrant
+git clone git@bitbucket.org:ubermuda/stage1.git --branch master --single-branch --depth 1 /vagrant
 
 cd /vagrant
 
