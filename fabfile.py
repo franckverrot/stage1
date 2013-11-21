@@ -5,16 +5,20 @@ from time import sleep
 env.host_string = 'stage1.io'
 env.user = 'root'
 env.project_path = '/var/www'
+env.upstart_path = '/etc/init'
+env.remote_dump_path = '/root/dump'
+env.local_dump_path = '~/dump'
 env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
+env.processes_prefix = 'stage1'
 env.processes = [
-    'consumer-build-0',
-    'consumer-build-1',
+    'consumer-build',
     'consumer-kill',
     'consumer-project-import',
     'websockets',
-    'log-fetch'
+    'log-fetch',
+    'hipache'
 ]
 
 env.log_files = [
@@ -26,17 +30,51 @@ env.log_files = [
     '/var/log/mysql/error.log',
 ]
 
+def backup():
+    run('mkdir -p %s' % env.remote_dump_path);
+    run('mysqldump -u root symfony > %s/stage1.sql' % env.remote_dump_path)
+    run('cp /var/lib/redis/dump.rdb %s/dump.rdb' % env.remote_dump_path)
+    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete %(user)s@%(host)s:%(remote)s/* %(local)s' % {
+        'user': env.user,
+        'host': env.host_string,
+        'remote': env.remote_dump_path,
+        'local': env.local_dump_path
+    })
+
+def restore():
+    if not local('test -d %s' % env.local_dump_path).succeeded:
+        info('nothing to restore')
+        exit
+
+    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete %(local)s/* %(user)s@%(host)s:%(remote)s' % {
+        'user': env.user,
+        'host': env.host_string,
+        'remote': env.remote_dump_path,
+        'local': env.local_dump_path
+    })
+
+    run('mysqladmin -u root -f drop symfony')
+    run('mysqladmin -u root create symfony')
+    run('mysql -u root symfony < %s/stage1.sql' % env.remote_dump_path)
+
+    run('service redis-server stop')
+    run('cp %s/dump.rdb /var/lib/redis/dump.rdb' % env.remote_dump_path)
+    run('service redis-server start')
+
+    run('restart hipache')
+
+def deploy_upstart():
+    local('sudo foreman export upstart /tmp/init -u root -a stage1')
+    local('sudo find /tmp/init -type f -exec sed -e \'s!/vagrant!%s!\' -e \'s! export PORT=.*;!!\' -i "{}" \;' % env.project_path)
+    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete /tmp/init/* %(user)s@%(host)s:%(remote)s' % {
+        'user': env.user,
+        'host': env.host_string,
+        'remote': env.upstart_path
+    })
+
+
 def rm_cache():
     sudo('rm -rf %s/app/cache/*' % env.project_path)
-
-def hipache_start():
-    sudo('monit start hipache')
-
-def hipache_stop():
-    sudo('monit stop hipache')
-
-def hipache_restart():
-    sudo('monit restart hipache')
 
 def llog():
     local('sudo tail -f %s' % ' '.join(env.log_files))
@@ -52,28 +90,31 @@ def prepare_assets():
     local('app/console assetic:dump --env=prod --no-debug')
 
 def provision():
-    with settings(warn_only=True):
-        if run('test -f /etc/apt/sources.list.d/dotdeb.list').succeeded:
-            info('already provisioned, skipping')
-            return
+    # with settings(warn_only=True):
+        # if run('test -f /etc/apt/sources.list.d/dotdeb.list').succeeded:
+            # info('already provisioned, skipping')
+            # return
 
-    info('provisioning host')
+    info('provisioning %s' % env.host_string)
 
     with cd('/tmp'):
-        put('app/Resources/support/config/apt/dotdeb.list', 'apt-dotdeb.list')
-        put('app/Resources/support/config/apt/rabbitmq.list', 'apt-rabbitmq.list')
-        put('app/Resources/support/config/apt/sources.list', 'apt-sources.list')
-        put('app/Resources/support/config/nginx/prod/default', 'nginx-default')
-        put('app/Resources/support/config/nginx/prod/htpasswd', 'nginx-htpasswd')
-        put('app/Resources/support/config/php/prod.ini', 'php-php.ini')
-        put('app/Resources/support/scripts/stage1.sh', 'stage1.sh')
+        put('packer/support/config/apt/dotdeb.list', 'apt-dotdeb.list')
+        put('packer/support/config/apt/docker.list', 'apt-docker.list')
+        put('packer/support/config/apt/rabbitmq.list', 'apt-rabbitmq.list')
+        put('packer/support/config/apt/sources.list', 'apt-sources.list')
+        put('packer/support/config/nginx/prod/default', 'nginx-default')
+        put('packer/support/config/php/prod.ini', 'php-php.ini')
+        put('packer/support/config/grub/default', 'grub-default')
+        put('packer/support/scripts/stage1.sh', 'stage1.sh')
+        put('packer/support/scripts/prod.sh', 'prod.sh')
 
         with settings(warn_only=True):
             if run('test -d /usr/lib/vmware-tools').succeeded:
-                put('app/Resources/support/config/rabbitmq/vm.config', 'rabbitmq-rabbitmq.config')
+                put('packer/support/config/rabbitmq/vm.config', 'rabbitmq-rabbitmq.config')
 
     sudo('bash /tmp/stage1.sh')
-    reboot()
+    sudo('bash /tmp/prod.sh')
+    # reboot()
 
 def check_connection():
     run('echo "OK"')
@@ -177,10 +218,7 @@ def cold_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     services_restart()
-    info('giving monit some time...')
-    sleep(2) # give monit some time to be reachable
     processes_start()
-    hipache_restart()
 
     run('chown -R www-data:www-data %s' % env.project_path)
     run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
@@ -206,10 +244,7 @@ def hot_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     services_restart()
-    info('giving monit some time...')
-    sleep(2) # give monit some time to be reachable
     processes_start()
-    hipache_restart()
     run('chown -R www-data:www-data %s' % env.project_path)
     run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
 
@@ -232,25 +267,24 @@ def processes_stop():
     info('stopping processes')
     with settings(warn_only=True):
         for process in env.processes:
-            sudo('monit stop %s' % process)
+            sudo('stop %s-%s' % (env.processes_prefix, process))
 
 def processes_start():
     info('starting processes')
     with settings(warn_only=True):
         for process in env.processes:
-            sudo('monit start %s' % process)
+            sudo('start %s-%s' % (env.processes_prefix, process))
 
 def processes_restart():
     info('restarting processes')
     with settings(warn_only=True):
         for process in env.processes:
-            sudo('monit restart %s' % process)
+            sudo('restart %s-%s' % (env.processes_prefix, process))
 
 def services_restart():
     sudo('/etc/init.d/nginx restart')
     sudo('/etc/init.d/php5-fpm restart')
     sudo('/etc/init.d/rabbitmq-server restart')
-    sudo('/etc/init.d/monit reload')
 
 @runs_once
 def prepare_deploy(ref='HEAD'):
