@@ -12,6 +12,7 @@ app/logs/
 Vagrantfile
 .vagrant
 /packer_cache/
+/packer
 
 .git*
 
@@ -60,4 +61,3 @@ composer.*
 /app/logs/
 /web/app_dev.php
 /vendor/incenteev/
-/app/Resources/boxes/
