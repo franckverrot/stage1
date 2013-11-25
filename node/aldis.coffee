@@ -1,9 +1,9 @@
 #!/usr/bin/coffee
 
 opts =
-    queue: 'docker_output'
-    docker_socket: '/var/run/docker.sock'
-    amqp_dsn: 'amqp://localhost'
+    docker_socket: process.env.ALDIS_DOCKER || '/var/run/docker.sock'
+    amqp_dsn: process.env.ALDIS_AMQP || 'amqp://localhost'
+    queue: process.env.ALDIS_QUEUE || 'docker_output'
 
 attachOptions = { logs: false, stream: true, stdout: true, stderr: true }
 
