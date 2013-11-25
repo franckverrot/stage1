@@ -29,6 +29,8 @@ parameters:
 
     # docker
     docker_api_base_url: http://127.0.0.1:9000/
+    docker_default_memory_limit: 134217728      # 128MB
+    docker_default_cpu_shares: 1
 
     # google analytics
     # google_analytics_tracking_code: UA-45690665-2
