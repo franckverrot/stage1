@@ -1,10 +1,13 @@
 {
     "name": "autostack/stage1",
-    "license": "MIT",
+    "license": "closed",
     "type": "project",
     "description": "The staging environment builder",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-0": {
+            "": "src/",
+            "Docker\\Tests": "tests/"
+        }
     },
     "require": {
         "php": ">=5.3.3",
@@ -22,6 +25,9 @@
         "ircmaxell/password-compat": "1.0.3",
         "guzzle/guzzle": "3.7.*",
         "drak/native-session": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
     },
     "scripts": {
         "post-install-cmd": [

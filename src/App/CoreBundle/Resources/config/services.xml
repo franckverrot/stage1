@@ -25,6 +25,10 @@
             <argument>%docker_api_base_url%</argument>
         </service>
 
+        <service id="app_core.docker" class="App\CoreBundle\Docker\Docker">
+            <argument type="service" id="app_core.client.docker" />
+        </service>
+
         <service id="app_core.discover.github" class="App\CoreBundle\Discover\Github">
             <argument type="service" id="app_core.client.github" />
             <argument type="service" id="logger" />
@@ -40,6 +44,14 @@
                 <argument>%feature_ip_access_list%</argument>
                 <argument>%feature_token_access_list%</argument>
             </call>
+        </service>
+
+
+        <service id="app_core.builder" class="App\CoreBundle\Builder\Builder">
+            <argument type="service" id="logger" />
+            <argument type="service" id="debug.stopwatch" />
+            <argument type="service" id="app_core.docker" />
+            <argument type="service" id="doctrine" />
         </service>
 
         <!-- rabbitmq consumers -->
