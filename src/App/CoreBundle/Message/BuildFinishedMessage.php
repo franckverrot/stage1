@@ -9,7 +9,7 @@ class BuildStartedMessage extends AbstractMessage
         $build = $this->build;
 
         return json_encode([
-            'event' => 'build.started',
+            'event' => 'build.finished',
             'channel' => $build->getChannel(),
             'timestamp' => microtime(true),
             'data' => [

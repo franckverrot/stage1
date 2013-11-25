@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Entity;
 
+use Docker\Container;
+
 use BadMethodCallException;
 
 class Build
@@ -177,7 +179,7 @@ class Build
             'url' => $this->getUrl(),
             'port' => $this->getPort(),
             'duration' => $this->getDuration(),
-            'project' => $this->getProject()->asWebsocketMessage(),
+            'project' => $this->getProject()->asMessage(),
         ];
 
     }
@@ -438,6 +440,17 @@ class Build
     public function getContainerId()
     {
         return $this->containerId;
+    }
+
+    /**
+     * @return Docker\Container
+     */
+    public function getContainer()
+    {
+        $container = new Container();
+        $container->setId($this->getContainerId());
+
+        return $container;
     }
 
     /**

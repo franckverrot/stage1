@@ -77,7 +77,7 @@ class Project
         return $this->getGithubFullName();
     }
 
-    public function asWebsocketMessage()
+    public function asMessage()
     {
         return [
             'id' => $this->getId(),
