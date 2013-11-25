@@ -164,7 +164,7 @@ class Build
         return $this->normalize($this->getRef());
     }
 
-    public function asWebsocketMessage()
+    public function asMessage()
     {
         return [
             'id' => $this->getId(),
@@ -177,6 +177,7 @@ class Build
             'url' => $this->getUrl(),
             'port' => $this->getPort(),
             'duration' => $this->getDuration(),
+            'project' => $this->getProject()->asWebsocketMessage(),
         ];
 
     }

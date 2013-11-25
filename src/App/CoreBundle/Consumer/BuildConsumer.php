@@ -242,9 +242,38 @@ class BuildConsumer implements ConsumerInterface
     {
         $body = json_decode($message->body);
 
-        $build_start = time();
-
         $build = $this->getBuildRepository()->find($body->build_id);
+
+        $em = $this->doctrine->getManager();
+        $build = $em->getRepository('AppCoreBundle:Build')->find($body->build_id);
+
+        if (!$build) {
+            echo '[x] could not find build #'.$body->build_id;
+            return;
+        }
+
+        $build->setStatus(Build::STATUS_BUILDING);
+
+        $em->persist($build);
+        $em->flush();
+
+        $this->stopwatch->start($build->getChannel());
+
+        $message = new BuildStartedMessage($build);
+        $this->producer->publish((string) $message);
+
+        $container = $this->getBuilder()->run($build);
+
+        $event = $this->stopwatch->stop($build->getChannel());
+
+        $build->setStartTime($event->getStartTime());
+        $build->getEndTime($event->getEndTime());
+        $build->setDuration($event->getDuration());
+        $build->setMemoryUsage($event->getMemory());
+
+        return;
+
+        #################################### LEGACY SHIT ####################################
 
         echo '<- received build order'.PHP_EOL;
         echo '   build started at '.$build_start.PHP_EOL;
