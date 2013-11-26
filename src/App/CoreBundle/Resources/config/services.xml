@@ -85,6 +85,13 @@
             <argument type="service" id="doctrine" />
         </service>
 
+        <!-- build listeners -->
+
+        <service id="app_core.listener.demo_build_email" class="App\CoreBundle\EventListener\Build\DemoBuildEmailListener">
+            <argument type="service" id="mailer" />
+            <tag name="kernel.event_listener" event="build.finished" method="onBuildFinished" />
+        </service>
+
         <!-- kernel listeners -->
 
         <service id="app_core.listener.configure" class="App\CoreBundle\EventListener\ConfigureListener">

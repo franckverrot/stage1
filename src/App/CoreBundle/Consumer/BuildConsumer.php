@@ -6,6 +6,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use App\CoreBundle\Entity\Build;
 
@@ -29,6 +30,10 @@ use App\CoreBundle\Message\BuildStartedMessage;
 use App\CoreBundle\Message\BuildFinishedMessage;
 use App\CoreBundle\Message\BuildStepMessage;
 
+use App\CoreBundle\BuildEvents;
+
+use App\CoreBundle\Event\BuildFinishedEvent;
+
 class BuildConsumer implements ConsumerInterface
 {
     private $doctrine;
@@ -43,8 +48,9 @@ class BuildConsumer implements ConsumerInterface
 
     private $expectedMessages = 0;
 
-    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router, Swift_Mailer $mailer, $buildHostMask)
+    public function __construct(EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Producer $producer, Router $router, Swift_Mailer $mailer, $buildHostMask)
     {
+        $this->dispatcher = $dispatcher;
         $this->doctrine = $doctrine;
         $this->producer = $producer;
         $this->router = $router;
@@ -82,6 +88,7 @@ class BuildConsumer implements ConsumerInterface
 
         $this->stopwatch->start($build->getChannel());
 
+        /** @todo write a producer that accepts Message objects */
         $message = new BuildStartedMessage($build);
         $this->producer->publish((string) $message);
 
@@ -106,6 +113,8 @@ class BuildConsumer implements ConsumerInterface
             $build->setMessage($e->getMessage());
         }
 
+        $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));
+
         $event = $this->stopwatch->stop($build->getChannel());
 
         if (strlen($build->getHost()) === 0) {
@@ -122,46 +131,5 @@ class BuildConsumer implements ConsumerInterface
 
         $message = new BuildFinishedMessage($build);
         $producer->publish((string) $message);
-
-        return;
-
-        #################################### LEGACY SHIT ####################################
-
-        if ($build->isRunning() && $build->isDemo()) {
-            $buildUrl = $build->getUrl();
-
-            echo '   sending demo build email to "'.$build->getDemo()->getEmail().'"'.PHP_EOL;
-
-            $message = Swift_Message::newInstance()
-                ->setSubject('Your Stage1 demo build is ready')
-                ->setFrom('geoffrey@stage1.io')
-                ->setTo($build->getDemo()->getEmail())
-                ->setBody(<<<EOM
-Your demo build is ready and you can access it through the following url:
-
-$buildUrl
-
--- 
-Geoffrey
-EOM
-);
-            $failed = [];
-
-            try {
-                $res = $this->mailer->send($message, $failed);
-
-                echo '   sent '.$res.' emails'.PHP_EOL;
-
-                if (count($failed) > 0) {
-                    echo '   failed '.count($failed).' recipients:'.PHP_EOL;
-                    foreach ($failed as $recipient) {
-                        echo '    - '.$recipient.PHP_EOL;
-                    }
-                }
-            } catch (Swift_TransportException $e) {
-                echo '   exception while trying to send an email'.PHP_EOL;
-                echo '     '.$e->getMessage().PHP_EOL;
-            }
-        }
     }
 }
