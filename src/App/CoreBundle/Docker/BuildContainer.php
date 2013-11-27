@@ -12,16 +12,16 @@ class BuildContainer extends Container
     {
         parent::__construct([
             'Env' => [
-                'SSH_URL' => $build->getProject()->getSshUrl(),
-                'REF' => $build->getRef(),
-                'HASH' => $build->getHash(),
+                'SSH_URL='.$build->getProject()->getSshUrl(),
+                'REF='.$build->getRef(),
+                'HASH='.$build->getHash(),
                 /**
                  * @todo there must be a way to avoid requiring a valid access token
                  *       I think the token is only used to avoid hitting github's
                  *       API limit through composer, so maybe there's a way to use a
                  *       stage1 specific token instead
                  */
-                'ACCESS_TOKEN' => $build->getProject()->getUsers()->first()->getAccessToken()
+                'ACCESS_TOKEN='.$build->getProject()->getUsers()->first()->getAccessToken()
             ],
             'Image' => $build->getImageName(),
             'Cmd' => ['buildapp']
