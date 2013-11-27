@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Message;
 
+use App\CoreBundle\Entity\Build;
+
 class BuildStepMessage extends AbstractMessage
 {
     private $step;
@@ -13,18 +15,10 @@ class BuildStepMessage extends AbstractMessage
         parent::__construct($build);
     }
 
-    public function toArray()
+    public function getData()
     {
-        $build = $this->getBuild();
-        $step = $this->step;
-
-        return [
-            'event' => 'build.step',
-            'channel' => $build->getChannel(),
-            'data' => [
-                'build' => $build->asMessage(),
-                'announce' => ['step' => $step],
-            ]
-        ];
+        return array_merge(parent::getData(), [
+            'announce' => ['step' => $step],
+        ]);
     }
 }

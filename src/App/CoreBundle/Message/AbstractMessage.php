@@ -6,18 +6,28 @@ use App\CoreBundle\Entity\Build;
 
 use Exception;
 
-abstract class AbstractMessage
+abstract class AbstractMessage implements MessageInterface
 {
-    private $build;
-    
-    public function __construct(Build $build)
+    private $object;
+
+    public function __construct($object)
     {
-        $this->build = $build;
+        $this->object = $object;
     }
 
-    public function getBuild()
+    public function getObject()
     {
-        return $this->build;
+        return $this->object;
+    }
+
+    public function toArray()
+    {
+        return [
+            'event' => $this->getEvent(),
+            'channel' => $this->getChannel(),
+            'timestamp' => microtime(true),
+            'data' => $this->getData(),
+        ];
     }
 
     public function __toString()
@@ -30,5 +40,21 @@ abstract class AbstractMessage
         }
     }
 
-    abstract public function toArray();
+    public function getEvent()
+    {
+        $className = get_class($this);
+        $className = substr($className, strrpos($className, '\\') + 1, -7);
+
+        return strtolower(preg_replace('~(?<=\\w)([A-Z])~', '.$1', $className));
+    }
+
+    public function getData()
+    {
+        return $this->object->asMessage();
+    }
+
+    public function getChannel()
+    {
+        return $this->objet->getChannel();
+    }
 }

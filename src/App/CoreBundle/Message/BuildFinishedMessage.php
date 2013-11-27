@@ -2,20 +2,12 @@
 
 namespace App\CoreBundle\Message;
 
+use App\CoreBundle\Entity\Build;
+
 class BuildFinishedMessage extends AbstractMessage
 {
-    public function toArray()
+    public function __construct(Build $build)
     {
-        $build = $this->getBuild();
-        
-        return [
-            'event' => 'build.finished',
-            'channel' => $build->getChannel(),
-            'timestamp' => microtime(true),
-            'data' => [
-                'progress' => 0,
-                'build' => $build->asMessage(),
-            ]
-        ];
+        parent::__construct($build);
     }
 }
