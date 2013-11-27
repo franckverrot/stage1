@@ -2,6 +2,11 @@ body {
     padding-top: 60px;
 }
 
+.modal {
+    width: 920px;
+    margin-left: -460px;
+}
+
 .nav-tabs > li > a, .nav-pills > li > a {
     /*line-height: inherit;*/
 }
