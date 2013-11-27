@@ -12,6 +12,7 @@ class BuildContainer extends Container
     {
         parent::__construct([
             'Env' => [
+                'BUILD_ID='.$build->getId(),
                 'SSH_URL='.$build->getProject()->getSshUrl(),
                 'REF='.$build->getRef(),
                 'HASH='.$build->getHash(),
