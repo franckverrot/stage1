@@ -42,7 +42,7 @@ primus.on 'connection', (spark) ->
             console.log '-> sending event "' + 'build.output.buffer'.yellow + '" for channel "' + channel.name.yellow + '" to spark#' + spark.id
             console.log '   buffer contains ' + (new String(buffer[channel.name].length).yellow) + ' items'
             
-            spark.write event: 'build.output.buffer', data: buffer[channel.name]
+            spark.write event: 'build.output.buffer', channel: channel.name, timestamp: null, data: buffer[channel.name]
 
     spark.on 'data', (data) ->
 
@@ -70,16 +70,12 @@ amqp.connect('amqp://localhost').then (conn) ->
                     console.log '<- received event "' + content.event + '" for channel "' + content.channel + '"'
 
                     if content.channel?
-                        unless buffer[content.channel]
-                            buffer[content.channel] = []
-
-                        buffer[content.channel].push(content)
-
-                        if content.event == 'build.finished' and buffer[content.channel]
+                        if content.event == 'build.finished'
                             console.log 'cleaning mess in channel ' + content.channel.yellow
-                            for m, i in buffer[content.channel]
-                                if !m or (m.data and m.data.build.id == content.data.build.id)
-                                    buffer[content.channel].splice(i, 1)
+                            delete buffer[content.channel] if buffer[content.channel]
+                        else
+                            buffer[content.channel] = [] unless buffer[content.channel]
+                            buffer[content.channel].push(content)
 
                         if primus.channels[content.channel]?
                             console.log '-> broadcasting event "' + content.event.yellow + '" to channel "' + content.channel.yellow + '"'
