@@ -211,7 +211,7 @@ class Import
 
     private function doKeys(Project $project)
     {
-        $keys = SshKeys::generate('Stage 1 - ' . $project->getFullName());
+        $keys = SshKeys::generate();
 
         $project->setPublicKey($keys['public']);
         $project->setPrivateKey($keys['private']);
@@ -219,58 +219,79 @@ class Import
 
     private function doDeployKey(Project $project)
     {
-        $keysUrl = str_replace('{/key_id}', '', $project->getKeysUrl());
-        $keys = $this->github_get($keysUrl);
+        $request = $this->client->get($project->getKeysUrl());
+        $response = $request->send();
 
-        $deployKey = $project->getPublicKey();
-        $deployKey = substr($deployKey, 0, strrpos($deployKey, ' '));
+        $keys = $response->json();
+        $projectDeployKey = $project->getPublicKey();
 
-        foreach ($keys as $_) {
-            if ($_->key === $deployKey) {
-                $key = $_;
-                break;
+        $scheduleDelete = [];
+
+        foreach ($keys as $key) {
+            if ($key['key'] === $projectDeployKey) {
+                $installedKey = $key;
+                continue;
+            }
+
+            if (strpos($key['title'], 'stage1.io') === 0) {
+                $scheduleDelete[] = $key;
             }
         }
 
-        if (!isset($key)) {
-            $key = $this->github_post($keysUrl, [
-                'key' => $deployKey,
-                'title' => 'Stage1 Deploy Key (added by ' . $this->getUser()->getUsername() .' )',
-            ]);
+        if (!isset($installedKey)) {
+            $request = $this->client->post($project->getKeysUrl());
+            $request->setBody(json_encode([
+                'key' => $projectDeployKey,
+                'title' => 'stage1.io (added by '.$this->getUser()->getUsername().')',
+            ]), 'application/json');
+
+            $response = $request->send();
+            $installedKey = $response->json();
         }
 
-        $project->setGithubDeployKeyId($key->id);
+        $project->setGithubDeployKeyId($installedKey['id']);
 
+        if (count($scheduleDelete) > 0) {
+            foreach ($scheduleDelete as $key) {
+                $request = $this->client->delete([$project->getKeysUrl(), ['key_id' => $key['id']]]);
+                $response = $request->send();
+            }
+        }
     }
 
     private function doWebhook(Project $project)
     {
-        $hooksUrl = $project->getHooksUrl();
         $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
 
         # @todo the fuck is this?
         $githubHookUrl = str_replace('http://localhost', 'http://stage1.io', $githubHookUrl);
-        $githubHookUrl = str_replace('http://stage1.io', 'http://stage1:stage1@stage1.io', $githubHookUrl);
 
-        $hooks = $this->github_get($hooksUrl);
+        $request = $this->client->get($project->getHooksUrl());
+        $response = $request->send();
 
-        foreach ($hooks as $_) {
-            if ($_->name === 'web' && $_->config->url === $githubHookUrl) {
-                $hook = $_;
+        $hooks = $response->json();
+
+        foreach ($hooks as $hook) {
+            if ($hook['name'] === 'web' && $hook['config']['url'] === $githubHookUrl) {
+                $installedHook = $hook;
                 break;
             }
         }
 
-        if (!isset($hook)) {
-            $hook = $this->github_post($hooksUrl, [
+        if (!isset($installedHook)) {
+            $request = $this->client->post($project->getHooksUrl());
+            $request->setBody(json_encode([
                 'name' => 'web',
                 'active' => true,
                 'events' => ['push'],
                 'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
-            ]);                
+            ]), 'application/json');
+
+            $response = $request->send();
+            $installedHook = $response->json();
         }
 
-        $project->setGithubHookId($hook->id);
+        $project->setGithubHookId($installedHook['id']);
     }
 
     private function doBranches(Project $project)
