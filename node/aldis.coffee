@@ -56,10 +56,12 @@ amqp.connect('amqp://' + opts.amqp).then((conn) ->
     if getopt.options.attach
         console.log('.. attaching already running containers')
         docker.listContainers null, (err, containers) ->
+            return unless containers
             containers.forEach (data) ->
                 attach(docker.getContainer(data.Id), channel)
 
     docker.getEvents(null, (err, stream) ->
+        throw err if err
         console.log((' ✓ connected to docker at "' + opts.docker + '"').green)
 
         stream.on('data', (data) ->
