@@ -190,7 +190,9 @@ class Build
             'url' => $this->getUrl(),
             'port' => $this->getPort(),
             'duration' => $this->getDuration(),
-            'project' => $this->getProject()->asMessage(),
+            'project' => (null === $this->getProject()
+                ? []
+                : $this->getProject()->asMessage()),
         ];
 
     }
