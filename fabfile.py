@@ -61,7 +61,7 @@ def restore():
     run('cp %s/dump.rdb /var/lib/redis/dump.rdb' % env.remote_dump_path)
     run('service redis-server start')
 
-    run('restart hipache')
+    run('restart %s-hipache' % env.processes_prefix)
 
 def deploy_upstart():
     local('sudo foreman export upstart /tmp/init -u root -a stage1')
