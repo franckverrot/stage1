@@ -21,6 +21,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 
 use Docker\Docker;
+use Docker\Exception\ContainerNotFoundException;
 
 use Exception;
 
@@ -79,23 +80,39 @@ class BuildConsumer implements ConsumerInterface
 
             $previousBuild = $buildRepository->findPreviousBuild($build);
 
+            // @todo move to a build.finished listener
             if ($previousBuild && $previousBuild->hasContainer()) {
-                $this->docker->getContainerManager()->stop($previousBuild->getContainer());
+                try {
+                    $this->docker->getContainerManager()->stop($previousBuild->getContainer());
+                } catch (ContainerNotFoundException $e) {
+                    $this->logger->warn('Found previous container but docker did not find it', ['container' => $previousBuild->getContainer()->getContainerId()]);
+                }
                 $previousBuild->setStatus(Build::STATUS_OBSOLETE);
                 $em->persist($previousBuild);
             }
 
+            // @todo move to a build.finished listener
             if (strlen($build->getHost()) === 0) {
                 $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
             }
 
             $build->setStatus(Build::STATUS_RUNNING);
-
-            $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));            
         } catch (Exception $e) {
-            $this->logger->error('Build failed', ['exception' => $e]);
+            $this->logger->error('build failed', ['build' => $build->getId(), 'exception' => $e]);
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());
+        }
+
+        /**
+         * We run this in a separate try/catch because even if the main build fails
+         * we want to let listeners a chance to do something
+         */
+        try {
+            $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));            
+        } catch (Exception $e) {
+            $this->logger->error('build.finished listeners failed', ['build' => $build->getId(), 'exception' => $e]);
+            $build->setStatus(Build::STATUS_FAILED);
+            $build->setMessage(get_class($e).': '.$e->getMessage());            
         }
 
         $em->persist($build);

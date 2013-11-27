@@ -89,21 +89,8 @@ class KillConsumer implements ConsumerInterface
         }
 
         if (!$build->isBuilding()) {
-            $this->producer->publish(json_encode([
-                'event' => 'build.finished',
-                'channel' => $build->getProject()->getChannel(),
-                'timestamp' => microtime(true),
-                'data' => [
-                    'build' => array_replace([
-                        'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
-                        ], $build->asWebsocketMessage()),
-                    'project' => [
-                        'id' => $build->getProject()->getId(),
-                        'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),
-                    ]
-                ]
-            ]));
-            
+            $message = new BuildFinishedMessage($build);
+            $this->producer->publish((string) $message);
             return true;
         }
 
@@ -132,19 +119,7 @@ class KillConsumer implements ConsumerInterface
 
         echo '-> sending build.finished'.PHP_EOL;
 
-        $this->producer->publish(json_encode([
-            'event' => 'build.finished',
-            'channel' => $build->getProject()->getChannel(),
-            'timestamp' => microtime(true),
-            'data' => [
-                'build' => array_replace([
-                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
-                    ], $build->asWebsocketMessage()),
-                'project' => [
-                    'id' => $build->getProject()->getId(),
-                    'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),
-                ]
-            ]
-        ]));
+        $message = new BuildFinishedMessage($build);
+        $this->producer->publish((string) $message);
     }
 }

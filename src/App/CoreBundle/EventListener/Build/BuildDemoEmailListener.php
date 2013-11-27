@@ -41,7 +41,7 @@ class BuildDemoEmailListener
     {
         $build = $event->getBuild();
 
-        if (!$build->isRunning() || !$build->isDemo()) {
+        if ($build->isFailed() || !$build->isRunning() || !$build->isDemo()) {
             return;
         }
 

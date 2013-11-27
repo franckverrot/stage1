@@ -44,17 +44,22 @@ abstract class AbstractMessage implements MessageInterface
     {
         $className = get_class($this);
         $className = substr($className, strrpos($className, '\\') + 1, -7);
+        $className = strtolower(preg_replace('~(?<=\\w)([A-Z])~', '.$1', $className));
 
-        return strtolower(preg_replace('~(?<=\\w)([A-Z])~', '.$1', $className));
+        return $className;
     }
 
     public function getData()
     {
-        return $this->object->asMessage();
+        $className = get_class($this->object);
+        $className = substr($className, strrpos($className, '\\') + 1);
+        $className = strtolower(preg_replace('~(?<=\\w)([A-Z])~', '_$1', $className));
+
+        return [$className => $this->object->asMessage()];
     }
 
     public function getChannel()
     {
-        return $this->objet->getChannel();
+        return $this->object->getChannel();
     }
 }
