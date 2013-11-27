@@ -6,6 +6,8 @@ use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
 
+use Symfony\Component\Process\Process;
+
 use Docker\Docker;
 use Docker\Context;
 use Docker\PortCollection;
@@ -75,8 +77,18 @@ SSH
         $manager->wait($buildContainer);
 
         if ($buildContainer->getExitCode() !== 0) {
-            $message = 'Build container stopped with exit code '.$buildContainer->getExitCode();
-            $logger->error($message);
+            $exitCode = $buildContainer->getExitCode();
+            $exitCodeLabel = Process::$exitCodes[$exitCode];
+
+            $message = sprintf('build container stopped with exit code %d (%s)', $exitCode, $exitCodeLabel);
+
+            $logger->error($message, [
+                'build' => $build->getId(),
+                'container' => $container->getId(),
+                'exit_code' => $exitCode,
+                'exit_code_label' => $exitCodeLabel,
+            ]);
+
             throw new Exception($message, $buildContainer->getExitCode());
         }
 
