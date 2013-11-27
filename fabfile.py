@@ -63,7 +63,10 @@ def restore():
 
     run('restart hipache')
 
-def deploy_upstart():
+def upstart_export():
+    local('sudo foreman export upstart /etc/init -u root -a stage1')
+
+def upstart_deploy():
     local('sudo foreman export upstart /tmp/init -u root -a stage1')
     local('sudo find /tmp/init -type f -exec sed -e \'s!/vagrant!%s!\' -e \'s! export PORT=.*;!!\' -i "{}" \;' % env.project_path)
     local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete /tmp/init/* %(user)s@%(host)s:%(remote)s' % {
