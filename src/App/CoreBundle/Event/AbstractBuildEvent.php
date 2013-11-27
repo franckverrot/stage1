@@ -2,7 +2,11 @@
 
 namespace App\CoreBundle\Event;
 
-abstract class AbstractBuildEvent
+use App\CoreBundle\Entity\Build;
+
+use Symfony\Component\EventDispatcher\Event;
+
+abstract class AbstractBuildEvent extends Event
 {
     private $build;
     

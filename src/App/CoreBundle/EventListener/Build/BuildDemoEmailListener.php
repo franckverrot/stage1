@@ -4,12 +4,14 @@ namespace App\CoreBundle\EventListener\Build;
 
 use App\CoreBundle\Event\BuildFinishedEvent;
 
+use Psr\Log\LoggerInterface;
+
 use Swift_Mailer;
 use Swift_Message;
 
 use Exception;
 
-class DemoBuildEmailListener
+class BuildDemoEmailListener
 {
     /**
      * @var Psr\Log\LoggerInterface
@@ -28,6 +30,8 @@ class DemoBuildEmailListener
     {
         $this->logger = $logger;
         $this->mailer = $mailer;
+
+        $logger->info('initialized '.__CLASS__);
     }
 
     /**
