@@ -15,9 +15,9 @@ class BuildStartedMessage extends AbstractMessage
     {
         $build = $this->getObject();
 
-        return [
-            'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
+        return ['build' => [
+            'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
             'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
-        ];
+        ]];
     }
 }

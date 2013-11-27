@@ -4,9 +4,9 @@ namespace App\CoreBundle\EventListener\Build;
 
 use App\CoreBundle\Event\BuildStartedEvent;
 use App\CoreBundle\Event\BuildFinishedEvent;
-
 use App\CoreBundle\Message\BuildStartedMessage;
 use App\CoreBundle\Message\BuildFinishedMessage;
+use App\CoreBundle\Message\MessageFactory;
 
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
@@ -25,13 +25,19 @@ class BuildWebsocketMessagesListener
     private $producer;
 
     /**
+     * @var App\CoreBundle\Message\MessageFactory
+     */
+    private $factory;
+
+    /**
      * @var Psr\Log\LoggerInterface
      * @var OldSound\RabbitMqBundle\RabbitMq\Producer
      */
-    public function __construct(LoggerInterface $logger, Producer $producer)
+    public function __construct(LoggerInterface $logger, Producer $producer, MessageFactory $factory)
     {
         $this->logger = $logger;
         $this->producer = $producer;
+        $this->factory = $factory;
 
         $logger->info('initialized '.__CLASS__);
     }
@@ -44,8 +50,8 @@ class BuildWebsocketMessagesListener
         $build = $event->getBuild();
 
         /** @todo write a producer that accepts Message objects */
-        $this->logger->info('sending build.started message for build #'.$build->getId());
-        $message = new BuildStartedMessage($build);
+        $this->logger->info('sending build.started message', ['build' => $build->getId()]);
+        $message = $this->factory->createBuildStarted($build);
         $this->producer->publish((string) $message);
     }
 
@@ -57,8 +63,8 @@ class BuildWebsocketMessagesListener
         $build = $event->getBuild();
 
         /** @todo write a producer that accepts Message objects */
-        $this->logger->info('sending build.finished message for build #'.$build->getId());
-        $message = new BuildFinishedMessage($build);
+        $this->logger->info('sending build.finished message', ['build' => $build->getId()]);
+        $message = $this->factory->createBuildFinished($build);
         $this->producer->publish((string) $message);
     }
 }

@@ -22,6 +22,14 @@ class MessageFactory
         $this->router = $router;
     }
 
+    public function createBuildScheduled(Build $build)
+    {
+        $message = new BuildScheduledMessage($build);
+        $message->setRouter($this->router);
+
+        return $message;
+    }
+
     /**
      * @param App\CoreBundle\Entity\Build $build
      */

@@ -48,7 +48,7 @@ abstract class AbstractMessage implements MessageInterface
             'event' => $this->getEvent(),
             'channel' => $this->getChannel(),
             'timestamp' => microtime(true),
-            'data' => array_merge($this->extra, $this->getData()),
+            'data' => array_merge_recursive($this->extra, $this->getRoutes(), $this->getData()),
         ];
     }
 

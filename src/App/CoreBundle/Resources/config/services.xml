@@ -109,6 +109,7 @@
         <service id="app_core.listener.build.websocket_messages" class="App\CoreBundle\EventListener\Build\BuildWebsocketMessagesListener">
             <argument type="service" id="logger" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
+            <argument type="service" id="app_core.message.factory" />
             <tag name="monolog.logger" channel="build" />
             <tag name="kernel.event_listener" event="build.started" method="onBuildStarted" />
             <tag name="kernel.event_listener" event="build.finished" method="onBuildFinished" />
