@@ -1,5 +1,13 @@
 #!/usr/bin/coffee
 
+#
+# Format of piped messages:
+#
+# { container:  (string)    container id,
+#   type:       (int)       stream type (0 = stdin, 1 = stdout, 2 = stderr),
+#   line:       (string)    actual log line }
+#
+
 VERSION = '0.0.1'
 
 getopt = require('node-getopt').create([
