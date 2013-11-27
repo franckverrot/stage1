@@ -55,18 +55,12 @@ class DefaultController extends Controller
     {
         try {
             $build = $this->findBuild($id);
-            $project = $build->getProject();
             $build->setStatus(Build::STATUS_CANCELED);
 
             $this->persistAndFlush($build);
 
-            $buildData = $build->asWebsocketMessage();
-
-            $buildData['schedule_url'] = $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]);
-
-            $this->publishWebsocket('build.canceled', $project->getChannel(), [
-                'build' => $buildData,
-                'project' => $project->asWebsocketMessage()
+            $this->publishWebsocket('build.canceled', $build->getChannel(), [
+                'build' => $build->asMessage(),
             ]);
 
             return new JsonResponse(null, 200);
@@ -78,6 +72,15 @@ class DefaultController extends Controller
     public function buildKillAction($id)
     {
         try {
+            $build = $this->findBuild($id);
+            $build->setStatus(Build::STATUS_KILLED);
+
+            $this->persistAndFlush($build);
+
+            $this->publishWebsocket('build.killed', $build->getChannel(), [
+                'build' => $build->asMessage(),
+            ]);
+
             $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
             return new JsonResponse(null, 200);
@@ -185,17 +188,13 @@ class DefaultController extends Controller
 
             $this->publishWebsocket('build.scheduled', $build->getChannel(), [
                 'progress' => 0,
-                'build' => array_replace([
-                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                    'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
-                ], $build->asWebsocketMessage()),
-                'project' => $project->asWebsocketMessage(),
+                'build' => $build->asMessage(),
             ]);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                 'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
-                'build' => $build->asWebsocketMessage(),
+                'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
@@ -258,16 +257,14 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', $project->getChannel(), [
-                'build' => array_replace([
-                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                ], $build->asWebsocketMessage()),
-                'project' => $project->asWebsocketMessage(),
+            $this->publishWebsocket('build.scheduled', $build->getChannel(), [
+                'progress' => 0,
+                'build' => $build->asMessage(),
             ]);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                'build' => $build->asWebsocketMessage(),
+                'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
