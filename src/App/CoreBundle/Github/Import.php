@@ -48,6 +48,8 @@ class Import
         $this->doctrine = $doctrine;
         $this->redis = $redis;
         $this->router = $router;
+
+        $this->client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
     }
 
     public function getSteps()

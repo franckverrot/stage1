@@ -17,20 +17,24 @@ class Controller extends BaseController
 
     protected function getHashFromRef(Project $project, $ref, $accessToken = null)
     {
-        $url = vsprintf('%s/repos/%s/%s/git/refs/heads', [
-            $this->container->getParameter('github_api_base_url'),
-            $project->getGithubOwnerLogin(),
-            $project->getName(),
-        ]);
+        $client = $this->container->get('app_core.client.github');
+        $client->setDefaultOption('header/Autorization', 'token '.$accessToken);
+        $client->setDefaultOption('header/Accept', 'application/vnd.github.v3');
 
+        $request = $client->get(['/repos/{owner}/{repo}/git/refs/heads', [
+            'owner' => $project->getGithubOwnerLogin(),
+            'repo' => $project->getName(),
+        ]]);
 
-        $refs = $this->github_get($url, $accessToken);
+        $response = $request->send();
+        $remoteRefs = $response->json();
 
         $branches = array();
 
-        foreach ($refs as $_) {
-            if ('refs/heads/'.$ref === $_->ref) {
-                $hash = $_->object->sha;
+        foreach ($remoteRefs as $remoteRef) {
+            if ('refs/heads/'.$ref === $remoteRef['ref']) {
+                $hash = $remoteRef['object']['sha'];
+                break;
             }
         }
 
@@ -110,40 +114,6 @@ class Controller extends BaseController
             ->exec();
 
         return (false !== array_search(true, $results));
-    }
-
-    /**
-     * @todo @github refactor
-     */
-    protected function github_post($url, $payload, $accessToken = null)
-    {
-        $accessToken = $accessToken ?: $this->getUser()->getAccessToken();
-
-        return json_decode(file_get_contents($url, false, stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'content' => json_encode($payload),
-                'header' => 'Authorization: token '.$accessToken."\r\n".
-                            "Content-Type: application/json\r\n".
-                            "Accept: application/vnd.github.v3\r\n"
-            ],
-        ])));
-    }
-
-    /**
-     * @todo @github refactor
-     */
-    protected function github_get($url, $accessToken = null)
-    {
-        $accessToken = $accessToken ?: $this->getUser()->getAccessToken();
-
-        return json_decode(file_get_contents($url, false, stream_context_create([
-            'http' => [
-                'method' => 'GET',
-                'header' => 'Authorization: token '.$accessToken."\r\n".
-                            "Accept: application/vnd.github.v3\r\n"
-            ],
-        ])));
     }
 
     protected function findBuild($id, $checkAuth = true)
