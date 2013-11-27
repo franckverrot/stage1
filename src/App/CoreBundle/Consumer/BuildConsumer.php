@@ -4,35 +4,23 @@ namespace App\CoreBundle\Consumer;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use App\CoreBundle\Builder\Builder;
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Message\BuildStartedMessage;
+use App\CoreBundle\Message\BuildFinishedMessage;
+use App\CoreBundle\Message\BuildStepMessage;
+use App\CoreBundle\BuildEvents;
+use App\CoreBundle\Event\BuildStartedEvent;
+use App\CoreBundle\Event\BuildFinishedEvent;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
 
 use Psr\Log\LoggerInterface;
 
-use InvalidArgumentException;
-use RuntimeException;
 use Exception;
-
-use Swift_Mailer;
-use Swift_Message;
-use Swift_TransportException;
-
-use Doctrine\ORM\NoResultException;
-
-use App\CoreBundle\Message\BuildStartedMessage;
-use App\CoreBundle\Message\BuildFinishedMessage;
-use App\CoreBundle\Message\BuildStepMessage;
-
-use App\CoreBundle\BuildEvents;
-
-use App\CoreBundle\Event\BuildFinishedEvent;
 
 class BuildConsumer implements ConsumerInterface
 {
@@ -42,34 +30,27 @@ class BuildConsumer implements ConsumerInterface
 
     private $router;
 
+    private $docker;
+
     private $buildTimeout = 0;
 
     private $buildHostMask;
 
-    private $expectedMessages = 0;
-
-    public function __construct(EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Producer $producer, Router $router, Swift_Mailer $mailer, $buildHostMask)
+    public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker, $buildHostMask)
     {
+        $this->logger = $logger;
         $this->dispatcher = $dispatcher;
         $this->doctrine = $doctrine;
-        $this->producer = $producer;
-        $this->router = $router;
-        $this->mailer = $mailer;
+        $this->builder = $builder;
+        $this->docker = $docker;
         $this->buildHostMask = $buildHostMask;
 
-        echo '== initializing BuildConsumer'.PHP_EOL;
-    }
-
-    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
-    {
-        return $this->router->generate($route, $parameters, $referenceType);
+        $logger->info('initialized '.__CLASS__);
     }
 
     public function execute(AMQPMessage $message)
     {
         $body = json_decode($message->body);
-
-        $build = $this->getBuildRepository()->find($body->build_id);
 
         $em = $this->doctrine->getManager();
         $buildRepository = $em->getRepository('AppCoreBundle:Build');
@@ -77,7 +58,7 @@ class BuildConsumer implements ConsumerInterface
         $build = $buildRepository->find($body->build_id);
 
         if (!$build) {
-            echo '[x] could not find build #'.$body->build_id;
+            $this->logger->info('could not find build #'.$body->build_id);
             return;
         }
 
@@ -86,14 +67,10 @@ class BuildConsumer implements ConsumerInterface
         $em->persist($build);
         $em->flush();
 
-        $this->stopwatch->start($build->getChannel());
-
-        /** @todo write a producer that accepts Message objects */
-        $message = new BuildStartedMessage($build);
-        $this->producer->publish((string) $message);
-
         try {
-            $container = $this->getBuilder()->run($build);
+            $this->dispatcher->dispatch(BuildEvents::STARTED, new BuildStartedEvent($build));
+
+            $container = $this->builder->run($build);
 
             $build->setContainerId($container->getId());
             $build->setPort($container->getMappedPort(80)->getHostPort());
@@ -101,35 +78,25 @@ class BuildConsumer implements ConsumerInterface
             $previousBuild = $buildRepository->findPreviousBuild($build);
 
             if ($previousBuild && $previousBuild->hasContainer()) {
-                $message = new BuildStepMessage($build, 'stop_previous');
-                $producer->publish((string) $message);
-
                 $this->docker->getContainerManager()->stop($previousBuild->getContainer());
                 $previousBuild->setStatus(Build::STATUS_OBSOLETE);
                 $em->persist($previousBuild);
             }
+
+            if (strlen($build->getHost()) === 0) {
+                $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
+            }
+
+            $build->setStatus(Build::STATUS_RUNNING);
+
+            $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));            
         } catch (Exception $e) {
+            $this->logger->error('Build failed', ['exception' => $e]);
             $build->setStatus(Build::STATUS_FAILED);
-            $build->setMessage($e->getMessage());
+            $build->setMessage(get_class($e).': '.$e->getMessage());
         }
-
-        $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));
-
-        $event = $this->stopwatch->stop($build->getChannel());
-
-        if (strlen($build->getHost()) === 0) {
-            $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
-        }
-
-        $build->setStartTime($event->getStartTime());
-        $build->getEndTime($event->getEndTime());
-        $build->setDuration($event->getDuration());
-        $build->setMemoryUsage($event->getMemory());
 
         $em->persist($build);
         $em->flush();
-
-        $message = new BuildFinishedMessage($build);
-        $producer->publish((string) $message);
     }
 }
