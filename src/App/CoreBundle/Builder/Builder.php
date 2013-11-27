@@ -6,14 +6,14 @@ use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
 
-use Symfony\Component\Stopwatch\Stopwatch;
-
 use Docker\Docker;
 use Docker\Context;
 use Docker\PortCollection;
 
 use Psr\Log\LoggerInterface;
 use Redis;
+
+use Exception;
 
 class Builder
 {
@@ -75,7 +75,9 @@ SSH
         $manager->wait($buildContainer);
 
         if ($buildContainer->getExitCode() !== 0) {
-            throw new Exception('Build container stopped with exit code '.$container->getExitCode(), $container->getExitCode());
+            $message = 'Build container stopped with exit code '.$buildContainer->getExitCode();
+            $logger->error($message);
+            throw new Exception($message, $buildContainer->getExitCode());
         }
 
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
@@ -85,6 +87,6 @@ SSH
 
         $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);
 
-        return $container;
+        return $appContainer;
     }
 }
