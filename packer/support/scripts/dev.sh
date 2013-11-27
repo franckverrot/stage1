@@ -48,7 +48,7 @@ echo "SYMFONY_ENV=dev" >> /etc/environment
 # apt-get install -yq \
 #     libfontconfig1
 
-# wget https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2 -O- | tar xzm
+# wget https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2 -O- | tar xj
 # wget https://github.com/n1k0/casperjs/tarball/master -O- | tar xzm
 
 # $(cd *phantomjs*; ln -sf $(pwd)/bin/phantomjs /usr/local/bin/phantomjs)
