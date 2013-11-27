@@ -36,7 +36,7 @@ class DockerOutputConsumer implements ConsumerInterface
     public function execute(AMQPMessage $message)
     {
         $body = json_decode($message->body, true);
-        $container = $this->docker->getContainerManager()->find($body->container)
+        $container = $this->docker->getContainerManager()->find($body->container);
         $env = $container->getParsedEnv();
 
         if (!array_key_exists('BUILD_ID', $env)) {

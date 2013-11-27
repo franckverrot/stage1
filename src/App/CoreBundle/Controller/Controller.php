@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
-
+use App\CoreBundle\Message\MessageInterface;
 use App\CoreBundle\Value\ProjectAccess;
 
 class Controller extends BaseController
@@ -146,14 +146,10 @@ class Controller extends BaseController
         return $qb->getQuery()->execute();
     }
 
-    protected function publishWebsocket($event, $channel, $data)
+    protected function publishWebsocket(MessageInterface $message)
     {
-        $this->get('old_sound_rabbit_mq.websocket_producer')->publish(json_encode([
-            'event' => $event,
-            'channel' => $channel,
-            'timestamp' => microtime(true),
-            'data' => $data,
-        ]));
+        $producer = $this->get('old_sound_rabbit_mq.websocket_producer');
+        $producer->publish((string) $message);
     }
 
     protected function removeAndFlush($entity)

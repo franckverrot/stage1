@@ -59,9 +59,10 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($build);
 
-            $this->publishWebsocket('build.canceled', $build->getChannel(), [
-                'build' => $build->asMessage(),
-            ]);
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildCanceled($build);
+
+            $this->publishWebsocket($message);
 
             return new JsonResponse(null, 200);
         } catch (Exception $e) {
@@ -77,9 +78,10 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($build);
 
-            $this->publishWebsocket('build.killed', $build->getChannel(), [
-                'build' => $build->asMessage(),
-            ]);
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildKilled($build);
+
+            $this->publishWebsocket($message);
 
             $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
@@ -186,10 +188,10 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', $build->getChannel(), [
-                'progress' => 0,
-                'build' => $build->asMessage(),
-            ]);
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildScheduled($build);
+
+            $this->publishWebsocket($message);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
@@ -257,10 +259,10 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', $build->getChannel(), [
-                'progress' => 0,
-                'build' => $build->asMessage(),
-            ]);
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildScheduled($build);
+
+            $this->publishWebsocket($message);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),

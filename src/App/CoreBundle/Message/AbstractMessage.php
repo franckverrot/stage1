@@ -4,15 +4,37 @@ namespace App\CoreBundle\Message;
 
 use App\CoreBundle\Entity\Build;
 
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 use Exception;
 
 abstract class AbstractMessage implements MessageInterface
 {
+    private $router;
+
     private $object;
+
+    private $extra = array();
 
     public function __construct($object)
     {
         $this->object = $object;
+    }
+
+    public function setExtra(array $extra)
+    {
+        $this->extra = $extra;
+    }
+
+    public function setRouter(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
+
+    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    {
+        return $this->router->generate($route, $parameters, $referenceType);
     }
 
     public function getObject()
@@ -26,7 +48,7 @@ abstract class AbstractMessage implements MessageInterface
             'event' => $this->getEvent(),
             'channel' => $this->getChannel(),
             'timestamp' => microtime(true),
-            'data' => $this->getData(),
+            'data' => array_merge($this->extra, $this->getData()),
         ];
     }
 
@@ -56,6 +78,11 @@ abstract class AbstractMessage implements MessageInterface
         $className = strtolower(preg_replace('~(?<=\\w)([A-Z])~', '_$1', $className));
 
         return [$className => $this->object->asMessage()];
+    }
+
+    public function getRoutes()
+    {
+        return [];
     }
 
     public function getChannel()

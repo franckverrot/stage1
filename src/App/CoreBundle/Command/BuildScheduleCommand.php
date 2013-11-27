@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Message\MessageInterface;
 
 use InvalidArgumentException;
 use DateTime;
@@ -25,21 +26,6 @@ class BuildScheduleCommand extends ContainerAwareCommand
             ]);
     }
 
-    protected function publishWebsocket($event, $channel, $data)
-    {
-        $this->getContainer()->get('old_sound_rabbit_mq.websocket_producer')->publish(json_encode([
-            'event' => $event,
-            'channel' => $channel,
-            'timestamp' => microtime(true),
-            'data' => $data,
-        ]));
-    }
-
-    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
-    {
-        return $this->getContainer()->get('router')->generate($route, $parameters, $referenceType);
-    }
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $doctrine = $this->getContainer()->get('doctrine');
@@ -49,7 +35,9 @@ class BuildScheduleCommand extends ContainerAwareCommand
             ->find($input->getArgument('project_id'));
 
         if (!$project) {
-            $project = $doctrine->getRepository('AppCoreBundle:Project')->findOneBySlug($input->getArgument('project_id'));
+            $project = $doctrine
+                ->getRepository('AppCoreBundle:Project')
+                ->findOneBySlug($input->getArgument('project_id'));
         }
 
         if (!$project) {
@@ -65,9 +53,12 @@ class BuildScheduleCommand extends ContainerAwareCommand
         $em->persist($build);
         $em->flush();
 
-        $producer = $this->getContainer()->get('old_sound_rabbit_mq.build_producer');
-        $producer->publish(json_encode(['build_id' => $build->getId()]));
+        $buildProducer = $this->getContainer()->get('old_sound_rabbit_mq.build_producer');
+        $buildProducer->publish(json_encode(['build_id' => $build->getId()]));
 
-        $this->publishWebsocket('build.scheduled', $build->getChannel(), ['build' => $build->asMessage()]);
+        $websocketProducer = $this->getContainer()->get('old_sound_rabbit_mq.websocket_producer');
+        $messageFactory = $this->get('app_core.message.factory');
+
+        $websocketProducer->publish($messageFactory->createBuildScheduled($build));
     }
 }

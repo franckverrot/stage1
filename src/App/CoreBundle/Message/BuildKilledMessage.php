@@ -4,7 +4,7 @@ namespace App\CoreBundle\Message;
 
 use App\CoreBundle\Entity\Build;
 
-class BuildStartedMessage extends AbstractMessage
+class BuildKilledMessage extends AbstractMessage
 {
     public function __construct(Build $build)
     {
@@ -17,7 +17,7 @@ class BuildStartedMessage extends AbstractMessage
 
         return [
             'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-            'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()])
+            'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getId()]),
         ];
     }
 }
