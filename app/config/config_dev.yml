@@ -15,10 +15,15 @@ web_profiler:
 
 monolog:
     handlers:
+        stdout:
+            type: stream
+            path: php://stdout
+            channels: build
         main:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
+            channels: !build
         firephp:
             type:  firephp
             level: info
