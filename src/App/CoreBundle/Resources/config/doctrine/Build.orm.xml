@@ -22,7 +22,10 @@
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="isDemo" column="is_demo" type="boolean" />
+        <field name="startTime" column="start_time" type="datetime" nullable="true" />
+        <field name="endTime" column="end_time" type="datetime" nullable="true" />
         <field name="duration" column="duration" type="integer" nullable="true" />
+        <field name="memoryUsage" column="memory_usage" type="integer" nullable="true" />
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="builds">
             <join-column name="project_id" referenced-column-name="id" />

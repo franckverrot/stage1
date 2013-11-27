@@ -76,6 +76,12 @@ class Build
 
     private $duration = 0;
 
+    private $startTime;
+
+    private $endTime;
+
+    private $memoryUsage;
+
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -781,5 +787,74 @@ class Build
     public function getDuration()
     {
         return $this->duration;
+    }
+
+    /**
+     * Set startTime
+     *
+     * @param \DateTime $startTime
+     * @return Build
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get startTime
+     *
+     * @return \DateTime 
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Set endTime
+     *
+     * @param \DateTime $endTime
+     * @return Build
+     */
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get endTime
+     *
+     * @return \DateTime 
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    /**
+     * Set memoryUsage
+     *
+     * @param integer $memoryUsage
+     * @return Build
+     */
+    public function setMemoryUsage($memoryUsage)
+    {
+        $this->memoryUsage = $memoryUsage;
+    
+        return $this;
+    }
+
+    /**
+     * Get memoryUsage
+     *
+     * @return integer 
+     */
+    public function getMemoryUsage()
+    {
+        return $this->memoryUsage;
     }
 }
