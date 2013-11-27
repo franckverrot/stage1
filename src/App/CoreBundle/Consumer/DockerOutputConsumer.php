@@ -35,8 +35,10 @@ class DockerOutputConsumer implements ConsumerInterface
 
     public function execute(AMQPMessage $message)
     {
+        $logger = $this->logger;
+
         $body = json_decode($message->body, true);
-        $container = $this->docker->getContainerManager()->find($body->container);
+        $container = $this->docker->getContainerManager()->find($body['container']);
         $env = $container->getParsedEnv();
 
         if (!array_key_exists('BUILD_ID', $env)) {
@@ -68,6 +70,7 @@ class DockerOutputConsumer implements ConsumerInterface
         $streamMap = [0 => 'stdin', 1 => 'stdout', 2 => 'stderr'];
 
         $buildLog = new BuildLog();
+        $buildLog->setType('output');
         $buildLog->setMessage($body['line']);
         $buildLog->setStream($body['type'] ? $streamMap[$body['type']] : null);
         $buildLog->setBuild($build);

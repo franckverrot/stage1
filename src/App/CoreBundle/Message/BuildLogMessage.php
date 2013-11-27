@@ -10,4 +10,14 @@ class BuildLogMessage extends AbstractMessage
     {
         parent::__construct($buildLog);
     }
+
+    public function getChannel()
+    {
+        return $this->getObject()->getBuild()->getChannel();
+    }
+
+    public function getData()
+    {
+        return ['build' => $this->getObject()->getBuild()->asMessage()];
+    }
 }
