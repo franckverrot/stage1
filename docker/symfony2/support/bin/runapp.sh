@@ -18,4 +18,6 @@ for service in ${services[@]}; do
     /etc/init.d/$service start 2>&1 > /dev/null
 done;
 
+touch /var/ww/app/logs/prod.log
+
 tail -f /var/log/nginx/*.log /var/www/app/logs/*.log /var/log/php5-fpm.log
