@@ -20,6 +20,8 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 use Psr\Log\LoggerInterface;
 
+use Docker\Docker;
+
 use Exception;
 
 class BuildConsumer implements ConsumerInterface
