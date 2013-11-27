@@ -128,6 +128,11 @@ class Build
             return $this->channel;
         }
 
+        if (null === $this->getProject())
+        {
+            return 'build.'.$this->getId();
+        }
+
         return $this->getProject()->getChannel();
     }
 
