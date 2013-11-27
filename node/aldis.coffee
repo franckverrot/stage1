@@ -6,14 +6,16 @@ getopt = require('node-getopt').create([
     ['d', 'docker=ARG', 'Docker DSN (eg: /var/run/docker.sock or 127.0.0.1:4243)'],
     ['a', 'amqp=ARG', 'AMQP DSN (eg: localhost)'],
     ['q', 'queue=ARG', 'queue to pipe messages to'],
-    ['h', 'help', 'show this help']
-    ['A', 'attach', 'attach already running containers']
-    ['m', 'multiplex', 'force multiplexing']
-    ['n', 'no-multiplex', 'force no multiplexing'],
-    ['l', 'log', 'output logs as they arrive']
+    ['A', 'attach', 'attach already running containers'],
+    ['l', 'log', 'output logs as they arrive'],
+    ['h', 'help', 'show this help'],
+    ['v', 'version', 'show program version']
 ])
 .bindHelp()
 .parseSystem()
+
+if getopt.options.version
+    return console.log('Aldis ' + VERSION)
 
 opts =
     docker: getopt.options.docker || '/var/run/docker.sock'
@@ -24,7 +26,6 @@ Docker = require('dockerode')
 amqp   = require('amqplib')
 colors = require('colors')
 domain = require('domain')
-util   = require('util')
 
 console.log('.. initializing aldis')
 console.log('   hit ^C to quit')
@@ -65,34 +66,6 @@ amqp.connect('amqp://' + opts.amqp).then((conn) ->
     )
 )
 
-# @see http://docs.docker.io/en/master/api/docker_remote_api_v1.7/#attach-to-a-container
-parse_with_multiplexing = (line) ->
-    buf = new Buffer(line, 'utf8')
-    type = buf.readUInt8(0)
-
-    if [0, 1, 2].indexOf(type) == -1
-        return false
-
-    return [type, buf.toString('utf8', 8, 8 + buf.readUInt32BE(4))]
-
-parse_line = (line) ->
-    if getopt.options['no-multiplex']
-        return [null, line]
-    else if getopt.options['multiplex']
-        res = parse_with_multiplexing(line)
-
-        if !res
-            throw new Error('could not parse line')
-
-        return res
-    else
-        res = parse_with_multiplexing(line)
-
-        if res == false
-            return [null, line]
-
-        return res
-
 attach = (container, channel) ->
     domain.create().on('error', (err) ->
         # most of the time it's dockerode replaying the callback when the connection is reset
@@ -100,6 +73,15 @@ attach = (container, channel) ->
         throw err unless err.code == 'ECONNRESET'
     ).run(->
         console.log('<- attaching container ' + container.id.substr(0, 12).yellow)
+        use_multiplexing = true
+
+        container.inspect((err, info) ->
+            throw err if err
+
+            if info.Config.tty
+                use_multiplexing = false
+        )
+
         container.attach({ logs: false, stream: true, stdout: true, stderr: true }, (err, stream) ->
             throw err if err
 
@@ -110,7 +92,7 @@ attach = (container, channel) ->
             )
 
             stream.on('data', (line) ->
-                parsed = parse_line(line)
+                parsed = parse_line(line, use_multiplexing)
 
                 if getopt.options.log
                     process.stdout.write(container.id.substr(0, 12).yellow + '> '+ parsed[1])
@@ -124,3 +106,16 @@ attach = (container, channel) ->
             )
         )
     )
+
+parse_line = (line, use_multiplexing) ->
+    if !use_multiplexing
+        return line
+
+    # @see http://docs.docker.io/en/master/api/docker_remote_api_v1.7/#attach-to-a-container
+    buf = new Buffer(line, 'utf8')
+    type = buf.readUInt8(0)
+
+    if [0, 1, 2].indexOf(type) == -1
+        throw new Error('Unknown stream type ' + type)
+
+    return [type, buf.toString('utf8', 8, 8 + buf.readUInt32BE(4))]
