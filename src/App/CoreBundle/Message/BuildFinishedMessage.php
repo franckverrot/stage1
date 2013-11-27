@@ -2,13 +2,13 @@
 
 namespace App\CoreBundle\Message;
 
-class BuildStartedMessage extends AbstractMessage
+class BuildFinishedMessage extends AbstractMessage
 {
-    public function __toString()
+    public function toArray()
     {
-        $build = $this->build;
-
-        return json_encode([
+        $build = $this->getBuild();
+        
+        return [
             'event' => 'build.finished',
             'channel' => $build->getChannel(),
             'timestamp' => microtime(true),
@@ -16,6 +16,6 @@ class BuildStartedMessage extends AbstractMessage
                 'progress' => 0,
                 'build' => $build->asMessage(),
             ]
-        ])
+        ];
     }
 }

@@ -13,18 +13,18 @@ class BuildStepMessage extends AbstractMessage
         parent::__construct($build);
     }
 
-    public function __toString()
+    public function toArray()
     {
-        $build = $this->build;
+        $build = $this->getBuild();
         $step = $this->step;
 
-        return json_encode([
+        return [
             'event' => 'build.step',
             'channel' => $build->getChannel(),
             'data' => [
                 'build' => $build->asMessage(),
                 'announce' => ['step' => $step],
             ]
-        ]);
+        ];
     }
 }
