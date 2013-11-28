@@ -19,7 +19,7 @@ old_sound_rabbit_mq:
             exchange_options: { name: 'project_import', type: direct }
         websocket:
             connection: default
-            exchange_options: { name: 'amq.fanout', type: fanout }
+            exchange_options: { name: 'websockets', type: direct, auto_delete: true, durable: false }
     consumers:
         build:
             connection: default
@@ -38,6 +38,6 @@ old_sound_rabbit_mq:
             callback:         app_core.consumer.project_import
         docker_output:
             connection: default
-            exchange_options: { name: 'docker_output', type: direct }
+            exchange_options: { name: 'aldis', type: fanout, auto_delete: true, durable: false }
             queue_options:    { name: 'docker_output' }
             callback:         app_core.consumer.docker_output

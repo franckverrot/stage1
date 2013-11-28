@@ -18,6 +18,9 @@ class BuildLogMessage extends AbstractMessage
 
     public function getData()
     {
-        return ['build' => $this->getObject()->getBuild()->asMessage()];
+        return [
+            'buildLog' => $this->getObject()->asMessage(),
+            'build' => $this->getObject()->getBuild()->asMessage()
+        ];
     }
 }

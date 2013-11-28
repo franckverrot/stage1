@@ -11,9 +11,10 @@
 VERSION = '0.0.1'
 
 getopt = require('node-getopt').create([
-    ['d', 'docker=ARG', 'Docker DSN (eg: /var/run/docker.sock or 127.0.0.1:4243)'],
-    ['a', 'amqp=ARG', 'AMQP DSN (eg: localhost)'],
-    ['q', 'queue=ARG', 'queue to pipe messages to'],
+    ['d', 'docker=ARG', 'Docker URL (eg: /var/run/docker.sock or 127.0.0.1:4243)'],
+    ['a', 'amqp=ARG', 'AMQP host (eg: localhost)'],
+    ['e', 'exchange=ARG', 'exchange to publish messages to'],
+    ['E', 'env=ARG+', 'env variables to include in pipe'],
     ['A', 'attach', 'attach already running containers'],
     ['l', 'log', 'output logs as they arrive'],
     ['h', 'help', 'show this help'],
@@ -26,100 +27,107 @@ if getopt.options.version
     return console.log('Aldis ' + VERSION)
 
 opts =
-    docker: getopt.options.docker || '/var/run/docker.sock'
-    amqp:   getopt.options.amqp   || 'localhost'
-    queue:  getopt.options.queue  || 'docker_output'
+    docker_url: getopt.options.docker   || '/var/run/docker.sock'
+    amqp_host:  getopt.options.amqp     || 'localhost'
+    exchange:   getopt.options.exchange || 'aldis'
+    env:        getopt.options.env      || []
 
 Docker = require('dockerode')
-amqp   = require('amqplib')
+amqp   = require('amqp')
 colors = require('colors')
 domain = require('domain')
 
-console.log('.. initializing aldis')
-console.log('   hit ^C to quit')
+console.log('.. initializing aldis (hit ^C to quit)')
 
-if opts.docker.indexOf(':') != -1
-    dockerOpts = opts.docker.split(':')
-    dockerOpts = { host: docker[0], port: docker[1] }
+if opts.docker_url.indexOf(':') != -1
+    dockerOpts = opts.docker_url.split(':')
+    dockerOpts = { host: dockerOpts[0], port: dockerOpts[1] }
 else
-    dockerOpts = { socketPath: opts.docker }
-
+    dockerOpts = { socketPath: opts.docker_url }
 
 docker = new Docker(dockerOpts)
+# queues = []
 
-amqp.connect('amqp://' + opts.amqp).then((conn) ->
-    return conn.createChannel()
-).then((channel) ->
-    channel.assertQueue(opts.queue)
-    console.log((' ✓ connected to amqp   at "' + opts.amqp + '/' + opts.queue + '"').green)
+amqp.createConnection({ host: opts.amqp_host }, { reconnect: false }, (conn) ->
+    console.log((' ✓ connected to amqp at "' + opts.amqp_host + '"').green)
+    # console.log('.. publishing to ' + opts.queues.map(colors.yellow).join(', '))
 
-    if getopt.options.attach
-        console.log('.. attaching already running containers')
-        docker.listContainers null, (err, containers) ->
-            return unless containers
-            containers.forEach (data) ->
-                attach(docker.getContainer(data.Id), channel)
+    conn.exchange(opts.exchange, { type: 'fanout' }, (exchange) ->
+        console.log('.. publishing to exchange ' + opts.exchange.yellow)
 
-    docker.getEvents(null, (err, stream) ->
-        throw err if err
-        console.log((' ✓ connected to docker at "' + opts.docker + '"').green)
+        if getopt.options.attach
+            console.log('.. attaching already running containers')
+            docker.listContainers null, (err, containers) ->
+                return unless containers
+                containers.forEach (data) ->
+                    attach(docker.getContainer(data.Id), exchange)
 
-        stream.on('data', (data) ->
-            data = JSON.parse(data)
-            # console.log('<- got "' + data.status + '" for container "' + data.id.yellow + '"')
+        docker.getEvents(null, (err, stream) ->
+            throw err if err
+            console.log((' ✓ connected to docker at "' + opts.docker_url + '"').green)
 
-            if data.status != 'create'
-                return
+            stream.on('data', (data) ->
+                data = JSON.parse(data)
+                # console.log('<- got "' + data.status + '" for container "' + data.id.yellow + '"')
 
-            attach(docker.getContainer(data.id), channel)
+                if data.status != 'create'
+                    return
+
+                attach(docker.getContainer(data.id), exchange)
+            )
         )
     )
 )
 
-attach = (container, channel) ->
+attach = (container, exchange) ->
     domain.create().on('error', (err) ->
         # most of the time it's dockerode replaying the callback when the connection is reset
         # see dockerode/lib/modem.js:87
         throw err unless err.code == 'ECONNRESET'
     ).run(->
-        console.log('<- attaching container ' + container.id.substr(0, 12).yellow)
-        use_multiplexing = true
-
         container.inspect((err, info) ->
             throw err if err
 
-            if info.Config.tty
-                use_multiplexing = false
-        )
+            use_multiplexing = not info.Config.Tty
 
-        container.attach({ logs: false, stream: true, stdout: true, stderr: true }, (err, stream) ->
-            throw err if err
+            env = {}
 
-            # stream.on('end', -> console.log('   stream ended for container "' + container.id.yellow + '"'))
+            if info.Config.Env and opts.env.length > 0
+                for evar in info.Config.Env
+                    evar = evar.split '='
+                    for name in opts.env
+                        if evar[0] == name
+                            env[evar[0]] = evar[1]
 
-            stream.on('end', ->
-                console.log('-> detaching container ' + container.id.substr(0, 12).yellow)
-            )
+            console.log('<- attaching container ' + container.id.substr(0, 12).yellow)
 
-            stream.on('data', (line) ->
-                parsed = parse_line(line, use_multiplexing)
+            container.attach({ logs: false, stream: true, stdout: true, stderr: true }, (err, stream) ->
+                throw err if err
 
-                if getopt.options.log
-                    process.stdout.write(container.id.substr(0, 12).yellow + '> '+ parsed[1])
+                stream.on('end', ->
+                    console.log('-> detaching container ' + container.id.substr(0, 12).yellow)
+                )
 
-                # console.log('<- got ' + line.length + ' bytes from container "' + container.id.yellow + '"')
-                message = { container: container.id, type: parsed[0], line: parsed[1] }
-                buffer = new Buffer(JSON.stringify(message), 'utf8')
+                stream.on('data', (line) ->
+                    parsed = parse_line(line, use_multiplexing)
 
-                channel.sendToQueue(opts.queue, buffer)
-                # console.log('-> sent ' + buffer.length + ' bytes to "' + opts.queue + '"')
+                    if getopt.options.log
+                        # process.stdout.write(container.id.substr(0, 12).yellow + '> '+ parsed[1])
+                        process.stdout.write(parsed[1])
+
+                    # console.log('<- got ' + line.length + ' bytes from container "' + container.id.yellow + '"')
+                    message = { container: container.id, type: parsed[0], line: parsed[1], env: env }
+
+                    exchange.publish('', message)
+                    # console.log('-> sent ' + buffer.length + ' bytes to "' + opts.queue + '"')
+                )
             )
         )
     )
 
 parse_line = (line, use_multiplexing) ->
     if !use_multiplexing
-        return line
+        return [null, line]
 
     # @see http://docs.docker.io/en/master/api/docker_remote_api_v1.7/#attach-to-a-container
     buf = new Buffer(line, 'utf8')

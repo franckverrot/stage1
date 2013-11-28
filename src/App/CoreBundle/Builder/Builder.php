@@ -84,7 +84,7 @@ SSH
 
             $logger->error($message, [
                 'build' => $build->getId(),
-                'container' => $container->getId(),
+                'container' => $buildContainer->getId(),
                 'exit_code' => $exitCode,
                 'exit_code_label' => $exitCodeLabel,
             ]);

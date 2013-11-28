@@ -4,6 +4,7 @@ namespace App\CoreBundle\Consumer;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\BuildLog;
 use App\CoreBundle\Message\BuildLogMessage;
 
@@ -62,27 +63,38 @@ class DockerOutputConsumer implements ConsumerInterface
             return;
         }
 
-        $logger->debug('processing log line', [
+        $logger->debug('processing log fragment', [
             'build' => $build->getId(),
             'container' => $container->getId(),
         ]);
 
+        $fragment = $body['line'];
+
+        while (preg_match('/^\[websocket:(.+?):(.*)\]$/m', $fragment, $matches)) {
+            $fragment = str_replace($matches[0], '', $fragment);
+
+            if ($matches[1] === 'step') {
+                $message = new BuildStepMessage($build, $matches[2]);
+                $this->producer->publish((string) $message);
+            }
+        }
+
         $streamMap = [0 => 'stdin', 1 => 'stdout', 2 => 'stderr'];
 
         $buildLog = new BuildLog();
-        $buildLog->setType('output');
-        $buildLog->setMessage($body['line']);
+        $buildLog->setType(Build::LOG_OUTPUT);
+        $buildLog->setMessage($fragment);
         $buildLog->setStream($body['type'] ? $streamMap[$body['type']] : null);
         $buildLog->setBuild($build);
 
         $build->addLog($buildLog);
 
+        $message = new BuildLogMessage($buildLog);
+        $this->producer->publish((string) $message);
+
         $em->persist($build);
         $em->persist($buildLog);
 
         $em->flush();
-
-        $message = new BuildLogMessage($buildLog);
-        $this->producer->publish((string) $message);
     }
 }

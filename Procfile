@@ -5,3 +5,4 @@ consumer-docker-output: app/console rabbitmq:consumer -vvv -m 1 -w docker_output
 
 hipache: hipache --config app/config/hipache_$STAGE1_ENV.json
 websockets: coffee node/websocket.coffee
+aldis: coffee node/aldis.coffee -A -E CHANNEL -E BUILD_ID

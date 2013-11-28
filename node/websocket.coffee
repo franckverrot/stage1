@@ -3,7 +3,7 @@
 Primus              = require 'primus'
 {PrimusChannels}    = require './primus-channels.coffee'
 http                = require 'http'
-amqp                = require 'amqplib'
+amqp                = require 'amqp'
 colors              = require 'colors'
 
 console.log '\r\n================================================================================'
@@ -53,37 +53,75 @@ primus.on 'connection', (spark) ->
 
 buffer = {}
 
-amqp.connect('amqp://localhost').then (conn) ->
-    console.log '[x] amqp connected'
-    conn.createChannel().then (channel) ->
-        console.log '[x] channel created'
-        channel.assertQueue('websockets').then (queue) ->
-            console.log '[x] queue created'
-            channel.bindQueue(queue.queue, 'amq.fanout', '').then ->
-                console.log '[x] queue bound'
-                console.log ''
-                # expected message content format:
-                # { event: <string>,
-                #   channel: <string> }
-                channel.consume queue.queue, (message) ->
-                    content = JSON.parse(message.content.toString('utf-8'))
-                    console.log '<- received event "' + content.event + '" for channel "' + content.channel + '"'
+opts =
+    amqp_host: 'localhost'
+    queue: 'websockets'
+    exchanges: { 'websockets': 'direct', 'aldis': 'fanout' }
 
-                    if content.channel?
-                        if content.event == 'build.finished'
-                            console.log 'cleaning mess in channel ' + content.channel.yellow
-                            delete buffer[content.channel] if buffer[content.channel]
-                        else
-                            buffer[content.channel] = [] unless buffer[content.channel]
-                            buffer[content.channel].push(content)
+amqp.createConnection { host: opts.amqp_host }, { reconnect: false }, (conn) ->
+    console.log((' ✓ connected to amqp at "' + opts.amqp_host + '"').green)
+    conn.queue opts.queue, (queue) ->
+        console.log((' ✓ queue ' + opts.queue + ' is usable').green)
 
-                        if primus.channels[content.channel]?
-                            console.log '-> broadcasting event "' + content.event.yellow + '" to channel "' + content.channel.yellow + '"'
-                            primus.channels[content.channel].write content
-                        else
-                            console.log '   channel "' + content.channel.yellow + '" does not exist, skipping'
+        for exchange, type of opts.exchanges
+            console.log('.. connecting to exchange ' + exchange.yellow + ' (type: ' + type.yellow + ')')
+            conn.exchange exchange, { type: type }, (exchange) ->
+                console.log((' ✓ connected to exchange ' + exchange.name).green)
+                queue.bind exchange, '', (e) ->
+                    console.log((' ✓ queue ' + queue.name + ' bound to exchange ' + e.name).green)
 
-                    channel.ack message
+        queue.subscribe (message, headers, deliveryInfo) ->
+
+            if message.contentType?
+                message = JSON.parse(message.data)
+
+            #
+            # expected message content format, one of:
+            #
+            # default node-amqp message format
+            #
+            # { data: <Buffer>
+            #   contentType: <some content type>}
+            #
+            # standard stage1 format
+            # 
+            # { event: <string>,
+            #   channel: <string>,
+            #   data: <some mixed data> }
+            #
+            # build log fragment from aldis
+            #
+            # { container: <a docker container id>,
+            #   type: <stream type id>
+            #   line: <actual message>,
+            #   env: { CHANNEL: <websocket channel>, BUILD_ID: <stage1 build id> } }
+            #
+            # everything *must* be converted to the standard stage1 format
+            #
+
+            if message.container?
+                message =
+                    event: 'build.log',
+                    channel: message.env.CHANNEL,
+                    data:
+                        build:
+                            id: message.env.BUILD_ID
+                        message: message.line
+                        type: 'output',
+                        stream: message.type
+
+            if not message.channel?
+                return
+
+            if message.event == 'build.finished'
+                delete buffer[message.channel] if buffer[message.channel]
+            else
+                buffer[message.channel] = [] unless buffer[message.channel]
+                buffer[message.channel].push(message)
+
+            if primus.channels[message.channel]?
+                primus.channels[message.channel].write(message)
+
 port = 8090
 server.listen port, ->
     console.log '[x] listening on port ' + port

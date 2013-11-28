@@ -42,7 +42,7 @@
             if (data.event == 'build.output.buffer') {
                 // console.log('processing buffered data');
                 for (i in data.data) {
-                    if (data.data[i].event && data.data[i].event == 'build.output') {
+                    if (data.data[i].event && data.data[i].event == 'build.log') {
                         processPart(data.data[i].data);
                     } else {
                         console.log('skipping buffered event "' + data.data[i].event + '"');
@@ -50,7 +50,7 @@
                 }
             }
 
-            if (data.event == 'build.output') {
+            if (data.event == 'build.log') {
                 processPart(data.data);
             }
         });
@@ -59,35 +59,37 @@
             // console.log(part);
 
             if (!part.build) {
-                // console.log('no build information');
+                console.log('no build information');
                 return;
             }
 
-            if (part.build.id != current_build_id) {
+            var build = part.build;
+
+            if (build.id != current_build_id) {
                 // console.log('expected build.id #' + current_build_id + ', got ' + part.build.id);
                 return;
             }
 
             // console.log('processing part #' + part.number + ' for build #' + part.build.id);
 
-            if (part.number != latestPart + 1) {
-                buffer.push(part)
-                return false;
-            }
+            // if (part.number != latestPart + 1) {
+            //     buffer.push(part)
+            //     return false;
+            // }
 
-            container.append(ansi_up.ansi_to_html(part.content) + '\n');
+            container.append(ansi_up.ansi_to_html(part.message));
 
             if (autoScroll) {
                 container[0].scrollTop = container[0].scrollHeight;
             }
 
-            latestPart = part.number;
+            // latestPart = part.number;
 
-            for (i in buffer) {
-                if (buffer[i].number == part.number + 1) {
-                    return processPart(buffer.splice(i, 1)[0]);
-                }
-            }
+            // for (i in buffer) {
+            //     if (buffer[i].number == part.number + 1) {
+            //         return processPart(buffer.splice(i, 1)[0]);
+            //     }
+            // }
 
             return true;
         }

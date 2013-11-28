@@ -57,7 +57,7 @@ class BuildScheduleCommand extends ContainerAwareCommand
         $buildProducer->publish(json_encode(['build_id' => $build->getId()]));
 
         $websocketProducer = $this->getContainer()->get('old_sound_rabbit_mq.websocket_producer');
-        $messageFactory = $this->get('app_core.message.factory');
+        $messageFactory = $this->getContainer()->get('app_core.message.factory');
 
         $websocketProducer->publish($messageFactory->createBuildScheduled($build));
     }

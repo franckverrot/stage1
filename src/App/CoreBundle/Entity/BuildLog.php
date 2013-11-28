@@ -21,6 +21,16 @@ class BuildLog
      */
     private $build;
 
+    public function asMessage()
+    {
+        return [
+            'message' => $this->getMessage(),
+            'type' => $this->getType(),
+            'stream' => $this->getStream(),
+            'build' => $this->getBuild()->asMessage(),
+        ];
+    }
+
     public function __toString()
     {
         return $this->getMessage();

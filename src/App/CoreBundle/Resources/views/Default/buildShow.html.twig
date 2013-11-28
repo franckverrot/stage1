@@ -70,7 +70,7 @@ stream_build_logs($('#logs'));
                 <i class="icon-refresh icon-spin icon-4x"></i>
             </div>
             {% endif %}
-        <pre id="output">{{ build.outputLogs | join('\n') }}</pre>
+        <pre id="output">{{ build.outputLogs | join('') }}</pre>
         </div>
         {% else %}
         <p class="lead">This build has no output.</p>
