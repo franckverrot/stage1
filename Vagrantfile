@@ -4,6 +4,7 @@
 $script = <<EOF
 sudo stop stage1
 cd /vagrant
+fab upstart_export
 composer install
 /vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
