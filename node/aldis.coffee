@@ -37,8 +37,6 @@ amqp   = require('amqp')
 colors = require('colors')
 domain = require('domain')
 
-stringToBytes = require('./stringToBytes').stringToBytes
-
 console.log('.. initializing aldis (hit ^C to quit)')
 
 if opts.docker_url.indexOf(':') != -1
@@ -147,7 +145,7 @@ parse_packet = (packet, use_multiplexing, callback) ->
         if not type in [0, 1, 2]
             throw new Error('Unknown stream type ' + frame.type)
 
-        callback { type: type, length: length, content: content}
+        callback { type: type, length: length, content: content }
 
         offset = offset + 8 + length
 

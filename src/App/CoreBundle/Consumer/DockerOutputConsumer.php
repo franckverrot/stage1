@@ -39,20 +39,15 @@ class DockerOutputConsumer implements ConsumerInterface
         $logger = $this->logger;
 
         $body = json_decode($message->body, true);
-        $container = $this->docker->getContainerManager()->find($body['container']);
-        $env = $container->getParsedEnv();
 
-        if (!array_key_exists('BUILD_ID', $env)) {
-            $logger->debug('discarding non-build container log', [
-                'container' => $container->getId()
-            ]);
-
+        if (!array_key_exists('BUILD_ID', $body['env'])) {
+            $logger->warn('no build information', ['message' => $body]);
             return;
         }
 
         $em = $this->doctrine->getManager();
         $repo = $em->getRepository('AppCoreBundle:Build');
-        $build = $repo->find($env['BUILD_ID']);
+        $build = $repo->find($body['env']['BUILD_ID']);
 
         if (!$build) {
             $logger->warn('could not find build for container', [
@@ -65,10 +60,10 @@ class DockerOutputConsumer implements ConsumerInterface
 
         $logger->debug('processing log fragment', [
             'build' => $build->getId(),
-            'container' => $container->getId(),
+            'container' => $body['container'],
         ]);
 
-        $fragment = $body['line'];
+        $fragment = $body['content'];
 
         while (preg_match('/^\[websocket:(.+?):(.*)\]$/m', $fragment, $matches)) {
             $fragment = str_replace($matches[0], '', $fragment);
