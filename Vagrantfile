@@ -3,7 +3,11 @@
 
 $script = <<EOF
 sudo stop stage1
+sudo usermod -aG docker vagrant
 cd /vagrant
+apt-get update
+apt-get install lxc-docker
+bin/docker/update.sh
 fab upstart_export
 composer install
 /vagrant/app/console doctrine:database:drop --force
