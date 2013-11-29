@@ -108,6 +108,7 @@ def provision():
         put('packer/support/config/nginx/prod/default', 'nginx-default')
         put('packer/support/config/php/prod.ini', 'php-php.ini')
         put('packer/support/config/grub/default', 'grub-default')
+        put('packer/support/config/docker/default', 'docker-default')
         put('packer/support/scripts/stage1.sh', 'stage1.sh')
         put('packer/support/scripts/prod.sh', 'prod.sh')
 
