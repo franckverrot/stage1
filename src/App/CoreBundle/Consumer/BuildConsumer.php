@@ -85,7 +85,7 @@ class BuildConsumer implements ConsumerInterface
                 try {
                     $this->docker->getContainerManager()->stop($previousBuild->getContainer());
                 } catch (ContainerNotFoundException $e) {
-                    $this->logger->warn('Found previous container but docker did not find it', ['container' => $previousBuild->getContainer()->getContainerId()]);
+                    $this->logger->warn('Found previous container but docker did not find it', ['container' => $previousBuild->getContainer()->getId()]);
                 }
                 $previousBuild->setStatus(Build::STATUS_OBSOLETE);
                 $em->persist($previousBuild);
