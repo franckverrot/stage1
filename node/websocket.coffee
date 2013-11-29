@@ -92,8 +92,9 @@ amqp.createConnection { host: opts.amqp_host }, { reconnect: false }, (conn) ->
             # build log fragment from aldis
             #
             # { container: <a docker container id>,
-            #   type: <stream type id>
-            #   line: <actual message>,
+            #   type: <stream type id>,
+            #   length: <content length>,
+            #   content: <actual message>,
             #   env: { CHANNEL: <websocket channel>, BUILD_ID: <stage1 build id> } }
             #
             # everything *must* be converted to the standard stage1 format
@@ -106,14 +107,18 @@ amqp.createConnection { host: opts.amqp_host }, { reconnect: false }, (conn) ->
                     data:
                         build:
                             id: message.env.BUILD_ID
-                        message: message.line
+                        length: message.length
+                        message: message.content
                         type: 'output',
                         stream: message.type
 
             if not message.channel?
                 return
 
-            if message.event == 'build.finished'
+            console.log('<- event ' + message.event.yellow + ' for channel ' + message.channel.yellow)
+
+            if message.event in ['build.finished', 'build.started']
+                console.log('   cleaning buffer for channel ' + message.channel.yellow)
                 delete buffer[message.channel] if buffer[message.channel]
             else
                 buffer[message.channel] = [] unless buffer[message.channel]

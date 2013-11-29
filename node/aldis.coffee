@@ -37,6 +37,8 @@ amqp   = require('amqp')
 colors = require('colors')
 domain = require('domain')
 
+stringToBytes = require('./stringToBytes').stringToBytes
+
 console.log('.. initializing aldis (hit ^C to quit)')
 
 if opts.docker_url.indexOf(':') != -1
@@ -68,7 +70,6 @@ amqp.createConnection({ host: opts.amqp_host }, { reconnect: false }, (conn) ->
 
             stream.on('data', (data) ->
                 data = JSON.parse(data)
-                # console.log('<- got "' + data.status + '" for container "' + data.id.yellow + '"')
 
                 if data.status != 'create'
                     return
@@ -108,32 +109,47 @@ attach = (container, exchange) ->
                     console.log('-> detaching container ' + container.id.substr(0, 12).yellow)
                 )
 
-                stream.on('data', (line) ->
-                    parsed = parse_line(line, use_multiplexing)
+                stream.on('data', (packet) ->
 
-                    if getopt.options.log
-                        # process.stdout.write(container.id.substr(0, 12).yellow + '> '+ parsed[1])
-                        process.stdout.write(parsed[1])
+                    parse_packet(packet, use_multiplexing, (frame) ->
+                        if getopt.options.log
+                            process.stdout.write(frame.content)
 
-                    # console.log('<- got ' + line.length + ' bytes from container "' + container.id.yellow + '"')
-                    message = { container: container.id, type: parsed[0], line: parsed[1], env: env }
+                        message = {
+                            container: container.id,
+                            env: env,
+                            type: frame.type,
+                            length: frame.length,
+                            content: frame.content
+                        }
 
-                    exchange.publish('', message)
-                    # console.log('-> sent ' + buffer.length + ' bytes to "' + opts.queue + '"')
+                        exchange.publish('', message)
+                    )
                 )
             )
         )
     )
 
-parse_line = (line, use_multiplexing) ->
+parse_packet = (packet, use_multiplexing, callback) ->
     if !use_multiplexing
-        return [null, line]
+        return [null, Buffer.byteLength(packet, 'utf8'), line]
 
-    # @see http://docs.docker.io/en/master/api/docker_remote_api_v1.7/#attach-to-a-container
-    buf = new Buffer(line, 'utf8')
-    type = buf.readUInt8(0)
+    offset = 0
 
-    if [0, 1, 2].indexOf(type) == -1
-        throw new Error('Unknown stream type ' + type)
+    buf = new Buffer(packet)
 
-    return [type, buf.toString('utf8', 8, 8 + buf.readUInt32BE(4))]
+    while offset < buf.length
+
+        type = buf.readUInt8(offset)
+        length = buf.readUInt32BE(offset + 4)
+        content = buf.toString('utf8', offset + 8, offset + 8 + length)
+
+        if not type in [0, 1, 2]
+            throw new Error('Unknown stream type ' + frame.type)
+
+        callback { type: type, length: length, content: content}
+
+        offset = offset + 8 + length
+
+String::padLeft = (padValue) ->
+    String(padValue + this).slice(-padValue.length)

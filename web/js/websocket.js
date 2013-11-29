@@ -32,11 +32,12 @@
             // outdated message, don't even bother
             console.log('discarding outdated message');
             return
+        } else {
+            lastTimestamp = data.timestamp;
         }
 
-        lastTimestamp = data.timestamp;
 
-        if (data.event == 'build.output' || data.event == 'data.output.buffer') {
+        if (data.event == 'build.log' || data.event == 'data.output.buffer') {
             return;
         }
 

@@ -89,9 +89,6 @@ class DockerOutputConsumer implements ConsumerInterface
 
         $build->addLog($buildLog);
 
-        $message = new BuildLogMessage($buildLog);
-        $this->producer->publish((string) $message);
-
         $em->persist($build);
         $em->persist($buildLog);
 
