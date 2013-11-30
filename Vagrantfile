@@ -1,21 +1,19 @@
 # -*- mode: ruby -*-
 # vim:set ft=ruby:
 
+`sudo true`
+
 $script = <<EOF
-sudo stop stage1
-sudo usermod -aG docker vagrant
 cd /vagrant
-apt-get update
-apt-get install lxc-docker
-bin/docker/update.sh
-fab upstart_export
 composer install
 /vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
 /vagrant/app/console assetic:dump
 /vagrant/app/console demo:setup
-sudo start stage1
+bundle install
+fab upstart_export
+sudo restart stage1
 EOF
 
 Vagrant.configure("2") do |config|
