@@ -2,10 +2,6 @@
 
 namespace App\CoreBundle\Consumer;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use App\CoreBundle\Builder\Builder;
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Message\BuildStartedMessage;
@@ -16,17 +12,21 @@ use App\CoreBundle\Event\BuildStartedEvent;
 use App\CoreBundle\Event\BuildFinishedEvent;
 use App\CoreBundle\Event\BuildKilledEvent;
 
+use Docker\Docker;
+use Docker\Container;
+use Docker\Exception\ContainerNotFoundException;
+
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 use Psr\Log\LoggerInterface;
 
-use Docker\Docker;
-use Docker\Container;
-use Docker\Exception\ContainerNotFoundException;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Exception;
 
+// needed for signal handling
 declare(ticks = 1);
 
 class BuildConsumer implements ConsumerInterface
@@ -45,14 +45,13 @@ class BuildConsumer implements ConsumerInterface
 
     private $buildHostMask;
 
-    public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker, $buildHostMask)
+    public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker)
     {
         $this->logger = $logger;
         $this->dispatcher = $dispatcher;
         $this->doctrine = $doctrine;
         $this->builder = $builder;
         $this->docker = $docker;
-        $this->buildHostMask = $buildHostMask;
 
         pcntl_signal(SIGTERM, [$this, 'terminate']);
 
@@ -66,8 +65,6 @@ class BuildConsumer implements ConsumerInterface
         if (null !== $this->build) {
             $build = $this->build;
             $docker = $this->docker;
-
-            $this->logger->info('[terminate] build hash', ['build' => spl_object_hash($build)]);
 
             $this->logger->info('cleaning things before exiting', ['build' => $build->getId()]);
 
@@ -130,26 +127,10 @@ class BuildConsumer implements ConsumerInterface
 
             $container = $this->builder->run($build);
 
+            $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => $container->getId()]);
+
             $build->setContainer($container);
             $build->setPort($container->getMappedPort(80)->getHostPort());
-
-            $previousBuild = $buildRepository->findPreviousBuild($build);
-
-            // @todo move to a build.finished listener
-            if ($previousBuild && $previousBuild->hasContainer()) {
-                try {
-                    $this->docker->getContainerManager()->stop($previousBuild->getContainer());
-                } catch (ContainerNotFoundException $e) {
-                    $this->logger->warn('Found previous container but docker did not find it', ['container' => $previousBuild->getContainer()->getId()]);
-                }
-                $previousBuild->setStatus(Build::STATUS_OBSOLETE);
-                $em->persist($previousBuild);
-            }
-
-            // @todo move to a build.finished listener
-            if (strlen($build->getHost()) === 0) {
-                $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
-            }
 
             $build->setStatus(Build::STATUS_RUNNING);
         } catch (Exception $e) {

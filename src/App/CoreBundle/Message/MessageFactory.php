@@ -22,6 +22,13 @@ class MessageFactory
         $this->router = $router;
     }
 
+    public function createBuildMessage(Build $build, $message)
+    {
+        $message = new BuildMessage($build, $message);
+        
+        return $message;
+    }
+
     public function createBuildScheduled(Build $build)
     {
         $message = new BuildScheduledMessage($build);

@@ -74,8 +74,6 @@ SSH
         $buildContainer = new BuildContainer($build);
         $build->setContainer($buildContainer);
 
-        $logger->info('[builder] build hash', ['build' => spl_object_hash($build)]);
-
         $manager = $this->docker->getContainerManager();
 
         $logger->info('starting actual build', ['build' => $build->getId()]);
