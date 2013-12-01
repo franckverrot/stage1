@@ -92,6 +92,11 @@
       "type": "file"
     },
     {
+      "destination": "/tmp/docker-default",
+      "source": "packer/support/config/docker/default",
+      "type": "file"
+    },
+    {
       "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
       "scripts": [
         "packer/support/scripts/ssh.sh",
