@@ -80,6 +80,7 @@ class DockerOutputConsumer implements ConsumerInterface
         $buildLog->setType(Build::LOG_OUTPUT);
         $buildLog->setMessage($fragment);
         $buildLog->setStream($body['type'] ? $streamMap[$body['type']] : null);
+        $buildLog->setMicrotime($body['timestamp']);
         $buildLog->setBuild($build);
 
         $build->addLog($buildLog);

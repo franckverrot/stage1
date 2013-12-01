@@ -42,6 +42,9 @@
         </many-to-one>
 
         <one-to-many field="logs" target-entity="App\CoreBundle\Entity\BuildLog" mapped-by="build">
+            <order-by>
+                <order-by-field name="microtime" direction="ASC" />
+            </order-by>
             <cascade><cascade-remove /></cascade>
         </one-to-many>
 

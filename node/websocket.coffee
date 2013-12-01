@@ -92,6 +92,7 @@ amqp.createConnection { host: opts.amqp_host }, { reconnect: false }, (conn) ->
             # build log fragment from aldis
             #
             # { container: <a docker container id>,
+            #   timestamp: <microseconds timestmap>,
             #   type: <stream type id>,
             #   length: <content length>,
             #   content: <actual message>,

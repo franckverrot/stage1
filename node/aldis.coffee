@@ -118,7 +118,8 @@ attach = (container, exchange) ->
                             env: env,
                             type: frame.type,
                             length: frame.length,
-                            content: frame.content
+                            content: frame.content,
+                            timestamp: Date.now()
                         }
 
                         exchange.publish('', message)
