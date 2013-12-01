@@ -46,6 +46,10 @@ class Build
 
     private $host;
 
+    private $pid;
+
+    private $container;
+
     private $containerId;
 
     private $imageId;
@@ -441,6 +445,10 @@ class Build
     public function setContainerId($containerId)
     {
         $this->containerId = $containerId;
+
+        if ($this->container && $this->container->getId() !== $containerId) {
+            $this->container = null;
+        }
     
         return $this;
     }
@@ -456,14 +464,27 @@ class Build
     }
 
     /**
+     * @return App\CoreBundle\Entity\Build
+     */
+    public function setContainer(Container $container)
+    {
+        $this->container = $container;
+        $this->setContainerId($container->getId());
+    }
+
+    /**
      * @return Docker\Container
      */
     public function getContainer()
     {
-        $container = new Container();
-        $container->setId($this->getContainerId());
+        if (null === $this->container && strlen($this->getContainerId()) > 0) {
+            $container = new Container();
+            $container->setId($this->getContainerId());
 
-        return $container;
+            $this->container = $container;
+        }
+
+        return $this->container;
     }
 
     /**
@@ -863,5 +884,28 @@ class Build
     public function getMemoryUsage()
     {
         return $this->memoryUsage;
+    }
+
+    /**
+     * Set pid
+     *
+     * @param integer $pid
+     * @return Build
+     */
+    public function setPid($pid)
+    {
+        $this->pid = $pid;
+    
+        return $this;
+    }
+
+    /**
+     * Get pid
+     *
+     * @return integer 
+     */
+    public function getPid()
+    {
+        return $this->pid;
     }
 }

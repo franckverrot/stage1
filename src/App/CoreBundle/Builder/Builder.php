@@ -49,7 +49,7 @@ class Builder
         $logger = $this->logger;
         $docker = $this->docker;
 
-        $logger->info('starting build #'.$build->getId());
+        $logger->info('starting build', ['build' => $build->getId()]);
 
         // @todo the base container can (and should?) be built during project import
         //       that's one lest step during the build
@@ -68,11 +68,18 @@ SSH
         $context->run('chmod -R 0600 /root/.ssh');
         $context->run('chown -R root:root /root/.ssh');
 
+        $logger->info('building base build container', ['build' => $build->getId()]);
         $docker->build($context, $build->getImageName());
 
         $buildContainer = new BuildContainer($build);
+        $build->setContainer($buildContainer);
+
+        $logger->info('[builder] build hash', ['build' => spl_object_hash($build)]);
 
         $manager = $this->docker->getContainerManager();
+
+        $logger->info('starting actual build', ['build' => $build->getId()]);
+
         $manager->run($buildContainer);
         $manager->wait($buildContainer);
 
@@ -92,11 +99,14 @@ SSH
             throw new Exception($message, $buildContainer->getExitCode());
         }
 
+        $logger->info('build successful, committing', ['build' => $build->getId()]);
+
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
 
         $appContainer = new AppContainer($build);
         $ports = new PortCollection(80, 22);
 
+        $logger->info('running app container', ['build' => $build->getId()]);
         $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);
 
         return $appContainer;

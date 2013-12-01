@@ -14,6 +14,7 @@ use App\CoreBundle\Message\BuildStepMessage;
 use App\CoreBundle\BuildEvents;
 use App\CoreBundle\Event\BuildStartedEvent;
 use App\CoreBundle\Event\BuildFinishedEvent;
+use App\CoreBundle\Event\BuildKilledEvent;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -21,12 +22,17 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 
 use Docker\Docker;
+use Docker\Container;
 use Docker\Exception\ContainerNotFoundException;
 
 use Exception;
 
+declare(ticks = 1);
+
 class BuildConsumer implements ConsumerInterface
 {
+    private $build;
+
     private $doctrine;
 
     private $producer;
@@ -48,7 +54,45 @@ class BuildConsumer implements ConsumerInterface
         $this->docker = $docker;
         $this->buildHostMask = $buildHostMask;
 
+        pcntl_signal(SIGTERM, [$this, 'terminate']);
+
         $logger->info('initialized '.__CLASS__);
+    }
+
+    public function terminate($signo)
+    {
+        $this->logger->info('received signal', ['signo' => $signo]);
+
+        if (null !== $this->build) {
+            $build = $this->build;
+            $docker = $this->docker;
+
+            $this->logger->info('[terminate] build hash', ['build' => spl_object_hash($build)]);
+
+            $this->logger->info('cleaning things before exiting', ['build' => $build->getId()]);
+
+            if (($container = $build->getContainer()) instanceof Container) {
+                $this->logger->info('stopping container', [
+                    'build' => $build->getId(),
+                    'container' => $container->getId(),
+                ]);
+
+                $docker->getContainerManager()->stop($container);
+            } else {
+                var_dump($container);
+            }
+
+            $build->setStatus(Build::STATUS_KILLED);
+            $build->setMessage('Build terminated with signal '.$signo);
+
+            $em = $this->doctrine->getManager();
+            $em->persist($build);
+            $em->flush();
+
+            $this->dispatcher->dispatch(BuildEvents::KILLED, new BuildKilledEvent($build));
+        }
+
+        exit(0);
     }
 
     public function execute(AMQPMessage $message)
@@ -58,14 +102,25 @@ class BuildConsumer implements ConsumerInterface
         $em = $this->doctrine->getManager();
         $buildRepository = $em->getRepository('AppCoreBundle:Build');
 
-        $build = $buildRepository->find($body->build_id);
+        $this->build = $build = $buildRepository->find($body->build_id);
 
         if (!$build) {
             $this->logger->info('could not find build #'.$body->build_id);
             return;
         }
 
+        if (!$build->isScheduled()) {
+            $this->logger->warn('build found but not scheduled', [
+                'build' => $build->getId(),
+                'status' => $build->getStatus(),
+                'status_label' => $build->getStatusLabel()
+            ]);
+
+            return;
+        }
+
         $build->setStatus(Build::STATUS_BUILDING);
+        $build->setPid(posix_getpid());
 
         $em->persist($build);
         $em->flush();
@@ -75,7 +130,7 @@ class BuildConsumer implements ConsumerInterface
 
             $container = $this->builder->run($build);
 
-            $build->setContainerId($container->getId());
+            $build->setContainer($container);
             $build->setPort($container->getMappedPort(80)->getHostPort());
 
             $previousBuild = $buildRepository->findPreviousBuild($build);

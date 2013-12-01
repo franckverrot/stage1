@@ -53,6 +53,7 @@
         <service id="app_core.builder" class="App\CoreBundle\Builder\Builder">
             <argument type="service" id="logger" />
             <argument type="service" id="app_core.docker" />
+            <tag name="monolog.logger" channel="build" />
         </service>
 
         <!-- rabbitmq consumers -->
@@ -69,9 +70,13 @@
         </service>
 
         <service id="app_core.consumer.kill" class="App\CoreBundle\Consumer\KillConsumer">
+            <argument type="service" id="logger" />
+            <argument type="service" id="app_core.docker" />
             <argument type="service" id="doctrine" />
+            <argument type="service" id="app_core.message.factory" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
             <argument type="service" id="router" />
+            <tag name="monolog.logger" channel="build" />
         </service>
 
         <service id="app_core.consumer.project_import" class="App\CoreBundle\Consumer\ProjectImportConsumer">
@@ -113,6 +118,7 @@
             <tag name="monolog.logger" channel="build" />
             <tag name="kernel.event_listener" event="build.started" method="onBuildStarted" />
             <tag name="kernel.event_listener" event="build.finished" method="onBuildFinished" />
+            <tag name="kernel.event_listener" event="build.killed" method="onBuildKilled" />
         </service>
 
         <!-- kernel listeners -->

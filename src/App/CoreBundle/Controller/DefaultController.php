@@ -78,11 +78,6 @@ class DefaultController extends Controller
 
             $this->persistAndFlush($build);
 
-            $factory = $this->get('app_core.message.factory');
-            $message = $factory->createBuildKilled($build);
-
-            $this->publishWebsocket($message);
-
             $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
             return new JsonResponse(null, 200);

@@ -4,8 +4,8 @@ namespace App\CoreBundle\EventListener\Build;
 
 use App\CoreBundle\Event\BuildStartedEvent;
 use App\CoreBundle\Event\BuildFinishedEvent;
-use App\CoreBundle\Message\BuildStartedMessage;
-use App\CoreBundle\Message\BuildFinishedMessage;
+use App\CoreBundle\Event\BuildKilledEvent;
+
 use App\CoreBundle\Message\MessageFactory;
 
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
@@ -65,6 +65,19 @@ class BuildWebsocketMessagesListener
         /** @todo write a producer that accepts Message objects */
         $this->logger->info('sending build.finished message', ['build' => $build->getId()]);
         $message = $this->factory->createBuildFinished($build);
+        $this->producer->publish((string) $message);
+    }
+
+    /**
+     * @param App\CoreBundle\Event\BuildFinishedEvent
+     */
+    public function onBuildKilled(BuildKilledEvent $event)
+    {
+        $build = $event->getBuild();
+
+        /** @todo write a producer that accepts Message objects */
+        $this->logger->info('sending build.killed message', ['build' => $build->getId()]);
+        $message = $this->factory->createBuildKilled($build);
         $this->producer->publish((string) $message);
     }
 }
