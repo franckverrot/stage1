@@ -94,4 +94,4 @@ RUN chmod -R +x /usr/local/bin/buildapp /usr/local/bin/runapp /usr/local/lib/bui
 # RUN apt-get autoremove -qy vim curl
 
 # EXPOSE 80
-EXPOSE 80 22
+# EXPOSE 80 22
