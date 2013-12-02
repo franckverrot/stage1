@@ -6,6 +6,8 @@
 
     <services>
         <!-- misc services -->
+        <service id="app_core.stopwatch" class="Symfony\Component\Stopwatch\Stopwatch" />
+
         <service id="session.handler.redis" class="Drak\NativeSession\NativeRedisSessionHandler">
             <argument>tcp://%redis_host%:%redis_port%?timeout=2</argument>
         </service>
@@ -121,7 +123,7 @@
 
         <service id="app_core.listener.build.stopwatch" class="App\CoreBundle\EventListener\Build\BuildStopwatchListener">
             <argument type="service" id="logger" />
-            <argument type="service" id="debug.stopwatch" />
+            <argument type="service" id="app_core.stopwatch" />
             <tag name="monolog.logger" channel="build" />
             <tag name="kernel.event_listener" priority="255" event="build.started" method="onBuildStarted" />
             <tag name="kernel.event_listener" priority="-200" event="build.finished" method="onBuildFinished" />
