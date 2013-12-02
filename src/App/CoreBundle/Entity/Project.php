@@ -9,6 +9,12 @@ namespace App\CoreBundle\Entity;
  */
 class Project
 {
+    const STATUS_DISABLED = 0;
+
+    const STATUS_ENABLED = 1;
+
+    const STATUS_HOLD = 2;
+
     /**
      * @var integer
      */
@@ -61,6 +67,8 @@ class Project
     protected $users;
 
     protected $branches;
+
+    protected $status = 1;
 
     public function __toString()
     {
@@ -666,5 +674,28 @@ class Project
     public function getHooksUrl()
     {
         return $this->hooksUrl;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     * @return Project
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return integer 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

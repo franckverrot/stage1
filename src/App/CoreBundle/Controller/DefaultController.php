@@ -164,6 +164,10 @@ class DefaultController extends Controller
     {
         $project = $this->findProject($id);
 
+        if ($project->getStatus() === Project::STATUS_HOLD) {
+            throw new Exception('Project is on hold');
+        }
+
         try {
             $ref = $request->request->get('ref');
 
@@ -230,13 +234,16 @@ class DefaultController extends Controller
 
     public function hooksGithubAction(Request $request)
     {
-
         $payload = json_decode($request->getContent());
 
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
 
         if (!$project) {
             throw $this->createNotFoundException('Unknown Github project');
+        }
+
+        if ($project->getStatus() === Project::STATUS_HOLD) {
+            return;
         }
 
         try {
