@@ -743,6 +743,9 @@ class Build
         return $this->host;
     }
 
+    /**
+     * @return boolean
+     */
     public function isDemo()
     {
         return $this->getIsDemo();

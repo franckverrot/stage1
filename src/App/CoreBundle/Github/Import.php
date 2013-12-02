@@ -150,34 +150,6 @@ class Import
         return call_user_func_array([$this->redis, 'sadd'], $args);
     }
 
-    /**
-     * @todo @github refactor
-     */
-    private function github_post($url, $payload)
-    {
-        return json_decode(file_get_contents($url, false, stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'content' => json_encode($payload),
-                'header' => 'Authorization: token '.$this->getAccessToken()."\r\n".
-                            "Content-Type: application/json\r\n"
-            ],
-        ])));
-    }
-
-    /**
-     * @todo @github refactor
-     */
-    private function github_get($url)
-    {
-        return json_decode(file_get_contents($url, false, stream_context_create([
-            'http' => [
-                'method' => 'GET',
-                'header' => 'Authorization: token '.$this->getAccessToken()."\r\n"
-            ],
-        ])));
-    }
-
     private function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         return $this->router->generate($route, $parameters, $referenceType);
