@@ -18,6 +18,7 @@ env.processes = [
     'consumer-project-import',
     'consumer-docker-output',
     'websockets',
+    'aldis',
     'hipache',
 ]
 
