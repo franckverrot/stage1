@@ -70,6 +70,8 @@ class Project
 
     protected $status = 1;
 
+    protected $env;
+
     public function isDemo()
     {
         foreach ($this->getUsers() as $user) {
@@ -708,5 +710,28 @@ class Project
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set env
+     *
+     * @param string $env
+     * @return Project
+     */
+    public function setEnv($env)
+    {
+        $this->env = $env;
+    
+        return $this;
+    }
+
+    /**
+     * Get env
+     *
+     * @return string 
+     */
+    public function getEnv()
+    {
+        return $this->env;
     }
 }

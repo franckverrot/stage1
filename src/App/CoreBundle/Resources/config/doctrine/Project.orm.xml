@@ -24,6 +24,7 @@
         <field name="privateKey" column="private_key" type="text" />
         <field name="masterPassword" column="master_password" type="text" nullable="true" />
         <field name="status" column="status" type="integer" />
+        <field name="env" column="env" type="text" nullable="true" />
 
         <many-to-many field="users" target-entity="App\CoreBundle\Entity\User" inversed-by="projects">
             <join-table name="users_projects">
