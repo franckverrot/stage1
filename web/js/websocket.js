@@ -45,8 +45,8 @@
             callbacks.build(data.event, data.data.build);
         }
 
-        if (data.data.project) {
-            callbacks.project(data.event, data.data.project);
+        if (data.data.build && data.data.build.project) {
+            callbacks.project(data.event, data.data.build.project);
         }
 
         if (typeof(callbacks[data.event]) == 'function') {
