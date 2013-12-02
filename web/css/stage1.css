@@ -139,3 +139,8 @@ div.build-building-icon {
 .table-candidates td {
     vertical-align: inherit;
 }
+
+textarea#project_env {
+    width: 98%;
+    height: 7em;
+}

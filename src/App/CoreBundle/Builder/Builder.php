@@ -72,6 +72,8 @@ SSH
         $docker->build($context, $build->getImageName());
 
         $buildContainer = new BuildContainer($build);
+        $buildContainer->addEnv($build->getProject()->getContainerEnv());
+
         $build->setContainer($buildContainer);
 
         $manager = $this->docker->getContainerManager();
@@ -104,6 +106,7 @@ SSH
         $ports = new PortCollection(80, 22);
 
         $appContainer = new AppContainer($build);
+        $appContainer->addEnv($build->getProject()->getContainerEnv());
         $appContainer->setExposedPorts($ports);
 
         $logger->info('running app container', ['build' => $build->getId()]);

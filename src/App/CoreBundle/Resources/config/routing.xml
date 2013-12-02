@@ -75,10 +75,6 @@
         <default key="_controller">AppCoreBundle:Default:projectScheduleBuild</default>
     </route>
 
-    <route id="app_core_project_admin" pattern="/project/{id}/admin" methods="GET">
-        <default key="_controller">AppCoreBundle:Default:projectAdmin</default>
-    </route>
-
     <route id="app_core_project_delete" pattern="/project/{id}/delete" methods="POST">
         <default key="_controller">AppCoreBundle:Default:projectDelete</default>
     </route>

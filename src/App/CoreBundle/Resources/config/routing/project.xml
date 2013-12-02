@@ -20,6 +20,14 @@
 
     <!-- private project routing -->
 
+    <route id="app_core_project_env" pattern="/project/{id}/env" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:updateEnv</default>
+    </route>
+
+    <route id="app_core_project_admin" pattern="/project/{id}/admin" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:admin</default>
+    </route>
+
     <route id="app_core_project_branches" pattern="/project/{id}/branches" methods="GET">
         <default key="_controller">AppCoreBundle:Project:branches</default>
     </route>

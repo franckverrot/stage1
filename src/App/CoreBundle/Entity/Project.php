@@ -713,6 +713,33 @@ class Project
     }
 
     /**
+     * @return array
+     */
+    public function getContainerEnv()
+    {
+        return explode(PHP_EOL, trim($this->getEnv()));
+    }
+
+    /**
+     * @return array
+     */
+    public function getParsedEnv()
+    {
+        $parsedEnv = [];
+        $vars = explode(PHP_EOL, trim($this->getEnv()));
+
+        foreach ($vars as $var) {
+            $var = explode('=', $var);
+
+            if (count($var) === 2) {
+                $parsedEnv[$var[0]] = $var[1];
+            }
+        }
+
+        return $parsedEnv;
+    }
+
+    /**
      * Set env
      *
      * @param string $env

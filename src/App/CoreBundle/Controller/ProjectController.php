@@ -26,6 +26,42 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * @param integer $id
+     */
+    public function adminAction($id)
+    {
+        $project = $this->findProject($id);
+        $this->setCurrentProjectId($id);
+
+        # @todo replace with SessionCsrfProvider
+        $token = uniqid(mt_rand(), true);
+        $this->get('session')->set('csrf_token', $token);
+
+        return $this->render('AppCoreBundle:Project:admin.html.twig', [
+            'project' => $project,
+            'csrf_token' => $token,
+        ]);
+    }
+
+    /**
+     * @param Symfony\Component\HttpFoundation\Request $request
+     * @param integer $id
+     */
+    public function updateEnvAction(Request $request, $id)
+    {
+        $project = $this->findProject($id);
+        $this->setCurrentProjectId($id);
+
+        $project->setEnv($request->request->get('project_env'));
+
+        $this->persistAndFlush($project);
+
+        $this->addFlash('success', 'Project environment saved');
+
+        return $this->redirect($this->generateUrl('app_core_project_admin', ['id' => $project->getId()]));
+    }
+
     public function branchesAction($id)
     {
         $this->setCurrentProjectId($id);

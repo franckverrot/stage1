@@ -22,6 +22,20 @@ $('#project_name').on('keyup', function(event) {
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
 <fieldset>
+    <legend>Project's environment</legend>
+
+    <form id="form-project-env" method="post" action="{{ path('app_core_project_env', { id: project.id }) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+        <textarea name="project_env" id="project_env">{{ project.env }}</textarea>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save project's environment</button>
+        </div>
+    </form>
+</fieldset>
+
+<fieldset>
     <legend>Project's public key</legend>
     <p>Use this key as a deploy key for your private dependencies.</p>
 

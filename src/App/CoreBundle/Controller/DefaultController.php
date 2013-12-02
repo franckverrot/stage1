@@ -86,21 +86,6 @@ class DefaultController extends Controller
         }
     }
 
-    public function projectAdminAction($id)
-    {
-        $project = $this->findProject($id);
-        $this->setCurrentProjectId($id);
-
-        # @todo replace with SessionCsrfProvider
-        $token = uniqid(mt_rand(), true);
-        $this->get('session')->set('csrf_token', $token);
-
-        return $this->render('AppCoreBundle:Default:projectAdmin.html.twig', [
-            'project' => $project,
-            'csrf_token' => $token,
-        ]);
-    }
-
     public function projectDeleteAction(Request $request, $id)
     {
         $project = $this->findProject($id);
