@@ -4,7 +4,9 @@ if [ ! -z "$DEBUG" ]; then
     set -x
 fi
 
-declare -a services=(mysql php5-fpm nginx ssh)
+/usr/sbin/sshd
+
+declare -a services=(mysql php5-fpm nginx)
 declare -a tries=(index.php app.php)
 
 for file in ${tries[@]}; do
