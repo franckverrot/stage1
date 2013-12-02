@@ -16,9 +16,9 @@ env.processes = [
     'consumer-build',
     'consumer-kill',
     'consumer-project-import',
+    'consumer-docker-output',
     'websockets',
-    'log-fetch',
-    'hipache'
+    'hipache',
 ]
 
 env.log_files = [
@@ -67,6 +67,7 @@ def upstart_export():
     local('sudo foreman export upstart /etc/init -u root -a stage1')
 
 def upstart_deploy():
+    local('sudo rm -rf /tmp/init/*')
     local('sudo foreman export upstart /tmp/init -u root -a stage1')
     local('sudo find /tmp/init -type f -exec sed -e \'s!/vagrant!%s!\' -e \'s! export PORT=.*;!!\' -i "{}" \;' % env.project_path)
     local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete /tmp/init/* %(user)s@%(host)s:%(remote)s' % {
