@@ -70,6 +70,17 @@ class Project
 
     protected $status = 1;
 
+    public function isDemo()
+    {
+        foreach ($this->getUsers() as $user) {
+            if ($user->getUsername() === 'Demo') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function __toString()
     {
         return json_encode($this->asWebsocketMessage());
