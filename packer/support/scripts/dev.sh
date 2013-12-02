@@ -14,6 +14,8 @@ fi
 
 redis-cli RPUSH frontend:stage1.dev stage1 http://127.0.0.1:8080/
 
+apt-get install tcpflow socat
+
 apt-get -qy install \
     build-essential \
     python2.7-dev \
@@ -28,7 +30,7 @@ apt-get install -q -y ruby rubygems
 gem install --no-ri --no-rdoc bundler
 
 # prepare a few thing that we won't have to do during vagrant up
-git clone git@bitbucket.org:ubermuda/stage1.git --branch master --single-branch --depth 1 /vagrant
+git clone git@bitbucket.org:ubermuda/stage1.git --branch master --depth 1 /vagrant
 
 cd /vagrant
 
