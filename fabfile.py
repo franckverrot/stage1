@@ -23,8 +23,8 @@ env.processes = [
 ]
 
 env.log_files = [
-    '/var/log/nginx/symfony.*.log',
-    '/tmp/log/*.log',
+    '/var/log/nginx/*.log',
+    '/var/log/stage1/*.log',
     '%s/app/logs/*.log' % env.project_path,
     '/var/log/syslog',
     '/var/log/php5-fpm.log',
@@ -223,7 +223,7 @@ def cold_deploy():
         info('running database migrations')
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
-    services_restart()
+    # services_restart()
     processes_start()
 
     run('chown -R www-data:www-data %s' % env.project_path)
@@ -249,7 +249,7 @@ def hot_deploy():
         info('running database migrations')
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
-    services_restart()
+    # services_restart()
     processes_start()
     run('chown -R www-data:www-data %s' % env.project_path)
     run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
