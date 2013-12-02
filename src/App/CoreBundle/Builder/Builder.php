@@ -101,8 +101,10 @@ SSH
 
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
 
-        $appContainer = new AppContainer($build);
         $ports = new PortCollection(80, 22);
+
+        $appContainer = new AppContainer($build);
+        $appContainer->setExposedPorts($ports);
 
         $logger->info('running app container', ['build' => $build->getId()]);
         $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);
