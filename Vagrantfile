@@ -1,8 +1,9 @@
 # -*- mode: ruby -*-
 # vim:set ft=ruby:
 
+`sudo true`
+
 $script = <<EOF
-sudo stop stage1
 cd /vagrant
 composer install
 /vagrant/app/console doctrine:database:drop --force
@@ -10,7 +11,9 @@ composer install
 /vagrant/app/console doctrine:schema:update --force
 /vagrant/app/console assetic:dump
 /vagrant/app/console demo:setup
-sudo start stage1
+bundle install
+fab upstart_export
+sudo restart stage1
 EOF
 
 Vagrant.configure("2") do |config|

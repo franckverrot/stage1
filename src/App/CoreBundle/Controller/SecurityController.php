@@ -37,11 +37,16 @@ class SecurityController extends Controller
 
     private function registerGithubUser(Request $request, $accessToken)
     {
-        $githubApiBaseUrl = $this->container->getParameter('github_api_base_url');
+        $client = $this->container->get('app_core.client.github');
+        $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
+        $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
-        $result = $this->github_get($githubApiBaseUrl.'/user', $accessToken);
+        $request = $client->get('/user');
+        $response = $request->send();
 
-        if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result->id))) {
+        $result = $response->json();
+
+        if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result['id']))) {
             $user = User::fromGithubResponse($result);
 
             if ($user->getUsername() === 'ubermuda') {
@@ -56,11 +61,16 @@ class SecurityController extends Controller
         }
 
         if (strlen($user->getEmail()) === 0) {
-            $result = $this->github_get($githubApiBaseUrl.'/user/emails', $accessToken);
+            $request = $client->get('/user/emails');
+            $response = $request->send();
+
+            $result = $response->json();
+
+            var_dump($result);
 
             foreach ($result as $email) {
-                if ($email->primary && $email->verified) {
-                    $user->setEmail($email->email);
+                if ($email['primary'] && $email['verified']) {
+                    $user->setEmail($email['email']);
                     break;
                 }
             }            

@@ -55,19 +55,14 @@ class DefaultController extends Controller
     {
         try {
             $build = $this->findBuild($id);
-            $project = $build->getProject();
             $build->setStatus(Build::STATUS_CANCELED);
 
             $this->persistAndFlush($build);
 
-            $buildData = $build->asWebsocketMessage();
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildCanceled($build);
 
-            $buildData['schedule_url'] = $this->generateUrl('app_core_project_schedule_build', ['id' => $project->getId()]);
-
-            $this->publishWebsocket('build.canceled', $project->getChannel(), [
-                'build' => $buildData,
-                'project' => $project->asWebsocketMessage()
-            ]);
+            $this->publishWebsocket($message);
 
             return new JsonResponse(null, 200);
         } catch (Exception $e) {
@@ -78,6 +73,11 @@ class DefaultController extends Controller
     public function buildKillAction($id)
     {
         try {
+            $build = $this->findBuild($id);
+            $build->setStatus(Build::STATUS_KILLED);
+
+            $this->persistAndFlush($build);
+
             $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
             return new JsonResponse(null, 200);
@@ -164,6 +164,10 @@ class DefaultController extends Controller
     {
         $project = $this->findProject($id);
 
+        if ($project->getStatus() === Project::STATUS_HOLD) {
+            throw new Exception('Project is on hold');
+        }
+
         try {
             $ref = $request->request->get('ref');
 
@@ -183,19 +187,15 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', $build->getChannel(), [
-                'progress' => 0,
-                'build' => array_replace([
-                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                    'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
-                ], $build->asWebsocketMessage()),
-                'project' => $project->asWebsocketMessage(),
-            ]);
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildScheduled($build);
+
+            $this->publishWebsocket($message);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
                 'cancel_url' => $this->generateUrl('app_core_build_cancel', ['id' => $build->getId()]),
-                'build' => $build->asWebsocketMessage(),
+                'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
@@ -234,13 +234,16 @@ class DefaultController extends Controller
 
     public function hooksGithubAction(Request $request)
     {
-
         $payload = json_decode($request->getContent());
 
         $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
 
         if (!$project) {
             throw $this->createNotFoundException('Unknown Github project');
+        }
+
+        if ($project->getStatus() === Project::STATUS_HOLD) {
+            return;
         }
 
         try {
@@ -258,16 +261,14 @@ class DefaultController extends Controller
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
 
-            $this->publishWebsocket('build.scheduled', $project->getChannel(), [
-                'build' => array_replace([
-                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                ], $build->asWebsocketMessage()),
-                'project' => $project->asWebsocketMessage(),
-            ]);
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildScheduled($build);
+
+            $this->publishWebsocket($message);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                'build' => $build->asWebsocketMessage(),
+                'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);

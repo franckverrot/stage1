@@ -32,5 +32,6 @@ function stage1_websocket_step {
 }
 
 stage1_websocket_message() {
-    echo "[websocket:$1:$2]"
+    true
+    # echo "[websocket:$1:$2]"
 }

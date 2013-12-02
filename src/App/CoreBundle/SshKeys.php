@@ -22,7 +22,7 @@ class SshKeys
         return $file;
     }
 
-    static public function generate($comment = 'Stage1 Deploy Key')
+    static public function generate($comment = '')
     {
         $private = tempnam(sys_get_temp_dir(), 'ssh-keygen-');
         $public  = $private.'.pub';
@@ -39,8 +39,8 @@ class SshKeys
         }
 
         return [
-            'private' => file_get_contents($private),
-            'public'  => file_get_contents($public),
+            'private' => trim(file_get_contents($private)),
+            'public'  => trim(file_get_contents($public)),
         ];
     }
 }

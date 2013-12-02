@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: github.yml }
     - { resource: security.yml }
+    - { resource: consumers.yml }
 
 framework:
     #esi:             ~
@@ -70,47 +71,3 @@ swiftmailer:
     host:      %mailer_host%
     username:  %mailer_user%
     password:  %mailer_password%
-
-# Oldsound RabbitMQ Bundle
-old_sound_rabbit_mq:
-    connections:
-        default:
-            host:      'localhost'
-            port:      5672
-            user:      'guest'
-            password:  'guest'
-            vhost:     '/'
-    producers:
-        build:
-            connection: default
-            exchange_options: { name: 'build', type: direct }
-        kill:
-            connection: default
-            exchange_options: { name: 'kill', type: direct }
-        project_import:
-            connection: default
-            exchange_options: { name: 'project_import', type: direct }
-        websocket:
-            connection: default
-            exchange_options: { name: 'amq.fanout', type: fanout }
-    consumers:
-        build:
-            connection: default
-            exchange_options: { name: 'build', type: direct }
-            queue_options:    { name: 'build' }
-            callback:         app_core.consumer.build
-        kill:
-            connection: default
-            exchange_options: { name: 'kill', type: direct }
-            queue_options:    { name: 'kill' }
-            callback:         app_core.consumer.kill
-        project_import:
-            connection: default
-            exchange_options: { name: 'project_import', type: direct }
-            queue_options:    { name: 'project_import' }
-            callback:         app_core.consumer.project_import
-        build_log:
-            connection: default
-            exchange_options: { name: 'build_log', type: direct }
-            queue_options:    { name: 'build_log' }
-            callback:         app_core.consumer.build_log

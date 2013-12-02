@@ -16,9 +16,9 @@ env.processes = [
     'consumer-build',
     'consumer-kill',
     'consumer-project-import',
+    'consumer-docker-output',
     'websockets',
-    'log-fetch',
-    'hipache'
+    'hipache',
 ]
 
 env.log_files = [
@@ -63,7 +63,11 @@ def restore():
 
     run('restart %s-hipache' % env.processes_prefix)
 
-def deploy_upstart():
+def upstart_export():
+    local('sudo foreman export upstart /etc/init -u root -a stage1')
+
+def upstart_deploy():
+    local('sudo rm -rf /tmp/init/*')
     local('sudo foreman export upstart /tmp/init -u root -a stage1')
     local('sudo find /tmp/init -type f -exec sed -e \'s!/vagrant!%s!\' -e \'s! export PORT=.*;!!\' -i "{}" \;' % env.project_path)
     local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete /tmp/init/* %(user)s@%(host)s:%(remote)s' % {
@@ -105,6 +109,7 @@ def provision():
         put('packer/support/config/nginx/prod/default', 'nginx-default')
         put('packer/support/config/php/prod.ini', 'php-php.ini')
         put('packer/support/config/grub/default', 'grub-default')
+        put('packer/support/config/docker/default', 'docker-default')
         put('packer/support/scripts/stage1.sh', 'stage1.sh')
         put('packer/support/scripts/prod.sh', 'prod.sh')
 

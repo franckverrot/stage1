@@ -8,6 +8,8 @@ class BuildLog
 
     protected $message;
 
+    protected $microtime;
+
     protected $createdAt;
 
     protected $updatedAt;
@@ -20,6 +22,17 @@ class BuildLog
      * @var \App\CoreBundle\Entity\Build
      */
     private $build;
+
+    public function asMessage()
+    {
+        return [
+            'message' => $this->getMessage(),
+            'type' => $this->getType(),
+            'stream' => $this->getStream(),
+            'microtime' => $this->getMicrotime(),
+            'build' => $this->getBuild()->asMessage(),
+        ];
+    }
 
     public function __toString()
     {
@@ -172,5 +185,28 @@ class BuildLog
     public function getStream()
     {
         return $this->stream;
+    }
+
+    /**
+     * Set microtime
+     *
+     * @param string $microtime
+     * @return BuildLog
+     */
+    public function setMicrotime($microtime)
+    {
+        $this->microtime = $microtime;
+    
+        return $this;
+    }
+
+    /**
+     * Get microtime
+     *
+     * @return string 
+     */
+    public function getMicrotime()
+    {
+        return $this->microtime;
     }
 }

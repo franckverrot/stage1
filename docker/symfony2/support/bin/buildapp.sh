@@ -8,31 +8,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source $DIR/../lib/stage1.sh
 
-[ -z "$1" ] && {
-    echo "Missing git repository"
-    exit 1
-}
-
-[ -z "$2" ] && {
-    echo "Missing git ref"
-    exit 1
-}
-
-# [ -z "$3" ] && {
-#     echo "Missing git hash"
-#     exit 1
-# }
-
-[ -z "$4" ] && {
-    echo "Github access token is missing"
-    exit 1
-}
-
-ssh_url=$1
-ref=$2
-hash=$3
-access_token=$4
-
 # stage1_announce "starting MySQL server"
 stage1_exec /etc/init.d/mysql start 2>&1 > /dev/null
 
@@ -40,54 +15,58 @@ stage1_exec /etc/init.d/mysql start 2>&1 > /dev/null
 # @todo this has to be moved to the symfony builder
 # but it must be ran even when the project provides a custom builder
 # so maybe a $builder/bin/before script could be useful
-stage1_announce "configuring composer with token $access_token"
+stage1_announce "configuring composer with token $ACCESS_TOKEN"
 
 stage1_exec mkdir -p /.composer
 stage1_exec cat > /.composer/config.json <<EOF
 {
     "config": {
         "github-oauth": {
-            "github.com": "$access_token"
+            "github.com": "$ACCESS_TOKEN"
         }
     }
 }
 EOF
 
-app_root=/var/www
+APP_ROOT=/var/www
+
+if [ -d $APP_ROOT ]; then
+    rm -rf $APP_ROOT
+fi
 
 stage1_announce "cloning repository $ssh_url"
 stage1_websocket_step "clone_repository"
-stage1_exec git clone --depth 1 --branch $ref $ssh_url $app_root
+stage1_exec git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT
 
-cd $app_root
+cd $APP_ROOT
 
 # stage1_exec git reset --hard $hash
 
-builders_root=$(realpath $DIR/../lib/builder)
-builders=($builders_root/*)
-selected_builder=
+BUILDERS_ROOT=$(realpath $DIR/../lib/builder)
+BUILDERS=($BUILDERS_ROOT/*)
+SELECTED_BUILDER=
 
 stage1_websocket_step "select_builder"
 
 if [ -n "$(stage1_get_config_script)" ]; then
-    builder="$STAGE1_CONFIG_PATH"
-    stage1_announce custom build detected
+    BUILDER="$STAGE1_CONFIG_PATH"
+    stage1_announce "custom build detected"
 
     stage1_get_config_script | while read cmd; do
         stage1_announce running $cmd
         stage1_exec eval $cmd
     done
 else
-    for builder in "${builders[@]}"; do
-        builder_name=$($builder/bin/detect "$app_root") && selected_builder=$builder && break
+    for BUILDER in "${BUILDERS[@]}"; do
+        BUILDER_NAME=$($BUILDER/bin/detect "$APP_ROOT") && SELECTED_BUILDER=$BUILDER && break
     done
 
-    if [ -n "$builder_name" ]; then
-        stage1_announce $builder_name app detected
+    if [ -n "$BUILDER_NAME" ]; then
+        stage1_announce "$BUILDER_NAME app detected"
     else
-        stage1_announce could not find a builder
+        stage1_announce "could not find a builder"
         exit 1
     fi
 
-    $builder/bin/build
+    $BUILDER/bin/build
 fi

@@ -1,12 +1,15 @@
 TODO
 ====
 
+GUIDELINES
+----------
+
+* Whenever (if) we need to add code to a repo, propose to create a PR, not to commit it directly
+
 DEMO
 ----
 
 * add the place of the build in the builds queue (?)
-
-* delete demo containers after 6h
 * limit number of demo build to 1 per email
 * if someone tries to launch a demo build with an already used email, try some marketing
 

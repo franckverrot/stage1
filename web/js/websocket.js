@@ -15,26 +15,34 @@
     });
 
     primus.on('data', function(data) {
-        // console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
+
+        if (data.event) {
+            console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
+        } else {
+            console.log(data);
+        }
 
         if (!data.data) {
             return;
         }
 
-        if (data.timestamp <= lastTimestamp) {
+        console.log(data.data);
+
+        if (data.timestamp && data.timestamp <= lastTimestamp) {
             // outdated message, don't even bother
-            // console.log('discarding outdated message');
+            console.log('discarding outdated message');
             return
+        } else {
+            lastTimestamp = data.timestamp;
         }
 
-        lastTimestamp = data.timestamp;
 
-        if (data.event == 'build.output' || data.event == 'data.output.buffer') {
+        if (data.event == 'build.log' || data.event == 'data.output.buffer') {
             return;
         }
 
         if (data.data.build) {
-            callbacks.build(data.event, data.data.build, data.data.project);
+            callbacks.build(data.event, data.data.build);
         }
 
         if (data.data.project) {
@@ -66,7 +74,7 @@
             update_project_nb_pending_builds(project.id, parseInt(project.nb_pending_builds));
         },
         
-        'build': function(event, build, project) {
+        'build': function(event, build) {
             update_build(build.id, 'status', function(el) {
                 el.data('status', build.status).removeClass().addClass('label label-' + build.status_label_class).html(build.status_label);
             });
@@ -113,7 +121,7 @@
                 });
             }
 
-            if (project.id && current_project_id == project.id) {
+            if (build.project && build.project.id && current_project_id == build.project.id) {
                 do_update_ref(build);
             }
         }

@@ -5,6 +5,7 @@ namespace App\CoreBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Yaml\Yaml;
@@ -18,7 +19,10 @@ class DemoSetupCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('demo:setup');
+            ->setName('demo:setup')
+            ->setDefinition([
+                new InputOption('reinstall', 'r', InputOption::VALUE_NONE)
+            ]);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -47,7 +51,16 @@ class DemoSetupCommand extends ContainerAwareCommand
         $websocketChannels = [];
 
         foreach ($config['projects'] as $fullName) {
-            if (null !== $project = $projectRepo->findOneByGithubFullName($fullName)) {
+            $project = $projectRepo->findOneByGithubFullName($fullName);
+
+            if (null !== $project && $input->getOption('reinstall')) {
+                $em->remove($project);
+                $em->flush();
+
+                $project = null;
+            }
+
+            if (null !== $project) {
                 $output->writeln('demo project <info>'.$fullName.'</info> already exists');
 
                 if (!$project->getUsers()->contains($user)) {

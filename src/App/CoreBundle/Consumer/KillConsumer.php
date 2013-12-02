@@ -2,36 +2,52 @@
 
 namespace App\CoreBundle\Consumer;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Process\ProcessBuilder;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Message\MessageFactory;
+
+use Docker\Docker;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
 
-use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
+
+use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+
 use RuntimeException;
+use InvalidArgumentException;
 use Exception;
 
 class KillConsumer implements ConsumerInterface
 {
+    private $logger;
+
+    private $docker;
+
     private $doctrine;
+
+    private $factory;
 
     private $producer;
 
     private $router;
 
-    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router)
+    private $timeout = 10;
+
+    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine, MessageFactory $factory, Producer $producer, Router $router)
     {
+        $this->logger = $logger;
+        $this->docker = $docker;
         $this->doctrine = $doctrine;
+        $this->factory = $factory;
         $this->producer = $producer;
         $this->router = $router;
 
-        echo '== initializing KillConsumer'.PHP_EOL;
+        $logger->info('initialized '.__CLASS__);
     }
 
     public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
@@ -75,37 +91,50 @@ class KillConsumer implements ConsumerInterface
 
     public function execute(AMQPMessage $message)
     {
-        $this->getDoctrine()->resetManager();
-
+        $logger = $this->logger;
         $body = json_decode($message->body);
+
+        $logger->info('received kill order', ['build' => $body->build_id]);
 
         $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
         $build = $buildRepo->find($body->build_id);
 
-        echo '<- received kill order for build #'.$body->build_id.PHP_EOL;
-
         if (!$build) {
-            throw new RuntimeException('Could not find Build#'.$body->build_id);
+            $logger->warn('could not find build', ['build' => $body->build_id]);
+            return;
         }
 
-        if (!$build->isBuilding()) {
-            $this->producer->publish(json_encode([
-                'event' => 'build.finished',
-                'channel' => $build->getProject()->getChannel(),
-                'timestamp' => microtime(true),
-                'data' => [
-                    'build' => array_replace([
-                        'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
-                        ], $build->asWebsocketMessage()),
-                    'project' => [
-                        'id' => $build->getProject()->getId(),
-                        'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),
-                    ]
-                ]
-            ]));
-            
-            return true;
+        if (!$build->getPid()) {
+            $logger->warn('build has no pid', ['build' => $build->getId()]);
+            return;
         }
+
+        $logger->info('build found, sending SIGTERM', ['build' => $build->getId()]);
+
+        $terminated = true;
+
+        if (posix_kill($build->getPid(), SIGTERM)) {
+
+            $terminated = false;
+
+            for ($i = 0; $i <= $this->timeout; $i++) {
+                if (false === posix_kill($build->getPid(), 0)) {
+                    $terminated = true;
+                    break;
+                }
+
+                $logger->info('build still alive...', ['build' => $build->getId()]);
+
+                sleep(1);
+            }            
+        }
+
+        if (!$terminated) {
+            $logger->info('sending SIGKILL', ['build' => $build->getId()]);
+            posix_kill($build->getPid(), SIGKILL);
+        }
+
+        return;
 
         $builder = new ProcessBuilder([
             realpath(__DIR__.'/../../../../bin/build/kill.sh'),
@@ -132,19 +161,7 @@ class KillConsumer implements ConsumerInterface
 
         echo '-> sending build.finished'.PHP_EOL;
 
-        $this->producer->publish(json_encode([
-            'event' => 'build.finished',
-            'channel' => $build->getProject()->getChannel(),
-            'timestamp' => microtime(true),
-            'data' => [
-                'build' => array_replace([
-                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
-                    ], $build->asWebsocketMessage()),
-                'project' => [
-                    'id' => $build->getProject()->getId(),
-                    'nb_pending_builds' => $this->getPendingBuildsCount($build->getProject()),
-                ]
-            ]
-        ]));
+        $message = new BuildFinishedMessage($build);
+        $this->producer->publish((string) $message);
     }
 }

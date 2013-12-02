@@ -60,6 +60,8 @@ mount -o remount /
 # install configuration
 cp /tmp/nginx-default /etc/nginx/sites-available/default
 
+cp /tmp/docker-default /etc/default/docker
+
 cp /tmp/php-php.ini /etc/php5/cli/php.ini
 cp /tmp/php-php.ini /etc/php5/fpm/php.ini
 

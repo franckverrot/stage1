@@ -203,13 +203,16 @@ class DemoController extends Controller
 
         $request->getSession()->set('demo_build_id', $build->getId());
 
-        $this->publishWebsocket('build.scheduled', $build->getChannel(), [
+        $factory = $this->container->get('app_core.message.factory');
+        
+        $message = $factory->createBuildScheduled($build);
+        $message->setExtra([
             'progress' => 0,
-            'build' => $build->asWebsocketMessage(),
             'steps' => $this->getSteps($project),
-            'project' => $project->asWebsocketMessage(),
-            'previousBuild' => $previousBuild ? $previousBuild->asWebsocketMessage() : null,
+            'previousBuild' => $previousBuild ? $previousBuild->asMessage() : null
         ]);
+
+        $this->publishWebsocket($message);
 
         $producer = $this->get('old_sound_rabbit_mq.build_producer');
         $producer->publish(json_encode(['build_id' => $build->getId()]));

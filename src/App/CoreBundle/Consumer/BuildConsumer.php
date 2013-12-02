@@ -2,376 +2,156 @@
 
 namespace App\CoreBundle\Consumer;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Process\ProcessBuilder;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
+use App\CoreBundle\Builder\Builder;
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Message\BuildStartedMessage;
+use App\CoreBundle\Message\BuildFinishedMessage;
+use App\CoreBundle\Message\BuildStepMessage;
+use App\CoreBundle\BuildEvents;
+use App\CoreBundle\Event\BuildStartedEvent;
+use App\CoreBundle\Event\BuildFinishedEvent;
+use App\CoreBundle\Event\BuildKilledEvent;
+
+use Docker\Docker;
+use Docker\Container;
+use Docker\Exception\ContainerNotFoundException;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
 
 use Psr\Log\LoggerInterface;
 
-use InvalidArgumentException;
-use RuntimeException;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Exception;
 
-use Swift_Mailer;
-use Swift_Message;
-use Swift_TransportException;
-
-use Doctrine\ORM\NoResultException;
+// needed for signal handling
+declare(ticks = 1);
 
 class BuildConsumer implements ConsumerInterface
 {
+    private $build;
+
     private $doctrine;
 
     private $producer;
 
     private $router;
 
+    private $docker;
+
     private $buildTimeout = 0;
 
     private $buildHostMask;
 
-    private $expectedMessages = 0;
-
-    public function __construct(RegistryInterface $doctrine, Producer $producer, Router $router, Swift_Mailer $mailer, $buildHostMask)
+    public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker)
     {
+        $this->logger = $logger;
+        $this->dispatcher = $dispatcher;
         $this->doctrine = $doctrine;
-        $this->producer = $producer;
-        $this->router = $router;
-        $this->mailer = $mailer;
-        $this->buildHostMask = $buildHostMask;
+        $this->builder = $builder;
+        $this->docker = $docker;
 
-        echo '== initializing BuildConsumer'.PHP_EOL;
+        pcntl_signal(SIGTERM, [$this, 'terminate']);
+
+        $logger->info('initialized '.__CLASS__);
     }
 
-    public function setBuildTimeout($buildTimeout)
+    public function terminate($signo)
     {
-        $this->buildTimeout = (integer) $buildTimeout;
-    }
+        $this->logger->info('received signal', ['signo' => $signo]);
 
-    public function getDoctrine()
-    {
-        return $this->doctrine;
-    }
+        if (null !== $this->build) {
+            $build = $this->build;
+            $docker = $this->docker;
 
-    private function getBuildRepository()
-    {
-        return $this->getDoctrine()->getRepository('AppCoreBundle:Build');
-    }
+            $this->logger->info('cleaning things before exiting', ['build' => $build->getId()]);
 
-    private function persistAndFlush($entity)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($entity);
-        $em->flush();
-    }
+            if (($container = $build->getContainer()) instanceof Container) {
+                $this->logger->info('stopping container', [
+                    'build' => $build->getId(),
+                    'container' => $container->getId(),
+                ]);
 
-    private function findPreviousBuild(Build $build, $demo = false)
-    {
-        try {
-            return $this->getBuildRepository()->findPreviousBuild($build, $demo);
-        } catch (NoResultException $e) {
-            printf('[x] Could not find a previous build for %s@%s', $build->getProject()->getFullName(), $build->getRef());
-        }
-
-        return null;
-    }
-
-    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
-    {
-        return $this->router->generate($route, $parameters, $referenceType);
-    }
-
-    private function doBuild(Build $build)
-    {
-        $buildFile = function($type) use ($build) {
-            $path = '/tmp/stage1/build/'.$build->getId().'/'.$type;
-
-            if (!file_exists(dirname($path))) {
-                mkdir($path, 0777, true);
+                $docker->getContainerManager()->stop($container);
+            } else {
+                var_dump($container);
             }
 
-            return $path;
-        };
+            $build->setStatus(Build::STATUS_KILLED);
+            $build->setMessage('Build terminated with signal '.$signo);
 
-        $projectDir = realpath(__DIR__.'/../../../..');
-        $builder = new ProcessBuilder([
-            $projectDir.'/bin/build/start.sh',
-            $build->getId()
-        ]);
+            $em = $this->doctrine->getManager();
+            $em->persist($build);
+            $em->flush();
 
-        # @todo add a Build::STATUS_TIMEOUT status
-        $builder->setTimeout($this->buildTimeout);
-        // $builder->setEnv('STAGE1_DEBUG', 1);
-
-        $process = $builder->getProcess();
-        $process->setCommandLine($process->getCommandLine());
-
-        echo 'running '.$process->getCommandLine().' with timeout '.$this->buildTimeout.PHP_EOL;
-        
-        $producer = $this->producer;
-        $entityManager = $this->getDoctrine()->getManager();
-        $expectedMessages = $this->expectedMessages;
-
-        # @todo check php version for $this binding in closures
-        $process->run(function($type, $data) use ($producer, $build, $entityManager, $expectedMessages) {
-            static $n = 0, $totalMessages = 0;
-
-            $data = rtrim($data);
-            $data = explode(PHP_EOL, $data);
-
-            $totalMessages++;
-
-            $progress = ($expectedMessages > 0) ? floor(($totalMessages / $expectedMessages) * 100) : null;
-
-            echo '   got message '.$totalMessages.' / '.$expectedMessages.' ('.$progress.'%)'.PHP_EOL;
-
-            foreach ($data as $line) {
-                if (preg_match('/^\[websocket:(.+?):(.*)\]$/', $line, $matches)) {
-                    echo '-> got websocket message'.PHP_EOL;
-                    echo '   event: '.$matches[1].PHP_EOL;
-                    echo '   data:  '.$matches[2].PHP_EOL;
-
-                    // if (!$build->getStreamSteps()) {
-                    //     echo PHP_EOL.'   step skipped because stream_steps is false';
-                    //     return;
-                    // } else {
-                    //     echo '<- routing step'.PHP_EOL;
-                    // }
-                    
-                    $producer->publish(json_encode([
-                        'event' => $matches[1],
-                        'channel' => $build->getChannel(),
-                        'data' => [
-                            'build' => $build->asWebsocketMessage(),
-                            'announce' => json_decode($matches[2], true),
-                            'progress' => $progress,
-                        ]
-                    ]));
-                } else {
-                    // if (!$build->getStreamOutput()) {
-                    //     echo PHP_EOL.'   output skipped because stream_output is false';
-                    //     return;
-                    // } else {
-                    //     echo '<- routing output'.PHP_EOL;
-                    // }
-
-                    $producer->publish(json_encode([
-                        'event' => 'build.output',
-                        'channel' => $build->getChannel(),
-                        'data' => [
-                            'build' => $build->asWebsocketMessage(),
-                            'project' => $build->getProject()->asWebsocketMessage(),
-                            'number' => $n++,
-                            'content' => $line,
-                            'progress' => $progress,
-                        ]
-                    ]));
-
-                    $log = $build->appendLog($line, 'output', $type);
-                    $entityManager->persist($log);                
-                }
-            }
-        });
-
-        $entityManager->flush();
-
-        if (!$process->isSuccessful()) {
-            if (in_array($process->getExitCode(), [137, 143])) {
-                return Build::STATUS_KILLED;
-            }
-
-            return false;
+            $this->dispatcher->dispatch(BuildEvents::KILLED, new BuildKilledEvent($build));
         }
 
-        $build->setExitCode($process->getExitCode());
-        $build->setExitCodeText($process->getExitCodeText());
-
-        $buildInfo = explode(PHP_EOL, trim(file_get_contents($buildFile('info'))));
-        unlink($buildFile('info'));
-
-        if (count($buildInfo) !== 3) {
-            throw new InvalidArgumentException('Malformed build info: '.var_export($buildInfo, true));
-        }
-
-        list($imageId, $containerId, $port) = $buildInfo;
-
-        $build->setContainerId($containerId);
-        $build->setImageId($imageId);
-        $build->setPort($port);
-
-        $producer->publish(json_encode([
-            'event' => 'build.step',
-            'channel' => $build->getChannel(),
-            'data' => [
-                'build' => $build->asWebsocketMessage(),
-                'announce' => ['step' => 'stop_previous'],
-            ]
-        ]));
-
-        $previousBuild = $this->findPreviousBuild($build, true);
-
-        if (null !== $previousBuild && $previousBuild->hasContainer()) {
-            $builder = new ProcessBuilder([
-                $projectDir.'/bin/build/stop.sh',
-                $previousBuild->getContainerId(),
-                $previousBuild->getImageId(),
-                $previousBuild->getImageTag(),
-            ]);
-            $process = $builder->getProcess();
-
-            echo 'stopping previous build container'.PHP_EOL;
-            echo 'running '.$process->getCommandLine().PHP_EOL;
-
-            $process->run();
-
-            $previousBuild->setStatus(Build::STATUS_OBSOLETE);
-            $this->persistAndFlush($previousBuild);
-        }
-
-        return true;
+        exit(0);
     }
 
     public function execute(AMQPMessage $message)
     {
         $body = json_decode($message->body);
 
-        $build_start = time();
+        $em = $this->doctrine->getManager();
+        $buildRepository = $em->getRepository('AppCoreBundle:Build');
 
-        $build = $this->getBuildRepository()->find($body->build_id);
+        $this->build = $build = $buildRepository->find($body->build_id);
 
-        echo '<- received build order'.PHP_EOL;
-        echo '   build started at '.$build_start.PHP_EOL;
+        if (!$build) {
+            $this->logger->info('could not find build #'.$body->build_id);
+            return;
+        }
 
-        if (!$build || !$build->isScheduled()) {
-            echo '[x] build is not "scheduled", skipping'.PHP_EOL;
+        if (!$build->isScheduled()) {
+            $this->logger->warn('build found but not scheduled', [
+                'build' => $build->getId(),
+                'status' => $build->getStatus(),
+                'status_label' => $build->getStatusLabel()
+            ]);
+
             return;
         }
 
         $build->setStatus(Build::STATUS_BUILDING);
+        $build->setPid(posix_getpid());
 
-        if (strlen($build->getHost()) === 0) {
-            $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
-        }
-
-        $this->persistAndFlush($build);
-
-        $previousBuild = $this->findPreviousBuild($build, false);
-
-        if (null !== $previousBuild) {
-            echo '   found previous build (#'.$previousBuild->getId().')'.PHP_EOL;
-            $this->expectedMessages = count($previousBuild->getLogs());
-        }
-
-        echo '   expecting '.$this->expectedMessages.' messages'.PHP_EOL;
-
-        $this->producer->publish(json_encode([
-            'event' => 'build.started',
-            'channel' => $build->getChannel(),
-            'timestamp' => microtime(true),
-            'data' => [
-                'progress' => 0,
-                'build' => array_replace([
-                    'kill_url' => $this->generateUrl('app_core_build_kill', ['id' => $build->getId()]),
-                    'show_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                ], $build->asWebsocketMessage()),
-                'project' => [
-                    'id' => $build->getProject()->getId(),
-                    'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject())
-                ]
-            ]
-        ]));
+        $em->persist($build);
+        $em->flush();
 
         try {
-            $res = $this->doBuild($build);
+            $this->dispatcher->dispatch(BuildEvents::STARTED, new BuildStartedEvent($build));
 
-            if (true === $res) {
-                $res = Build::STATUS_RUNNING;
-            } elseif (false === $res) {
-                $res = Build::STATUS_FAILED;
-            }
+            $container = $this->builder->run($build);
 
-            $build->setStatus($res);
+            $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => $container->getId()]);
+
+            $build->setContainer($container);
+            $build->setPort($container->getMappedPort(80)->getHostPort());
+
+            $build->setStatus(Build::STATUS_RUNNING);
         } catch (Exception $e) {
-            echo 'got exception "'.get_class($e).PHP_EOL.PHP_EOL;
-            echo $e->getMessage();
-            echo PHP_EOL.PHP_EOL;
-
+            $this->logger->error('build failed', ['build' => $build->getId(), 'exception' => $e]);
             $build->setStatus(Build::STATUS_FAILED);
-            $build->setMessage($e->getMessage());
-
-            if (!$this->getDoctrine()->getManager()->isOpen()) {
-                $this->getDoctrine()->resetManager();
-            }
+            $build->setMessage(get_class($e).': '.$e->getMessage());
         }
 
-        $build_end = time();
-
-        echo '   build finished at '.$build_end.PHP_EOL;
-        echo '   build duration: '.($build_end - $build_start).PHP_EOL;
-
-        $build->setDuration($build_end - $build_start);
-
-        $this->persistAndFlush($build);
-
-        if ($build->isRunning() && $build->isDemo()) {
-            $buildUrl = $build->getUrl();
-
-            echo '   sending demo build email to "'.$build->getDemo()->getEmail().'"'.PHP_EOL;
-
-            $message = Swift_Message::newInstance()
-                ->setSubject('Your Stage1 demo build is ready')
-                ->setFrom('geoffrey@stage1.io')
-                ->setTo($build->getDemo()->getEmail())
-                ->setBody(<<<EOM
-Your demo build is ready and you can access it through the following url:
-
-$buildUrl
-
--- 
-Geoffrey
-EOM
-);
-            $failed = [];
-
-            try {
-                $res = $this->mailer->send($message, $failed);
-
-                echo '   sent '.$res.' emails'.PHP_EOL;
-
-                if (count($failed) > 0) {
-                    echo '   failed '.count($failed).' recipients:'.PHP_EOL;
-                    foreach ($failed as $recipient) {
-                        echo '    - '.$recipient.PHP_EOL;
-                    }
-                }
-            } catch (Swift_TransportException $e) {
-                echo '   exception while trying to send an email'.PHP_EOL;
-                echo '     '.$e->getMessage().PHP_EOL;
-            }
+        /**
+         * We run this in a separate try/catch because even if the main build fails
+         * we want to let listeners a chance to do something
+         */
+        try {
+            $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));            
+        } catch (Exception $e) {
+            $this->logger->error('build.finished listeners failed', ['build' => $build->getId(), 'exception' => $e]);
+            $build->setStatus(Build::STATUS_FAILED);
+            $build->setMessage(get_class($e).': '.$e->getMessage());            
         }
 
-        $this->producer->publish(json_encode([
-            'event' => 'build.finished',
-            'channel' => $build->getChannel(),
-            'timestamp' => microtime(true),
-            'data' => [
-                'progress' => 100,
-                'build' => array_replace([
-                    'schedule_url' => $this->generateUrl('app_core_project_schedule_build', ['id' => $build->getProject()->getId()]),
-                    ], $build->asWebsocketMessage()),
-                'project' => [
-                    'id' => $build->getProject()->getId(),
-                    'name' => $build->getProject()->getName(),
-                    'nb_pending_builds' => $this->getBuildRepository()->countPendingBuildsByProject($build->getProject()),
-                ]
-            ]
-        ]));
+        $em->persist($build);
+        $em->flush();
     }
 }

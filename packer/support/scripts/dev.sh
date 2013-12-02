@@ -3,6 +3,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 usermod -aG docker vagrant
+
 cp /etc/ssh/ssh_config /home/vagrant/.ssh/config
 chmod 0600 /home/vagrant/.ssh/config
 
@@ -12,6 +13,8 @@ if [ -f /tmp/grub-default ]; then
 fi
 
 redis-cli RPUSH frontend:stage1.dev stage1 http://127.0.0.1:8080/
+
+apt-get install tcpflow socat
 
 apt-get -qy install \
     build-essential \
@@ -27,7 +30,7 @@ apt-get install -q -y ruby rubygems
 gem install --no-ri --no-rdoc bundler
 
 # prepare a few thing that we won't have to do during vagrant up
-git clone git@bitbucket.org:ubermuda/stage1.git --branch master --single-branch --depth 1 /vagrant
+git clone git@bitbucket.org:ubermuda/stage1.git --branch master --depth 1 /vagrant
 
 cd /vagrant
 
@@ -48,7 +51,7 @@ echo "SYMFONY_ENV=dev" >> /etc/environment
 # apt-get install -yq \
 #     libfontconfig1
 
-# wget https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2 -O- | tar xzm
+# wget https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-x86_64.tar.bz2 -O- | tar xj
 # wget https://github.com/n1k0/casperjs/tarball/master -O- | tar xzm
 
 # $(cd *phantomjs*; ln -sf $(pwd)/bin/phantomjs /usr/local/bin/phantomjs)

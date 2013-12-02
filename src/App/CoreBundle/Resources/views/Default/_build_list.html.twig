@@ -41,15 +41,9 @@
                 </script>
 
                 {% if build.failed and build.message %}
-                <a href="#inspect-{{ build.id }}" role="button" data-toggle="modal" class="inspect btn btn-small">inspect</a>
-
-                {% include '::modal.html.twig' with {
-                    id: 'inspect-' ~ build.id,
-                    title: null,
-                    body: '<p class="lead">' ~ build.message ~ '</p>'
-                } %}
-
+                <a href="#modal-inspect-{{ build.id }}" data-toggle="modal" class="inspect btn btn-small">inspect</a>
                 {% endif %}
+
                 <span id="build-{{ build.id }}-link">
                 {% if build.running and build.url %}
                 <a href="{{ build.url }}">{{ build.url }}</a>
@@ -60,3 +54,13 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div id="modals">
+{% for build in builds %}
+    {% include '::modal.html.twig' with {
+        id: 'inspect-' ~ build.id,
+        title: 'Build #' ~ build.id ~' failed',
+        body: '<p class="lead"><pre>' ~ build.message ~ '</pre></p>'
+    } %}
+{% endfor %}
+</div>

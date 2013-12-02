@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Entity;
 
+use Docker\Container;
+
 use BadMethodCallException;
 
 class Build
@@ -44,6 +46,10 @@ class Build
 
     private $host;
 
+    private $pid;
+
+    private $container;
+
     private $containerId;
 
     private $imageId;
@@ -73,6 +79,12 @@ class Build
     private $demo;
 
     private $duration = 0;
+
+    private $startTime;
+
+    private $endTime;
+
+    private $memoryUsage;
 
     public function __construct()
     {
@@ -120,6 +132,11 @@ class Build
             return $this->channel;
         }
 
+        if (null === $this->getProject())
+        {
+            return 'build.'.$this->getId();
+        }
+
         return $this->getProject()->getChannel();
     }
 
@@ -164,7 +181,7 @@ class Build
         return $this->normalize($this->getRef());
     }
 
-    public function asWebsocketMessage()
+    public function asMessage()
     {
         return [
             'id' => $this->getId(),
@@ -177,6 +194,9 @@ class Build
             'url' => $this->getUrl(),
             'port' => $this->getPort(),
             'duration' => $this->getDuration(),
+            'project' => (null === $this->getProject()
+                ? []
+                : $this->getProject()->asMessage()),
         ];
 
     }
@@ -425,6 +445,10 @@ class Build
     public function setContainerId($containerId)
     {
         $this->containerId = $containerId;
+
+        if ($this->container && $this->container->getId() !== $containerId) {
+            $this->container = null;
+        }
     
         return $this;
     }
@@ -437,6 +461,30 @@ class Build
     public function getContainerId()
     {
         return $this->containerId;
+    }
+
+    /**
+     * @return App\CoreBundle\Entity\Build
+     */
+    public function setContainer(Container $container)
+    {
+        $this->container = $container;
+        $this->setContainerId($container->getId());
+    }
+
+    /**
+     * @return Docker\Container
+     */
+    public function getContainer()
+    {
+        if (null === $this->container && strlen($this->getContainerId()) > 0) {
+            $container = new Container();
+            $container->setId($this->getContainerId());
+
+            $this->container = $container;
+        }
+
+        return $this->container;
     }
 
     /**
@@ -695,6 +743,9 @@ class Build
         return $this->host;
     }
 
+    /**
+     * @return boolean
+     */
     public function isDemo()
     {
         return $this->getIsDemo();
@@ -767,5 +818,97 @@ class Build
     public function getDuration()
     {
         return $this->duration;
+    }
+
+    /**
+     * Set startTime
+     *
+     * @param \DateTime $startTime
+     * @return Build
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get startTime
+     *
+     * @return \DateTime 
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Set endTime
+     *
+     * @param \DateTime $endTime
+     * @return Build
+     */
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get endTime
+     *
+     * @return \DateTime 
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    /**
+     * Set memoryUsage
+     *
+     * @param integer $memoryUsage
+     * @return Build
+     */
+    public function setMemoryUsage($memoryUsage)
+    {
+        $this->memoryUsage = $memoryUsage;
+    
+        return $this;
+    }
+
+    /**
+     * Get memoryUsage
+     *
+     * @return integer 
+     */
+    public function getMemoryUsage()
+    {
+        return $this->memoryUsage;
+    }
+
+    /**
+     * Set pid
+     *
+     * @param integer $pid
+     * @return Build
+     */
+    public function setPid($pid)
+    {
+        $this->pid = $pid;
+    
+        return $this;
+    }
+
+    /**
+     * Get pid
+     *
+     * @return integer 
+     */
+    public function getPid()
+    {
+        return $this->pid;
     }
 }

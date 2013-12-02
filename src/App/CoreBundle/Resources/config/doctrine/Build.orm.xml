@@ -14,6 +14,7 @@
         <field name="channel" column="channel" type="string" length="255" nullable="true" />
         <field name="streamOutput" column="stream_output" type="boolean" />
         <field name="streamSteps" column="stream_steps" type="boolean" />
+        <field name="pid" column="pid" type="integer" nullable="true" />
         <field name="containerId" column="container_id" type="string" length="255" nullable="true" />
         <field name="imageId" column="image_id" type="string" length="255" nullable="true" />
         <field name="message" column="message" type="text" nullable="true" />
@@ -22,7 +23,10 @@
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="isDemo" column="is_demo" type="boolean" />
+        <field name="startTime" column="start_time" type="datetime" nullable="true" />
+        <field name="endTime" column="end_time" type="datetime" nullable="true" />
         <field name="duration" column="duration" type="integer" nullable="true" />
+        <field name="memoryUsage" column="memory_usage" type="integer" nullable="true" />
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="builds">
             <join-column name="project_id" referenced-column-name="id" />
@@ -38,6 +42,9 @@
         </many-to-one>
 
         <one-to-many field="logs" target-entity="App\CoreBundle\Entity\BuildLog" mapped-by="build">
+            <order-by>
+                <order-by-field name="microtime" direction="ASC" />
+            </order-by>
             <cascade><cascade-remove /></cascade>
         </one-to-many>
 
