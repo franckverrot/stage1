@@ -3,6 +3,21 @@
 {% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
+<div id="branches">
+{% for branch in project.branches %}
+<fieldset class="branch">
+    <legend>{{ branch.name }}</legend>
+    {% if branch.hasRunningBuild %}
+    Current running build
+    {% endif %}
+
+    {% if branch.lastBuild %}
+    Last build
+    {% endif %}
+</fieldset>
+{% endfor %}
+</div>
+
 <table class="table" id="project-{{ project.id }}-branches">
     <thead>
         <tr>
