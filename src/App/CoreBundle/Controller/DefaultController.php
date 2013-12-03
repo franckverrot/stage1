@@ -149,9 +149,9 @@ class DefaultController extends Controller
     {
         $project = $this->findProject($id);
 
-        if ($project->getStatus() === Project::STATUS_HOLD) {
-            return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
-        }
+        // if ($project->getStatus() === Project::STATUS_HOLD) {
+        //     return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
+        // }
 
         try {
             $ref = $request->request->get('ref');
