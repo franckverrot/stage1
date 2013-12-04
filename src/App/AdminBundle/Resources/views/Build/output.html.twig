@@ -17,7 +17,7 @@ $('#output').html(ansi_up.ansi_to_html($('#output').text()));
 
 {% if build.building or build.outputLogs | length > 0 %}
 <div id="output-container">
-    <pre id="output">{{ build.outputLogs | join('\n') }}</pre>
+    <pre id="output">{{ build.outputLogs | join('') }}</pre>
 </div>
 {% else %}
 <p class="lead">This build has no output.</p>
