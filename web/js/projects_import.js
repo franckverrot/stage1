@@ -69,8 +69,8 @@
 
                 $('#nav-projects').append(tpl_nav_project_item({ link: project_link }));
             } catch (e) {
-                console.log(e);
-                console.log(e.message);
+                // console.log(e);
+                // console.log(e.message);
                 // throw e;
             }
         });

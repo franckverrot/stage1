@@ -74,8 +74,6 @@ SSH
         $buildContainer = new BuildContainer($build);
         $buildContainer->addEnv($build->getProject()->getContainerEnv());
 
-        $build->setContainer($buildContainer);
-
         $manager = $this->docker->getContainerManager();
 
         $logger->info('starting actual build', ['build' => $build->getId()]);
@@ -83,6 +81,8 @@ SSH
         $manager->run($buildContainer);
         $manager->wait($buildContainer);
 
+        $build->setContainer($buildContainer);
+        
         if ($buildContainer->getExitCode() !== 0) {
             $exitCode = $buildContainer->getExitCode();
             $exitCodeLabel = Process::$exitCodes[$exitCode];

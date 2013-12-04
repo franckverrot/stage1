@@ -9,7 +9,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/../lib/stage1.sh
 
 # stage1_announce "starting MySQL server"
-stage1_exec /etc/init.d/mysql start 2>&1 > /dev/null
+stage1_exec "/etc/init.d/mysql start 2>&1 > /dev/null"
 
 # composer configuration to avoid hitting github's api rate limit
 # @todo this has to be moved to the symfony builder
@@ -17,8 +17,9 @@ stage1_exec /etc/init.d/mysql start 2>&1 > /dev/null
 # so maybe a $builder/bin/before script could be useful
 stage1_announce "configuring composer with token $ACCESS_TOKEN"
 
-stage1_exec mkdir -p /.composer
-stage1_exec cat > /.composer/config.json <<EOF
+stage1_exec "mkdir -p /.composer"
+stage1_exec "$(cat <<EXEC
+cat > /.composer/config.json <<EOF
 {
     "config": {
         "github-oauth": {
@@ -27,6 +28,8 @@ stage1_exec cat > /.composer/config.json <<EOF
     }
 }
 EOF
+EXEC
+)"
 
 APP_ROOT=/var/www
 
@@ -36,7 +39,7 @@ fi
 
 stage1_announce "cloning repository $ssh_url"
 stage1_websocket_step "clone_repository"
-stage1_exec git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT
+stage1_exec "git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 
 cd $APP_ROOT
 
@@ -48,13 +51,13 @@ SELECTED_BUILDER=
 
 stage1_websocket_step "select_builder"
 
-if [ -n "$(stage1_get_config_script)" ]; then
+if [ -n "$(stage1_get_config_build)" ]; then
     BUILDER="$STAGE1_CONFIG_PATH"
     stage1_announce "custom build detected"
 
-    stage1_get_config_script | while read cmd; do
+    stage1_get_config_build | while read cmd; do
         stage1_announce running $cmd
-        stage1_exec eval $cmd
+        stage1_exec "eval $cmd"
     done
 else
     for BUILDER in "${BUILDERS[@]}"; do

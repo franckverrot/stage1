@@ -8,23 +8,31 @@ trap 'exit $?' ERR
 STAGE1_CONFIG_PATH=".build.yml"
 
 stage1_announce() {
-    echo "------> $@"
+    echo -e "\033[1;33mstage1\033[0m> $*"
 }
 
-stage1_get_config_script() {
-    test -f "$STAGE1_CONFIG_PATH" && ruby -r yaml -e "puts YAML.load_file('$STAGE1_CONFIG_PATH')['script'] rescue NoMethodError"
+stage1_get_config_key() {
+    test -f "$1" && ruby -r yaml -e "puts YAML.load_file('$1')['$2'] rescue NoMethodError"
+}
+
+stage1_get_config_build() {
+    stage1_get_config_key $STAGE1_CONFIG_PATH "build"
 }
 
 stage1_get_config_env() {
-    test -f "$STAGE1_CONFIG_PATH" && ruby -r yaml -e "puts YAML.load_file('$STAGE1_CONFIG_PATH')['env'] rescue NoMethodError"
+    stage1_get_config_key $STAGE1_CONFIG_PATH "env"
+}
+
+stage1_get_config_run() {
+    stage1_get_config_key $STAGE1_CONFIG_PATH "run"
 }
 
 stage1_exec() {
-    # it would be cool to indent all output but right now
-    # this only indent stdout (not stderr), so that makes thing
-    # more ugly than anything else
-    # also, it makes some of composer lines too long for the web term
-    "$@" # | sed -ue 's/^/        /'
+    bash -c "$*"
+}
+
+stage1_exec_bg() {
+    bash -c "$*" &
 }
 
 function stage1_websocket_step {

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 XARGS="xargs --no-run-if-empty"
 

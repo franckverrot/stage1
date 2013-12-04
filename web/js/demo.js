@@ -1,6 +1,6 @@
 function demo_websocket_listen(websocket_channel) {
 
-    console.log('listening for demo build on channel "' + websocket_channel + '"');
+    // console.log('listening for demo build on channel "' + websocket_channel + '"');
 
     var primus = Primus.connect('http://' + document.location.hostname + ':8090/', {
         privatePattern: /(project|user)\.\d+/,
@@ -14,14 +14,14 @@ function demo_websocket_listen(websocket_channel) {
     });
 
     primus.on('data', function(message) {
-        console.log(message);
+        // console.log(message);
 
         if (!message.data.build && message.event !== 'build.output.buffer') { //} || message.data.build.id !== current_build_id) {
-            console.log('invalid message', message);
+            // console.log('invalid message', message);
             return;
         }
 
-        console.log('received event "' + message.event + '"');
+        // console.log('received event "' + message.event + '"');
 
         processMessage(message);
     });
@@ -50,17 +50,17 @@ function demo_websocket_listen(websocket_channel) {
             $('#build-meta').html(content);
 
             if (message.data.previousBuild && message.data.previousBuild.duration) {
-                console.log('rendering duration', message.data.previousBuild.duration);
+                // console.log('rendering duration', message.data.previousBuild.duration);
                 var duration = Math.ceil(message.data.previousBuild.duration / 60);
                 var content = Mustache.render($('#tpl-duration').text(), {
                     duration: duration,
                     unit: (duration == 1 ? 'minute' : 'minutes')
                 });
                 $('#build-meta').append(content);
-                console.log('rendered duration');
+                // console.log('rendered duration');
             }
 
-            console.log('hiding form');
+            // console.log('hiding form');
             $('#form-build').hide();
 
             $('#steps li').tooltip();
@@ -109,10 +109,10 @@ function demo_websocket_listen(websocket_channel) {
             return;
         }
 
-        console.log('received step "' + message.data.announce.step + '"');
+        // console.log('received step "' + message.data.announce.step + '"');
 
         if ($('#' + message.data.announce.step).length == 0) {
-            console.log('unrecognized step, skipping');
+            // console.log('unrecognized step, skipping');
             return;
         }
 

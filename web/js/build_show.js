@@ -45,7 +45,7 @@
                     if (data.data[i].event && data.data[i].event == 'build.log') {
                         processPart(data.data[i].data);
                     } else {
-                        console.log('skipping buffered event "' + data.data[i].event + '"');
+                        // console.log('skipping buffered event "' + data.data[i].event + '"');
                     }
                 }
             }
@@ -59,7 +59,7 @@
             // console.log(part);
 
             if (!part.build) {
-                console.log('no build information');
+                // console.log('no build information');
                 return;
             }
 

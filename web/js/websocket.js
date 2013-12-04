@@ -17,20 +17,20 @@
     primus.on('data', function(data) {
 
         if (data.event) {
-            console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
+            // console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
         } else {
-            console.log(data);
+            // console.log(data);
         }
 
         if (!data.data) {
             return;
         }
 
-        console.log(data.data);
+        // console.log(data.data);
 
         if (data.timestamp && data.timestamp <= lastTimestamp) {
             // outdated message, don't even bother
-            console.log('discarding outdated message');
+            // console.log('discarding outdated message');
             return
         } else {
             lastTimestamp = data.timestamp;
