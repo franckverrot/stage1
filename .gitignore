@@ -1,3 +1,6 @@
+# help site
+help/_site/
+
 # Bootstrap
 app/bootstrap*
 bin/phpunit

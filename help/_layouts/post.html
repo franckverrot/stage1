@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{{ page.title }} - Stage1 / Help</title>
+        <link rel="stylesheet" href="/assets/css/vendor/bootstrap.css" />
+        <link rel="stylesheet" href="/assets/css/vendor/font-awesome.css" />
+        <link rel="stylesheet" href="/assets/css/public.css" />
+        <link rel="stylesheet" href="/assets/css/help.css" />
+    </head>
+
+    <body>
+        <div class="container-narrow">
+
+            {% include navigation.html %}
+
+            <h3 class="post-title">{{ page.title }}</h3>
+
+            <hr />
+
+            <div class="post-content">
+                {{ content }}
+            </div>
+    
+            {% include footer.html %}
+        </div> <!-- /container -->
+    </body>
+</html>

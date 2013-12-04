@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder ".", "/vagrant", :nfs => true
     config.hostmanager.aliases = %w(
         stage1.dev
+        help.stage1.dev
         feature-checkout.acmemuda-acmeshop.stage1.dev
         master.acmemuda-acmeshop.stage1.dev
         master.ubermuda-puphpet.stage1.dev
