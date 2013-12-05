@@ -96,6 +96,8 @@ SSH
                 'exit_code_label' => $exitCodeLabel,
             ]);
 
+            $docker->commit($buildContainer, ['repo' => $build->getImageName(), 'tag' => 'failed']);
+
             throw new Exception($message, $buildContainer->getExitCode());
         }
 
