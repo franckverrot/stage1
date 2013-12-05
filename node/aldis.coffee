@@ -109,21 +109,25 @@ attach = (container, exchange) ->
 
                 stream.on('data', (packet) ->
 
-                    parse_packet(packet, use_multiplexing, (frame) ->
-                        if getopt.options.log
-                            process.stdout.write(frame.content)
+                    try
+                        parse_packet(packet, use_multiplexing, (frame) ->
+                            if getopt.options.log
+                                process.stdout.write(frame.content)
 
-                        message = {
-                            container: container.id,
-                            env: env,
-                            type: frame.type,
-                            length: frame.length,
-                            content: frame.content,
-                            timestamp: Date.now()
-                        }
+                            message = {
+                                container: container.id,
+                                env: env,
+                                type: frame.type,
+                                length: frame.length,
+                                content: frame.content,
+                                timestamp: Date.now()
+                            }
 
-                        exchange.publish('', message)
-                    )
+                            exchange.publish('', message)
+                        )
+                    catch e
+                        console.log 'could not parse packet: '.red + e.message
+                        console.log packet
                 )
             )
         )
