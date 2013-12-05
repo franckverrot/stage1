@@ -44,7 +44,7 @@ class DemoController extends Controller
             ],
             [
                 'id' => 'install_dependencies',
-                'match' => 'installing dependencies through composer',
+                'match' => 'loading composer repositories with package information',
                 'label' => 'Installing dependencies',
                 'tooltip' => 'Every project has dependencies, let\'s fetch them! For example, the Symfony 2 builder will use composer to install dependencies.',
             ],
