@@ -194,6 +194,7 @@ class Build
             'url' => $this->getUrl(),
             'port' => $this->getPort(),
             'duration' => $this->getDuration(),
+            'output_logs_count' => count($this->getOutputLogs()),
             'project' => (null === $this->getProject()
                 ? []
                 : $this->getProject()->asMessage()),

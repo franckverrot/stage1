@@ -82,11 +82,10 @@ class DemoController extends Controller
             return $this->disabledAction();
         }
 
+
         $session = $request->getSession();
         $session->set('demo_key', $session->get('demo_key', md5(uniqid(mt_rand(), true))));
-
         $channel = $session->get('demo_build_channel', 'demo-'.uniqid(mt_rand(), true));
-
         $build_id = $session->get('demo_build_id');
 
         if (null !== $build_id) {
@@ -207,7 +206,6 @@ class DemoController extends Controller
         
         $message = $factory->createBuildScheduled($build);
         $message->setExtra([
-            'progress' => 0,
             'steps' => $this->getSteps($project),
             'previousBuild' => $previousBuild ? $previousBuild->asMessage() : null
         ]);
@@ -221,6 +219,6 @@ class DemoController extends Controller
         $websocket_token = uniqid(mt_rand(), true);
         $this->get('app_core.redis')->sadd('channel:auth:' . $build->getChannel(), $websocket_token);
 
-        return new JsonResponse(json_encode(['status' => 200, 'echo' => $echo]), 200);
+        return new JsonResponse(json_encode(['status' => 200, 'echo' => $echo, 'build_id' => $build->getId()]), 200);
     }
 }

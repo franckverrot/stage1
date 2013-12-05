@@ -118,12 +118,12 @@ amqp.createConnection { host: opts.amqp_host }, { reconnect: false }, (conn) ->
 
             console.log('<- event ' + message.event.yellow + ' for channel ' + message.channel.yellow)
 
-            if message.event in ['build.finished', 'build.started']
+            if message.event in ['build.finished', 'build.scheduled']
                 console.log('   cleaning buffer for channel ' + message.channel.yellow)
                 delete buffer[message.channel] if buffer[message.channel]
-            else
-                buffer[message.channel] = [] unless buffer[message.channel]
-                buffer[message.channel].push(message)
+
+            buffer[message.channel] = [] unless buffer[message.channel]
+            buffer[message.channel].push(message)
 
             if primus.channels[message.channel]?
                 primus.channels[message.channel].write(message)
