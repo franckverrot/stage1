@@ -57,7 +57,7 @@ if [ -n "$(stage1_get_config_build)" ]; then
 
     stage1_get_config_build | while read cmd; do
         stage1_announce running $cmd
-        stage1_exec "eval $cmd"
+        stage1_exec "$cmd"
     done
 else
     for BUILDER in "${BUILDERS[@]}"; do

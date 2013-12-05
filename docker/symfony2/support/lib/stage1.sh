@@ -28,11 +28,11 @@ stage1_get_config_run() {
 }
 
 stage1_exec() {
-    bash -c "$*"
+    (bash -c "$@")
 }
 
 stage1_exec_bg() {
-    bash -c "$*" &
+    (bash -c "$@" &)
 }
 
 function stage1_websocket_step {
