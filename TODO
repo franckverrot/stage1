@@ -9,33 +9,34 @@ GUIDELINES
 TODO PRIVATE BETA
 -----------------
 
-* switch runtime to supervisor or something to make sure everything runs as it should
-
+* help
+    * what can stage1 do for me, and how
+    * how to protect access to my staging env
+    * customizing the build with the .build.yml file
+    * setup custom env variables in my containers
+    * launch arbitrary services in the app container
+    * how to provision my containers using...
+        * puppet
+        * chef
+        * cfengine
+        * ansible
+        * salt
+* builds
+    * switch runtime to supervisor or something to make sure everything runs as it should
 * global
     * have contextual help everywhere it matters
-    * commands to empty redis
-* production
-    * needs to have working error reporting
-    * needs to have proper monitoring
-* projects
-    * explain how the master password works
-    * update project access when an user joins the project
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
 * projects
-    * last_build_at + last_build_ref (last_build_id ?)
+    * per-project image selection, allow bare image
+    * support dependencies in a gitlab instance
+    * do not try to install deploy key on public projects
+    * update project access when an user joins the project
     * import: show "go to project" link in lieu of import ok button
-* builds
-    * check that the runtime container was successfuly built
-    * check the desired branch is available
-* websocket routing
-    * do not subscribe a user to all sub-channels he's allowed to, but rather
-      check if an incoming message is going through a channel that's a sub-channel
-      of a currently subscribed channel
 * github hook
     * log requests (there has been a strange request on a non-existant branch in c2is/seh)
 * logs
-    * log_fetch seems to broadcast logs to the build.* channel instead of project.*
+    * application logs
 
 SCALING
 =======
@@ -54,16 +55,21 @@ TODO
         * is the deploy key configured?
         * is the webhook configured?
     * project:import
+    * commands to empty redis
 
 * REST API / webhooks
 
 * production
     * everything needs to transit through SSL
+    * needs to have working error reporting
+    * needs to have proper monitoring
 
 * instances
     * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
 
 * builds
+    * check that the runtime container was successfuly built
+    * check the desired branch is available
     * running and building status are confusing
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
@@ -94,6 +100,7 @@ TODO
     * support Procfiles
 
 * projects
+    * last_build_at + last_build_ref (last_build_id ?)
     * allow per-project docker image selection
         This should not be in the UI, it's an admin (as in, me) only feature for now
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
@@ -126,6 +133,9 @@ TODO
     * update project access page when an ip is added to the access list
     * update project access page when a master password is set/unset
     * buffered channels implementation is a terrible mess
+    * do not subscribe a user to all sub-channels he's allowed to, but rather
+      check if an incoming message is going through a channel that's a sub-channel
+      of a currently subscribed channel
 
 * VM / provisioning
     * use GNU parallel to speed up VM packing and provisioning
