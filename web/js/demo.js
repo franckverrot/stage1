@@ -10,6 +10,7 @@ function demo_websocket_listen(websocketChannel) {
     var lastTimestamp = 0;
     var receivedMessages = 0;
     var expectedMessages = 0;
+    var steps = [];
 
     primus.on('open', function() {
         primus.subscribe(websocketChannel);
@@ -29,7 +30,7 @@ function demo_websocket_listen(websocketChannel) {
             processMessage(message);
         } catch (e) {
             console.log('EXCEPTION');
-            console.log(e);
+            console.dir(e)
         }
     });
 
@@ -51,10 +52,56 @@ function demo_websocket_listen(websocketChannel) {
 
             progress = (receivedMessages / expectedMessages) * 100;
             $('#build-progress .bar').css('width', progress + '%');
+
+            console.log(message.data.message);
+
+            for (i in steps) {
+                console.log('matching against ' + steps[i].match);
+                console.log(message.data.message.match(new RegExp(steps[i].match, 'i')));
+
+                if (message.data.message.match(new RegExp(steps[i].match, 'i'))) {
+                    step_id = steps[i].id;
+
+                    if ($('#' + step_id).length == 0) {
+                        console.log('unrecognized step, skipping');
+                        return;
+                    }
+
+
+                    $('#steps li.running')
+                        .not('#' + step_id)
+                        .removeClass('running')
+                        .prevAll('li')
+                            .removeClass()
+                        .addBack()
+                            .addClass('done')
+                            .find('i')
+                                .removeClass()
+                                .addClass('icon-ok');
+
+                    $('#steps li#' + step_id)
+                        .prevAll()
+                            .removeClass()
+                            .addClass('done')
+                            .find('i')
+                                .removeClass()
+                                .addClass('icon-ok')
+                            .end()
+                        .end()
+                        .removeClass('pending')
+                        .addClass('running')
+                            .find('i')
+                                .removeClass()
+                                .addClass('icon-refresh icon-spin');
+
+                }
+            }
         }
 
         if (message.event === 'build.scheduled') {
             console.log('processing "build.scheduled" event');
+
+            steps = message.data.steps;
 
             var content = Mustache.render($('#tpl-steps').text(), { 'steps': message.data.steps });
             $('#build-steps').html(content);
@@ -87,6 +134,8 @@ function demo_websocket_listen(websocketChannel) {
                 if (previousBuild.output_logs_count) {
                     console.log('expecting ' + previousBuild.output_logs_count);
                     expectedMessages = previousBuild.output_logs_count;
+                } else {
+                    $('#build-progress .bar').css('width', '100%');
                 }
             }
 
@@ -137,35 +186,5 @@ function demo_websocket_listen(websocketChannel) {
             $('#build-steps').hide();
             return;
         }
-
-        if (message.event !== 'build.step') {
-            return;
-        }
-
-        console.log('received step "' + message.data.announce.step + '"');
-
-        if ($('#' + message.data.announce.step).length == 0) {
-            console.log('unrecognized step, skipping');
-            return;
-        }
-
-
-        $('#steps li.running')
-            .not('#' + message.data.announce.step)
-            .removeClass('running')
-            .prevAll('li')
-                .removeClass()
-            .addBack()
-                .addClass('done')
-                .find('i')
-                    .removeClass()
-                    .addClass('icon-ok');
-
-        $('#steps li#' + message.data.announce.step)
-            .removeClass('pending')
-            .addClass('running')
-                .find('i')
-                    .removeClass()
-                    .addClass('icon-refresh icon-spin');
     }
 }

@@ -26,21 +26,25 @@ class DemoController extends Controller
         $steps = [
             [
                 'id' => 'prepare_build_container',
+                'match' => 'configuring composer with token',
                 'label' => 'Preparing build container',
                 'tooltip' => 'This is the container where your project will be built. This steps include ssh keys generation and setup, for example.'
             ],
             [
                 'id' => 'clone_repository',
+                'match' => 'cloning repository',
                 'label' => 'Cloning repository',
                 'tooltip' => 'Next, we need to retrieve your code from github. Pretty straightforward.'
             ],
             [
                 'id' => 'select_builder',
+                'match' => '(custom build|app) detected',
                 'label' => 'Selecting builder',
                 'tooltip' => 'We need to determine what type of project you\'re trying to build (that is, if you did not specify a custom build). We use something much like heroku\'s buildpacks for that.',
             ],
             [
                 'id' => 'install_dependencies',
+                'match' => 'installing dependencies through composer',
                 'label' => 'Installing dependencies',
                 'tooltip' => 'Every project has dependencies, let\'s fetch them! For example, the Symfony 2 builder will use composer to install dependencies.',
             ],
