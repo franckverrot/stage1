@@ -223,12 +223,13 @@ class Import
 
         $project->setGithubDeployKeyId($installedKey['id']);
 
-        if (count($scheduleDelete) > 0) {
-            foreach ($scheduleDelete as $key) {
-                $request = $this->client->delete([$project->getKeysUrl(), ['key_id' => $key['id']]]);
-                $response = $request->send();
-            }
-        }
+        // @todo
+        // if (count($scheduleDelete) > 0) {
+        //     foreach ($scheduleDelete as $key) {
+        //         $request = $this->client->delete([$project->getKeysUrl(), ['key_id' => $key['id']]]);
+        //         $response = $request->send();
+        //     }
+        // }
     }
 
     private function doWebhook(Project $project)
