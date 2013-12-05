@@ -6,24 +6,6 @@ GUIDELINES
 
 * Whenever (if) we need to add code to a repo, propose to create a PR, not to commit it directly
 
-DEMO
-----
-
-* add the place of the build in the builds queue (?)
-* limit number of demo build to 1 per email
-* if someone tries to launch a demo build with an already used email, try some marketing
-
-DEMO PROJECTS
--------------
-
-* symfony cmf / sulu cmf / sonata sandbox
-* orocrm
-* sylius
-* puphpet (to remove, too confusing)
-* akeneo
-* ekino cms ?
-
-
 TODO PRIVATE BETA
 -----------------
 
@@ -82,7 +64,6 @@ TODO
     * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
 
 * builds
-    * handle build.output through the log_fetch server
     * running and building status are confusing
     * the build process must be completely error/fool proof
     * make the symfony builder a bit more clever
@@ -110,8 +91,6 @@ TODO
         * push notif
         * mail
         * webhooks
-    * have a way to configure ENV variables in the container
-    * export a few ENV var for easier configuration (see http://symfony.com/doc/current/cookbook/configuration/external_parameters.html)
     * support Procfiles
 
 * projects
@@ -135,7 +114,6 @@ TODO
         * number of running instances
 
 * admin
-    * manually schedule builds for any project/branch
     * bundle to override container parameters per user
 
 * misc UI
@@ -198,6 +176,23 @@ THE DISTANT FUTURE
 
 * misc
     * pusher private channels to receive push notif about your projects' builds
+
+DEMO
+----
+
+* add the place of the build in the builds queue (?)
+* limit number of demo build to 1 per email
+* if someone tries to launch a demo build with an already used email, try some marketing
+
+DEMO PROJECTS
+-------------
+
+* symfony cmf / sulu cmf / sonata sandbox
+* orocrm
+* sylius
+* puphpet (to remove, too confusing)
+* akeneo
+* ekino cms ?
 
 IDEES DE OUF
 ============
