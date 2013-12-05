@@ -8,7 +8,7 @@ trap 'exit $?' ERR
 STAGE1_CONFIG_PATH=".build.yml"
 
 stage1_announce() {
-    echo -e "\033[1;33mstage1\033[0m> $*"
+    echo -e "\033[1;33mstage1\033[0m> $@"
 }
 
 stage1_get_config_key() {

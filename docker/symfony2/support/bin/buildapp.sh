@@ -56,7 +56,7 @@ if [ -n "$(stage1_get_config_build)" ]; then
     stage1_announce "custom build detected"
 
     stage1_get_config_build | while read cmd; do
-        stage1_announce running $cmd
+        stage1_announce running "$cmd"
         stage1_exec "$cmd"
     done
 else
