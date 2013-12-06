@@ -21,7 +21,7 @@ class DemoController extends Controller
 
     private $demoUser;
 
-    public function getSteps(Project $project)
+    private function getSteps(Project $project)
     {
         $steps = [
             [
