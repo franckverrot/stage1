@@ -14,6 +14,13 @@ server {
 }
 
 server {
+        listen 127.0.0.1:8080;
+        server_name help.stage1.io;
+        root /vagrant/help/_site/;
+        index index.html;
+}
+
+server {
         listen       127.0.0.1:8080;
 
         server_name  stage1;
