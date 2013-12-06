@@ -14,27 +14,27 @@ class User implements UserInterface
 
     const STATUS_WAITING_LIST = 2;
 
-    public $id;
+    protected $id;
 
-    public $githubId;
+    protected $githubId;
 
-    public $username;
+    protected $username;
 
-    public $email;
+    protected $email;
 
-    public $accessToken;
+    protected $accessToken;
 
-    public $createdAt;
+    protected $createdAt;
 
-    public $updatedAt;
+    protected $updatedAt;
 
-    public $lastLoginAt;
+    protected $lastLoginAt;
 
-    public $projects;
+    protected $projects;
 
-    public $status = 1;
+    protected $status = 1;
 
-    public $waitingList = 0;
+    protected $waitingList = 0;
 
     public function getChannel()
     {
