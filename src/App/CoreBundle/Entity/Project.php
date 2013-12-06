@@ -72,7 +72,7 @@ class Project
 
     protected $env;
 
-    protected $dockerBaseImage = 'ubuntu:precise';
+    protected $dockerBaseImage = 'symfony2:latest';
 
     public function isDemo()
     {
