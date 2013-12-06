@@ -23,12 +23,12 @@ TODO PRIVATE BETA
         * salt
 * builds
     * switch runtime to supervisor or something to make sure everything runs as it should
+    * limit running instances to 5 for everyone
 * global
     * have contextual help everywhere it matters
 * dashboard
     * list of running instances grouped by project and order by project.last_build_id
 * projects
-    * per-project image selection, allow bare image
     * support dependencies in a gitlab instance
     * do not try to install deploy key on public projects
     * update project access when an user joins the project
