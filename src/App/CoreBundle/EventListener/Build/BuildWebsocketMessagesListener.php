@@ -66,9 +66,6 @@ class BuildWebsocketMessagesListener
         $this->logger->info('sending build.finished message', ['build' => $build->getId()]);
         $message = $this->factory->createBuildFinished($build);
         $this->producer->publish((string) $message);
-
-        // $message = $this->factory->createBuildMessage($build, sprintf('Build finished (%s)', date('r')));
-        // $this->producer->publish((string) $message);
     }
 
     /**

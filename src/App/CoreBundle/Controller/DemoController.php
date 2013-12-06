@@ -198,7 +198,6 @@ class DemoController extends Controller
 
         $ref = $this->getDemoConfig('default_build_ref');
         $hash = $this->getHashFromRef($project, $ref, $this->getDemoConfig('access_token'));
-        // $subdomain = substr(md5($request->getSession()->get('channel')), 0, 8);
         $subdomain = preg_replace('/[^a-z0-9]+/', '-', $email);
 
         $build = new Build();

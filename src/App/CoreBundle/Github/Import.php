@@ -39,6 +39,8 @@ class Import
 
     private $feature_token_access_list = true;
 
+    private $delete_old_keys = false;
+
     public function __construct(Client $client, RegistryInterface $doctrine, Redis $redis, Router $router)
     {
         $this->client = $client;
@@ -234,13 +236,12 @@ class Import
 
         $project->setGithubDeployKeyId($installedKey['id']);
 
-        // @todo
-        // if (count($scheduleDelete) > 0) {
-        //     foreach ($scheduleDelete as $key) {
-        //         $request = $this->client->delete([$project->getKeysUrl(), ['key_id' => $key['id']]]);
-        //         $response = $request->send();
-        //     }
-        // }
+        if ($this->delete_old_keys && count($scheduleDelete) > 0) {
+            foreach ($scheduleDelete as $key) {
+                $request = $this->client->delete([$project->getKeysUrl(), ['key_id' => $key['id']]]);
+                $response = $request->send();
+            }
+        }
     }
 
     private function doWebhook(Project $project)

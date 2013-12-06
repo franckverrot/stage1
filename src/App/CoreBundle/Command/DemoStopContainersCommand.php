@@ -50,16 +50,12 @@ class DemoStopContainersCommand extends ContainerAwareCommand
             ->getQuery()
             ->execute();
 
-        // $output->writeln(sprintf('Found <info>%d</info> demo builds.', count($builds)));
-
         $client = $this->getContainer()->get('app_core.client.docker');
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         $dryRun = $input->getOption('dry-run');
 
         foreach ($builds as $build) {
-            // $output->writeln('stopping container <info>'.$build->getContainerId().'</info>');
-
             if ($dryRun) {
                 $output->writeln('would stop container <info>'.$build->getContainerId().'</info>');
             } else {
