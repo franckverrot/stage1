@@ -51,7 +51,7 @@ class Controller extends BaseController
      */
     protected function getClientIp()
     {
-        if (preg_match('/'.self::REGEXP_IP.'$/', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+        if (preg_match('/'.self::REGEXP_IP.'$/', $this->getRequest()->server->get('HTTP_X_FORWARDED_FOR'), $matches)) {
             return $matches[0];
         }
 
