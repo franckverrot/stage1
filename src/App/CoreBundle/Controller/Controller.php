@@ -51,12 +51,14 @@ class Controller extends BaseController
      */
     protected function getClientIp()
     {
-        if (preg_match('/'.self::REGEXP_IP.'$/', $this->getRequest()->server->get('HTTP_X_FORWARDED_FOR'), $matches)) {
+        $server = $this->getRequest()->server;
+
+        if (preg_match('/'.self::REGEXP_IP.'$/', $server->get('HTTP_X_FORWARDED_FOR'), $matches)) {
             return $matches[0];
         }
 
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            return $_SERVER['REMOTE_ADDR'];
+        if (null !== $server->get('REMOTE_ADDR')) {
+            return $server->get('REMOTE_ADDR');
         }
 
         return null;
