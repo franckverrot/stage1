@@ -27,6 +27,9 @@ parameters:
     # build timeout, in seconds
     stage1_build_timeout:       10
 
+    # maximum number of containers running per user
+    stage1_running_containers_per_user: 5
+
     # docker
     docker_api_base_url: http://127.0.0.1:9000/
     docker_default_memory_limit: 134217728      # 128MB

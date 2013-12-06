@@ -11,6 +11,35 @@ use Doctrine\ORM\NoResultException;
 
 class BuildRepository extends EntityRepository
 {
+    /**
+     * @param App\CoreBundle\Entity\User $user
+     * 
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function findRunningBuildsByUser(User $user)
+    {
+        $query = $this->createQueryBuilder('b')
+            ->select()
+            ->leftJoin('b.project', 'p')
+            ->leftJoin('p.users', 'u')
+            ->where('u.id = ?1')
+            ->andWhere('b.status = ?2')
+            ->orderBy('b.createdAt', 'DESC')
+            ->setParameters([
+                1 => $user->getId(),
+                2 => Build::STATUS_RUNNING,
+            ])
+            ->getQuery();
+
+        return $query->execute();
+
+    }
+
+    /**
+     * @param App\CoreBundle\Entity\Project $project
+     * 
+     * @return integer
+     */
     public function countPendingBuildsByProject(Project $project)
     {
         $query = $this->createQueryBuilder('b')
@@ -26,6 +55,11 @@ class BuildRepository extends EntityRepository
         return (int) $query->getSingleScalarResult();
     }
 
+    /**
+     * @param App\CoreBundle\Entity\Project $project
+     * 
+     * @return Doctrine\Common\Collections\Collection
+     */
     public function findLastByRefs(Project $project)
     {
         $query = 'SELECT b.* FROM (SELECT * FROM build WHERE build.project_id = ? ORDER BY created_at DESC) b GROUP BY b.ref';
@@ -43,6 +77,11 @@ class BuildRepository extends EntityRepository
      *       or not: we might need to be able to find a previousBuild by multiple criterias. For example
      *       when we want to approximate the time a build will take based on previous builds, a previous
      *       build is actually the previous build "running" or "obsolete" with the same branch and project
+     * 
+     * @param App\CoreBundle\Entity\Build $build
+     * @param boolean $demo
+     * 
+     * @return null|App\CoreBundle\Entity\Build
      */
     public function findPreviousBuild(Build $build, $demo = false)
     {
@@ -71,6 +110,11 @@ class BuildRepository extends EntityRepository
         }
     }
 
+    /**
+     * @param App\CoreBundle\Entity\Build $build
+     * 
+     * @return null|App\CoreBundle\Entity\Build
+     */
     public function findPreviousDemoBuild(Build $build)
     {
         $query = $this->createQueryBuilder('b')

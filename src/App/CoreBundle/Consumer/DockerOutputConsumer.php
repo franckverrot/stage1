@@ -65,15 +65,6 @@ class DockerOutputConsumer implements ConsumerInterface
 
         $fragment = $body['content'];
 
-        while (preg_match('/^\[websocket:(.+?):(.*)\]$/m', $fragment, $matches)) {
-            $fragment = str_replace($matches[0], '', $fragment);
-
-            if ($matches[1] === 'step') {
-                $message = new BuildStepMessage($build, $matches[2]);
-                $this->producer->publish((string) $message);
-            }
-        }
-
         $streamMap = [0 => 'stdin', 1 => 'stdout', 2 => 'stderr'];
 
         $buildLog = new BuildLog();
