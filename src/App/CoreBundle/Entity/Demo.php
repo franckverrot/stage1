@@ -2,8 +2,6 @@
 
 namespace App\CoreBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * Demo
  */

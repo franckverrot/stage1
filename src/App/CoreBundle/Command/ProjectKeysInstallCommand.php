@@ -2,8 +2,6 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\Project;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Symfony\Component\Console\Input\InputArgument;

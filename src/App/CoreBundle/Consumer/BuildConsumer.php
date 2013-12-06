@@ -4,9 +4,7 @@ namespace App\CoreBundle\Consumer;
 
 use App\CoreBundle\Builder\Builder;
 use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Message\BuildStartedMessage;
-use App\CoreBundle\Message\BuildFinishedMessage;
-use App\CoreBundle\Message\BuildStepMessage;
+
 use App\CoreBundle\BuildEvents;
 use App\CoreBundle\Event\BuildStartedEvent;
 use App\CoreBundle\Event\BuildFinishedEvent;
@@ -14,7 +12,6 @@ use App\CoreBundle\Event\BuildKilledEvent;
 
 use Docker\Docker;
 use Docker\Container;
-use Docker\Exception\ContainerNotFoundException;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -31,19 +28,17 @@ declare(ticks = 1);
 
 class BuildConsumer implements ConsumerInterface
 {
-    private $build;
+    private $logger;
+
+    private $dispatcher;
 
     private $doctrine;
 
-    private $producer;
-
-    private $router;
+    private $builder;
 
     private $docker;
 
-    private $buildTimeout = 0;
-
-    private $buildHostMask;
+    private $build;
 
     public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker)
     {

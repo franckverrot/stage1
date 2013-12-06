@@ -4,8 +4,6 @@ namespace App\AdminBundle\Controller\Docker;
 
 use App\AdminBundle\Controller\Controller;
 
-use Guzzle\Http\Client;
-
 class ContainerController extends Controller
 {
     private function getClient()
@@ -30,7 +28,7 @@ class ContainerController extends Controller
         $client = $this->getClient();
 
         $request = $client->post(['/containers/{id}/stop', ['id' => $id]]);
-        $response = $request->send();
+        $request->send();
 
         $this->addFlash('success', 'The container has been stopped');
 

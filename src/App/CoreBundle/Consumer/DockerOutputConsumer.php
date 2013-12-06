@@ -6,7 +6,6 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\BuildLog;
-use App\CoreBundle\Message\BuildLogMessage;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
@@ -15,8 +14,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 
 use Docker\Docker;
-
-use DateTime;
 
 class DockerOutputConsumer implements ConsumerInterface
 {

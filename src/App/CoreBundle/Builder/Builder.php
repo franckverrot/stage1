@@ -13,7 +13,6 @@ use Docker\Context;
 use Docker\PortCollection;
 
 use Psr\Log\LoggerInterface;
-use Redis;
 
 use Exception;
 

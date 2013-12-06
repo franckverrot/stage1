@@ -9,8 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use App\CoreBundle\Entity\Branch;
 
-use DateTime;
-
 class ProjectBranchImportCommand extends ContainerAwareCommand
 {
     public function configure()

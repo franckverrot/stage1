@@ -4,7 +4,6 @@ namespace App\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpFoundation\Cookie;
 
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
@@ -28,8 +27,6 @@ class Controller extends BaseController
 
         $response = $request->send();
         $remoteRefs = $response->json();
-
-        $branches = array();
 
         foreach ($remoteRefs as $remoteRef) {
             if ('refs/heads/'.$ref === $remoteRef['ref']) {

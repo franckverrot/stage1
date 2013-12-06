@@ -12,7 +12,6 @@ use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Demo;
 
-use Exception;
 use RuntimeException;
 
 class DemoController extends Controller
@@ -129,9 +128,6 @@ class DemoController extends Controller
         }
 
         $session->set('demo_build_channel', $channel);
-
-        $config = $this->getDemoConfig();
-
 
         foreach ($this->getDemoConfig('projects') as $project) {
             # @todo @slug

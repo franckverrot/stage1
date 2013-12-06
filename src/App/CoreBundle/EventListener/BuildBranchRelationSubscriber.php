@@ -10,8 +10,6 @@ use Doctrine\Common\EventSubscriber;
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Branch;
 
-use DateTime;
-
 /**
  * Whenever a build is created, checks if there exists a corresponding
  * branch record. If not create it. in any case, create a relation between

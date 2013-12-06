@@ -2,8 +2,6 @@
 
 namespace App\CoreBundle\Message;
 
-use App\CoreBundle\Entity\Build;
-
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

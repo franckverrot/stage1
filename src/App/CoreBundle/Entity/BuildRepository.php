@@ -5,8 +5,6 @@ namespace App\CoreBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
-use Exception;
-
 use Doctrine\ORM\NoResultException;
 
 class BuildRepository extends EntityRepository

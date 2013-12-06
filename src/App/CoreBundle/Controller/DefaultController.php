@@ -8,11 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Build;
 
-use App\CoreBundle\SshKeys;
-use App\CoreBundle\Value\ProjectAccess;
-
 use Exception;
-use DateTime;
 
 class DefaultController extends Controller
 {

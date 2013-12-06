@@ -22,8 +22,6 @@ class ProjectImportConsumer implements ConsumerInterface
 
     private $websocketChannel;
 
-    private $user;
-
     public function __construct(Import $importer, RegistryInterface $doctrine, Producer $websocket, Router $router)
     {
         $this->importer = $importer;

@@ -27,7 +27,6 @@ class ProjectAuditCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $project = $input->getArgument('project');
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
 
         $infos = [];
 

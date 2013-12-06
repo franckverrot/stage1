@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Guzzle\Http\Client;
-use Doctrine\Common\Util\Inflector;
 
 use App\CoreBundle\SshKeys;
 use App\CoreBundle\Entity\User;
@@ -23,8 +22,6 @@ class Import
     private $client;
 
     private $doctrine;
-
-    private $project;
 
     private $user;
 
@@ -114,14 +111,27 @@ class Import
         $project = new Project();
         $project->setGithubFullName($githubFullName);
 
-        foreach ($this->getSteps() as $step) {
-            if (null !== $callback) {
-                $callback($step);
-            }
-
-            $method = 'do'.Inflector::classify($step['id']);
-            $this->$method($project);
+        if (null === $callback) {
+            $callback = function() {};
         }
+
+        $callback(['id' => 'inspect', 'label' => 'Inspecting project']);
+        $this->doInspect($project);
+
+        $callback(['id' => 'keys', 'label' => 'Generating keys']);
+        $this->doKeys($project);
+
+        $callback(['id' => 'deploy_key', 'label' => 'Adding deploy key']);
+        $this->doDeployKey($project);
+
+        $callback(['id' => 'webhook', 'label' => 'Configuring webhook']);
+        $this->doWebhook($project);
+
+        $callback(['id' => 'branches', 'label' => 'Importing branches']);
+        $this->doBranches($project);
+
+        $callback(['id' => 'access', 'label' => 'Granting default access']);
+        $this->doAccess($project);
 
         $em = $this->doctrine->getManager();
         $em->persist($project);
@@ -174,7 +184,7 @@ class Import
         $project->setSshUrl($infos['ssh_url']);
         $project->setKeysUrl($infos['keys_url']);
         $project->setHooksUrl($infos['hooks_url']);
-        $project->setDockerBaseImage('symfony2');
+        $project->setDockerBaseImage('symfony2:latest');
 
         # @todo does this really belong here?
         if (null !== $this->getUser()) {

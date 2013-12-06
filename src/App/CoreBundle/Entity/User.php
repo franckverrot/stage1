@@ -4,8 +4,6 @@ namespace App\CoreBundle\Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
-use stdClass;
-
 class User implements UserInterface
 {
     const STATUS_DISABLED = 0;

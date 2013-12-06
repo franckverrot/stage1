@@ -12,8 +12,6 @@ use Symfony\Component\Yaml\Yaml;
 
 use App\CoreBundle\Entity\User;
 
-use Closure;
-
 class DemoSetupCommand extends ContainerAwareCommand
 {
     public function configure()

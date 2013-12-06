@@ -14,13 +14,10 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 use Psr\Log\LoggerInterface;
 
-use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
-use RuntimeException;
-use InvalidArgumentException;
 use Exception;
 
 class KillConsumer implements ConsumerInterface
@@ -61,17 +58,9 @@ class KillConsumer implements ConsumerInterface
         return $this->doctrine;
     }
 
-    private function persistAndFlush($entity)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($entity);
-        $em->flush();
-    }
-
     public function getPendingBuildsCount(Project $project)
     {
         $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
-        $qb = $buildRepo->createQueryBuilder('b');
 
         $query = $buildRepo->createQueryBuilder('b')
            ->select('count(b.id)')

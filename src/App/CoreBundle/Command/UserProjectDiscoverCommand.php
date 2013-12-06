@@ -9,15 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use App\CoreBundle\Entity\User;
-
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\MultiTransferException;
-
 class UserProjectDiscoverCommand extends ContainerAwareCommand
 {
-    private $projects = [];
-
     public function configure()
     {
         $this
