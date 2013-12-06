@@ -9,7 +9,7 @@ layout: base
 {% for category in site.categories %}
 
 <fieldset>
-<legend>{{ category[0] | capitalize }}</legend>
+<h5>{{ category[0] | capitalize }}</h5>
 
 <ul>
     {% for post in category[1] %}
