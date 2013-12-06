@@ -67,7 +67,6 @@ function demo_websocket_listen(websocketChannel) {
                         return;
                     }
 
-
                     $('#steps li.running')
                         .not('#' + step_id)
                         .removeClass('running')

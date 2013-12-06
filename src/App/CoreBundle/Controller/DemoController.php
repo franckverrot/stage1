@@ -52,13 +52,6 @@ class DemoController extends Controller
 
         if ($project->getName() === 'pim-community-standard') {
             $steps[] = [
-                'id' => 'install_assets',
-                'match' => 'installing assets using the',
-                'label' => 'Installing assets',
-                'tooltip' => 'Assets are the make-up of web application, special care has to be taken! Most Symfony 2 projects use Assetic to manage their assets.',
-            ];
-
-            $steps[] = [
                 'id' => 'install_other_dependencies',
                 'match' => 'running apt-get install',
                 'label' => 'Installing runtime dependencies',
@@ -70,6 +63,13 @@ class DemoController extends Controller
                 'match' => 'clear extend cache folder',
                 'label' => 'Custom installation script',
                 'tooltip' => 'Some projects require a very specific installation process. Again, Stage1 doesn\'t get in the way and allow arbitrary build commands.',
+            ];
+
+            $steps[] = [
+                'id' => 'install_assets',
+                'match' => 'installing assets using the',
+                'label' => 'installing assets using the hard copy option',
+                'tooltip' => 'Assets are the make-up of web application, special care has to be taken! Most Symfony 2 projects use Assetic to manage their assets.',
             ];
         }
 
