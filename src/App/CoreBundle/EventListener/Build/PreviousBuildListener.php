@@ -71,10 +71,16 @@ class PreviousBuildListener
         }
 
         try {
-            $this->docker->getContainerManager()->stop($previousBuild->getContainer());
-            $this->logger->info('stopped previous container', [
+            $manager = $this->docker->getContainerManager();
+            $container = $previousBuild->getContainer();
+
+            $manager
+                ->stop($container)
+                ->remove($container);
+
+            $this->logger->info('stopped and removed previous container', [
                 'previous_build' => $previousBuild->getId(),
-                'container' => $previousBuild->getContainer()->getId()
+                'previous_container' => $previousBuild->getContainer()->getId()
             ]);
         } catch (ContainerNotFoundException $e) {
             $this->logger->warn('found previous container but docker did not find it', [

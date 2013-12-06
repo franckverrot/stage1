@@ -101,9 +101,11 @@ SSH
             throw new Exception($message, $buildContainer->getExitCode());
         }
 
-        $logger->info('build successful, committing', ['build' => $build->getId()]);
-
+        $logger->info('build successful, committing', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
+
+        $logger->info('removing build container', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
+        $manager->remove($buildContainer);
 
         $ports = new PortCollection(80, 22);
 
