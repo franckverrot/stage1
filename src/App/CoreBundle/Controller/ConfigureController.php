@@ -15,7 +15,7 @@ class ConfigureController extends BaseController
 {
     private function getConfigPath($file)
     {
-        $rootDir = $this->containter->getParameter('kernel.root_dir')
+        $rootDir = $this->containter->getParameter('kernel.root_dir');
         return realpath($rootDir.'/config/'.$file.'.yml');
     }
 
