@@ -67,8 +67,8 @@ class DemoController extends Controller
 
             $steps[] = [
                 'id' => 'install_assets',
-                'match' => 'installing assets using the',
-                'label' => 'installing assets using the hard copy option',
+                'match' => 'installing assets using the hard copy option',
+                'label' => 'Installing assets',
                 'tooltip' => 'Assets are the make-up of web application, special care has to be taken! Most Symfony 2 projects use Assetic to manage their assets.',
             ];
         }
