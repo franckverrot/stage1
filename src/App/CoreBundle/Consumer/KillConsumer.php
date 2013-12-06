@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Consumer;
 
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Message\MessageFactory;
 
 use Docker\Docker;
@@ -67,7 +68,7 @@ class KillConsumer implements ConsumerInterface
         $em->flush();
     }
 
-    public function getPendingBuildsCount($project)
+    public function getPendingBuildsCount(Project $project)
     {
         $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
         $qb = $buildRepo->createQueryBuilder('b');

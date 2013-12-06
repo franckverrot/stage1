@@ -6,6 +6,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\WebsocketRoutable;
 
 use Redis;
 
@@ -30,7 +31,7 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
         ];
     }
 
-    private function getKeys($entity)
+    private function getKeys(WebsocketRoutable $entity)
     {
         return [
             'entity' => $entity->getChannel(),
@@ -44,7 +45,7 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
     {
         $entity = $args->getEntity();
 
-        if (!method_exists($entity, 'getChannel') || !method_exists($entity, 'getUsers')) {
+        if (!$entity instanceof WebsocketRoutable) {
             return;
         }
 

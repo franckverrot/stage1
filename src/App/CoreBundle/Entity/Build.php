@@ -6,7 +6,7 @@ use Docker\Container;
 
 use BadMethodCallException;
 
-class Build
+class Build implements WebsocketRoutable
 {
     const STATUS_SCHEDULED = 1;
 

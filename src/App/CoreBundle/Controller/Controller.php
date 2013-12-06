@@ -136,7 +136,7 @@ class Controller extends BaseController
     /**
      * @todo use BuildRepository#findPendingByProject
      */
-    protected function findPendingBuilds($project)
+    protected function findPendingBuilds(Project $project)
     {
         $qb = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
 

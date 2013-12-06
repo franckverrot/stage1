@@ -7,7 +7,7 @@ namespace App\CoreBundle\Entity;
 /**
  * Project
  */
-class Project
+class Project implements WebsocketRoutable
 {
     const STATUS_DISABLED = 0;
 
