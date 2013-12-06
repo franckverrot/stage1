@@ -139,6 +139,7 @@ def hipache_init_redis():
     info('initializing redis for hipache')
     run('redis-cli DEL frontend:%s' % env.host_string)
     run('redis-cli RPUSH frontend:%s stage1 http://127.0.0.1:8080/' % env.host_string)
+    run('redis-cli RPUSH frontend:help.%s help http://127.0.0.1:8080/' % env.host_string)
 
 def fix_permissions():
     with settings(warn_only=True):

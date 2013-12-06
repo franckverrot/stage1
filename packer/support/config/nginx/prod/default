@@ -1,4 +1,11 @@
 server {
+        listen 127.0.0.1:8080;
+        server_name help.stage1.io;
+        root /vagrant/help/_site/;
+        index index.html;
+}
+
+server {
         listen       127.0.0.1:8080;
 
         server_name  stage1;
@@ -24,16 +31,5 @@ server {
                 fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
                 fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
                 fastcgi_param   SERVER_PORT        80;
-        }
-}
-
-server {
-        listen 127.0.0.1:9000;
-
-        access_log   /var/log/nginx/docker.access.log;
-        error_log    /var/log/nginx/docker.error.log;
-
-        location / {
-                proxy_pass http://unix:/var/run/docker.sock:/;
         }
 }

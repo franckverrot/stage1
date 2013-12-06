@@ -14,6 +14,8 @@ composer install
 bundle install
 fab upstart_export
 sudo restart stage1
+redis-cli del frontend:help.stage1.dev
+redis-cli rpush frontend:help.stage1.dev help http://127.0.0.1:8080/
 EOF
 
 Vagrant.configure("2") do |config|
