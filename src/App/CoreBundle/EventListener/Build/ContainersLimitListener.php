@@ -55,7 +55,7 @@ class ContainersLimitListener
     {
         $build = $event->getBuild();
 
-        if (!$build->isRunning()) {
+        if (!$build->isRunning() || $build->isDemo()) {
             return;
         }
 
