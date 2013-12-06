@@ -70,7 +70,7 @@ RUN apt-get install -qy \
 ADD ./support/nginx.conf /etc/nginx/sites-available/default
 ADD ./support/php.ini /etc/php5/fpm/php.ini
 ADD ./support/php.ini /etc/php5/cli/php.ini
-ADD ./support/parameters.yml /etc/symfony/parameters.yml.dist
+ADD ./support/parameters.yml.dist /etc/symfony/parameters.yml.dist
 ADD ./support/my.cnf /etc/mysql/my.cnf
 
 # just in case something's wrong with innodb
