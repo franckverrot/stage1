@@ -134,34 +134,6 @@ class KillConsumer implements ConsumerInterface
             posix_kill($build->getPid(), SIGKILL);
         }
 
-        return;
-
-        $builder = new ProcessBuilder([
-            realpath(__DIR__.'/../../../../bin/build/kill.sh'),
-            $build->getId()
-        ]);
-        $process = $builder->getProcess();
-
-        echo '   running '.$process->getCommandLine().PHP_EOL;
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            printf('   (%d) %s', $process->getExitCode(), $stderr = $process->getErrorOutput());
-
-            if (trim($stderr) === 'Nothing to kill.') {
-                echo '   marking build finished anyway.'.PHP_EOL;
-                $build->setStatus(Build::STATUS_KILLED);
-            }
-        } else {
-            $build->setStatus(Build::STATUS_KILLED);
-        }
-
-        $this->persistAndFlush($build);
-
-        echo '-> sending build.finished'.PHP_EOL;
-
-        $message = new BuildFinishedMessage($build);
         $this->producer->publish((string) $message);
     }
 }
