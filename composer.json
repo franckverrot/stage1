@@ -1,6 +1,6 @@
 {
     "name": "autostack/stage1",
-    "license": "closed",
+    "license": "proprietary",
     "type": "project",
     "description": "The staging environment builder",
     "autoload": {
