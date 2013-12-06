@@ -2,10 +2,24 @@
 layout: base
 ---
 
-<p>There are <strong>{{ site.posts | size }}</strong> articles in the knowledge base:</p>
+<p id="articles_count">There are <strong>{{ site.posts | size }}</strong> articles in the knowledge base.</p>
+
+<hr />
+
+{% for category in site.categories %}
+
+<fieldset>
+<legend>{{ category[0] | capitalize }}</legend>
 
 <ul>
-    {% for post in site.posts %}
+    {% for post in category[1] %}
     <li><a href="{{ post.url }}/">{{ post.title }}</a></li>
     {% endfor %}
 </ul>
+</fieldset>
+
+{% endfor %}
+
+<hr />
+
+<p id="contact_a_human">Didn't find what you were looking for? <a href="mailto:geoffrey@stage1.io">Contact a human</a>!</p>
