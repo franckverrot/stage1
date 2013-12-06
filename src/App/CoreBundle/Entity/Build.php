@@ -202,6 +202,11 @@ class Build
 
     }
 
+    public function getBaseImageName()
+    {
+        return $this->getProject()->getDockerBaseImage();
+    }
+
     public function getImageName()
     {
         return sprintf('b/%d/%s/%d', $this->getProject()->getId(), $this->getNormRef(), $this->getId());

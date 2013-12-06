@@ -1,3 +1,11 @@
+.help p {
+    text-align: justify;
+}
+
+p.readmore {
+    text-align: right;
+}
+
 body {
     padding-top: 60px;
 }
@@ -141,6 +149,6 @@ div.build-building-icon {
 }
 
 textarea#project_env {
-    width: 98%;
+    width: 95%;
     height: 7em;
 }

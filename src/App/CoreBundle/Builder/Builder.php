@@ -54,7 +54,7 @@ class Builder
         // @todo the base container can (and should?) be built during project import
         //       that's one lest step during the build
         $context = new Context();
-        $context->from('symfony2:latest');
+        $context->from($build->getBaseImageName());
         $context->add('/root/.ssh/id_rsa', $build->getProject()->getPrivateKey());
         $context->add('/root/.ssh/id_rsa.pub', $build->getProject()->getPublicKey());
         $context->add('/root/.ssh/config', <<<SSH

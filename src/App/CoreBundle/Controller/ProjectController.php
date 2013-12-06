@@ -26,6 +26,14 @@ class ProjectController extends Controller
         ]);
     }
 
+    private function getProjectBaseImageForm(Project $project)
+    {
+        return $this->createForm('project_base_image', $project, [
+            'action' => $this->generateUrl('app_core_project_admin_base_image_update', ['id' => $project->getId()]),
+            'method' => 'POST',
+        ]);
+    }
+
     /**
      * @param integer $id
      */
@@ -39,6 +47,31 @@ class ProjectController extends Controller
         $this->get('session')->set('csrf_token', $token);
 
         return $this->render('AppCoreBundle:Project:admin.html.twig', [
+            'base_image_form' => $this->getProjectBaseImageForm($project)->createView(),
+            'project' => $project,
+            'csrf_token' => $token,
+        ]);
+    }
+
+    public function updateBaseImageAction(Request $request, $id)
+    {
+        $project = $this->findProject($id);
+        $this->setCurrentProjectId($id);
+
+        $form = $this->getProjectBaseImageForm($project);
+
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $this->persistAndFlush($project);
+            return $this->redirect($this->generateUrl('app_core_project_admin', ['id' => $project->getId()]));
+        }
+
+        $token = uniqid(mt_rand(), true);
+        $this->get('session')->set('csrf_token', $token);
+
+        return $this->render('AppCoreBundle:Project:admin.html.twig', [
+            'base_image_form' => $form->createView(),
             'project' => $project,
             'csrf_token' => $token,
         ]);

@@ -15,7 +15,7 @@ server {
 
 server {
         listen 127.0.0.1:8080;
-        server_name help.stage1.io;
+        server_name help.stage1.dev;
         root /vagrant/help/_site/;
         index index.html;
 }
@@ -23,7 +23,7 @@ server {
 server {
         listen       127.0.0.1:8080;
 
-        server_name  stage1;
+        server_name  stage1.dev;
         access_log   /var/log/nginx/symfony.access.log;
         error_log    /var/log/nginx/symfony.error.log;
 

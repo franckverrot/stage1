@@ -22,12 +22,56 @@ $('#project_name').on('keyup', function(event) {
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
 <fieldset>
+    <legend>Project's base image</legend>
+
+    {{ form_start(base_image_form) }}
+
+    <div class="row-fluid">
+        <div class="span6">
+            {{ form_row(base_image_form.docker_base_image) }}
+        </div>
+
+        <div class="span6 help">
+            <p>The base image determines what will be available by default in your runtime environment. The <strong><a href="http://help.stage1.io/article/the-ubuntu-precise-12-04-base-image/"><i class="icon-question-sign"></i> Ubuntu Precise (12.04)</a></strong> base image is Docker's base Ubuntu image, so there's nothing much on the image and you will have to do all the provisioning by hand. The <strong><a href="http://help.stage1.io/article/the-symfony-2-base-image/"><i class="icon-question-sign"></i> Symfony 2</a></strong> base image is Stage1's pre-baked Symfony 2 image. It contains everything needed to run a standard Symfony 2 application: NginX, PHP 5.4 and a MySQL instance.</p>
+            <p class="readmore"><a href="http://help.stage1.io/" target="_blank"><i class="icon-question-sign"></i> Read more about the different base images available</a></p>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        {{ form_widget(base_image_form.save, { attr: { class: "btn btn-primary" } }) }}
+    </div>
+
+
+    {{ form_end(base_image_form) }}
+</fieldset>
+
+<fieldset>
     <legend>Project's environment</legend>
 
     <form id="form-project-env" method="post" action="{{ path('app_core_project_env', { id: project.id }) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
 
-        <textarea name="project_env" id="project_env">{{ project.env }}</textarea>
+        <div class="row-fluid">
+            <div class="span6">
+                <textarea name="project_env" id="project_env">{{ project.env }}</textarea>
+            </div>
+            <div class="span6 help">
+                <p>Rules:</p>
+                <ul>
+                    <li>one variable per-line,</li>
+                    <li>in the <code>NAME=VALUE</code> format,</li>
+                    <li>no quoting</li>
+                </ul>
+
+                <p>Example:</p>
+
+                <pre>SYMFONY_ENV=prod
+FOO_API_KEY=7BMnTzAIoTeVg
+FOO=some value with spaces</pre>
+
+                <p class="readmore"><a href="http://help.stage1.io/article/setup-custom-environment-variables-in-my-containers/"><i class="icon-question-sign"></i> Read more about environment variables</a></p>
+            </div>
+        </div>
 
         <div class="form-actions">
             <button class="btn btn-primary" type="submit">Save project's environment</button>
@@ -37,9 +81,16 @@ $('#project_name').on('keyup', function(event) {
 
 <fieldset>
     <legend>Project's public key</legend>
-    <p>Use this key as a deploy key for your private dependencies.</p>
+    <div class="row-fluid">
+        <div class="span6">
+            <pre>{{ project.publicKey }}</pre>
+        </div>
+        <div class="span6 help">
+            <p>This is your project's public key. You can use it as a deploy key in your private dependencies so that Stage1 can fetch them.</p>
 
-    <pre>{{ project.publicKey }}</pre>
+            <p class="readmore"><a href="http://help.stage1.io/article/fetching-private-dependencies/"><i class="icon-question-sign"></i> Read more about private dependencies</p></a>
+        </div>
+    </div>
 </fieldset>
 
 <form id="form-delete" class="form-inline" method="post" action="{{ path('app_core_project_delete', { id: project.id }) }}">

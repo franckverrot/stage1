@@ -72,6 +72,8 @@ class Project
 
     protected $env;
 
+    protected $dockerBaseImage = 'ubuntu:precise';
+
     public function isDemo()
     {
         foreach ($this->getUsers() as $user) {
@@ -760,5 +762,28 @@ class Project
     public function getEnv()
     {
         return $this->env;
+    }
+
+    /**
+     * Set dockerBaseImage
+     *
+     * @param string $dockerBaseImage
+     * @return Project
+     */
+    public function setDockerBaseImage($dockerBaseImage)
+    {
+        $this->dockerBaseImage = $dockerBaseImage;
+    
+        return $this;
+    }
+
+    /**
+     * Get dockerBaseImage
+     *
+     * @return string 
+     */
+    public function getDockerBaseImage()
+    {
+        return $this->dockerBaseImage;
     }
 }
