@@ -76,7 +76,10 @@ class BuildConsumer implements ConsumerInterface
 
                 $docker->getContainerManager()->stop($container);
             } else {
-                var_dump($container);
+                $this->logger->warn('expected container, got something else', [
+                    'type' => gettype($container),
+                    'class' => get_class($container)
+                ]);
             }
 
             $build->setStatus(Build::STATUS_KILLED);

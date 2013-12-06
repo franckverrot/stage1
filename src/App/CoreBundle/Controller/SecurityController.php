@@ -66,8 +66,6 @@ class SecurityController extends Controller
 
             $result = $response->json();
 
-            var_dump($result);
-
             foreach ($result as $email) {
                 if ($email['primary'] && $email['verified']) {
                     $user->setEmail($email['email']);
