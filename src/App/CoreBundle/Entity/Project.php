@@ -2,8 +2,6 @@
 
 namespace App\CoreBundle\Entity;
 
-
-
 /**
  * Project
  */
@@ -75,6 +73,15 @@ class Project implements WebsocketRoutable
     protected $env;
 
     protected $dockerBaseImage = 'symfony2:latest';
+
+    public function getGitUrl()
+    {
+        if ($this->getGithubPrivate()) {
+            return $this->getSshUrl();
+        }
+
+        return $this->getCloneUrl();
+    }
 
     public function isDemo()
     {
@@ -810,5 +817,33 @@ class Project implements WebsocketRoutable
     public function getGithubPrivate()
     {
         return $this->githubPrivate;
+    }
+    /**
+     * @var string
+     */
+    private $githubUrl;
+
+
+    /**
+     * Set githubUrl
+     *
+     * @param string $githubUrl
+     * @return Project
+     */
+    public function setGithubUrl($githubUrl)
+    {
+        $this->githubUrl = $githubUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubUrl
+     *
+     * @return string 
+     */
+    public function getGithubUrl()
+    {
+        return $this->githubUrl;
     }
 }

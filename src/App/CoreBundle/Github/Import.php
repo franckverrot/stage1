@@ -187,7 +187,7 @@ class Import
         $project->setKeysUrl($infos['keys_url']);
         $project->setHooksUrl($infos['hooks_url']);
         $project->setDockerBaseImage('symfony2:latest');
-        $project->setGithubPrivate($infos['private']);
+        // $project->setGithubPrivate($infos['private']);
 
         # @todo does this really belong here?
         if (null !== $this->getUser()) {
