@@ -48,6 +48,8 @@ class Project implements WebsocketRoutable
 
     protected $githubDeployKeyId;
 
+    protected $githubPrivate;
+
     protected $builds;
 
     protected $createdAt;
@@ -785,5 +787,28 @@ class Project implements WebsocketRoutable
     public function getDockerBaseImage()
     {
         return $this->dockerBaseImage;
+    }
+
+    /**
+     * Set githubPrivate
+     *
+     * @param boolean $githubPrivate
+     * @return Project
+     */
+    public function setGithubPrivate($githubPrivate)
+    {
+        $this->githubPrivate = $githubPrivate;
+    
+        return $this;
+    }
+
+    /**
+     * Get githubPrivate
+     *
+     * @return boolean 
+     */
+    public function getGithubPrivate()
+    {
+        return $this->githubPrivate;
     }
 }

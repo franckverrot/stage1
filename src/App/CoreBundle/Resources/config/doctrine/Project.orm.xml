@@ -25,7 +25,8 @@
         <field name="masterPassword" column="master_password" type="text" nullable="true" />
         <field name="status" column="status" type="integer" />
         <field name="env" column="env" type="text" nullable="true" />
-        <field name="dockerBaseImage" type="string" nullable="true" />
+        <field name="dockerBaseImage" column="docker_base_image" type="string" nullable="true" />
+        <field name="githubPrivate" column="github_private" type="boolean" />
 
         <many-to-many field="users" target-entity="App\CoreBundle\Entity\User" inversed-by="projects">
             <join-table name="users_projects">
