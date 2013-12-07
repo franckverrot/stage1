@@ -23,7 +23,6 @@ TODO PRIVATE BETA
         * salt
 * builds
     * switch runtime to supervisor or something to make sure everything runs as it should
-    * limit running instances to 5 for everyone
 * global
     * have contextual help everywhere it matters
 * dashboard
