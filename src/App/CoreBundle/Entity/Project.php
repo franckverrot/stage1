@@ -74,6 +74,11 @@ class Project implements WebsocketRoutable
 
     protected $dockerBaseImage = 'symfony2:latest';
 
+    /**
+     * @var string
+     */
+    private $githubUrl;
+
     public function getGitUrl()
     {
         if ($this->getGithubPrivate()) {
@@ -818,11 +823,6 @@ class Project implements WebsocketRoutable
     {
         return $this->githubPrivate;
     }
-    /**
-     * @var string
-     */
-    private $githubUrl;
-
 
     /**
      * Set githubUrl
