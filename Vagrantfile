@@ -28,7 +28,10 @@ Vagrant.configure("2") do |config|
 
     config.vm.hostname = 'stage1-dev'
     config.vm.network :private_network, ip: '192.168.215.42'
+    
     config.vm.synced_folder ".", "/vagrant", :nfs => true
+    config.vm.synced_folder "/Users/ash/Projects/docker-php", "/docker-php", :nfs => true
+
     config.hostmanager.aliases = %w(
         stage1.dev
         help.stage1.dev
