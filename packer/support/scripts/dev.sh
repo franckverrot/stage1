@@ -14,7 +14,7 @@ fi
 
 redis-cli RPUSH frontend:stage1.dev stage1 http://127.0.0.1:8080/
 
-apt-get install tcpflow socat
+apt-get install -q -y tcpflow socat
 
 apt-get -qy install \
     build-essential \
