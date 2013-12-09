@@ -31,6 +31,16 @@ env.log_files = [
     '/var/log/mysql/error.log',
 ]
 
+def deploy_help():
+    with cd('./help'):
+        local('jekyll build')
+
+        local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete ./ %(user)s@%(host)s:%(remote)s/help' % {
+            'user': env.user,
+            'host': env.host_string,
+            'remote': env.project_path
+        })
+
 def backup():
     run('mkdir -p %s' % env.remote_dump_path);
     run('mysqldump -u root symfony > %s/stage1.sql' % env.remote_dump_path)
@@ -139,6 +149,7 @@ def hipache_init_redis():
     info('initializing redis for hipache')
     run('redis-cli DEL frontend:%s' % env.host_string)
     run('redis-cli RPUSH frontend:%s stage1 http://127.0.0.1:8080/' % env.host_string)
+    run('redis-cli DEL frontend:help.%s' % env.host_string)
     run('redis-cli RPUSH frontend:help.%s help http://127.0.0.1:8080/' % env.host_string)
 
 def fix_permissions():
