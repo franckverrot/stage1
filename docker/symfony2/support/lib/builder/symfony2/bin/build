@@ -13,14 +13,14 @@ stage1_exec "composer install --ansi --no-progress --no-dev --prefer-dist --no-i
 if app/console list doctrine:database > /dev/null 2>&1; then
     stage1_announce "initializing database"
     stage1_websocket_step "initialize_database"
-    stage1_exec "app/console doctrine:database:create"
-    stage1_exec "app/console doctrine:schema:update --force"
+    stage1_exec "php app/console doctrine:database:create"
+    stage1_exec "php app/console doctrine:schema:update --force"
 fi
 
 if app/console list doctrine:fixtures > /dev/null 2>&1; then
     stage1_announce "loading fixtures"
     stage1_websocket_step "load_fixtures"
-    stage1_exec "app/console doctrine:fixtures:load"
+    stage1_exec "php app/console doctrine:fixtures:load"
 fi
 
 # @todo move to a $builder/bin/after script?
