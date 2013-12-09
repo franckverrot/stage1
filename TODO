@@ -10,17 +10,13 @@ TODO PRIVATE BETA
 -----------------
 
 * help
-    * what can stage1 do for me, and how
-    * how to protect access to my staging env
-    * customizing the build with the .build.yml file
-    * setup custom env variables in my containers
-    * launch arbitrary services in the app container
     * how to provision my containers using...
         * puppet
         * chef
         * cfengine
         * ansible
         * salt
+        * an heroku buildpack
 * builds
     * switch runtime to supervisor or something to make sure everything runs as it should
 * global
@@ -29,7 +25,6 @@ TODO PRIVATE BETA
     * list of running instances grouped by project and order by project.last_build_id
 * projects
     * support dependencies in a gitlab instance
-    * do not try to install deploy key on public projects
     * update project access when an user joins the project
     * import: show "go to project" link in lieu of import ok button
 * github hook
