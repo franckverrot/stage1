@@ -16,9 +16,15 @@ class Controller extends BaseController
 
     protected function getHashFromRef(Project $project, $ref, $accessToken = null)
     {
+        if (null === $accessToken) {
+            $accessToken = $project->getUsers()->first()->getAccessToken();
+        }
+
+        $this->container->get('logger')->info('using access token '.$accessToken);
+
         $client = $this->container->get('app_core.client.github');
-        $client->setDefaultOption('header/Autorization', 'token '.$accessToken);
-        $client->setDefaultOption('header/Accept', 'application/vnd.github.v3');
+        $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
+        $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
         $request = $client->get(['/repos/{owner}/{repo}/git/refs/heads', [
             'owner' => $project->getGithubOwnerLogin(),
