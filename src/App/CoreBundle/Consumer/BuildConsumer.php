@@ -135,12 +135,20 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus(Build::STATUS_RUNNING);
         } catch (ClientErrorResponseException $e) {
-            $this->logger->error('build failed', ['build' => $build->getId(), 'exception' => $e]);
+            $this->logger->error('build failed', [
+                'build' => $build->getId(),
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+            ]);
             $this->logger->error($e->getResponse()->getBody(true));
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());
         } catch (Exception $e) {
-            $this->logger->error('build failed', ['build' => $build->getId(), 'exception' => $e]);
+            $this->logger->error('build failed', [
+                'build' => $build->getId(),
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+            ]);
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());
         }

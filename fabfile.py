@@ -281,6 +281,11 @@ def is_release_tagged():
 def git_branch():
     return local('git symbolic-ref -q HEAD | sed -e \'s|^refs/heads/||\'', capture=True)
 
+def builder_restart():
+    info('restarting builder')
+    with settings(warn_only=True):
+        sudo('restart %s-consumer-build' % env.processes_prefix)
+
 def processes_stop():
     info('stopping processes')
     with settings(warn_only=True):
