@@ -61,3 +61,17 @@ body {
 .marketing p {
   text-align: justify;
 }
+
+
+.site-error {
+  overflow: auto;
+}
+
+.status-code {
+  float: right;
+  font-size: 10em;
+  font-weight: bolder;
+  opacity: 0.5;
+  padding-left: 12pt;
+  margin-bottom: 12pt;
+}
