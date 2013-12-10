@@ -251,7 +251,7 @@ def hot_deploy():
 
     prepare_assets()
 
-    processes_stop()
+    # processes_stop()
     rsync()
 
     with cd(env.project_path):
@@ -262,7 +262,7 @@ def hot_deploy():
         run('php app/console doctrine:schema:update --env=prod --no-debug --force')
 
     # services_restart()
-    processes_start()
+    # processes_start()
     run('chown -R www-data:www-data %s' % env.project_path)
     run('chmod -R 0777 %s/app/cache %s/app/logs' % (env.project_path, env.project_path))
 
