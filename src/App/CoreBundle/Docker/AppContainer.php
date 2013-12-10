@@ -14,6 +14,9 @@ class AppContainer extends Container
             'Memory' => 128 * 1024 * 1204,  // @todo use configuration, maybe get from project
             'Cmd' => ['runapp'],
             'Image' => $build->getImageName(),
+            'Env' => [
+                'SYMFONY_ENV=prod',
+            ]
         ]);
     }
 }

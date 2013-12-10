@@ -24,7 +24,8 @@ class BuildContainer extends Container
                  *       API limit through composer, so maybe there's a way to use a
                  *       stage1 specific token instead
                  */
-                'ACCESS_TOKEN='.$build->getProject()->getUsers()->first()->getAccessToken()
+                'ACCESS_TOKEN='.$build->getProject()->getUsers()->first()->getAccessToken(),
+                'SYMFONY_ENV=prod',
             ],
             'Image' => $build->getImageName(),
             'Cmd' => ['buildapp']
