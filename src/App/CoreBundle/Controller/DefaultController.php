@@ -176,6 +176,7 @@ class DefaultController extends Controller
             ], 201);
         } catch (Exception $e) {
             $this->container->get('logger')->error($e->getMessage());
+            $this->container->get('logger')->error($e->getResponse()->getBody(true));
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
@@ -250,6 +251,7 @@ class DefaultController extends Controller
             ], 201);
         } catch (Exception $e) {
             $this->container->get('logger')->error($e->getMessage());
+            $this->container->get('logger')->error($e->getResponse()->getBody(true));
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
