@@ -28,6 +28,7 @@ cd /var/www/
 
 mkdir -p app/logs
 touch app/logs/prod.log
+chmod -R 777 app/logs/
 
 if [ -n "$(stage1_get_config_run)" ]; then
     stage1_get_config_run | while read cmd; do
@@ -36,4 +37,4 @@ if [ -n "$(stage1_get_config_run)" ]; then
     done
 fi
 
-tail -f /var/log/nginx/*.log /var/www/app/logs/*.log /var/log/php5-fpm.log
+tail -F /var/log/nginx/*.log /var/www/app/logs/*.log /var/log/php5-fpm.log
