@@ -61,6 +61,12 @@ class ProjectAuditCommand extends ContainerAwareCommand
             }
         }
 
+        $infos['tokens'] = [];
+
+        foreach ($project->getUsers() as $user) {
+            $infos['tokens'][$user->getUsername()] = $user->getAccessToken();
+        }
+
         $content = Yaml::dump($infos, 10);
         $content = preg_replace('/^(\s*)([^:\n]+)(:)/m', '\\1<info>\\2</info>\\3', $content);
         $content = preg_replace('/^([^:-]+)(-|:) ([^\n]+)$/m', '\\1\\2 <comment>\\3</comment>', $content);
