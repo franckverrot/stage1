@@ -733,7 +733,10 @@ class Project implements WebsocketRoutable
      */
     public function getContainerEnv()
     {
-        return explode(PHP_EOL, trim($this->getEnv()));
+        $env = explode(PHP_EOL, $this->getEnv());
+        $env = array_map('trim', $env);
+
+        return $env;
     }
 
     /**
@@ -742,10 +745,8 @@ class Project implements WebsocketRoutable
     public function getParsedEnv()
     {
         $parsedEnv = [];
-        $vars = explode(PHP_EOL, trim($this->getEnv()));
 
-        foreach ($vars as $var) {
-            $var = trim($var);
+        foreach ($this->getContainerEnv() as $var) {
             $var = explode('=', $var);
 
             if (count($var) === 2) {
