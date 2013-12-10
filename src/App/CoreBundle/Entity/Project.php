@@ -77,7 +77,7 @@ class Project implements WebsocketRoutable
     /**
      * @var string
      */
-    private $githubUrl;
+    protected $githubUrl;
 
     public function getGitUrl()
     {
