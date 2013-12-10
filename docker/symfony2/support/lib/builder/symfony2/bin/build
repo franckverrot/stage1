@@ -19,7 +19,6 @@ fi
 
 if app/console list doctrine:fixtures > /dev/null 2>&1; then
     stage1_announce "loading fixtures"
-    stage1_websocket_step "load_fixtures"
     stage1_exec "php app/console doctrine:fixtures:load"
 fi
 

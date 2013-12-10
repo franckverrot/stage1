@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# @todo move to symfony2 specific stuff
+
 if [ ! -z "$DEBUG" ]; then
     set -x
 fi
@@ -26,9 +28,10 @@ done;
 
 cd /var/www/
 
-mkdir -p app/logs
+mkdir -p app/logs app/cache
 touch app/logs/prod.log
-chmod -R 777 app/logs/
+
+chmod -R 777 app/logs app/cache
 
 if [ -n "$(stage1_get_config_run)" ]; then
     stage1_get_config_run | while read cmd; do
