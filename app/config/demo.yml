@@ -3,7 +3,7 @@
 enabled:            true
 
 access_token:       3b689379987ec47eb3015ca56600310d7b10235e
-username:           %demo_username%
+username:           Demo
 
 default_build_ref:  master
 default_ttl:        6 hours

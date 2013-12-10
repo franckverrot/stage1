@@ -33,6 +33,7 @@ class ProjectAuditCommand extends ContainerAwareCommand
         $project = $this->findProject($input->getArgument('project'));
 
         $infos['name'] = $project->getFullName();
+        $infos['private'] = $project->getGithubPrivate();
         $infos['users'] = $project->getUsers()->map(function($user) { return $user->getUsername(); })->toArray();
         $infos['branches'] = $project->getBranches()->map(function($branch) { return $branch->getName(); })->toArray();
 
@@ -41,6 +42,24 @@ class ProjectAuditCommand extends ContainerAwareCommand
             'running' => count($project->getRunningBuilds()),
             'building' => count($project->getBuildingBuilds()),
         );
+
+        $accessToken = $project->getUsers()->first()->getAccessToken();
+
+        $output->writeln('Using access token <info>'.$accessToken.'</info>');
+
+        $client = $this->getContainer()->get('app_core.client.github');
+        $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
+        $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
+
+        $response = $client->get($project->getKeysUrl())->send();
+
+        $infos['has_deploy_key'] = 'no';        
+
+        foreach ($response->json() as $githubKey) {
+            if ($githubKey['key'] === $project->getPublicKey()) {
+                $infos['has_deploy_key'] = 'yes';
+            }
+        }
 
         $content = Yaml::dump($infos, 10);
         $content = preg_replace('/^(\s*)([^:\n]+)(:)/m', '\\1<info>\\2</info>\\3', $content);
