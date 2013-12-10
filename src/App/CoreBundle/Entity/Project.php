@@ -745,6 +745,7 @@ class Project implements WebsocketRoutable
         $vars = explode(PHP_EOL, trim($this->getEnv()));
 
         foreach ($vars as $var) {
+            $var = trim($var);
             $var = explode('=', $var);
 
             if (count($var) === 2) {
