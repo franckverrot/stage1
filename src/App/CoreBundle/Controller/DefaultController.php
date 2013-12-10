@@ -175,6 +175,7 @@ class DefaultController extends Controller
                 'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
+            $this->container->get('logger')->error($e->getMessage());
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
@@ -248,6 +249,7 @@ class DefaultController extends Controller
                 'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
+            $this->container->get('logger')->error($e->getMessage());
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
