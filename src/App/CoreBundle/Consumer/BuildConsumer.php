@@ -13,6 +13,8 @@ use App\CoreBundle\Event\BuildKilledEvent;
 use Docker\Docker;
 use Docker\Container;
 
+use Guzzle\Http\Exception\ClientErrorResponseException;
+
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -22,6 +24,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Exception;
+
 
 // needed for signal handling
 declare(ticks = 1);
@@ -131,6 +134,11 @@ class BuildConsumer implements ConsumerInterface
             $build->setPort($container->getMappedPort(80)->getHostPort());
 
             $build->setStatus(Build::STATUS_RUNNING);
+        } catch (ClientErrorResponseException $e) {
+            $this->logger->error('build failed', ['build' => $build->getId(), 'exception' => $e]);
+            $this->logger->error($e->getResponse()->getBody(true));
+            $build->setStatus(Build::STATUS_FAILED);
+            $build->setMessage(get_class($e).': '.$e->getMessage());
         } catch (Exception $e) {
             $this->logger->error('build failed', ['build' => $build->getId(), 'exception' => $e]);
             $build->setStatus(Build::STATUS_FAILED);
