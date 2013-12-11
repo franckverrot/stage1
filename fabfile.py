@@ -32,14 +32,13 @@ env.log_files = [
 ]
 
 def deploy_help():
-    with cd('./help'):
-        local('jekyll build')
+    local('jekyll build -s ./help -d ./help/_site')
 
-        local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete ./ %(user)s@%(host)s:%(remote)s/help' % {
-            'user': env.user,
-            'host': env.host_string,
-            'remote': env.project_path
-        })
+    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete ./help %(user)s@%(host)s:%(remote)s/' % {
+        'user': env.user,
+        'host': env.host_string,
+        'remote': env.project_path
+    })
 
 def backup():
     run('mkdir -p %s' % env.remote_dump_path);
