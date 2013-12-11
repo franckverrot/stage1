@@ -9,3 +9,11 @@
 td.value-PID, td.value-CPI, td.value-MEM, td.value-VSZ, td.value-RSS {
     text-align: right;
 }
+
+table.table td {
+    vertical-align: middle;
+}
+
+table.table.top td {
+    vertical-align: top;
+}

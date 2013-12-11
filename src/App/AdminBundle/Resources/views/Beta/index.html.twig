@@ -22,6 +22,13 @@
             <td><tt>{{ signup.betaKey }}</tt></td>
             <td>{{ signup.tries }}</td>
             <td><abbr class="timeago" title="{{ signup.createdAt | date('c') }}">{{ signup.createdAt | date('Y-m-d H:i:s') }}</abbr></td>
+            <td>
+                {% if not signup.isEmailSent %}
+                <form method="post" action="{{ path('app_admin_beta_email_send', { id: signup.id }) }}">
+                    <button class="btn btn-warning">send email</button>
+                </form>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

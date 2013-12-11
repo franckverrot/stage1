@@ -7,6 +7,10 @@ namespace App\CoreBundle\Entity;
  */
 class BetaSignup
 {
+    const STATUS_DEFAULT = 0;
+
+    const STATUS_EMAIL_SENT = 1;
+
     /**
      * @var string
      */
@@ -37,6 +41,20 @@ class BetaSignup
      */
     private $id;
 
+    /**
+     * @var integer
+     */
+    private $status = 0;
+
+    /**
+     * @var \DateTime
+     */
+    private $emailSentAt;
+
+    public function isEmailSent()
+    {
+        return $this->getStatus() === self::STATUS_EMAIL_SENT;
+    }
 
     /**
      * Set email
@@ -161,5 +179,51 @@ class BetaSignup
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     * @return BetaSignup
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return integer 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set emailSentAt
+     *
+     * @param \DateTime $emailSentAt
+     * @return BetaSignup
+     */
+    public function setEmailSentAt($emailSentAt)
+    {
+        $this->emailSentAt = $emailSentAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get emailSentAt
+     *
+     * @return \DateTime 
+     */
+    public function getEmailSentAt()
+    {
+        return $this->emailSentAt;
     }
 }
