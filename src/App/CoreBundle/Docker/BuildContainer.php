@@ -11,6 +11,7 @@ class BuildContainer extends Container
     public function __construct(Build $build)
     {
         parent::__construct([
+            'Memory' => 256 * 1024 * 1204,  // @todo use configuration, maybe get from project
             'Env' => [
                 'BUILD_ID='.$build->getId(),
                 'PROJECT_ID='.$build->getProject()->getId(),
