@@ -39,6 +39,11 @@ class Feedback
      */
     private $user;
 
+    /**
+     * @var string
+     */
+    private $token;
+
 
     /**
      * Set email
@@ -163,5 +168,28 @@ class Feedback
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     * @return Feedback
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+    
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string 
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }

@@ -18,9 +18,9 @@ class SecurityController extends Controller
 {
     private function isForceEnabled(User $user, SessionInterface $session)
     {
-        // if ($user->getUsername() === 'ubermuda') {
-        //     return true;
-        // }
+        if ($user->getUsername() === 'ubermuda') {
+            return true;
+        }
 
         if (null === ($betaKey = $session->get('beta_key'))) {
             return false;

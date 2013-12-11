@@ -8,6 +8,7 @@
 
         <field name="email" column="email" type="string" length="255" nullable="true" />
         <field name="message" column="message" type="text" />
+        <field name="token" column="token" type="string" length="255" />
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project">
             <join-column name="project_id" referenced-column-name="id" />
