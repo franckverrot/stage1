@@ -2,30 +2,22 @@
 
 namespace App\CoreBundle\Entity;
 
-/**
- * Demo
- */
-class Demo
-{
-    /**
-     * @var string
-     */
-    private $demoKey;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Feedback
+ */
+class Feedback
+{
     /**
      * @var string
      */
     private $email;
 
     /**
-     * @var \DateTime
+     * @var string
      */
-    private $createdAt;
-
-    /**
-     * @var \DateTime
-     */
-    private $updatedAt;
+    private $message;
 
     /**
      * @var integer
@@ -43,15 +35,16 @@ class Demo
     private $build;
 
     /**
-     * @var \App\CoreBundle\Entity\User
+     * @var \App\CoreBundle\Entity\Project
      */
     private $user;
+
 
     /**
      * Set email
      *
      * @param string $email
-     * @return Demo
+     * @return Feedback
      */
     public function setEmail($email)
     {
@@ -71,49 +64,26 @@ class Demo
     }
 
     /**
-     * Set createdAt
+     * Set message
      *
-     * @param \DateTime $createdAt
-     * @return Demo
+     * @param string $message
+     * @return Feedback
      */
-    public function setCreatedAt($createdAt)
+    public function setMessage($message)
     {
-        $this->createdAt = $createdAt;
+        $this->message = $message;
     
         return $this;
     }
 
     /**
-     * Get createdAt
+     * Get message
      *
-     * @return \DateTime 
+     * @return string 
      */
-    public function getCreatedAt()
+    public function getMessage()
     {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     * @return Demo
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-    
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime 
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
+        return $this->message;
     }
 
     /**
@@ -130,7 +100,7 @@ class Demo
      * Set project
      *
      * @param \App\CoreBundle\Entity\Project $project
-     * @return Demo
+     * @return Feedback
      */
     public function setProject(\App\CoreBundle\Entity\Project $project = null)
     {
@@ -153,7 +123,7 @@ class Demo
      * Set build
      *
      * @param \App\CoreBundle\Entity\Build $build
-     * @return Demo
+     * @return Feedback
      */
     public function setBuild(\App\CoreBundle\Entity\Build $build = null)
     {
@@ -176,7 +146,7 @@ class Demo
      * Set user
      *
      * @param \App\CoreBundle\Entity\User $user
-     * @return Demo
+     * @return Feedback
      */
     public function setUser(\App\CoreBundle\Entity\User $user = null)
     {
@@ -193,28 +163,5 @@ class Demo
     public function getUser()
     {
         return $this->user;
-    }
-
-    /**
-     * Set demoKey
-     *
-     * @param string $demoKey
-     * @return Demo
-     */
-    public function setDemoKey($demoKey)
-    {
-        $this->demoKey = $demoKey;
-    
-        return $this;
-    }
-
-    /**
-     * Get demoKey
-     *
-     * @return string 
-     */
-    public function getDemoKey()
-    {
-        return $this->demoKey;
     }
 }

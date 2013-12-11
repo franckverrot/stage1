@@ -47,6 +47,8 @@
                     {% if is_granted('ROLE_USER') %}
                     {% include 'AppCoreBundle:Default:_sidebar.html.twig' %}
                     {% endif %}
+
+                    {% include 'AppCoreBundle:Feedback:_compose.html.twig' %}
                 </div>
                 <div class="span9">
                     {% for message in app.session.flashbag.get('success') %}
@@ -65,6 +67,7 @@
                 </div>
             </div>
         </div>
+
         {% if is_granted('ROLE_USER') %}
         <script type="text/javascript">
         var current_user_id = {{ app.user.id }};
@@ -86,9 +89,11 @@
             'js/project_branches.js'
             'js/project_builds.js'
             'js/projects_import.js'
+            'js/feedback.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+
         {% block javascripts %}{% endblock %}
         {% if google_analytics_tracking_code | length > 0 %}
         <script>

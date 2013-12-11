@@ -60,7 +60,8 @@
     {% include '::modal.html.twig' with {
         id: 'inspect-' ~ build.id,
         title: 'Build #' ~ build.id ~' failed',
-        body: '<p class="lead"><pre>' ~ build.message ~ '</pre></p>'
+        body: '<p class="lead"><pre>' ~ build.message ~ '</pre></p>',
+        class: 'inspect'
     } %}
 {% endfor %}
 </div>

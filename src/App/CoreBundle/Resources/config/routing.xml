@@ -10,6 +10,10 @@
     <route id="app_core_blog" pattern="/blog/" methods="GET" />
     <route id="app_core_blog_post" pattern="/blog/{slug}/" methods="GET" />
 
+    <route id="app_core_feedback_create" pattern="/feedback" methods="POST">
+        <default key="_controller">AppCoreBundle:Feedback:create</default>
+    </route>
+
     <route id="app_core_survey" pattern="/survey" methods="GET">
         <default key="_controller">FrameworkBundle:Redirect:urlRedirect</default>
         <default key="path">https://docs.google.com/forms/d/1_aFC4iYo6z6mLstgXKGrL07nRs-08l6mYD5et0uTZDo/viewform</default>

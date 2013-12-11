@@ -10,7 +10,7 @@ body {
     padding-top: 60px;
 }
 
-.modal {
+.modal.inspect {
     width: 920px;
     margin-left: -460px;
 }
@@ -156,4 +156,20 @@ textarea#project_env {
 #project-import-footer {
     padding-left: 6em;
     padding-top: 3em;
+}
+
+#feedback-compose-button {
+    position: fixed;
+    bottom: 101px;
+    left: 101px;
+}
+
+#feedback-compose-button a {
+    font-size: 2em;
+    padding: .5em;
+}
+
+#feedback textarea {
+    width: 98%;
+    height: 15em;
 }
