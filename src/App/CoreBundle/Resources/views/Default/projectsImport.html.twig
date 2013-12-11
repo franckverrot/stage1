@@ -32,6 +32,8 @@ find_repositories();
     <li class="pending" id="{{ id }}"><div class="icon-container"><i></i></div> {{ label }}</li>
     {{/steps}}
 </ul>
+
+<div id="project-import-footer"></div>
 {% endverbatim %}
 </script>
 
@@ -51,6 +53,10 @@ find_repositories();
     </table>
 </fieldset>
 {% endverbatim %}
+</script>
+
+<script type="text/mustache" id="tpl-project-button">
+{% verbatim %}<a href="{{ url }}" class="btn btn-large btn-success">Visit project</a>{% endverbatim %}
 </script>
 
 <script type="text/mustache" id="tpl-project-link">

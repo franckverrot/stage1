@@ -3,6 +3,7 @@
     var tpl_nav_project = Mustache.compile($('#tpl-nav-projects').text());
     var tpl_nav_project_item = Mustache.compile($('#tpl-project-nav').text());
     var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
+    var tpl_project_button = Mustache.compile($('#tpl-project-button').text());
 
     $(function() {
         if (typeof(primus) === 'undefined') { return; }
@@ -62,10 +63,13 @@
                 primus.subscribe(data.websocket_channel, data.websocket_token);
 
                 var project_link = tpl_project_link({ url: data.project_url, name: data.project_full_name });
+                var project_button = tpl_project_button({ url: data.project_url });
 
                 if ($('#nav-projects').length == 0) {
                     $('#sidebar').prepend(tpl_nav_project());
                 }
+
+                $('#project-import-footer').append(project_button);
 
                 $('#nav-projects').append(tpl_nav_project_item({ link: project_link }));
             } catch (e) {

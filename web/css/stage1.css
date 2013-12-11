@@ -152,3 +152,8 @@ textarea#project_env {
     width: 95%;
     height: 7em;
 }
+
+#project-import-footer {
+    padding-left: 6em;
+    padding-top: 3em;
+}
