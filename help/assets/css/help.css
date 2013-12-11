@@ -85,3 +85,7 @@ code {
     margin-bottom : auto;
     margin-left: 1.5em;
 }
+
+.note.oneline p {
+    padding-top: .5em;
+}
