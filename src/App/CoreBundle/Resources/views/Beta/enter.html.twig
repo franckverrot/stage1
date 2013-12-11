@@ -1,0 +1,20 @@
+{% extends '::public.html.twig' %}
+
+{% block body %}
+
+<div class="jumbotron">
+    <h2>Welcome to the future.</h2>
+</div>
+
+<div class="marketing">
+<p class="lead">Congratulations, you have been selected to enter Stage1's <strong>very private beta</strong>. You will be able to use every feature of Stage1, unlimited and free of charge. Isn't that great?</p>
+
+<p class="lead">Accessing Stage1 requires a <a href="https://github.com/">Github</a> account, and that your projects be hosted at Github. We will ask for <strong>read and write access to your repositories</strong>. This is because Stage1 automatically installs a Deploy Key and a Webhook to the projects you import.</p>
+
+<p class="lead">Please note Stage1 currently <strong>only works with projects using the <a href="http://www.symfony.com/">Symfony 2</a> PHP framework</strong>. We are working hard to support more frameworks and languages.</p>
+
+<div class="jumbotron">
+    <a class="btn btn-large btn-success" href="{{ path('app_core_auth_github_authorize') }}">Get on stage!</a>
+</div>
+
+{% endblock %}

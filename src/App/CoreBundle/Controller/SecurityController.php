@@ -2,21 +2,36 @@
 
 namespace App\CoreBundle\Controller;
 
+use App\CoreBundle\Entity\User;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\SecurityEvents;
 
-use App\CoreBundle\Entity\User;
-
 use DateTime;
-
 use RuntimeException;
 
 class SecurityController extends Controller
 {
+    private function isForceEnabled(User $user, SessionInterface $session)
+    {
+        // if ($user->getUsername() === 'ubermuda') {
+        //     return true;
+        // }
+
+        if (null === ($betaKey = $session->get('beta_key'))) {
+            return false;
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('AppCoreBundle:BetaSignup');
+
+        return (null !== $repo->findByBetaKey($betaKey));
+    }
+
     /**
      * @todo
      * 
@@ -41,15 +56,15 @@ class SecurityController extends Controller
         $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
         $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
-        $request = $client->get('/user');
-        $response = $request->send();
+        $githubRequest = $client->get('/user');
+        $githubResponse = $githubRequest->send();
 
-        $result = $response->json();
+        $result = $githubResponse->json();
 
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result['id']))) {
             $user = User::fromGithubResponse($result);
 
-            if ($user->getUsername() === 'ubermuda') {
+            if ($this->isForceEnabled($user, $request->getSession())) {
                 $user->setStatus(User::STATUS_ENABLED);
             } else {
                 $user->setStatus(User::STATUS_WAITING_LIST);

@@ -2,6 +2,8 @@
 
 namespace App\AdminBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class BetaController extends Controller
 {
     public function indexAction()

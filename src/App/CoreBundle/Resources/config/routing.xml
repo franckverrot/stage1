@@ -37,6 +37,10 @@
         <default key="_controller">AppCoreBundle:WaitingList:index</default>
     </route>
 
+    <route id="app_core_beta_enter" pattern="/beta/{betaKey}" methods="GET">
+        <default key="_controller">AppCoreBundle:Beta:enter</default>
+    </route>
+
     <route id="app_core_beta_signup" pattern="/beta" methods="POST">
         <default key="_controller">AppCoreBundle:Beta:signup</default>
     </route>

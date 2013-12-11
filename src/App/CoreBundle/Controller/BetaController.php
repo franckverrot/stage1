@@ -35,13 +35,32 @@ class BetaController extends Controller
     public function landingAction(Request $request)
     {
         $email = $request->getSession()->get('beta_email');
+        $beta = $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email);
 
-        if (null === $email) {
+        if (null === $beta) {
             return $this->render('AppCoreBundle:Default:index.html.twig');
         } else {
             return $this->render('AppCoreBundle:Beta:landing.html.twig', [
-                'beta' => $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email),
+                'beta' => $beta,
             ]);            
         }
+    }
+
+    public function enterAction(Request $request, $betaKey)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('AppCoreBundle:BetaSignup');
+
+        $betaSignup = $repo->findByBetaKey($betaKey);
+
+        if (!$betaSignup) {
+            return $this->indexAction();
+        }
+
+        $request->getSession()->set('beta_key', $betaKey);
+
+        return $this->render('AppCoreBundle:Beta:enter.html.twig', [
+            'beta_signup' => $betaSignup,
+        ]);
     }
 }
