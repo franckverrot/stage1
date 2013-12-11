@@ -10,6 +10,7 @@ TODO PRIVATE BETA
 -----------------
 
 * help
+    * how to use sass/compass
     * how to provision my containers using...
         * puppet
         * chef
