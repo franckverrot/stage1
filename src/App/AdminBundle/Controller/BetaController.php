@@ -21,7 +21,7 @@ class BetaController extends Controller
 
         $message = Swift_Message::newInstance()
             ->setSubject('Your invitation to Stage1\'s very private beta has arrived.')
-            ->setFrom('geoffrey@stage1.io')
+            ->setFrom('geoffrey@stage1.io', 'Stage1')
             ->setTo($beta->getEmail())
             ->setBody($mailContent);
 

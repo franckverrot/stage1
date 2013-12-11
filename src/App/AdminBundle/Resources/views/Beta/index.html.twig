@@ -1,5 +1,17 @@
 {% extends '::admin.html.twig' %}
 
+{% block javascripts %}
+<script type="text/javascript">
+$('table').on('submit', 'form.email-send', function(event) {
+    var target = $(event.target);
+    var dest = $(target).parents('tr').find('td:first').text();
+    if (!confirm('Send beta invitation to ' + dest + '?')) {
+        event.preventDefault();
+    }
+});
+</script>
+{% endblock %}
+
 {% block body %}
 <h3>Beta Signups</h3>
 <hr />
@@ -13,6 +25,8 @@
             <th>Key</th>
             <th>Tries</th>
             <th>Created At</th>
+            <th>Email Sent At</th>
+            <th>&nbsp;</th>
         </tr>
     </thead>
     <tbody>
@@ -23,9 +37,18 @@
             <td>{{ signup.tries }}</td>
             <td><abbr class="timeago" title="{{ signup.createdAt | date('c') }}">{{ signup.createdAt | date('Y-m-d H:i:s') }}</abbr></td>
             <td>
+                {% if signup.isEmailSent %}
+                <abbr class="timeago" title="{{ signup.emailSentAt | date('c') }}">{{ signup.emailSentAt | date('Y-m-d H:i:s') }}</abbr>
+                {% endif %}
+            </td>
+            <td>
                 {% if not signup.isEmailSent %}
-                <form method="post" action="{{ path('app_admin_beta_email_send', { id: signup.id }) }}">
+                <form class="email-send" method="post" action="{{ path('app_admin_beta_email_send', { id: signup.id }) }}">
                     <button class="btn btn-warning">send email</button>
+                </form>
+                {% else %}
+                <form class="email-send" method="post" action="{{ path('app_admin_beta_email_send', { id: signup.id }) }}">
+                    <button class="btn btn-danger"><strong>RE</strong>-send email</button>
                 </form>
                 {% endif %}
             </td>
