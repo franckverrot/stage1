@@ -10,15 +10,15 @@ class DefaultController extends Controller
 
         $projects = $doctrine
             ->getRepository('AppCoreBundle:Project')
-            ->findBy([], ['createdAt' => 'DESC'], 10);
+            ->findBy([], ['createdAt' => 'DESC'], 5);
             
         $users = $doctrine
             ->getRepository('AppCoreBundle:User')
-            ->findBy([], ['createdAt' => 'DESC'], 10);
+            ->findBy([], ['createdAt' => 'DESC'], 5);
 
         $builds = $doctrine
             ->getRepository('AppCoreBundle:Build')
-            ->findBy([], ['createdAt' => 'DESC'], 50);
+            ->findBy([], ['createdAt' => 'DESC'], 20);
 
         return $this->render('AppAdminBundle:Default:index.html.twig', [
             'projects' => $projects,
