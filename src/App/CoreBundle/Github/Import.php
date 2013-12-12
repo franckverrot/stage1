@@ -205,9 +205,9 @@ class Import
 
     private function doDeployKey(Project $project)
     {
-        if (!$project->getGithubPrivate()) {
-            return;
-        }
+        // if (!$project->getGithubPrivate()) {
+        //     return;
+        // }
 
         $request = $this->client->get($project->getKeysUrl());
         $response = $request->send();
