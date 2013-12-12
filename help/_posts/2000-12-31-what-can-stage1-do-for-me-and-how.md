@@ -13,7 +13,7 @@ Once setup, **Stage1 requires no action on your part to produce staging environm
 
 You start by importing a project from Github. The import process does a variety of things, 3 of which are especially worthy of your attention right now:
 
-1. The importer inspects the project and checks that it is of a supported type (currently, only Symfony 2 is supported)
+1. The importer inspects the project and checks that it is of a supported type (currently, only Symfony2 is supported)
 2. If the project is private, it adds a deploy key in order to be able to clone it during builds
 3. In all case, it installs a webhook to notify Stage1 of new commits, that will trigger new builds
 
@@ -29,7 +29,7 @@ There are three main steps in a build:
 2. The build itself
 3. Deploying the container
 
-Depending on your project type or configuration, a different base container will be used. Right now, most projects use [the Symfony 2 base image]({% post_url 1900-12-29-the-symfony-2-base-image %}/), which contains everything you need to run a Symfony 2 projects as its name suggests. Prepation of the build container includes tasks like setting up ssh keys and configuration to be able to clone the repository.
+Depending on your project type or configuration, a different base container will be used. Right now, most projects use [the Symfony2 base image]({% post_url 1900-12-29-the-symfony2-base-image %}/), which contains everything you need to run a Symfony2 projects as its name suggests. Prepation of the build container includes tasks like setting up ssh keys and configuration to be able to clone the repository.
 
 > You can also use [a bare image]({% post_url 1900-12-30-the-ubuntu-precise-12-04-base-image %}/) and easily provision your build using existing provisioning tools, like [Ansible]({% post_url 1800-12-31-how-to-provision-my-containers-using-ansible %}/), [CFengine]({% post_url 1800-12-30-how-to-provision-my-containers-using-cfengine %}/), [Chef]({% post_url 1800-12-29-how-to-provision-my-containers-using-chef %}/), [Puppet]({% post_url 1800-12-28-how-to-provision-my-containers-using-puppet %}/) or [Salt]({% post_url 1800-12-27-how-to-provision-my-containers-using-salt %}/)
 {:.note}
@@ -48,13 +48,13 @@ Once the build is finished and successful, the container is deployed and you can
 In its current state, **Stage1** has three major restrictions:
 
 * your projects **MUST** be hosted at [Github](http://github.com/)
-* you **MUST** be using the [Symfony 2](http://www.symfony.com/) framework
+* you **MUST** be using the [Symfony2](http://www.symfony.com/) framework
 * your dependencies **SHOULD** be hosted at Github too, or **MUST** be accessible from the internet (no internal Gitlab instance for example)
 
-> Stage1's builder is flexible enough to build any sort of web project, but we are concentrating our efforts on making the experience seemless for users of the Symfony 2 framework (because, that's what we know best).
+> Stage1's builder is flexible enough to build any sort of web project, but we are concentrating our efforts on making the experience seemless for users of the Symfony2 framework (because, that's what we know best).
 {:.note}
 
-A private beta will be available to non Symfony 2 projects very soon, [signup now](http://stage1.io/beta) to be contacted when other technologies will be supported.
+A private beta will be available to non Symfony2 projects very soon, [signup now](http://stage1.io/beta) to be contacted when other technologies will be supported.
 
 ### Profit!
 

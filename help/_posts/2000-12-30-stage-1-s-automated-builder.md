@@ -5,7 +5,7 @@ published: true
 category: general
 ---
 
-**Stage1**'s default builder for Symfony 2 does a number of things for you:
+**Stage1**'s default builder for Symfony2 does a number of things for you:
 
 1. Setting up a default `parameters.yml`
 2. Installing dependencies with [Composer](http://getcomposer.org/)

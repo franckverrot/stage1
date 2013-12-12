@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Configuring Symfony using environment variables
+title: Configuring Symfony2 using environment variables
 category: Symfony
 published: true
 ---
 
-One less known feature of Symfony is that you can [inject kernel parameters using environment variables](http://symfony.com/doc/current/cookbook/configuration/external_parameters.html). This makes things incredibly easier when you want to configure your build.
+One less known feature of Symfony2 is that you can [inject kernel parameters using environment variables](http://symfony.com/doc/current/cookbook/configuration/external_parameters.html). This makes things incredibly easier when you want to configure your build.
 
 For example, say your application relies on a third party API to which you authenticate using a secret token. You certainly don't want to commit your secret token in your repository just so that your application can work on Stage1. That's where environment variables come in handy. Declaring a `SYMFONY__SECRET_TOKEN` environment variable will inject a `secret_token` parameter in your application, so you just have to add the following to your Stage1 project's environment variables:
 
