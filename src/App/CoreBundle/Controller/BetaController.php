@@ -14,7 +14,7 @@ class BetaController extends Controller
 
         $session = $request->getSession();
 
-        $session->set('beta_key', $session->get('beta_key', md5(uniqid(mt_rand(), true))));
+        $beta_key = md5(uniqid(mt_rand(), true));
         $session->set('beta_email', $email);
 
         $beta = $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email);
@@ -22,7 +22,7 @@ class BetaController extends Controller
         if (!$beta) {
             $beta = new BetaSignup();
             $beta->setEmail($email);
-            $beta->setBetaKey($session->get('beta_key'));            
+            $beta->setBetaKey($beta_key);
         }
 
         $beta->setTries($beta->getTries() + 1);
