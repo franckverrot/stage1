@@ -8,7 +8,7 @@ stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml"
 
 stage1_announce "installing dependencies through composer"
 stage1_websocket_step "install_dependencies"
-stage1_exec "composer install --ansi --no-progress --no-dev --no-interaction --prefer-source"
+stage1_exec "composer install --ansi --no-progress --no-dev --no-interaction --prefer-source -vvv"
 
 if app/console list doctrine:database > /dev/null 2>&1; then
     stage1_announce "initializing database"
