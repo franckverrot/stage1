@@ -4,7 +4,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source $DIR/../../../stage1.sh
 
-stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml"
+if [ -f app/config/parameters.yml.stage1 ]; then
+    stage1_exec "cp app/config/parameters.yml.stage1 app/config/parameters.yml.dist"
+    stage1_exec "cp app/config/parameters.yml.stage1 app/config/parameters.yml"
+else
+    stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml.dist"
+    stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml"
+fi
 
 stage1_announce "installing dependencies through composer"
 stage1_websocket_step "install_dependencies"
