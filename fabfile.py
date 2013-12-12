@@ -195,6 +195,7 @@ def docker_update():
 
 def docker_build():
     info('building docker')
+    sudo('docker build -t php %s/docker/php' % env.project_path)
     sudo('docker build -t symfony2 %s/docker/symfony2' % env.project_path)
 
 def docker_clean():
