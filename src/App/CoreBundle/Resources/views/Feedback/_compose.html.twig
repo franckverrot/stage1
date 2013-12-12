@@ -5,6 +5,7 @@
 <form method="post" action="{{ path('app_core_feedback_create') }}">
     <input type="hidden" name="feedback[current_project_id]" id="feedback_current_project_id" value="{{ app.request.attributes.get('current_project_id') }}" />
     <input type="hidden" name="feedback[current_build_id]" id="feedback_current_build_id" value="{{ app.request.attributes.get('current_build_id') }}" />
+    <input type="hidden" name="feedback[url]" id="feedback_url" value="{{ app.request.uri }}" />
     <input type="hidden" name="feedback[return]" id="feedback_return" value="{{ app.request.uri }}" />
 
     <div id="feedback" class="modal hide fade">

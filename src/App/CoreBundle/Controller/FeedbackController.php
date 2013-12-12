@@ -16,6 +16,7 @@ class FeedbackController extends Controller
         $feedback = new Feedback();
         $feedback->setMessage($data['message']);
         $feedback->setUser($this->getUser());
+        $feedback->setUrl($data['url']);
         $feedback->setToken(md5(uniqid(mt_rand(), true)));
 
         if ($data['current_project_id']) {

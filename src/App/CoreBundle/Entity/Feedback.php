@@ -44,6 +44,11 @@ class Feedback
      */
     private $token;
 
+    /**
+     * @var string
+     */
+    private $url;
+
 
     /**
      * Set email
@@ -191,5 +196,28 @@ class Feedback
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     * @return Feedback
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 }
