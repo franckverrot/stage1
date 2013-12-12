@@ -50,10 +50,16 @@ class Builder
 
         $logger->info('starting build', ['build' => $build->getId()]);
 
+        $env  = 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'.PHP_EOL;
+        $env .= 'SYMFONY_ENV=prod'.PHP_EOL;
+        $env .= $build->getProject()->getEnv();
+
         // @todo the base container can (and should?) be built during project import
         //       that's one lest step during the build
+        // @todo also, move that to a BuildContext
         $context = new Context();
         $context->from($build->getBaseImageName());
+        $context->add('/etc/environment', $env);
         $context->add('/root/.ssh/id_rsa', $build->getProject()->getPrivateKey());
         $context->add('/root/.ssh/id_rsa.pub', $build->getProject()->getPublicKey());
         $context->add('/root/.ssh/config', <<<SSH

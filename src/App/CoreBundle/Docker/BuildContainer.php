@@ -27,6 +27,15 @@ class BuildContainer extends Container
                  */
                 'ACCESS_TOKEN='.$build->getProject()->getUsers()->first()->getAccessToken(),
                 'SYMFONY_ENV=prod',
+                // @todo one idea to override parameters could be to read the parameters.yml
+                //       modify the parameters array and re-dump it to yaml
+                //       this technique should also detect the presence of the incenteev/ParameterHandler
+                //       to populate/override an env-map in the composer.json
+                // 'STAGE1__DATABASE_HOST=127.0.0.1',
+                // 'STAGE1__DATABASE_PORT=~',
+                // 'STAGE1__DATABASE_NAME=symfony',
+                // 'STAGE1__DATABASE_USER=root',
+                // 'STAGE1__DATABASE_PASSWORD=~',
             ],
             'Image' => $build->getImageName(),
             'Cmd' => ['buildapp']
