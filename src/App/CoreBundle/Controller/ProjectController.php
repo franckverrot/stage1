@@ -123,6 +123,10 @@ class ProjectController extends Controller
         $discover = $this->container->get('app_core.discover.github');
         $projects = $discover->discover($this->getUser());
 
+        if (count($projects) === 0) {
+            return new JsonResponse(json_encode([]));
+        }
+
         $githubIds = array_values(array_map(function($p) { return $p['github_id']; }, $projects));
 
         $queryBuilder = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->createQueryBuilder('p');
