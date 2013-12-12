@@ -4,4 +4,4 @@ $('#feedback').on('shown', function(event) {
 
 $('#feedback').on('hidden', function(event) {
     $('#feedback-compose-button a')[0].blur();
-})
+});
