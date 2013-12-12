@@ -206,7 +206,7 @@ class Controller extends BaseController
             throw $this->createNotFoundException('Project not found');
         }
 
-        if ($this->getUser()->getUsername() === 'ubermuda') {
+        if ($this->getUser() && $this->getUser()->getUsername() === 'ubermuda') {
             return $project;
         }
 
