@@ -55,7 +55,7 @@
 
                     <span id="ref-{{ branch.normName }}-show-link">
                         {% if branch.lastBuild %}
-                        <a href="{{ path('app_core_build_show', { id: branch.lastBuild.id }) }}">show build</a>
+                        <a href="{{ path('app_core_build_show', { id: branch.lastBuild.id }) }}" class="btn btn-small">show last build</a>
                         {% endif %}
                     </span>
                 </td>
@@ -100,7 +100,7 @@
 
 <script type="text/mustache" id="tpl-ref-show-link">
 {% verbatim %}
-<a href="{{ show_url }}">show build</a>
+<a class="btn btn-small" href="{{ show_url }}">show last build</a>
 {% endverbatim %}
 </script>
 
