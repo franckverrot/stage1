@@ -34,7 +34,7 @@ The `parameters.yml.dist` used is:
 And the build script is equivalent to this `.build.yml` configuration:
 
     build:
-      - composer install --ansi --no-progress --no-dev --prefer-dist --no-interaction
+      - composer install --ansi --no-progress --no-dev --prefer-source --no-interaction -vvv
       - php app/console doctrine:database:create
       - php app/console doctrine:schema:update --force
       - php app/console doctrine:fixtures:load
