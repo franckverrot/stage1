@@ -6,9 +6,7 @@ source $DIR/../../../stage1.sh
 
 if [ -f app/config/parameters.yml.stage1 ]; then
     stage1_exec "cp app/config/parameters.yml.stage1 app/config/parameters.yml.dist"
-    stage1_exec "cp app/config/parameters.yml.stage1 app/config/parameters.yml"
 else
-    stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml.dist"
     stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml"
 fi
 
