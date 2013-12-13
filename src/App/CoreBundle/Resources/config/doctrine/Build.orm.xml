@@ -29,23 +29,22 @@
         <field name="memoryUsage" column="memory_usage" type="integer" nullable="true" />
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="builds">
-            <join-column name="project_id" referenced-column-name="id" />
             <cascade><persist /></cascade>
+            <join-column name="project_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
 
         <many-to-one field="initiator" target-entity="App\CoreBundle\Entity\User">
-            <join-column name="user_id" referenced-column-name="id" />
+            <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
 
         <many-to-one field="branch" target-entity="App\CoreBundle\Entity\Branch" inversed-by="builds">
-            <join-column name="branch_id" referenced-column-name="id" />
+            <join-column name="branch_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
 
         <one-to-many field="logs" target-entity="App\CoreBundle\Entity\BuildLog" mapped-by="build">
             <order-by>
                 <order-by-field name="microtime" direction="ASC" />
             </order-by>
-            <cascade><cascade-remove /></cascade>
         </one-to-many>
 
         <one-to-one field="demo" target-entity="App\CoreBundle\Entity\Demo" mapped-by="build" />

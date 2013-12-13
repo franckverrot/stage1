@@ -12,18 +12,15 @@
         <field name="updatedAt" column="updated_at" type="datetime" />
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project">
-            <join-column name="project_id" referenced-column-name="id" />
-            <cascade><cascade-remove /></cascade>
+            <join-column name="project_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
 
         <one-to-one field="build" target-entity="App\CoreBundle\Entity\Build" inversed-by="demo">
-            <join-column name="build_id" reference-column-name="id" />
-            <cascade><cascade-remove /></cascade>
+            <join-column name="build_id" reference-column-name="id" on-delete="CASCADE" />
         </one-to-one>
 
         <many-to-one field="user" target-entity="App\CoreBundle\Entity\User">
-            <join-column name="user_id" referenced-column-name="id" />
-            <cascade><cascade-remove /></cascade>
+            <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
 
 </entity>

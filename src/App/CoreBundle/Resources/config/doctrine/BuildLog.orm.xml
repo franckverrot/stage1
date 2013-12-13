@@ -14,8 +14,7 @@
         <field name="updatedAt" column="updated_at" type="datetime" />
 
         <many-to-one field="build" target-entity="App\CoreBundle\Entity\Build" inversed-by="logs">
-            <join-column name="build_id" referenced-column-name="id" />
-            <cascade><cascade-remove /></cascade>
+            <join-column name="build_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
     </entity>
 

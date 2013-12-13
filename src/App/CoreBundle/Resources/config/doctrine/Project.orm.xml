@@ -41,17 +41,11 @@
         </many-to-many>
 
         <one-to-many field="builds" target-entity="App\CoreBundle\Entity\Build" mapped-by="project">
-            <cascade>
-                <cascade-remove />
-                <persist />
-            </cascade>
+            <cascade><persist /></cascade>
         </one-to-many>
 
         <one-to-many field="branches" target-entity="App\CoreBundle\Entity\Branch" mapped-by="project">
-            <cascade>
-                <cascade-remove />
-                <persist />
-            </cascade>
+            <cascade><persist /></cascade>
         </one-to-many>
     </entity>
 

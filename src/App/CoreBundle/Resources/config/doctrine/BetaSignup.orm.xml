@@ -13,6 +13,6 @@
         <field name="tries" column="tries" type="integer" />
         <field name="status" column="status" type="integer" />
         <field name="emailSentAt" column="email_sent_at" type="datetime" nullable="true" />
-</entity>
+    </entity>
 
 </doctrine-mapping>
