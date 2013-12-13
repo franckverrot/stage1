@@ -54,7 +54,11 @@ RUN apt-get update -y
 RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb; dpkg --install libicu44_4.4.2-2_amd64.deb
 #####################################################
 
+# php5-sqlite is mainly for prestacms
+# zip is mainly for puphpet
+
 RUN apt-get install -qy \
+    make \
     nginx \
     mysql-server \
     php5-cli \
@@ -62,7 +66,9 @@ RUN apt-get install -qy \
     php5-mysqlnd \
     php5-intl \
     php5-curl \
-    zip                         # needed to build puphpet correctly
+    php5-gd \
+    php5-sqlite \
+    zip
 
 # needed to build phpupet correctly
 # RUN apt-get install -qy zip

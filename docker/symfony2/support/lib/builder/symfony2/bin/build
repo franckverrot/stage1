@@ -6,7 +6,15 @@ source $DIR/../../../stage1.sh
 
 if [ -f app/config/parameters.yml.stage1 ]; then
     stage1_exec "cp app/config/parameters.yml.stage1 app/config/parameters.yml.dist"
+fi
+
+if grep buildParameters composer.json > /dev/null; then
+    stage1_announce "detected incenteev/ParameterHandler"
+elif [ -f app/config/parameters.yml.dist ]; then
+    stage1_announce "using bundled parameters.yml.dist"
+    stage1_exec "cp app/config/parameters.yml.dist app/config/parameters.yml"
 else
+    stage1_announce "using default parameters.yml"
     stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml"
 fi
 
@@ -14,16 +22,26 @@ stage1_announce "installing dependencies through composer"
 stage1_websocket_step "install_dependencies"
 stage1_exec "composer install --ansi --no-progress --no-dev --no-interaction --prefer-source"
 
-if app/console list doctrine:database > /dev/null 2>&1; then
-    stage1_announce "initializing database"
-    stage1_websocket_step "initialize_database"
-    stage1_exec "php app/console doctrine:database:create"
-    stage1_exec "php app/console doctrine:schema:update --force"
-fi
+if [ -f Makefile ] && grep -E '^install:' Makefile 2>&1 > /dev/null; then
+    stage1_announce "detected Makefile, running \"make install\""
+    stage1_exec "make install"
+else
+    if app/console list doctrine:database > /dev/null 2>&1; then
+        stage1_announce "initializing database"
+        stage1_websocket_step "initialize_database"
+        stage1_exec "php app/console doctrine:database:create"
+        stage1_exec "php app/console doctrine:schema:update --force"
+    fi
 
-if app/console list doctrine:fixtures > /dev/null 2>&1; then
-    stage1_announce "loading fixtures"
-    stage1_exec "php app/console doctrine:fixtures:load --no-interaction"
+    if app/console list doctrine:fixtures > /dev/null 2>&1; then
+        stage1_announce "loading fixtures"
+        stage1_exec "php app/console doctrine:fixtures:load --no-interaction"
+    fi
+
+    if app/console list assetic > /dev/null 2>&1; then
+        stage1_announce "dumping assets with assetic"
+        stage1_exec "php app/console assetic:dump"
+    fi
 fi
 
 # @todo move to a $builder/bin/after script?

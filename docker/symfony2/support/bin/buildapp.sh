@@ -65,7 +65,7 @@ else
     done
 
     if [ -n "$BUILDER_NAME" ]; then
-        stage1_announce "$BUILDER_NAME app detected"
+        stage1_announce "using \"$BUILDER_NAME\" builder"
     else
         stage1_announce "could not find a builder"
         exit 1
