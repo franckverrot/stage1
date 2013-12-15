@@ -88,3 +88,5 @@ RUN rm -f /var/lib/mysql/ib_logfile*
 
 RUN curl -sS https://getcomposer.org/installer | php;  mv composer.phar /usr/local/bin/composer
 #####################################################
+
+RUN gem install --no-ri --no-rdoc compass sass; ln -s /usr/local/bin/compass /usr/bin/compass; ln -s /usr/local/bin/sass /usr/bin/sass
