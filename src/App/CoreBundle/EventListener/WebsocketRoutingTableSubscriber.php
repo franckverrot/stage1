@@ -6,7 +6,10 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\User;
 use App\CoreBundle\Entity\WebsocketRoutable;
+
+use Psr\Log\LoggerInterface;
 
 use Redis;
 
@@ -16,13 +19,29 @@ use Redis;
  */
 class WebsocketRoutingTableSubscriber implements EventSubscriber
 {
+    /**
+     * @var Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var Redis
+     */
     private $redis;
 
-    public function __construct(Redis $redis)
+    /**
+     * @param Psr\Log\LoggerInterface   $logger
+     * @param Redis                     $redis
+     */
+    public function __construct(LoggerInterface $logger, Redis $redis)
     {
+        $this->logger = $logger;
         $this->redis = $redis;
     }
 
+    /**
+     * @return array
+     */
     public function getSubscribedEvents()
     {
         return [
@@ -31,16 +50,24 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
         ];
     }
 
-    private function getKeys(WebsocketRoutable $entity)
+    /**
+     * @param App\CoreBundle\Entity\WebsocketRoutable
+     * 
+     * @return array
+     */
+    private function getChannels(WebsocketRoutable $entity)
     {
         return [
             'entity' => $entity->getChannel(),
-            'users' => $entity->getUsers()->map(function($user) {
+            'users' => $entity->getUsers()->map(function(User $user) {
                 return 'channel:routing:'.$user->getChannel();
             })
         ];
     }
 
+    /**
+     * @param Doctrine\ORM\Event\LifecycleEventArgs
+     */
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
@@ -49,15 +76,22 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
             return;
         }
 
-        $keys = $this->getKeys($entity);
-        $entityKey = $keys['entity'];
+        $channels = $this->getChannels($entity);
+        $redis = $this->redis;
 
-        foreach ($keys['users'] as $userKey) {
-            $this->redis->sadd($userKey, $entityKey);
+        foreach ($channels['users'] as $channel) {
+            $this->logger->info('adding websocket routing', [
+                'user' => substr($channel, 16),
+                'entity' => $channels['entity']
+            ]);
+
+            $redis->sadd($channel, $channels['entity']);
         }
-
     }
 
+    /**
+     * @param Doctrine\ORM\Event\LifecycleEventArgs
+     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
@@ -66,11 +100,16 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
             return;
         }
 
-        $keys = $this->getKeys($entity);
-        $entityKey = $keys['entity'];
+        $channels = $this->getChannels($entity);
+        $redis = $this->redis;
 
-        foreach ($keys['users'] as $userKey) {
-            $this->redis->srem($userKey, $entityKey);
+        foreach ($channels['users'] as $channel) {
+            $this->logger->info('removing websocket routing', [
+                'user' => substr($channel, 16),
+                'entity' => $channels['entity']
+            ]);
+
+            $redis->srem($channel, $channels['entity']);
         }
     }
 }

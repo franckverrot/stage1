@@ -16,6 +16,8 @@
         <field name="lastLoginAt" column="last_login_at" type="datetime" nullable="true" />
         <field name="status" column="status" type="integer" />
         <field name="waitingList" column="waiting_list" type="integer" />
+        <!-- @todo remove nullable once all users have been migrated -->
+        <field name="channel" type="string" length="255" nullable="true" />
 
         <many-to-many field="projects" target-entity="App\CoreBundle\Entity\Project" mapped-by="users" />
     </entity>

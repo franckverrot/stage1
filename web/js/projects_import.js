@@ -60,7 +60,8 @@
 
             try {
 
-                primus.subscribe(data.websocket_channel, data.websocket_token);
+                // globaly resubscribing will automatically subscribe to the newly created project
+                primus.subscribe();
 
                 var project_link = tpl_project_link({ url: data.project_url, name: data.project_full_name });
                 var project_button = tpl_project_button({ url: data.project_url });

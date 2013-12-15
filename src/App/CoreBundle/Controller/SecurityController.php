@@ -42,12 +42,25 @@ class SecurityController extends Controller
     {
         # @todo @channel_auth move channel auth to an authenticator service
         $channel = $request->request->get('channel');
+        $token = uniqid(mt_rand(), true);            
 
-        $token = uniqid(mt_rand(), true);
+        if (strlen($channel) > 0) {
+            $repo = $this->getDoctrine()->getRepository('AppCoreBundle:User');
+            $authUser = $repo->findByChannel($channel);
+
+            if ($authUser !== $this->getUser()) {
+                return new JsonResponse(null, 403);
+            }
+        } else {
+            $channel = $this->getUser()->getChannel();
+        }
 
         $this->get('app_core.redis')->sadd('channel:auth:' . $channel, $token);
 
-        return new JsonResponse(json_encode(['token' => $token]));
+        return new JsonResponse(json_encode([
+            'channel' => $this->getUser()->getChannel(),
+            'token' => $token,
+        ]));
     }
 
     private function registerGithubUser(Request $request, $accessToken)

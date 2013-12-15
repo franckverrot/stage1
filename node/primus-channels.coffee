@@ -9,16 +9,15 @@ events = require 'events'
         primus.unsubscribe = (channel) ->
                 primus.write action: 'unsubscribe', channel: channel
 
-        primus.subscribe = (channel, token = null) ->
-            subscribe = (token) -> primus.write action: 'subscribe', channel: channel, token: token
+        primus.subscribe = (channel = null, token = null) ->
+            subscribe = (channel, token) -> primus.write action: 'subscribe', channel: channel, token: token
 
-            if token? or not channel.match(options.privatePattern || /^(private|presence)\-/)
-                subscribe token
+            if token? or (channel? and not channel.match(options.privatePattern || /^(private|presence)\-/))
+                subscribe channel, token
             else
                 $.post options.auth_url, { channel: channel }, (response) ->
                     response = JSON.parse(response)
-                    if response.token
-                        subscribe response.token
+                    subscribe response.channel, response.token
 
     server: (primus, options) ->
         primus.channels = {}
@@ -80,11 +79,11 @@ class Channel extends events.EventEmitter
         @auth token,
             =>
                 if @has spark
-                    # console.warn ('   spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
+                    console.warn ('   spark#' + spark.id + ' was already subscribed to "' + @name + '"').yellow
                 else 
                     @sparks.push spark
                     spark.emit 'subscribed', this
-                    # console.log ('   subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
+                    console.log ('   subscribed spark#' + spark.id + ' to channel "' + @name + '" (clients: ' + @sparks.length + ')').green
 
                 # check if this is a meta channel
                 @redis.smembers 'channel:routing:' + @name, (err, results) =>
@@ -92,7 +91,7 @@ class Channel extends events.EventEmitter
 
                     if results.length > 0
                         for result in results
-                            # console.log '   subscribing spark to children channel ' + result.yellow
+                            console.log '   subscribing spark to children channel ' + result.yellow
                             spark.subscribe result, true
                             @children.push result
 

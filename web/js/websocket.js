@@ -2,7 +2,8 @@
     if (typeof(current_user_id) === 'undefined') { return; }
 
     var primus = Primus.connect('http://' + document.location.hostname + ':8090/', {
-        privatePattern: /(project|user)\.\d+/,
+        // privatePattern: /(project|user)\.\d+/,
+        privatePattern: /.*/,
         auth_url: websocket_auth_url,
     });
 
@@ -11,7 +12,7 @@
     window.primus = primus;
 
     primus.on('open', function() {
-        primus.subscribe('user.' + current_user_id);
+        primus.subscribe();
     });
 
     primus.on('data', function(data) {

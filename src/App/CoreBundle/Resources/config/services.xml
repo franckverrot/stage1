@@ -168,6 +168,7 @@
         <!-- doctrine listeners -->
 
         <service id="app_core.subscriber.websocket_routing_table" class="App\CoreBundle\EventListener\WebsocketRoutingTableSubscriber">
+            <argument type="service" id="logger" />
             <argument type="service" id="app_core.redis" />
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
@@ -186,6 +187,11 @@
         <service id="app_core.subscriber.hipache_routing_table" class="App\CoreBundle\EventListener\HipacheRoutingTableSubscriber">
             <argument type="service" id="app_core.redis" />
             <argument type="service" id="logger" />
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+
+        <service id="app_core.subscriber.entity.channel" class="App\CoreBundle\EventListener\EntityChannelSubscriber">
+            <argument>%kernel.environment%</argument>
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
 

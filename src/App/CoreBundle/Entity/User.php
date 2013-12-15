@@ -34,10 +34,7 @@ class User implements UserInterface
 
     protected $waitingList = 0;
 
-    public function getChannel()
-    {
-        return 'user.'.$this->getId();
-    }
+    protected $channel;
 
     public function __toString()
     {
@@ -355,5 +352,32 @@ class User implements UserInterface
     public function getWaitingList()
     {
         return $this->waitingList;
+    }
+
+    /**
+     * Set channel
+     *
+     * @param string $channel
+     * @return User
+     */
+    public function setChannel($channel)
+    {
+        $this->channel = $channel;
+    
+        return $this;
+    }
+
+    /**
+     * Get channel
+     *
+     * @return string 
+     */
+    public function getChannel()
+    {
+        if (strlen($this->channel) > 0) {
+            return $this->channel;
+        }
+
+        return 'user.'.$this->getId();
     }
 }
