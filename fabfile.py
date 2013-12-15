@@ -340,7 +340,7 @@ def tag_release():
 @runs_once
 def reset_environment():
     info('resetting local environment')
-    # local('php app/console cache:clear --env=prod --no-debug --no-warmup')
+    local('php app/console cache:clear --env=prod --no-debug --no-warmup')
     # local('php app/console cache:clear --env=dev --no-debug --no-warmup')
     local('composer dump-autoload --optimize')
 

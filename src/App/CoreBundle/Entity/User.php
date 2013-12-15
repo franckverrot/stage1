@@ -372,9 +372,9 @@ class User implements UserInterface
      *
      * @return string 
      */
-    public function getChannel()
+    public function getChannel($raw = false)
     {
-        if (strlen($this->channel) > 0) {
+        if ($raw || strlen($this->channel) > 0) {
             return $this->channel;
         }
 

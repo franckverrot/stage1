@@ -23,12 +23,12 @@ class UserFixCommand extends ContainerAwareCommand
         $env = $this->getContainer()->getParameter('kernel.environment');
 
         foreach ($repository->findAll() as $user) {
-            if ($env === 'prod' && null === $user->getChannel()) {
+            if ($env === 'prod' && strlen($user->getChannel(true)) === 0) {
                 $output->writeln('generating channel for <info>'.$user->getUsername().'</info>');
                 $user->setChannel(uniqid(mt_rand(), true));
             }
 
-            if ($env === 'dev' && null !== $user->getChannel()) {
+            if ($env === 'dev' && strlen($user->getChannel(true)) > 0) {
                 $output->writeln('nulling channel for <info>'.$user->getUsername().'</info>');
                 $user->setChannel(null);
             }
