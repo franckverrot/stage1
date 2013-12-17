@@ -21,8 +21,12 @@ class UserFixCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         $env = $this->getContainer()->getParameter('kernel.environment');
+        $client = $this->getContainer()->get('app_core.client.github');
+        $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
         foreach ($repository->findAll() as $user) {
+            $client->setDefaultOption('headers/Authorization', 'token '.$user->getAccessToken());
+
             if ($env === 'prod' && strlen($user->getChannel(true)) === 0) {
                 $output->writeln('generating channel for <info>'.$user->getUsername().'</info>');
                 $user->setChannel(uniqid(mt_rand(), true));
@@ -31,6 +35,19 @@ class UserFixCommand extends ContainerAwareCommand
             if ($env === 'dev' && strlen($user->getChannel(true)) > 0) {
                 $output->writeln('nulling channel for <info>'.$user->getUsername().'</info>');
                 $user->setChannel(null);
+            }
+
+            if (strlen($user->getEmail()) === 0) {
+                $output->writeln('fixing email for <info>'.$user->getUsername().'</info>');
+                $request = $client->get('/user/emails');
+                $response = $request->send();
+
+                foreach ($response->json() as $email) {
+                    if ($email['primary']) {
+                        $user->setEmail($email['email']);
+                        break;
+                    }
+                }
             }
 
             $em->persist($user);
