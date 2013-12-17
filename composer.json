@@ -5,12 +5,12 @@
     "description": "The staging environment builder",
     "autoload": {
         "psr-0": {
-            "": "src/",
-            "Docker\\Tests": "tests/"
+            "": "src/"
         }
     },
     "require": {
         "php": ">=5.3.3",
+        "stage1/docker-php": "@dev",
         "symfony/symfony": "2.3.*",
         "doctrine/orm": ">=2.2.3,<2.4-dev",
         "doctrine/doctrine-bundle": "1.2.*",
@@ -23,7 +23,7 @@
         "sensio/generator-bundle": "2.3.*",
         "oldsound/rabbitmq-bundle": "1.2.*@dev",
         "ircmaxell/password-compat": "1.0.3",
-        "guzzle/guzzle": "3.7.*",
+        "guzzle/guzzle": "~3.8",
         "drak/native-session": "1.0.0"
     },
     "require-dev": {
