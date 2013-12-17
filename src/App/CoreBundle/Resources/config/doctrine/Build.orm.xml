@@ -38,6 +38,7 @@
         </many-to-one>
 
         <many-to-one field="branch" target-entity="App\CoreBundle\Entity\Branch" inversed-by="builds">
+            <cascade><persist /></cascade>
             <join-column name="branch_id" referenced-column-name="id" on-delete="CASCADE" />
         </many-to-one>
 

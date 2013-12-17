@@ -2,11 +2,12 @@
 
 namespace App\CoreBundle\Controller;
 
+use App\CoreBundle\Entity\Branch;
+use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Entity\Project;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\Build;
 
 use Exception;
 
@@ -215,7 +216,8 @@ class DefaultController extends Controller
     {
         $payload = json_decode($request->getContent());
 
-        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
+        $em = $this->getDoctrine()->getManager();
+        $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
 
         if (!$project) {
             throw $this->createNotFoundException('Unknown Github project');
@@ -229,13 +231,23 @@ class DefaultController extends Controller
             $ref = substr($payload->ref, 11);
             $hash = $payload->after;
 
+            $branch = $em->getRepository('AppCoreBundle:Branch')->findOneByName($ref);
+
+            if (!$branch) {
+                $branch = new Branch();
+                $branch->setProject($project);
+                $branch->setName($ref);
+            }
+
             $build = new Build();
             $build->setProject($project);
             $build->setStatus(Build::STATUS_SCHEDULED);
             $build->setRef($ref);
             $build->setHash($hash);
+            $build->setBranch($branch);
 
-            $this->persistAndFlush($build);
+            $em->persist($build);
+            $em->flush();
 
             $producer = $this->get('old_sound_rabbit_mq.build_producer');
             $producer->publish(json_encode(['build_id' => $build->getId()]));
