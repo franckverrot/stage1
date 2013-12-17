@@ -20,6 +20,8 @@
                 <span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span>
             </td>
             <td id="build-{{ build.id }}-actions" class="actions">
+                <a class="btn btn-small" href="{{ path('app_core_build_show', { id: build.id }) }}">show</a>
+
                 {% if build.scheduled %}
                 <form id="build-{{ build.id }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: build.id }) }}">
                     <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
