@@ -279,7 +279,7 @@ def is_release_tagged():
     return len(local('git tag --contains HEAD', capture=True)) > 0
 
 def git_branch():
-    return local('git symbolic-ref -q HEAD | sed -e \'s|^refs/heads/||\'', capture=True)
+    return local('git symbolic-ref -q HEAD | sed -e \'s,^refs/heads/,,\'', capture=True)
 
 def builder_restart():
     info('restarting builder')
