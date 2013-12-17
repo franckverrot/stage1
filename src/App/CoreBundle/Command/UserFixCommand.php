@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Exception;
+
 class UserFixCommand extends ContainerAwareCommand
 {
     public function configure()
@@ -39,7 +41,7 @@ class UserFixCommand extends ContainerAwareCommand
 
             if (strlen($user->getEmail()) === 0) {
                 $output->write('fixing email for <info>'.$user->getUsername().'</info> ');
-                
+
                 try {
                     $request = $client->get('/user/emails');
                     $response = $request->send();
