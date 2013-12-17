@@ -64,7 +64,7 @@ body {
 
 
 .site-error {
-  overflow: auto;
+  overflow: hidden;
 }
 
 .status-code {

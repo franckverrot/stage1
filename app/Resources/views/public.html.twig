@@ -23,7 +23,9 @@
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
           <li><a href="{{ path('app_core_blog') }}">Blog</a></li>
+          {% if not is_granted('ROLE_USER') %}
           <li><a href="{{ path('app_core_auth_github_authorize') }}">Signin</a></li>
+          {% endif %}
           {# <li><a href="{{ path('app_core_demo') }}">Demo</a><li> #}
         </ul>
         <h3 class="muted"><a href="{{ path('app_core_homepage') }}">Stage1</a></h3>
