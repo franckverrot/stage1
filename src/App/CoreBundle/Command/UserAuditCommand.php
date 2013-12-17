@@ -36,6 +36,7 @@ class UserAuditCommand extends ContainerAwareCommand
         $infos['email'] = $user->getEmail();
         $infos['token'] = $user->getAccessToken();
         $infos['running_builds'] = count($em->getRepository('AppCoreBundle:Build')->findRunningBuildsByUser($user));
+        $infos['created_at'] = $user->getCreatedAt()->format('r');
 
         $infos['projects'] = [];
 
