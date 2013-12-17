@@ -38,7 +38,13 @@ stream_build_logs($('#logs'));
             <dt>Ref.</dt>
             <dd>{{ build.ref }}</dd>
             <dt>Hash</dt>
-            <dd>{% if build.hash %}<abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr>{% else %}<abbr title="Not available">N/A</abbr>{% endif %}</dd>
+            <dd>
+                {% if build.hash %}
+                <a href="https://github.com/{{ build.project.githubFullName }}/commit/{{ build.hash }}"><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr> <i class="icon-github"></i></a>
+                {% else %}
+                <abbr title="Not available">N/A</abbr>
+                {% endif %}
+            </dd>
         </dl>
 
         <dl class="span4">
