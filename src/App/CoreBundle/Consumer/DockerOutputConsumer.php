@@ -29,6 +29,8 @@ class DockerOutputConsumer implements ConsumerInterface
         $this->doctrine = $doctrine;
         $this->docker = $docker;
         $this->producer = $producer;
+
+        $this->logger->info('initialized '.__CLASS__);
     }
 
     public function execute(AMQPMessage $message)
