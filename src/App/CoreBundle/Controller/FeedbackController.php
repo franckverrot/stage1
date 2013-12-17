@@ -33,19 +33,21 @@ class FeedbackController extends Controller
 
         $this->addFlash('success', 'Your feedback has been sent, we will reach out to you very soon!');
 
-        $from = [$feedback->getUser()->getEmail() => $feedback->getUser()->getUsername()];
+        if (strlen($feedback->getUser()->getEmail()) > 0) {
+            $from = [$feedback->getUser()->getEmail() => $feedback->getUser()->getUsername()];
 
-        $message = Swift_Message::newInstance()
-            ->setFrom($from)
-            ->setReplyTo($from)
-            ->setTo('geoffrey@stage1.io')
-            ->setSubject('Feedback from Stage1')
-            ->setBody($feedback->getMessage());
+            $message = Swift_Message::newInstance()
+                ->setFrom($from)
+                ->setReplyTo($from)
+                ->setTo('geoffrey@stage1.io')
+                ->setSubject('Feedback from Stage1')
+                ->setBody($feedback->getMessage());
 
-        $headers = $message->getHeaders();
-        $headers->addTextHeader('X-Feedback-Token', $feedback->getToken());
+            $headers = $message->getHeaders();
+            $headers->addTextHeader('X-Feedback-Token', $feedback->getToken());
 
-        $this->get('mailer')->send($message);
+            $this->get('mailer')->send($message);
+        }
 
         return $this->redirect($data['return']);
     }
