@@ -38,16 +38,23 @@ class UserFixCommand extends ContainerAwareCommand
             }
 
             if (strlen($user->getEmail()) === 0) {
-                $output->writeln('fixing email for <info>'.$user->getUsername().'</info>');
-                $request = $client->get('/user/emails');
-                $response = $request->send();
+                $output->write('fixing email for <info>'.$user->getUsername().'</info> ');
+                
+                try {
+                    $request = $client->get('/user/emails');
+                    $response = $request->send();
 
-                foreach ($response->json() as $email) {
-                    if ($email['primary']) {
-                        $user->setEmail($email['email']);
-                        break;
-                    }
+                    foreach ($response->json() as $email) {
+                        if ($email['primary']) {
+                            $user->setEmail($email['email']);
+                            break;
+                        }
+                    }                    
+                } catch (Exception $e) {
+                    $output->write('<error>failed</error>');
                 }
+
+                $output->writeln('');
             }
 
             $em->persist($user);
