@@ -89,6 +89,13 @@ class PreviousBuildListener
                 'previous_build' => $previousBuild->getId(),
                 'previous_container' => $previousBuild->getContainer()->getId()
             ]);
+        } catch (Exception $e) {
+            $this->logger->error('error stopping previous container', [
+                'build' => $build->getId(),
+                'previous_build' => $previousBuild->getId(),
+                'previous_container' => $previousBuild->getContainer()->getId(),
+                'message' => $e->getMessage(),
+            ]);
         }
 
         $previousBuild->setStatus(Build::STATUS_OBSOLETE);
