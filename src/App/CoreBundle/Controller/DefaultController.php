@@ -144,31 +144,14 @@ class DefaultController extends Controller
 
     public function projectScheduleBuildAction(Request $request, $id)
     {
-        $project = $this->findProject($id);
-
         try {
+            $project = $this->findProject($id);
+            $scheduler = $this->container->get('app_core.build_scheduler');
+
             $ref = $request->request->get('ref');
+            $hash = $this->getHashFromRef($project, $ref);
 
-            if (null === $hash = $request->request->get('hash')) {
-                $hash = $this->getHashFromRef($project, $ref);
-            }
-
-            $build = new Build();
-            $build->setProject($project);
-            $build->setInitiator($this->getUser());
-            $build->setStatus(Build::STATUS_SCHEDULED);
-            $build->setRef($ref);
-            $build->setHash($hash);
-
-            $this->persistAndFlush($build);
-
-            $producer = $this->get('old_sound_rabbit_mq.build_producer');
-            $producer->publish(json_encode(['build_id' => $build->getId()]));
-
-            $factory = $this->get('app_core.message.factory');
-            $message = $factory->createBuildScheduled($build);
-
-            $this->publishWebsocket($message);
+            $build = $scheduler->schedule($project, $ref, $hash);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
@@ -178,6 +161,7 @@ class DefaultController extends Controller
         } catch (Exception $e) {
             $this->container->get('logger')->error($e->getMessage());
             $this->container->get('logger')->error($e->getResponse()->getBody(true));
+
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
@@ -214,48 +198,26 @@ class DefaultController extends Controller
 
     public function hooksGithubAction(Request $request)
     {
-        $payload = json_decode($request->getContent());
-
-        $em = $this->getDoctrine()->getManager();
-        $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
-
-        if (!$project) {
-            throw $this->createNotFoundException('Unknown Github project');
-        }
-
-        if ($project->getStatus() === Project::STATUS_HOLD) {
-            return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
-        }
-
         try {
+            $payload = json_decode($request->getContent());
+
+            $em = $this->getDoctrine()->getManager();
+            $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
+
+            if (!$project) {
+                throw $this->createNotFoundException('Unknown Github project');
+            }
+
+            if ($project->getStatus() === Project::STATUS_HOLD) {
+                return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
+            }
+
+            $scheduler = $this->get('app_core.build_scheduler');
+
             $ref = substr($payload->ref, 11);
             $hash = $payload->after;
 
-            $branch = $em->getRepository('AppCoreBundle:Branch')->findOneByName($ref);
-
-            if (!$branch) {
-                $branch = new Branch();
-                $branch->setProject($project);
-                $branch->setName($ref);
-            }
-
-            $build = new Build();
-            $build->setProject($project);
-            $build->setStatus(Build::STATUS_SCHEDULED);
-            $build->setRef($ref);
-            $build->setHash($hash);
-            $build->setBranch($branch);
-
-            $em->persist($build);
-            $em->flush();
-
-            $producer = $this->get('old_sound_rabbit_mq.build_producer');
-            $producer->publish(json_encode(['build_id' => $build->getId()]));
-
-            $factory = $this->get('app_core.message.factory');
-            $message = $factory->createBuildScheduled($build);
-
-            $this->publishWebsocket($message);
+            $build = $scheduler->schedule($project, $ref, $hash);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),

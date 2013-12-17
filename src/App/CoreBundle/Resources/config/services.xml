@@ -8,6 +8,14 @@
         <!-- misc services -->
         <service id="app_core.stopwatch" class="Symfony\Component\Stopwatch\Stopwatch" />
 
+        <service id="app_core.build_scheduler" class="App\CoreBundle\BuildScheduler">
+            <argument type="service" id="logger" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="old_sound_rabbit_mq.build_producer" />
+            <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
+            <argument type="service" id="app_core.message.factory" />
+        </service>
+
         <service id="session.handler.redis" class="Drak\NativeSession\NativeRedisSessionHandler">
             <argument>tcp://%redis_host%:%redis_port%?timeout=2</argument>
         </service>

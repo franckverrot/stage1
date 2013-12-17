@@ -76,16 +76,7 @@ class SecurityController extends Controller
 
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result['id']))) {
             $user = User::fromGithubResponse($result);
-
-            if ($this->isForceEnabled($user, $request->getSession())) {
-                $user->setStatus(User::STATUS_ENABLED);
-            } else {
-                $user->setStatus(User::STATUS_WAITING_LIST);
-            }
-        }
-
-        if ($user->getStatus() === User::STATUS_WAITING_LIST) {
-            $user->setWaitingList($user->getWaitingList() + 1);
+            $user->setStatus(User::STATUS_WAITING_LIST);
         }
 
         if (strlen($user->getEmail()) === 0) {
@@ -99,7 +90,16 @@ class SecurityController extends Controller
                     $user->setEmail($email['email']);
                     break;
                 }
-            }            
+            }
+        }
+
+        if ($user->getStatus() === User::STATUS_WAITING_LIST) {
+            if ($this->isForceEnabled($user, $request->getSession())) {
+                $user->setStatus(User::STATUS_ENABLED);
+            } else {
+                $user->setWaitingList($user->getWaitingList() + 1);
+                $this->createBetaSignup($user);
+            }
         }
 
         $user->setLastLoginAt(new DateTime());
@@ -110,6 +110,21 @@ class SecurityController extends Controller
         $em->flush();
 
         return $user;
+    }
+
+    private function createBetaSignup(User $user)
+    {
+        $em = $this->get('doctrine')->getManager();
+        $repo = $em->getRepository('AppCoreBundle:BetaSignup');
+
+        if (null === $beta = $repo->findOneByEmail($user->getEmail())) {
+            $beta = new BetaSignup();
+            $beta->setEmail($user->getEmail());
+            $beta->setTries($user->getWaitingList());
+            $beta->setStatus(BetaSignup::STATUS_DEFAULT);
+
+            $em->persist($beta);            
+        }
     }
 
     public function authorizeAction()

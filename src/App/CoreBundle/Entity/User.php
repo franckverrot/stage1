@@ -12,6 +12,8 @@ class User implements UserInterface
 
     const STATUS_WAITING_LIST = 2;
 
+    const STATUS_BETA = 3;
+
     protected $id;
 
     protected $githubId;

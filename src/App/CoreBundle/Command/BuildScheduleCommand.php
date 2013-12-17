@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Entity\Project;
 
 use InvalidArgumentException;
 
@@ -18,44 +19,58 @@ class BuildScheduleCommand extends ContainerAwareCommand
         $this
             ->setName('build:schedule')
             ->setDefinition([
-                new InputArgument('project_id', InputArgument::REQUIRED, 'The project id'),
+                new InputArgument('project_spec', InputArgument::REQUIRED, 'The project'),
                 new InputArgument('ref', InputArgument::REQUIRED, 'The ref'),
             ]);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $doctrine = $this->getContainer()->get('doctrine');
+        $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $project = $doctrine
+        $project = $em
             ->getRepository('AppCoreBundle:Project')
-            ->find($input->getArgument('project_id'));
-
-        if (!$project) {
-            $project = $doctrine
-                ->getRepository('AppCoreBundle:Project')
-                ->findOneBySlug($input->getArgument('project_id'));
-        }
+            ->findOneBySpec($input->getArgument('project_spec'));
 
         if (!$project) {
             throw new InvalidArgumentException('project not found');
         }
 
-        $build = new Build();
-        $build->setProject($project);
-        $build->setStatus(Build::STATUS_SCHEDULED);
-        $build->setRef($input->getArgument('ref'));
+        $ref = $input->getArgument('ref');
+        // $hash = $this->getHashFromRef($project, $ref);
+        $hash = null;
 
-        $em = $doctrine->getManager();
-        $em->persist($build);
-        $em->flush();
+        $this
+            ->getContainer()
+            ->get('app_core.build_scheduler')
+            ->schedule($project, $ref, $hash);
+    }
 
-        $buildProducer = $this->getContainer()->get('old_sound_rabbit_mq.build_producer');
-        $buildProducer->publish(json_encode(['build_id' => $build->getId()]));
+    protected function getHashFromRef(Project $project, $ref)
+    {
+        $accessToken = $project->getUsers()->first()->getAccessToken();
 
-        $websocketProducer = $this->getContainer()->get('old_sound_rabbit_mq.websocket_producer');
-        $messageFactory = $this->getContainer()->get('app_core.message.factory');
+        $this->getContainer()->get('logger')->info('using access token '.$accessToken);
 
-        $websocketProducer->publish($messageFactory->createBuildScheduled($build));
+        $client = $this->getContainer()->get('app_core.client.github');
+        $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
+        $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
+
+        $request = $client->get(['/repos/{owner}/{repo}/git/refs/heads', [
+            'owner' => $project->getGithubOwnerLogin(),
+            'repo' => $project->getName(),
+        ]]);
+
+        $response = $request->send();
+        $remoteRefs = $response->json();
+
+        foreach ($remoteRefs as $remoteRef) {
+            if ('refs/heads/'.$ref === $remoteRef['ref']) {
+                $hash = $remoteRef['object']['sha'];
+                break;
+            }
+        }
+
+        return $hash;
     }
 }

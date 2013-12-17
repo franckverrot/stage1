@@ -50,8 +50,8 @@ class DockerOutputConsumer implements ConsumerInterface
 
         if (!$build) {
             $logger->warn('could not find build for container', [
-                'build' => $env['BUILD_ID'],
-                'container' => $container->getId()
+                'build' => $body['env']['BUILD_ID'],
+                'container' => $body['container']
             ]);
 
             return;
