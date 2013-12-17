@@ -23,7 +23,7 @@ ADD ./support/sources.list /etc/apt/sources.list
 # RUN apt-get update -y
 # RUN apt-get install -qy realpath vim curl git openssh-server vim
 
-RUN apt-get update -y; apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1
+RUN apt-get update -y; apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1 openjdk-7-jre-headless || true
 #####################################################
 
 # ruby is needed to read yaml
