@@ -11,6 +11,8 @@ use Docker\Exception\ContainerNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Exception;
+
 class PreviousBuildListener
 {
     /**
