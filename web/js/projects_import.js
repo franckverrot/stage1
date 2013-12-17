@@ -161,6 +161,21 @@
         $.get('/discover').then(function(data) {
             data = JSON.parse(data);
 
+            if (data.length === 0) {
+                $('#projects_import_status')
+                    .removeClass()
+                    .addClass('alert alert-error');
+
+                $('#projects_import_status i')
+                    .removeClass()
+                    .addClass('icon-remove');
+
+                $('#projects_import_status span')
+                    .text('No Symfony2 projects found in any of your organisations.');
+
+                return;
+            }
+
             // console.log(data);
 
             for (fullName in data) {
@@ -221,7 +236,7 @@
                     .addClass('icon-ok');
 
                 $('#projects_import_status span')
-                    .text('Found ' + candidates_count + ' Symfony project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');
+                    .text('Found ' + candidates_count + ' Symfony2 project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');
             }
         });
     };
