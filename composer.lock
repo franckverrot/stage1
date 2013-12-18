@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "6e7a1e6c86bf23cb0aaf776a9f3ae12b",
+    "hash": "e51830f20855c1354fcc909bf93d0acb",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1207,12 +1207,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stage1/docker-php.git",
-                "reference": "07eb2089476a9e1b51b0e83d354d0d7ab1123545"
+                "reference": "8926dca7dcc650341f1a51ca80505b05a6f14411"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stage1/docker-php/zipball/07eb2089476a9e1b51b0e83d354d0d7ab1123545",
-                "reference": "07eb2089476a9e1b51b0e83d354d0d7ab1123545",
+                "url": "https://api.github.com/repos/stage1/docker-php/zipball/8926dca7dcc650341f1a51ca80505b05a6f14411",
+                "reference": "8926dca7dcc650341f1a51ca80505b05a6f14411",
                 "shasum": ""
             },
             "require": {
@@ -1235,7 +1235,7 @@
                 "MIT"
             ],
             "description": "A Docker PHP client",
-            "time": "2013-12-17 13:30:43"
+            "time": "2013-12-18 10:48:34"
         },
         {
             "name": "swiftmailer/swiftmailer",

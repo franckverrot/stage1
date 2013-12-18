@@ -9,7 +9,7 @@ use App\CoreBundle\Docker\BuildContainer;
 use Symfony\Component\Process\Process;
 
 use Docker\Docker;
-use Docker\Context;
+use Docker\Context\ContextBuilder;
 use Docker\PortCollection;
 
 use Psr\Log\LoggerInterface;
@@ -57,12 +57,12 @@ class Builder
         // @todo the base container can (and should?) be built during project import
         //       that's one lest step during the build
         // @todo also, move that to a BuildContext
-        $context = new Context();
-        $context->from($build->getBaseImageName());
-        $context->add('/etc/environment', $env);
-        $context->add('/root/.ssh/id_rsa', $build->getProject()->getPrivateKey());
-        $context->add('/root/.ssh/id_rsa.pub', $build->getProject()->getPublicKey());
-        $context->add('/root/.ssh/config', <<<SSH
+        $builder = new ContextBuilder();
+        $builder->from($build->getBaseImageName());
+        $builder->add('/etc/environment', $env);
+        $builder->add('/root/.ssh/id_rsa', $build->getProject()->getPrivateKey());
+        $builder->add('/root/.ssh/id_rsa.pub', $build->getProject()->getPublicKey());
+        $builder->add('/root/.ssh/config', <<<SSH
 Host github.com
     Hostname github.com
     User git
@@ -70,11 +70,11 @@ Host github.com
     StrictHostKeyChecking no
 SSH
 );
-        $context->run('chmod -R 0600 /root/.ssh');
-        $context->run('chown -R root:root /root/.ssh');
+        $builder->run('chmod -R 0600 /root/.ssh');
+        $builder->run('chown -R root:root /root/.ssh');
 
         $logger->info('building base build container', ['build' => $build->getId()]);
-        $docker->build($context, $build->getImageName());
+        $docker->build($builder->getContext(), $build->getImageName());
 
         $buildContainer = new BuildContainer($build);
         $buildContainer->addEnv($build->getProject()->getContainerEnv());

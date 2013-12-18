@@ -40,10 +40,12 @@ class BuildScheduleCommand extends ContainerAwareCommand
         // $hash = $this->getHashFromRef($project, $ref);
         $hash = null;
 
-        $this
+        $build = $this
             ->getContainer()
             ->get('app_core.build_scheduler')
             ->schedule($project, $ref, $hash);
+
+        $output->writeln('scheduled build <info>'.$build->getId().'</info>');
     }
 
     protected function getHashFromRef(Project $project, $ref)
