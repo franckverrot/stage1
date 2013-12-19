@@ -124,6 +124,6 @@ class KillConsumer implements ConsumerInterface
             posix_kill($build->getPid(), SIGKILL);
         }
 
-        $this->producer->publish((string) $message);
+        $this->producer->publish((string) $this->factory->createBuildKilled($build));
     }
 }
