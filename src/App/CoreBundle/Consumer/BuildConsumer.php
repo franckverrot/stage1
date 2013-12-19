@@ -43,6 +43,8 @@ class BuildConsumer implements ConsumerInterface
 
     private $build;
 
+    private $timeout = null;
+
     public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker)
     {
         $this->logger = $logger;
@@ -54,6 +56,13 @@ class BuildConsumer implements ConsumerInterface
         pcntl_signal(SIGTERM, [$this, 'terminate']);
 
         $logger->info('initialized '.__CLASS__);
+    }
+
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
+
+        return $this;
     }
 
     public function terminate($signo)
@@ -126,7 +135,7 @@ class BuildConsumer implements ConsumerInterface
         try {
             $this->dispatcher->dispatch(BuildEvents::STARTED, new BuildStartedEvent($build));
 
-            $container = $this->builder->run($build);
+            $container = $this->builder->run($build, $this->timeout);
 
             $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => $container->getId()]);
 

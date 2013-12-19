@@ -43,7 +43,7 @@ class Builder
      * 
      * @return Docker\Container
      */
-    public function run(Build $build)
+    public function run(Build $build, $timeout = null)
     {
         $logger = $this->logger;
         $docker = $this->docker;
@@ -81,10 +81,13 @@ SSH
 
         $manager = $this->docker->getContainerManager();
 
-        $logger->info('starting actual build', ['build' => $build->getId()]);
+        $logger->info('starting actual build', [
+            'build' => $build->getId(),
+            'timeout' => $timeout,
+        ]);
 
         $manager->run($buildContainer);
-        $manager->wait($buildContainer);
+        $manager->wait($buildContainer, $timeout);
 
         $build->setContainer($buildContainer);
         
