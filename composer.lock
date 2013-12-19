@@ -1207,16 +1207,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stage1/docker-php.git",
-                "reference": "8926dca7dcc650341f1a51ca80505b05a6f14411"
+                "reference": "96867a3b238bec591d887cceaa25854ec9d83591"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stage1/docker-php/zipball/8926dca7dcc650341f1a51ca80505b05a6f14411",
-                "reference": "8926dca7dcc650341f1a51ca80505b05a6f14411",
+                "url": "https://api.github.com/repos/stage1/docker-php/zipball/96867a3b238bec591d887cceaa25854ec9d83591",
+                "reference": "96867a3b238bec591d887cceaa25854ec9d83591",
                 "shasum": ""
             },
             "require": {
-                "guzzle/http": "~3.8",
+                "guzzle/parser": "~3.8",
                 "php": ">=5.4",
                 "symfony/filesystem": "~2.3",
                 "symfony/process": "~2.3"
@@ -1235,7 +1235,7 @@
                 "MIT"
             ],
             "description": "A Docker PHP client",
-            "time": "2013-12-18 10:48:34"
+            "time": "2013-12-19 15:12:20"
         },
         {
             "name": "swiftmailer/swiftmailer",
