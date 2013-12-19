@@ -42,7 +42,7 @@ def deploy_help():
 
 def backup():
     run('mkdir -p %s' % env.remote_dump_path);
-    run('mysqldump -u root symfony > %s/stage1.sql' % env.remote_dump_path)
+    run('mysqldump -u root symfony | gzip > %s/stage1.sql.gz' % env.remote_dump_path)
     run('cp /var/lib/redis/dump.rdb %s/dump.rdb' % env.remote_dump_path)
     local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete %(user)s@%(host)s:%(remote)s/* %(local)s' % {
         'user': env.user,
@@ -50,6 +50,24 @@ def backup():
         'remote': env.remote_dump_path,
         'local': env.local_dump_path
     })
+
+def inject():
+    if not local('test -d %s' % env.local_dump_path).succeeded:
+        info('nothing to inject')
+        exit
+
+    local('mysqladmin -u root -f drop symfony')
+    local('mysqladmin -u root create symfony')
+    local('gunzip -c %s/stage1.sql.gz | mysql -u root symfony' % env.local_dump_path)
+
+    local('sudo service redis-server stop')
+    local('sudo cp %s/dump.rdb /var/lib/redis/dump.rdb' % env.local_dump_path)
+    local('sudo service redis-server start')
+
+    hipache_init_redis_local()
+
+    local('sudo restart %s-hipache' % env.processes_prefix)
+    local('sudo restart %s-websockets' % env.processes_prefix)
 
 def restore():
     if not local('test -d %s' % env.local_dump_path).succeeded:
@@ -65,13 +83,14 @@ def restore():
 
     run('mysqladmin -u root -f drop symfony')
     run('mysqladmin -u root create symfony')
-    run('mysql -u root symfony < %s/stage1.sql' % env.remote_dump_path)
+    run('gunzip -c %s/stage1.sql.gz | mysql -u root symfony' % env.remote_dump_path)
 
     run('service redis-server stop')
     run('cp %s/dump.rdb /var/lib/redis/dump.rdb' % env.remote_dump_path)
     run('service redis-server start')
 
     run('restart %s-hipache' % env.processes_prefix)
+    run('restart %s-websockets' % env.processes_prefix)
 
 def upstart_export():
     local('sudo foreman export upstart /etc/init -u root -a stage1')
@@ -150,6 +169,12 @@ def hipache_init_redis():
     run('redis-cli RPUSH frontend:%s stage1 http://127.0.0.1:8080/' % env.host_string)
     run('redis-cli DEL frontend:help.%s' % env.host_string)
     run('redis-cli RPUSH frontend:help.%s help http://127.0.0.1:8080/' % env.host_string)
+
+def hipache_init_redis_local():
+    local('redis-cli DEL frontend:stage1.dev')
+    local('redis-cli RPUSH frontend:stage1.dev stage1 http://127.0.0.1:8080/')
+    local('redis-cli DEL frontend:help.stage1.dev')
+    local('redis-cli RPUSH frontend:help.stage1.dev help http://127.0.0.1:8080/')
 
 def fix_permissions():
     with settings(warn_only=True):
