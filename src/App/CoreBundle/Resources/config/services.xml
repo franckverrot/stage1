@@ -35,12 +35,12 @@
             <argument>%github_api_base_url%</argument>
         </service>
 
-        <service id="app_core.client.docker" class="Guzzle\Http\Client">
+        <service id="app_core.docker.http_client" class="Docker\Http\Client">
             <argument>%docker_api_base_url%</argument>
         </service>
 
         <service id="app_core.docker" class="Docker\Docker">
-            <argument type="service" id="app_core.client.docker" />
+            <argument type="service" id="app_core.docker.http_client" />
         </service>
 
         <service id="app_core.discover.github" class="App\CoreBundle\Discover\Github">
@@ -75,6 +75,9 @@
             <argument type="service" id="app_core.builder" />
             <argument type="service" id="app_core.docker" />
             <argument>%build_host_mask%</argument>
+            <call method="setTimeout">
+                <argument>%stage1_build_timeout%</argument>
+            </call>
 
             <tag name="monolog.logger" channel="build" />
         </service>
