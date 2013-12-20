@@ -74,6 +74,7 @@
         var current_project_id = {{ app.request.attributes.get('current_project_id') | default('undefined') }};
         var current_build_id = {{ app.request.attributes.get('current_build_id') | default('undefined') }};
         var websocket_auth_url = '{{ path("app_core_primus_auth") }}';
+        var build_logs_load_url = '{{ path('app_core_build_logs_load', { id: '0' }) }}';
         </script>
         {% endif %}
         {% javascripts output="assets/base.js"

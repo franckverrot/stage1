@@ -127,8 +127,20 @@ class SecurityController extends Controller
         }
     }
 
-    public function authorizeAction()
+    public function authorizeAction(Request $request)
     {
+        if ($this->container->getParameter('kernel.environment') === 'dev') {
+            $user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByUsername('ubermuda');
+
+            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+            $this->get('security.context')->setToken($token);
+
+            $loginEvent = new InteractiveLoginEvent($request, $token);
+            $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
+
+            return $this->redirect($this->generateUrl('app_core_homepage'));
+        }
+
         $token = $this->get('form.csrf_provider')->generateCsrfToken('github');
         $this->get('session')->set('csrf_token', $token);
 

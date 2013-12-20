@@ -4,10 +4,65 @@
 <script type="text/javascript">
 $('#output').html(ansi_up.ansi_to_html($('#output').text()));
 
+window.build_logs_load = function(container, build_id) {
+    var url = build_logs_load_url.replace(/0/, build_id);
+    var lastLoadedPage = -1;
+    var loading = false;
+    var loadingIndicator = $('#logs-loading-indicator');
+
+    function loadPage(page, scroll) {
+        loadingIndicator.show();
+
+        $.get(url, { page: page }, function(data) {
+            var currentTopElement = $(container).children().first();
+
+            for (i = data.items.length; i > 0; i--) {
+                var fragment = data.items[i - 1];
+                $(container).prepend(ansi_up.ansi_to_html(fragment.message));
+
+                if (scroll) {
+                    container[0].scrollTop = container[0].scrollHeight;
+                }
+            }
+
+            lastLoadedPage = data.page;
+
+            loadingIndicator.hide();
+            loading = false;
+
+            $(container).scrollTop(currentTopElement.position().top);
+
+            console.log('loaded page ' + data.page);
+        });
+    }
+
+    loadPage(lastLoadedPage, true);
+
+    $(container).on('scroll', function(event) {
+        if (lastLoadedPage === 1 || loading)  {
+            return;
+        }
+
+        loading = true;
+
+        var t = event.target;
+
+        if (t.scrollTop <= 100) {
+            loadPage(lastLoadedPage - 1, false);
+        } else {
+            loading = false;
+        }
+    });
+};
+
 {% if build.building %}
 stream_build_output($('#output'));
 {% else %}
-stream_build_logs($('#logs'));
+    {% if forceTab == 'output' %}
+    build_logs_load($('#output'), {{ build.id }});
+    {% else %}
+    stream_build_logs($('#logs'));
+    {% endif %}
 {% endif %}
 </script>
 {% endblock javascripts %}
@@ -69,18 +124,17 @@ stream_build_logs($('#logs'));
 
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">
-        {% if build.building or build.outputLogs | length > 0 %}
         <div id="output-container">
             {% if build.building %}
             <div id="build-{{ build.id }}-progress" class="build-building-icon">
                 <i class="icon-refresh icon-spin icon-4x"></i>
             </div>
             {% endif %}
-        <pre id="output">{% if not build.building %}{{ build.outputLogs | join('') }}{% endif %}</pre>
+            <div id="logs-loading-indicator">
+                <i class="icon-refresh icon-spin icon-4x"></i>
+            </div>
+            <pre id="output"></pre>
         </div>
-        {% else %}
-        <p class="lead">This build has no output.</p>
-        {% endif %}
     </div>
 
     <div class="tab-pane{% if forceTab == 'logs' %} active{% endif %}" id="build-logs">
