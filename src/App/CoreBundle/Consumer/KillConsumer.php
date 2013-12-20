@@ -68,16 +68,18 @@ class KillConsumer implements ConsumerInterface
             return;
         }
 
-        $logger->info('build found, sending SIGTERM', ['build' => $build->getId()]);
-
         $terminated = true;
 
         if (false === posix_kill($build->getPid(), SIGTERM)) {
+            $logger->info('build found but pid does not exist, marking as killed', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+
             $build->setStatus(Build::STATUS_KILLED);
             $em = $this->doctrine->getManager();
             $em->persist($build);
             $em->flush();
         } else {
+            $logger->info('pid found, sent SIGTERM', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+
             $terminated = false;
 
             for ($i = 0; $i <= $this->timeout; $i++) {
@@ -86,14 +88,14 @@ class KillConsumer implements ConsumerInterface
                     break;
                 }
 
-                $logger->info('build still alive...', ['build' => $build->getId()]);
+                $logger->info('build still alive...', ['build' => $build->getId(), 'pid' => $build->getPid()]);
 
                 sleep(1);
             }            
         }
 
         if (!$terminated) {
-            $logger->info('sending SIGKILL', ['build' => $build->getId()]);
+            $logger->info('sending SIGKILL', ['build' => $build->getId(), 'pid' => $build->getPid()]);
             posix_kill($build->getPid(), SIGKILL);
         }
 

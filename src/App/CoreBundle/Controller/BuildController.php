@@ -16,33 +16,39 @@ class BuildController extends Controller
         $limit = $request->get('limit', $this->container->getParameter('build_logs_load_limit'));
 
         $list = $build->getLogsList();
-        $length = $redis->llen($list);
+        $total = $redis->llen($list);
+        $pages = ceil($total / $limit);
 
-        $offset = $page < 0
-            ? $length + ($page * $limit)
-            : ($page - 1) * $limit;
-
-        if ($offset < 0) {
-            $offset = 0;
+        if ($page < 0) {
+            $page = $pages + ($page + 1);
         }
 
+        $offset_start = max(0, ($page - 1) * $limit);
+        $offset_stop  = min($offset_start + $limit - 1, $total);
+
         $response = [
-            'offset' => $offset,
+            'source' => $list,
+            'offset_start' => $offset_start,
+            'offset_stop' => $offset_stop,
             'limit' => $limit,
-            'length' => $length,
-            'pages' => ceil($length / $limit),
-            'page' => ceil($offset / $limit) + 1,
+            'total' => $total,
+            'pages' => $pages,
+            'request_page' => $request->get('page'),
+            'page' => $page,
+            'previous_page' => max(1, $page - 1),
+            'next_page' => min($pages, $page + 1),
         ];
 
-        if ($offset >= $length) {
+        if ($offset_start >= $total) {
             $response['error'] = 'out of bound';
 
             return new JsonResponse($response, 400);
         }
 
-        $items = $redis->lrange($list, $offset, $offset + $limit);
+        $items = $redis->lrange($list, $offset_start, $offset_stop);
         $items = array_map('json_decode', $items);
 
+        $response['items_length'] = count($items);
         $response['items'] = $items;
 
         return new JsonResponse($response, 200);

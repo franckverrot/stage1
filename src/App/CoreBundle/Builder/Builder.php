@@ -48,7 +48,7 @@ class Builder
         $logger = $this->logger;
         $docker = $this->docker;
 
-        $logger->info('starting build', ['build' => $build->getId()]);
+        $logger->info('starting build', ['build' => $build->getId(), 'timeout' => $timeout]);
 
         $env  = 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'.PHP_EOL;
         $env .= 'SYMFONY_ENV=prod'.PHP_EOL;

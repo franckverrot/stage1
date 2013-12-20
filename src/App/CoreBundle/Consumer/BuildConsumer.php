@@ -143,13 +143,15 @@ class BuildConsumer implements ConsumerInterface
             $build->setPort($container->getMappedPort(80)->getHostPort());
 
             $build->setStatus(Build::STATUS_RUNNING);
-        } catch (ClientErrorResponseException $e) {
+        } catch (\Docker\Http\Exception\ParseErrorException $e) {
             $this->logger->error('build failed', [
                 'build' => $build->getId(),
-                'exception' => $e,
-                'trace' => $e->getTraceAsString(),
+                'exception' => $e
             ]);
-            $this->logger->error($e->getResponse()->getBody(true));
+
+            $this->logger->error((string) $e->getRequest());
+            $this->logger->error($e->getContent());
+
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());
         } catch (Exception $e) {

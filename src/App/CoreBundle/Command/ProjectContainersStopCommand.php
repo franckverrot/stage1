@@ -25,16 +25,22 @@ class ProjectContainersStopCommand extends ContainerAwareCommand
     {
         $project = $this->findProject($input->getArgument('project_spec'));
 
-        $client = $this->getContainer()->get('app_core.client.docker');
+        $output->writeln('found project <info>'.$project->getGithubFullName().'</info>');
+
+        $client = $this->getContainer()->get('app_core.docker.http_client');
         $request = $client->get('/containers/json');
-        $response = $request->send();
+        $response = $client->send($request);
 
         $prefix = 'b/'.$project->getId();
         $prefixLength = strlen($prefix);
 
+        $containers = $response->json(true);
+
+        $output->writeln('found <info>'.count($containers).'</info> running containers');
+
         $count = 0;
 
-        foreach ($response->json() as $container) {
+        foreach ($response->json(true) as $container) {
             if (substr($container['Image'], 0, $prefixLength) === $prefix) {
                 $output->writeln('stopping container <info>'.$container['Id'].'</info>');
                 $request = $client->post(['/containers/{id}/stop', ['id' => $container['Id']]]);

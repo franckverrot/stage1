@@ -10,7 +10,8 @@ window.build_logs_load = function(container, build_id) {
     var loading = false;
     var loadingIndicator = $('#logs-loading-indicator');
 
-    function loadPage(page, scroll) {
+    function loadPage(page, callback) {
+        loading = true;
         loadingIndicator.show();
 
         $.get(url, { page: page }, function(data) {
@@ -19,39 +20,43 @@ window.build_logs_load = function(container, build_id) {
             for (i = data.items.length; i > 0; i--) {
                 var fragment = data.items[i - 1];
                 $(container).prepend(ansi_up.ansi_to_html(fragment.message));
-
-                if (scroll) {
-                    container[0].scrollTop = container[0].scrollHeight;
-                }
             }
 
             lastLoadedPage = data.page;
 
-            loadingIndicator.hide();
+            if (currentTopElement.length > 0) {
+                $(container).scrollTop(currentTopElement.position().top);
+            } else {
+                container[0].scrollTop = container[0].scrollHeight;
+            }
+
+            if (data.items_length < data.limit && data.page > 1) {
+                loadPage(data.previous_page);
+            }
+
+            loadingIndicator.hide();            
             loading = false;
 
-            $(container).scrollTop(currentTopElement.position().top);
-
-            console.log('loaded page ' + data.page);
+            if (typeof(callback) === 'function') {
+                callback();
+            }
         });
     }
 
-    loadPage(lastLoadedPage, true);
+    loadPage(lastLoadedPage, function() {
+        $(container).on('scroll', function(event) {
+            if (lastLoadedPage <= 1 || loading)  {
+                return;
+            }
 
-    $(container).on('scroll', function(event) {
-        if (lastLoadedPage === 1 || loading)  {
-            return;
-        }
+            var t = event.target;
 
-        loading = true;
-
-        var t = event.target;
-
-        if (t.scrollTop <= 100) {
-            loadPage(lastLoadedPage - 1, false);
-        } else {
-            loading = false;
-        }
+            if (t.scrollTop <= 100) {
+                loadPage(lastLoadedPage - 1);
+            } else {
+                loading = false;
+            }
+        });
     });
 };
 
