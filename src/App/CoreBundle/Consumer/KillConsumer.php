@@ -48,37 +48,6 @@ class KillConsumer implements ConsumerInterface
         $logger->info('initialized '.__CLASS__);
     }
 
-    public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
-    {
-        return $this->router->generate($route, $parameters, $referenceType);
-    }
-
-    public function getDoctrine()
-    {
-        return $this->doctrine;
-    }
-
-    public function getPendingBuildsCount(Project $project)
-    {
-        $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
-
-        $query = $buildRepo->createQueryBuilder('b')
-           ->select('count(b.id)')
-            ->where('b.project = ?1')
-            ->andWhere('b.status IN (?2)')
-            ->setParameters([
-                1 => $project->getId(),
-                2 => [Build::STATUS_BUILDING, Build::STATUS_SCHEDULED]
-            ])
-            ->getQuery();
-
-        try {
-            return (int) $query->getSingleScalarResult();
-        } catch (Exception $e) {
-            return 0;
-        }
-    }
-
     public function execute(AMQPMessage $message)
     {
         $logger = $this->logger;
@@ -103,8 +72,12 @@ class KillConsumer implements ConsumerInterface
 
         $terminated = true;
 
-        if (posix_kill($build->getPid(), SIGTERM)) {
-
+        if (false === posix_kill($build->getPid(), SIGTERM)) {
+            $build->setStatus(Build::STATUS_KILLED);
+            $em = $this->doctrine->getManager();
+            $em->persist($build);
+            $em->flush();
+        } else {
             $terminated = false;
 
             for ($i = 0; $i <= $this->timeout; $i++) {
