@@ -57,7 +57,10 @@ class DockerOutputConsumer implements ConsumerInterface
             'container' => $body['container'],
         ]);
 
-        $redis->rpush('build:output:'.$buildId, json_encode([
+        $build = new Build();
+        $build->setId($buildId);
+
+        $redis->rpush($build->getLogsList(), json_encode([
             'type' => Build::LOG_OUTPUT,
             'message' => $body['content'],
             'stream' => $this->getStreamType($body['type']),

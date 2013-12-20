@@ -105,6 +105,11 @@ class Build implements WebsocketRoutable
         return json_encode($this->asWebsocketMessage());
     }
 
+    public function getLogsList()
+    {
+        return 'build:output:'.$this->getId();
+    }
+
     /**
      * @return array
      */
@@ -361,6 +366,18 @@ class Build implements WebsocketRoutable
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * @param integer $id
+     * 
+     * @return App\CoreBundle\Entity\Build
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**

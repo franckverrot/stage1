@@ -1,4 +1,8 @@
 (function($, window) {
+    // window.build_logs_load = function(container, build_id) {
+    //     var url = build_logs_load_url.replace(/{id}/, build_id);
+    // };
+
     window.stream_build_logs = function(container) {
         container[0].scrollTop = container[0].scrollHeight;
 
@@ -17,7 +21,7 @@
             if (data.event == 'build.log' && data.build_id == current_build_id) {
                 container.append(data.content);
                 if (autoScroll) {
-                    container[0].scrollTop = container[0].scrollHeight;                    
+                    container[0].scrollTop = container[0].scrollHeight;
                 }
             }
         });

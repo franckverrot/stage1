@@ -20,6 +20,9 @@ parameters:
     redis_host:             127.0.0.1
     redis_port:             6379
 
+    # various parameters
+    build_logs_load_limit: 100
+
     # features switches
     feature_ip_access_list:     false
     feature_token_access_list:  true
