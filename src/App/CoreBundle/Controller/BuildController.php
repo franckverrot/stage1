@@ -35,8 +35,8 @@ class BuildController extends Controller
             'pages' => $pages,
             'request_page' => $request->get('page'),
             'page' => $page,
-            'previous_page' => max(1, $page - 1),
-            'next_page' => min($pages, $page + 1),
+            'previous_page' => ($page - 1 < 1) ? null : $page - 1,
+            'next_page' => ($page + 1 > $pages) ? null : $page + 1,
         ];
 
         if ($offset_start >= $total) {

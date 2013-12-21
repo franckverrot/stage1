@@ -9,17 +9,20 @@ window.build_logs_load = function(container, build_id) {
     var lastLoadedPage = -1;
     var loading = false;
     var loadingIndicator = $('#logs-loading-indicator');
+    var initialScrollHeight = container[0].scrollHeight;
 
-    function loadPage(page, callback) {
+    window.loadPage = function(page, callback) {
         loading = true;
         loadingIndicator.show();
 
         $.get(url, { page: page }, function(data) {
             var currentTopElement = $(container).children().first();
 
+            console.log(currentTopElement);
+
             for (i = data.items.length; i > 0; i--) {
                 var fragment = data.items[i - 1];
-                $(container).prepend(ansi_up.ansi_to_html(fragment.message));
+                $(container).prepend('<span data-timestamp="' + fragment.microtime + '" data-fragment-id="' + fragment.fragment_id + '">' + ansi_up.ansi_to_html(fragment.message) + '<span>');
             }
 
             lastLoadedPage = data.page;
@@ -30,6 +33,8 @@ window.build_logs_load = function(container, build_id) {
                 container[0].scrollTop = container[0].scrollHeight;
             }
 
+            console.log('loaded page ' + data.page);
+
             if (data.items_length < data.limit && data.page > 1) {
                 loadPage(data.previous_page);
             }
@@ -38,26 +43,33 @@ window.build_logs_load = function(container, build_id) {
             loading = false;
 
             if (typeof(callback) === 'function') {
-                callback();
+                callback(data);
             }
         });
     }
 
-    loadPage(lastLoadedPage, function() {
-        $(container).on('scroll', function(event) {
-            if (lastLoadedPage <= 1 || loading)  {
-                return;
-            }
+    var callback = function(data) {
+        if (container[0].scrollHeight == initialScrollHeight && data.previous_page != data.page) {
+            loadPage(data.previous_page, callback);
+        } else {
+            $(container).on('scroll', function(event) {
+                if (lastLoadedPage <= 1 || loading)  {
+                    return;
+                }
 
-            var t = event.target;
+                var t = event.target;
 
-            if (t.scrollTop <= 100) {
-                loadPage(lastLoadedPage - 1);
-            } else {
-                loading = false;
-            }
-        });
-    });
+                if (t.scrollTop <= 100) {
+                    loadPage(lastLoadedPage - 1);
+                } else {
+                    loading = false;
+                }
+            });
+
+        }
+    };
+
+    loadPage(lastLoadedPage, callback);
 };
 
 {% if build.building %}

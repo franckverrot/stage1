@@ -47,6 +47,7 @@ else
 
 docker = new Docker(dockerOpts)
 # queues = []
+fragment_ids = {};
 
 amqp.createConnection({ host: opts.amqp_host }, { reconnect: false }, (conn) ->
     console.log((' ✓ connected to amqp at "' + opts.amqp_host + '"').green)
@@ -104,18 +105,24 @@ attach = (container, exchange) ->
                 throw err if err
 
                 stream.on('end', ->
+                    delete fragment_ids[container.id]
                     console.log('-> detaching container ' + container.id.substr(0, 12).yellow)
                 )
+
+                fragment_ids[container.id] = 0
 
                 stream.on('data', (packet) ->
 
                     try
                         parse_packet(packet, use_multiplexing, (frame) ->
+                            fragment_id = fragment_ids[container.id]++
+
                             if getopt.options.log
-                                process.stdout.write(frame.content)
+                                process.stdout.write(fragment_id + '> ' + frame.content)
 
                             message = {
                                 container: container.id,
+                                fragment_id: fragment_id,
                                 env: env,
                                 type: frame.type,
                                 length: frame.length,

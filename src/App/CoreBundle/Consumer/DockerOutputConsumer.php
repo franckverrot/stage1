@@ -47,7 +47,7 @@ class DockerOutputConsumer implements ConsumerInterface
                 'message' => $body
             ]);
 
-            return;
+            return true;
         }
 
         $buildId = $body['env']['BUILD_ID'];
@@ -55,6 +55,7 @@ class DockerOutputConsumer implements ConsumerInterface
         $logger->debug('processing log fragment', [
             'build' => $buildId,
             'container' => $body['container'],
+            'keys' => array_keys($body),
         ]);
 
         $build = new Build();
@@ -65,6 +66,7 @@ class DockerOutputConsumer implements ConsumerInterface
             'message' => $body['content'],
             'stream' => $this->getStreamType($body['type']),
             'microtime' => $body['timestamp'],
+            'fragment_id' => isset($body['fragment_id']) ? $body['fragment_id'] : null,
             'build_id' => $buildId,
         ]));
     }
