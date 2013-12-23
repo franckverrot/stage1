@@ -66,7 +66,7 @@ class DockerOutputConsumer implements ConsumerInterface
             'message' => $body['content'],
             'stream' => $this->getStreamType($body['type']),
             'microtime' => $body['timestamp'],
-            'fragment_id' => isset($body['fragment_id']) ? $body['fragment_id'] : null,
+            'fragment_id' => $body['fragment_id'],
             'build_id' => $buildId,
         ]));
     }

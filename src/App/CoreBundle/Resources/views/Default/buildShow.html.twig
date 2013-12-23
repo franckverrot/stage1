@@ -2,81 +2,16 @@
 
 {% block javascripts %}
 <script type="text/javascript">
-$('#output').html(ansi_up.ansi_to_html($('#output').text()));
-
 window.build_logs_load = function(container, build_id) {
     var url = build_logs_load_url.replace(/0/, build_id);
-    var lastLoadedPage = -1;
-    var loading = false;
-    var loadingIndicator = $('#logs-loading-indicator');
-    var initialScrollHeight = container[0].scrollHeight;
-
-    window.loadPage = function(page, callback) {
-        loading = true;
-        loadingIndicator.show();
-
-        $.get(url, { page: page }, function(data) {
-            var currentTopElement = $(container).children().first();
-
-            console.log(currentTopElement);
-
-            for (i = data.items.length; i > 0; i--) {
-                var fragment = data.items[i - 1];
-                $(container).prepend('<span data-timestamp="' + fragment.microtime + '" data-fragment-id="' + fragment.fragment_id + '">' + ansi_up.ansi_to_html(fragment.message) + '<span>');
-            }
-
-            lastLoadedPage = data.page;
-
-            if (currentTopElement.length > 0) {
-                $(container).scrollTop(currentTopElement.position().top);
-            } else {
-                container[0].scrollTop = container[0].scrollHeight;
-            }
-
-            console.log('loaded page ' + data.page);
-
-            if (data.items_length < data.limit && data.page > 1) {
-                loadPage(data.previous_page);
-            }
-
-            loadingIndicator.hide();            
-            loading = false;
-
-            if (typeof(callback) === 'function') {
-                callback(data);
-            }
-        });
-    }
-
-    var callback = function(data) {
-        if (container[0].scrollHeight == initialScrollHeight && data.previous_page != data.page) {
-            loadPage(data.previous_page, callback);
-        } else {
-            $(container).on('scroll', function(event) {
-                if (lastLoadedPage <= 1 || loading)  {
-                    return;
-                }
-
-                var t = event.target;
-
-                if (t.scrollTop <= 100) {
-                    loadPage(lastLoadedPage - 1);
-                } else {
-                    loading = false;
-                }
-            });
-
-        }
-    };
-
-    loadPage(lastLoadedPage, callback);
+    Scroller(container, url).init();
 };
 
 {% if build.building %}
 stream_build_output($('#output'));
 {% else %}
     {% if forceTab == 'output' %}
-    build_logs_load($('#output'), {{ build.id }});
+    build_logs_load($('#output')[0], {{ build.id }});
     {% else %}
     stream_build_logs($('#logs'));
     {% endif %}
