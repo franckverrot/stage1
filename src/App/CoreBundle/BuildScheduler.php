@@ -43,6 +43,10 @@ class BuildScheduler
             $branch = new Branch();
             $branch->setProject($project);
             $branch->setName($ref);
+
+            $em->persist($branch);
+        } else {
+            $this->logger->info('branch found', ['project' => $project->getId(), 'branch' => $ref, 'id' => $branch->getId()]);
         }
 
         $build = new Build();
