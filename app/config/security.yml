@@ -30,4 +30,5 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/demo, roles: ROLE_DEMO }
+        - { path: ^/(build|project), roles: ROLE_USER }
         - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }

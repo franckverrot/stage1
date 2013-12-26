@@ -100,6 +100,7 @@ SSH
             $logger->error($message, [
                 'build' => $build->getId(),
                 'container' => $buildContainer->getId(),
+                'container_name' => $buildContainer->getName(),
                 'exit_code' => $exitCode,
                 'exit_code_label' => $exitCodeLabel,
             ]);

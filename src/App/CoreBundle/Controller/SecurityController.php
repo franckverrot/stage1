@@ -138,7 +138,15 @@ class SecurityController extends Controller
             $loginEvent = new InteractiveLoginEvent($request, $token);
             $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
 
-            return $this->redirect($this->generateUrl('app_core_homepage'));
+            if ($request->getSession()->has('_security.main.target_path')) {
+                $redirectUrl = $request->getSession()->get('_security.main.target_path');
+                $request->getSession()->remove('_security.main.target_path');
+            } else {
+                $redirectRoute = (count($user->getProjects()) == 0) ? 'app_core_projects_import' : 'app_core_homepage';
+                $redirectUrl = $this->generateUrl($redirectRoute);
+            }
+
+            return $this->redirect($redirectUrl);
         }
 
         $token = $this->get('form.csrf_provider')->generateCsrfToken('github');
