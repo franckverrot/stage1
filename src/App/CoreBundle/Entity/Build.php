@@ -52,6 +52,8 @@ class Build implements WebsocketRoutable
 
     private $containerId;
 
+    private $containerName;
+
     private $imageId;
 
     private $message;
@@ -493,6 +495,7 @@ class Build implements WebsocketRoutable
     {
         $this->container = $container;
         $this->setContainerId($container->getId());
+        $this->setContainerName($container->getName());
     }
 
     /**
@@ -933,5 +936,28 @@ class Build implements WebsocketRoutable
     public function getPid()
     {
         return $this->pid;
+    }
+
+    /**
+     * Set containerName
+     *
+     * @param string $containerName
+     * @return Build
+     */
+    public function setContainerName($containerName)
+    {
+        $this->containerName = $containerName;
+    
+        return $this;
+    }
+
+    /**
+     * Get containerName
+     *
+     * @return string 
+     */
+    public function getContainerName()
+    {
+        return $this->containerName;
     }
 }
