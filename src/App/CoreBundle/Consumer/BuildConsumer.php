@@ -144,7 +144,7 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus(Build::STATUS_RUNNING);
         } catch (\Docker\Http\Exception\ParseErrorException $e) {
-            $this->logger->error('build failed', [
+            $this->logger->error('build failed (response parse error)', [
                 'build' => $build->getId(),
                 'exception' => $e
             ]);

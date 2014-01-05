@@ -80,10 +80,10 @@ class SecurityController extends Controller
         }
 
         if (strlen($user->getEmail()) === 0) {
-            $request = $client->get('/user/emails');
-            $response = $request->send();
+            $githubRequest = $client->get('/user/emails');
+            $githubResponse = $githubRequest->send();
 
-            $result = $response->json();
+            $result = $githubResponse->json();
 
             foreach ($result as $email) {
                 if ($email['primary']) {
@@ -130,23 +130,23 @@ class SecurityController extends Controller
     public function authorizeAction(Request $request)
     {
         if ($this->container->getParameter('kernel.environment') === 'dev') {
-            $user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByUsername('ubermuda');
+            if (null !== ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByUsername('ubermuda'))) {
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.context')->setToken($token);
 
-            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-            $this->get('security.context')->setToken($token);
+                $loginEvent = new InteractiveLoginEvent($request, $token);
+                $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
 
-            $loginEvent = new InteractiveLoginEvent($request, $token);
-            $this->get('event_dispatcher')->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
+                if ($request->getSession()->has('_security.main.target_path')) {
+                    $redirectUrl = $request->getSession()->get('_security.main.target_path');
+                    $request->getSession()->remove('_security.main.target_path');
+                } else {
+                    $redirectRoute = (count($user->getProjects()) == 0) ? 'app_core_projects_import' : 'app_core_homepage';
+                    $redirectUrl = $this->generateUrl($redirectRoute);
+                }
 
-            if ($request->getSession()->has('_security.main.target_path')) {
-                $redirectUrl = $request->getSession()->get('_security.main.target_path');
-                $request->getSession()->remove('_security.main.target_path');
-            } else {
-                $redirectRoute = (count($user->getProjects()) == 0) ? 'app_core_projects_import' : 'app_core_homepage';
-                $redirectUrl = $this->generateUrl($redirectRoute);
+                return $this->redirect($redirectUrl);
             }
-
-            return $this->redirect($redirectUrl);
         }
 
         $token = $this->get('form.csrf_provider')->generateCsrfToken('github');
