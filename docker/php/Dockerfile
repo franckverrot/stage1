@@ -1,4 +1,4 @@
-FROM ubuntu:precise
+FROM ubuntu:quantal
 MAINTAINER Geoffrey Bachelet <geoffrey.bachelet@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -40,9 +40,8 @@ ADD ./support/ssh_config /root/.ssh/config
 RUN chmod -R 600 /root/.ssh; mkdir /var/run/sshd
 #####################################################
 
-RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
-
-ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
+# RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
+# ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 
 RUN apt-get update -y
 
@@ -51,7 +50,7 @@ RUN apt-get update -y
 # RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb
 # RUN dpkg --install libicu44_4.4.2-2_amd64.deb
 
-RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb; dpkg --install libicu44_4.4.2-2_amd64.deb
+# RUN curl -O http://launchpadlibrarian.net/59651391/libicu44_4.4.2-2_amd64.deb; dpkg --install libicu44_4.4.2-2_amd64.deb
 #####################################################
 
 # php5-sqlite is mainly for prestacms
