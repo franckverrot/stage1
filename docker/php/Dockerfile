@@ -1,4 +1,4 @@
-FROM ubuntu:quantal
+FROM stackbrew/ubuntu:saucy
 MAINTAINER Geoffrey Bachelet <geoffrey.bachelet@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -11,19 +11,20 @@ RUN echo "Acquire::http {No-Cache=True;};" > /etc/apt/apt.conf.d/no-cache
 # RUN dpkg-divert --local --rename --add /sbin/initctl
 # RUN ln -s /bin/true /sbin/initctl
 
-RUN dpkg-divert --local --rename --add /sbin/initctl; ln -s /bin/true /sbin/initctl
+# RUN dpkg-divert --local --rename --add /sbin/initctl; ln -s /bin/true /sbin/initctl
 #####################################################
 
 # trick to avoid df error messages
 RUN grep -v rootfs /proc/mounts > /etc/mtab
 
-ADD ./support/sources.list /etc/apt/sources.list
+# ADD ./support/sources.list /etc/apt/sources.list
 
 #####################################################
 # RUN apt-get update -y
 # RUN apt-get install -qy realpath vim curl git openssh-server vim
 
-RUN apt-get update -y; apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1 ca-certificates-java openjdk-7-jre-headless || true
+RUN apt-get update -y
+RUN apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1 ca-certificates-java openjdk-7-jre-headless || true
 #####################################################
 
 # ruby is needed to read yaml
@@ -43,7 +44,7 @@ RUN chmod -R 600 /root/.ssh; mkdir /var/run/sshd
 # RUN curl -sS http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 # ADD ./support/dotdeb.list /etc/apt/sources.list.d/dotdeb.list
 
-RUN apt-get update -y
+# RUN apt-get update -y
 
 #####################################################
 # needed for php5-intl
@@ -54,6 +55,7 @@ RUN apt-get update -y
 #####################################################
 
 # php5-sqlite is mainly for prestacms
+# php5-json is for composer
 # zip is mainly for puphpet
 
 RUN apt-get install -qy \
@@ -67,6 +69,7 @@ RUN apt-get install -qy \
     php5-curl \
     php5-gd \
     php5-sqlite \
+    php5-json \
     zip
 
 # needed to build phpupet correctly
