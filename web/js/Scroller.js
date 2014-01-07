@@ -14,7 +14,7 @@ var Scroller = function(container, url, options) {
     this.preLoading = true;
 
     this.init = function(page) {
-        this.loadPage(this.options.firstPage, function(data, scroller) {
+        this.loadPage(page || this.options.firstPage, function(data, scroller) {
             $(scroller.container).on('scroll', function(event) {
                 if (scroller.nextPage === null || scroller.loading) {
                     return;
@@ -42,7 +42,7 @@ var Scroller = function(container, url, options) {
 
             for (i = data.items.length; i > 0; i--) {
                 var fragment = data.items[i - 1];
-                $(scroller.container).prepend('<span data-fragment-id="' + fragment.fragment_id + '">' + ansi_up.ansi_to_html(fragment.message) + '<span>');
+                $(scroller.container).prepend('<span id="fragment-' + fragment.fragment_id + '">' + fragment.message + '</span>');
 
                 if (currentTopElement.length > 0 && !scroller.preLoading) {
                     scroller.container.scrollTop = currentTopElement.position().top;

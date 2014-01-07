@@ -21,7 +21,8 @@ parameters:
     redis_port:             6379
 
     # various parameters
-    build_logs_load_limit: 100
+    build_logs_load_limit: 500
+    build_logs_stream_limit: 1000
 
     # features switches
     feature_ip_access_list:     false

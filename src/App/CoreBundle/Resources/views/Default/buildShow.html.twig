@@ -2,16 +2,11 @@
 
 {% block javascripts %}
 <script type="text/javascript">
-window.build_logs_load = function(container, build_id) {
-    var url = build_logs_load_url.replace(/0/, build_id);
-    Scroller(container, url).init();
-};
-
 {% if build.building %}
 stream_build_output($('#output'));
 {% else %}
-    {% if forceTab == 'output' %}
-    build_logs_load($('#output')[0], {{ build.id }});
+    {% if forceTab == 'output' and streamLogs %}
+    Scroller($('#output')[0], build_logs_load_url.replace(/0/, {{ build.id }})).init();
     {% else %}
     stream_build_logs($('#logs'));
     {% endif %}
@@ -76,6 +71,7 @@ stream_build_output($('#output'));
 
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">
+        {% if streamLogs %}
         <div id="output-container">
             {% if build.building %}
             <div id="build-{{ build.id }}-progress" class="build-building-icon">
@@ -87,6 +83,12 @@ stream_build_output($('#output'));
             </div>
             <pre id="output"></pre>
         </div>
+        {% else %}
+        <p class="lead">This build has too much log and we cannot stream them efficiently.</p>
+
+        {% set download_url = path('app_core_build_logs_download', { id: build.id }) %}
+        <p>Fortunately, you can still <a href="{{ download_url }}">download the logs</a> (or <a href="{{ download_url }}?gzip=1">gzipped</a>).</p>
+        {% endif %}
     </div>
 
     <div class="tab-pane{% if forceTab == 'logs' %} active{% endif %}" id="build-logs">

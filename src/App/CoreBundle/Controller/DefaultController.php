@@ -42,9 +42,21 @@ class DefaultController extends Controller
             }
         }
 
+        $streamLogs = false;
+
+        if ($forceTab === 'output') {
+            $logsList = $build->getLogsList();
+            $logsLength = $this->get('app_core.redis')->llen($logsList);
+
+            if ($logsLength < $this->container->getParameter('build_logs_stream_limit')) {
+                $streamLogs = true;
+            }
+        }
+
         return $this->render('AppCoreBundle:Default:buildShow.html.twig', [
             'build' => $build,
             'forceTab' => $forceTab,
+            'streamLogs' => $streamLogs,
         ]);
     }
 

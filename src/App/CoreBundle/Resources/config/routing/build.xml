@@ -21,6 +21,10 @@
         <default key="_controller">AppCoreBundle:Build:logsLoad</default>
     </route>
 
+    <route id="app_core_build_logs_download" pattern="/build/{id}/logs/download" methods="GET">
+        <default key="_controller">AppCoreBundle:Build:logsDownload</default>
+    </route>
+
     <route id="app_core_build_logs" pattern="/build/{id}/logs" methods="GET">
         <default key="_controller">AppCoreBundle:Default:buildShow</default>
         <default key="forceTab">logs</default>
