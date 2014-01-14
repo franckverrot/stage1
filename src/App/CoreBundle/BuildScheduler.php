@@ -45,6 +45,7 @@ class BuildScheduler
             $branch->setName($ref);
 
             $em->persist($branch);
+            $em->flush();
         } else {
             $this->logger->info('branch found', ['project' => $project->getId(), 'branch' => $ref, 'id' => $branch->getId()]);
         }
