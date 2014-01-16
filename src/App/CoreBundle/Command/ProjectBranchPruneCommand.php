@@ -61,7 +61,7 @@ class ProjectBranchPruneCommand extends ContainerAwareCommand
             $response = $request->send();
             $existingBranches = array_map(function($branch) { return $branch['name']; }, $response->json());
 
-            foreach ($project->getBranches() as $branch) {
+            foreach ($project->getActiveBranches() as $branch) {
                 if (false === array_search($branch->getName(), $existingBranches)) {
                     $output->writeln('  - marking branch <info>'.$branch->getName().'</info> as deleted');
                     $branch->setDeleted(true);
