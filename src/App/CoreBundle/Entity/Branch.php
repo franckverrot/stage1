@@ -14,6 +14,8 @@ class Branch
 
     protected $updatedAt;
 
+    protected $deleted = false;
+
     protected $builds;
 
     /** not persisted **/
@@ -210,5 +212,28 @@ class Branch
     public function getBuilds()
     {
         return $this->builds;
+    }
+
+    /**
+     * Set deleted
+     *
+     * @param boolean $deleted
+     * @return Branch
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+    
+        return $this;
+    }
+
+    /**
+     * Get deleted
+     *
+     * @return boolean 
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
     }
 }

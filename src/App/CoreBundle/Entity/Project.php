@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Project
  */
@@ -624,6 +626,16 @@ class Project implements WebsocketRoutable
     public function removeBranch(\App\CoreBundle\Entity\Branch $branch)
     {
         return $this->removeBranche($branch);
+    }
+
+    /**
+     * Get branches not marked as deleted
+     * 
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActiveBranches()
+    {
+        return $this->getBranches()->filter(function($branch) { return !$branch->getDeleted(); });
     }
 
     /**

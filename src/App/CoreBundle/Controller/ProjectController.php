@@ -106,7 +106,7 @@ class ProjectController extends Controller
             ->findLastByRefs($project);
 
         foreach ($builds as $build) {     
-            foreach ($project->getBranches() as $branch) {
+            foreach ($project->getActiveBranches() as $branch) {
                 if ($branch->getName() == $build->getRef()) {
                     $branch->setLastBuild($build);
                 }

@@ -133,7 +133,9 @@ class DefaultController extends Controller
         $qb = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
 
         $builds = $qb
+            ->leftJoin('b.branch', 'br')
             ->where($qb->expr()->eq('b.project', ':project'))
+            ->andWhere('br.deleted = 0')
             ->orderBy('b.createdAt', 'DESC')
             ->setParameter(':project', $project->getId())
             ->getQuery()
