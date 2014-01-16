@@ -15,6 +15,7 @@ class ProjectBranchImportCommand extends ContainerAwareCommand
     {
         $this
             ->setName('project:branch:import')
+            ->setDescription('Imports a project branch from the git provider')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project\'s spec'),
             ]);
