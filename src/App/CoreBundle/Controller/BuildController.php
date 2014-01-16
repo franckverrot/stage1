@@ -33,7 +33,7 @@ class BuildController extends Controller
 
             $logs = array_map(function($log) {
                 $message = json_decode($log, true)['message'];
-                $message = preg_replace('/\[\d+m/', '', $message);
+                $message = preg_replace('/\[\d+(?:;\d+)?m/', '', $message);
 
                 return $message;
             }, $logs);
