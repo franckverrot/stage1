@@ -1,11 +1,7 @@
 stage1
 ======
 
-services
---------
+Crontab
+-------
 
-    bin/consumer start build
-    bin/consumer start kill
-
-    bin/websocketd --port=8888 bin/websocket/build-output
-    bin/websocketd --port=8889 bin/websocket/build
+`app/console stage1:build:check-timeout`: checks for timeouted build and sets their status to failed.
