@@ -14,7 +14,7 @@ class UserProjectDiscoverCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('user:project:discover')
+            ->setName('stage1:user:project:discover')
             ->setDescription('Discovers a user\'s projects')
             ->setDefinition([
                 new InputArgument('user_spec', InputArgument::REQUIRED, 'The user'),

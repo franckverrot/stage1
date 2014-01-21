@@ -12,7 +12,7 @@ class UserListCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('user:list')
+            ->setName('stage1:user:list')
             ->setDescription('Retrieves a list of users');
     }
 

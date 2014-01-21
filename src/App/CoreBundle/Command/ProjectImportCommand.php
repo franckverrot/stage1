@@ -14,7 +14,8 @@ class ProjectImportCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:import')
+            ->setName('stage1:project:import')
+            ->setDescription('Imports a project')
             ->setDefinition([
                 new InputArgument('project_full_name', InputArgument::REQUIRED, 'The project\'s full name'),
                 new InputArgument('user_spec', InputArgument::REQUIRED, 'The user spec'),

@@ -12,7 +12,8 @@ class BuildKillCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('build:kill')
+            ->setName('stage1:build:kill')
+            ->setDescription('Sends a build kill order')
             ->setDefinition([
                 new InputArgument('build_id', InputArgument::REQUIRED, 'The build id'),
             ]);

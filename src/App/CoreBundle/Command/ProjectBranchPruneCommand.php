@@ -13,7 +13,7 @@ class ProjectBranchPruneCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:branch:prune')
+            ->setName('stage1:project:branch:prune')
             ->setDescription('Prune deleted branches')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::OPTIONAL, 'The project spec'),

@@ -11,7 +11,7 @@ class WebsocketRoutingRebuildCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('websocket:routing:rebuild')
+            ->setName('stage1:websocket:routing:rebuild')
             ->setDescription('Rebuilds the websocket routing from scratch');
     }
 

@@ -15,7 +15,8 @@ class UserValidateCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('user:validate')
+            ->setName('stage1:user:validate')
+            ->setDescription('Validates an otherwise unvalidated user')
             ->setDefinition([
                 new InputArgument('user_spec', InputArgument::REQUIRED, 'The user'),
             ]);

@@ -13,7 +13,7 @@ class UserFixCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('user:fix')
+            ->setName('stage1:user:fix')
             ->setDescription('Fixes malformed User entities');
     }
 

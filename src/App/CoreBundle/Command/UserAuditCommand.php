@@ -15,7 +15,7 @@ class UserAuditCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('user:audit')
+            ->setName('stage1:user:audit')
             ->setDescription('Displays various information about a user')
             ->setDefinition([
                 new InputArgument('user_spec', InputArgument::REQUIRED, 'The user spec'),

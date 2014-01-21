@@ -17,7 +17,7 @@ class ProjectHoldCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:hold')
+            ->setName('stage1:project:hold')
             ->setDescription('Set a project on hold (disables builds)')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project\'s spec')

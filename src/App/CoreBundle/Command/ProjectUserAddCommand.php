@@ -15,7 +15,7 @@ class ProjectUserAddCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:user:add')
+            ->setName('stage1:project:user:add')
             ->setDescription('Adds an user to a project')
             ->setDefinition([
                 new InputArgument('project', InputArgument::REQUIRED, 'The project\'s id or slug'),

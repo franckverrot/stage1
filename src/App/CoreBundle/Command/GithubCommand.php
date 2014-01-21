@@ -14,7 +14,7 @@ class GithubCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('github')
+            ->setName('stage1:github')
             ->setDescription('Runs requests against the Github API')
             ->setDefinition([
                 new InputOption('user', 'u', InputOption::VALUE_REQUIRED, 'User to get an access token from'),

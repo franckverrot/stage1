@@ -17,7 +17,7 @@ class ProjectAuditCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:audit')
+            ->setName('stage1:project:audit')
             ->setDescription('Retrieves information about a project')
             ->setDefinition([
                 new InputArgument('project', InputArgument::REQUIRED, 'The project\'s id or slug')

@@ -11,7 +11,7 @@ class ProjectFixCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:fix')
+            ->setName('stage1:project:fix')
             ->setDescription('Fixes malformed Project entities');
     }
 

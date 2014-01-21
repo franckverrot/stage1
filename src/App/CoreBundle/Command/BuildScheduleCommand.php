@@ -17,7 +17,8 @@ class BuildScheduleCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('build:schedule')
+            ->setName('stage1:build:schedule')
+            ->setDescription('Schedules a build')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project'),
                 new InputArgument('ref', InputArgument::REQUIRED, 'The ref'),

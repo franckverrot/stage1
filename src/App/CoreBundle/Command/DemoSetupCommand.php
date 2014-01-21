@@ -17,7 +17,8 @@ class DemoSetupCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('demo:setup')
+            ->setName('stage1:demo:setup')
+            ->setDescription('Setups the demo')
             ->setDefinition([
                 new InputOption('reinstall', 'r', InputOption::VALUE_NONE)
             ]);

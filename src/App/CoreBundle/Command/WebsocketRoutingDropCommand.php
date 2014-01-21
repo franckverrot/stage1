@@ -12,7 +12,7 @@ class WebsocketRoutingDropCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('websocket:routing:drop')
+            ->setName('stage1:websocket:routing:drop')
             ->setDescription('Drops all websocket routing information')
             ->setDefinition([
                 new InputOption('force', 'f', InputOption::VALUE_NONE, 'Actually drop stuff'),

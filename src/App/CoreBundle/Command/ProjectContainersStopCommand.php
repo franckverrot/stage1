@@ -15,7 +15,8 @@ class ProjectContainersStopCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:containers:stop')
+            ->setName('stage1:project:containers:stop')
+            ->setDescription('Stops all containers for a project')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project\'s spec'),
             ]);

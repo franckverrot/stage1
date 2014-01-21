@@ -12,7 +12,7 @@ class ProjectListCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:list')
+            ->setName('stage1:project:list')
             ->setDescription('Retrieves a list of projects');
     }
 

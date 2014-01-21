@@ -15,7 +15,8 @@ class BuildPreviousCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('build:previous')
+            ->setName('stage1:build:previous')
+            ->setDescription('Finds a previous build for a specific build')
             ->setDefinition([
                 new InputArgument('build_id', InputArgument::REQUIRED, 'The build id'),
             ]);

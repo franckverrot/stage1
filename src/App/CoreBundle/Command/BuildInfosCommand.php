@@ -14,7 +14,7 @@ class BuildInfosCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('build:infos')
+            ->setName('stage1:build:infos')
             ->setDescription('Dumps build infos to be used by the build wrapper')
             ->setDefinition([
                 new InputArgument('build_id', InputArgument::REQUIRED, 'The build id'),

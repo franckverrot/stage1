@@ -17,7 +17,7 @@ class BuildDumpKeysCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('build:keys:dump')
+            ->setName('stage1:build:keys:dump')
             ->setDescription('Dumps keys to be used to a specific build')
             ->setDefinition([
                 new InputArgument('build_id', InputArgument::REQUIRED, 'The build id'),

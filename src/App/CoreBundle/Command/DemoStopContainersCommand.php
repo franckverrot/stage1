@@ -19,7 +19,8 @@ class DemoStopContainersCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('demo:stop-containers')
+            ->setName('stage1:demo:stop-containers')
+            ->setDescription('Stops all demo containers')
             ->setDefinition([
                 new InputOption('ttl', 't', InputOption::VALUE_REQUIRED, 'The ttl of containers', 0),
                 new InputOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run'),

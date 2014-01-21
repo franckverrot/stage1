@@ -17,7 +17,7 @@ class ProjectKeysInstallCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:keys:install')
+            ->setName('stage1:project:keys:install')
             ->setDescription('Install or reinstalls a project\'s keys')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project\'s spec'),

@@ -15,7 +15,7 @@ class ProjectBranchDedupCommand extends ContainerAwareCommand
     public function configure()
     {
         $this
-            ->setName('project:branch:dedup')
+            ->setName('stage1:project:branch:dedup')
             ->setDescription('Deduplicates projects branches')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::OPTIONAL, 'The project\'s spec', null),
