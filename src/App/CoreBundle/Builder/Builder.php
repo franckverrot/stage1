@@ -27,15 +27,27 @@ class Builder
      * @var Docker\Docker
      */
     private $docker;
+
+    /**
+     * @var boolean
+     */
+    private $dummyBuild = false;
+
+    /**
+     * @var integer
+     */
+    private $dummyBuildDuration = 10;
     
     /**
      * @param Psr\Log\LoggerInterface $logger
      * @param Docker\Docker $docker
      */
-    public function __construct(LoggerInterface $logger, Docker $docker)
+    public function __construct(LoggerInterface $logger, Docker $docker, $dummyBuild, $dummyBuildDuration)
     {
         $this->docker = $docker;
         $this->logger = $logger;
+        $this->dummyBuild = $dummyBuild;
+        $this->dummyBuildDuration = $dummyBuildDuration;
     }
 
     /**
@@ -47,6 +59,13 @@ class Builder
     {
         $logger = $this->logger;
         $docker = $this->docker;
+
+        if ($this->dummyBuild) {
+            $logger->info('dummy build, sleeping', ['duration' => $this->dummyBuildDuration]);
+            sleep($this->dummyBuildDuration);
+
+            return true;
+        }
 
         $logger->info('starting build', [
             'build' => $build->getId(),

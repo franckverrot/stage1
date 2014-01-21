@@ -137,10 +137,12 @@ class BuildConsumer implements ConsumerInterface
 
             $container = $this->builder->run($build, $this->timeout);
 
-            $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => $container->getId()]);
+            $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => ($container instanceof Container ? $container->getId() : '-')]);
 
-            $build->setContainer($container);
-            $build->setPort($container->getMappedPort(80)->getHostPort());
+            if ($container instanceof Container) {
+                $build->setContainer($container);
+                $build->setPort($container->getMappedPort(80)->getHostPort());                
+            }
 
             $build->setStatus(Build::STATUS_RUNNING);
         } catch (\Docker\Http\Exception\ParseErrorException $e) {
