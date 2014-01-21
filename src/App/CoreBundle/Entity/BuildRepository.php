@@ -10,6 +10,25 @@ use Doctrine\ORM\NoResultException;
 class BuildRepository extends EntityRepository
 {
     /**
+     * @param integer $ttl
+     * 
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function findTimeouted($ttl)
+    {
+        $query = 'SELECT b.* FROM build AS b WHERE TIME_TO_SEC(TIMEDIFF(NOW(), b.created_at)) >= ? AND b.status = ?';
+
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata('App\\CoreBundle\\Entity\\Build', 'b');
+        $query = $this->getEntityManager()->createNativeQuery($query, $rsm);
+
+        $query->setParameter(1, $ttl);
+        $query->setParameter(2, Build::STATUS_BUILDING);
+
+        return $query->execute();
+    }
+
+    /**
      * @param App\CoreBundle\Entity\User $user
      * 
      * @return Doctrine\Common\Collections\Collection
