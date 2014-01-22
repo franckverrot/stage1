@@ -50,6 +50,7 @@
         </one-to-many>
 
         <one-to-one field="demo" target-entity="App\CoreBundle\Entity\Demo" mapped-by="build" />
+        <one-to-one field="payload" target-entity="App\CoreBundle\Entity\GithubPayload" mapped-by="build" />
     </entity>
 
 </doctrine-mapping>

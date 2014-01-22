@@ -88,6 +88,11 @@ class Build implements WebsocketRoutable
 
     private $memoryUsage;
 
+    /**
+     * @var \App\CoreBundle\Entity\GithubPayload
+     */
+    private $payload;
+
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -959,5 +964,28 @@ class Build implements WebsocketRoutable
     public function getContainerName()
     {
         return $this->containerName;
+    }
+
+    /**
+     * Set payload
+     *
+     * @param \App\CoreBundle\Entity\GithubPayload $payload
+     * @return Build
+     */
+    public function setPayload(\App\CoreBundle\Entity\GithubPayload $payload = null)
+    {
+        $this->payload = $payload;
+    
+        return $this;
+    }
+
+    /**
+     * Get payload
+     *
+     * @return \App\CoreBundle\Entity\GithubPayload 
+     */
+    public function getPayload()
+    {
+        return $this->payload;
     }
 }

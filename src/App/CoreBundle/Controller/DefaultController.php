@@ -5,6 +5,7 @@ namespace App\CoreBundle\Controller;
 use App\CoreBundle\Entity\Branch;
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\GithubPayload;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -234,6 +235,13 @@ class DefaultController extends Controller
             $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
 
             $build = $scheduler->schedule($project, $ref, $hash);
+
+            $payload = new GithubPayload();
+            $payload->setPayload($request->getContent());
+            $payload->setBuild($build);
+
+            $em->persist($payload);
+            $em->flush();
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
