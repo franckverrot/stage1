@@ -32,30 +32,25 @@ stream_build_output($('#output'));
         <dl class="span4">
             <dt>Status</dt>
             <dd><span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
+        </dl>
+
+        <dl class="span4">
             <dt>Created</dt>
             <dd><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></dd>
         </dl>
 
         <dl class="span4">
             <dt>Ref.</dt>
-            <dd>{{ build.ref }}</dd>
-            <dt>Hash</dt>
             <dd>
+                {{ build.ref }}
+
                 {% if build.hash %}
-                <a href="https://github.com/{{ build.project.githubFullName }}/commit/{{ build.hash }}"><abbr title="{{ build.hash }}"><tt>{{ build.hash[0:8] }}</tt></abbr> <i class="icon-github"></i></a>
-                {% else %}
-                <abbr title="Not available">N/A</abbr>
+                (<a href="https://github.com/{{ build.project.githubFullName }}/commit/{{ build.hash }}">
+                    <abbr title="{{ build.hash }}">{{ build.hash[0:8] }}</abbr>&nbsp;
+                    <i class="icon-github"></i>
+                </a>)
                 {% endif %}
             </dd>
-        </dl>
-
-        <dl class="span4">
-            <dt>Initiator</dt>
-            <dd>{% if build.initiator %}{{ build.initiator.username }}{% else %}<abbr title="Not available">N/A</abbr>{% endif %}</dd>
-            {% if build.exitCode %}
-            <dt>Exit code</dt>
-            <dd><abbr title="{{ build.exitCodeText }}">{{ build.exitCode }}</abbr></dd>
-            {% endif %}
         </dl>
     </div>
 </fieldset>
