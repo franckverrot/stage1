@@ -73,3 +73,5 @@ else
 
     $BUILDER/bin/build
 fi
+
+stage1_build_common

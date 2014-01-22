@@ -15,6 +15,10 @@ stage1_get_config_key() {
     test -f "$1" && ruby -r yaml -e "puts YAML.load_file('$1')['$2'] rescue NoMethodError"
 }
 
+stage1_get_config_writable() {
+    stage1_get_config_key $STAGE1_CONFIG_PATH "writable"
+}
+
 stage1_get_config_build() {
     stage1_get_config_key $STAGE1_CONFIG_PATH "build"
 }
