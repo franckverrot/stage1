@@ -27,9 +27,6 @@ TODO PRIVATE BETA
 * projects
     * support dependencies in a gitlab instance
     * update project access when an user joins the project
-    * import: show "go to project" link in lieu of import ok button
-* github hook
-    * log requests (there has been a strange request on a non-existant branch in c2is/seh)
 * logs
     * application logs
 
@@ -47,9 +44,7 @@ TODO
 
 * Commands
     * project:audit
-        * is the deploy key configured?
         * is the webhook configured?
-    * project:import
     * commands to empty redis
 
 * REST API / webhooks
@@ -78,7 +73,6 @@ TODO
     * log trigger source (manual / push)
     * before build: check that the app is actually buildable (eg: there is a composer.json)
     * before starting a build, check that the required docker image is present
-    * need a way to update buildapp in runtime without re building the whole image
     * rewrite the build system, with extensibility in mind
         * build steps could be infered at import time (or pre-build time)
         * a build file could be generated with said steps
@@ -86,20 +80,20 @@ TODO
         * if a step fails, the builder fails
         * also, if a specific step fail, we know what it exactly is, so we can try and guess why it did fail and
           tell the user steps to take to fix it (or maybe fix it automatically, I'm looking at you, missing deploy key)
-    * checkbox "go to this build when it's finished"
+    * checkbox "go to this build when it's finished" (?)
     * container ports should be bound on local private IPs instead of stage1.io public IP
     * alerts
         * push notif
         * mail
         * webhooks
-    * support Procfiles
+    * support Procfiles (?)
 
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
     * allow per-project docker image selection
         This should not be in the UI, it's an admin (as in, me) only feature for now
         This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
-    * access
+    * access (?)
         * implement "one-time-access-granting" URLs
         * implement "one-time" passwords
         * implement auto-expiring accesses
