@@ -640,7 +640,11 @@ class Build implements WebsocketRoutable
      */
     public function getUrl()
     {
-        return sprintf('http://%s/', $this->getHost());
+        if ($this->isRunning() && strlen($this->getHost()) > 0) {
+            return sprintf('http://%s/', $this->getHost());
+        }
+
+        return null;
     }
 
     /**
