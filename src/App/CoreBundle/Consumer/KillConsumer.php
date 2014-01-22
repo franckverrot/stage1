@@ -96,6 +96,18 @@ class KillConsumer implements ConsumerInterface
 
         if (!$terminated) {
             $logger->info('sending SIGKILL', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+
+            if (null === $container = $build->getContainer()) {
+                $logger->warn('could not find a container');
+            } else {
+                $logger->info('trying to stop container before SIGKILL', [
+                    'build' => $build->getId(),
+                    'container' => $container->getId()
+                ]);
+                
+                $this->docker->getContainerManager()->stop($container);
+            }
+
             posix_kill($build->getPid(), SIGKILL);
         }
 

@@ -7,6 +7,7 @@ use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
 
 use Symfony\Component\Process\Process;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Docker\Docker;
 use Docker\Context\Context;
@@ -43,10 +44,11 @@ class Builder
      * @param Psr\Log\LoggerInterface $logger
      * @param Docker\Docker $docker
      */
-    public function __construct(LoggerInterface $logger, Docker $docker, $dummyBuild, $dummyBuildDuration)
+    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine, $dummyBuild, $dummyBuildDuration)
     {
         $this->docker = $docker;
         $this->logger = $logger;
+        $this->doctrine = $doctrine;
         $this->dummyBuild = $dummyBuild;
         $this->dummyBuildDuration = $dummyBuildDuration;
     }
@@ -60,6 +62,7 @@ class Builder
     {
         $logger = $this->logger;
         $docker = $this->docker;
+        $em = $this->doctrine->getManager();
 
         if ($this->dummyBuild) {
             $logger->info('dummy build, sleeping', ['duration' => $this->dummyBuildDuration]);
@@ -112,11 +115,16 @@ SSH
             'timeout' => $timeout,
         ]);
 
-        $manager->run($buildContainer);
-        $manager->wait($buildContainer, $timeout);
+        $manager->create($buildContainer);
 
         $build->setContainer($buildContainer);
+
+        $em->persist($build);
+        $em->flush();
         
+        $manager->start($buildContainer);
+        $manager->wait($buildContainer, $timeout);
+
         if ($buildContainer->getExitCode() !== 0) {
             $exitCode = $buildContainer->getExitCode();
             $exitCodeLabel = Process::$exitCodes[$exitCode];

@@ -63,6 +63,7 @@
         <service id="app_core.builder" class="App\CoreBundle\Builder\Builder">
             <argument type="service" id="logger" />
             <argument type="service" id="app_core.docker" />
+            <argument type="service" id="doctrine" />
             <argument>%stage1_dummy_build%</argument>
             <argument>%stage1_dummy_build_duration%</argument>
             <tag name="monolog.logger" channel="build" />

@@ -26,9 +26,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Exception;
 
 
-// needed for signal handling
-declare(ticks = 1);
-
 class BuildConsumer implements ConsumerInterface
 {
     private $logger;
@@ -53,9 +50,12 @@ class BuildConsumer implements ConsumerInterface
         $this->builder = $builder;
         $this->docker = $docker;
 
+        // needed for signal handling
+        declare(ticks = 1);
+
         pcntl_signal(SIGTERM, [$this, 'terminate']);
 
-        $logger->info('initialized '.__CLASS__);
+        $logger->info('initialized '.__CLASS__, ['pid' => posix_getpid()]);
     }
 
     public function setTimeout($timeout)
@@ -67,7 +67,7 @@ class BuildConsumer implements ConsumerInterface
 
     public function terminate($signo)
     {
-        $this->logger->info('received signal', ['signo' => $signo]);
+        $this->logger->info('received signal', ['signo' => $signo, 'pid' => posix_getpid()]);
 
         if (null !== $this->build) {
             $build = $this->build;
@@ -128,6 +128,8 @@ class BuildConsumer implements ConsumerInterface
 
         $build->setStatus(Build::STATUS_BUILDING);
         $build->setPid(posix_getpid());
+
+        $this->logger->info('starting build', ['pid' => $build->getPid()]);
 
         $em->persist($build);
         $em->flush();
