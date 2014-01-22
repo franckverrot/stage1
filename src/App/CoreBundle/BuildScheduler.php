@@ -5,6 +5,7 @@ namespace App\CoreBundle;
 use App\CoreBundle\Entity\Branch;
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\User;
 use App\CoreBundle\Message\MessageFactory;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Psr\Log\LoggerInterface;
@@ -29,7 +30,7 @@ class BuildScheduler
         $this->messageFactory = $messageFactory;
     }
 
-    public function schedule(Project $project, $ref, $hash)
+    public function schedule(Project $project, $ref, $hash, User $initiator = null)
     {
         $em = $this->doctrine->getManager();
 
@@ -55,6 +56,10 @@ class BuildScheduler
         $build->setStatus(Build::STATUS_SCHEDULED);
         $build->setRef($ref);
         $build->setHash($hash);
+
+        if (null !== $initiator) {
+            $build->setInitiator($initiator);
+        }
 
         $em->persist($build);
         $em->flush();

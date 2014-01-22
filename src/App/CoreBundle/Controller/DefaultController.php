@@ -165,7 +165,7 @@ class DefaultController extends Controller
             $ref = $request->request->get('ref');
             $hash = $this->getHashFromRef($project, $ref);
 
-            $build = $scheduler->schedule($project, $ref, $hash);
+            $build = $scheduler->schedule($project, $ref, $hash, $this->getUser());
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
@@ -230,6 +230,8 @@ class DefaultController extends Controller
 
             $ref = substr($payload->ref, 11);
             $hash = $payload->after;
+
+            $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
 
             $build = $scheduler->schedule($project, $ref, $hash);
 

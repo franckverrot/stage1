@@ -16,4 +16,9 @@ class UserRepository extends EntityRepository
 
         return $this->findOneByUsername($spec);
     }
+
+    public function findOneByGithubUsername($username)
+    {
+        return $this->findOneByUsername($username);
+    }
 }
