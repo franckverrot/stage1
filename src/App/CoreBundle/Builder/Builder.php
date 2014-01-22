@@ -9,6 +9,7 @@ use App\CoreBundle\Docker\BuildContainer;
 use Symfony\Component\Process\Process;
 
 use Docker\Docker;
+use Docker\Context\Context;
 use Docker\Context\ContextBuilder;
 use Docker\PortCollection;
 
@@ -82,6 +83,7 @@ class Builder
         //       that's one lest step during the build
         // @todo also, move that to a BuildContext
         $builder = new ContextBuilder();
+        $builder->setFormat(Context::FORMAT_TAR);
         $builder->from($build->getBaseImageName());
         $builder->add('/etc/environment', $env);
         $builder->add('/root/.ssh/id_rsa', $build->getProject()->getPrivateKey());
@@ -98,7 +100,7 @@ SSH
         $builder->run('chown -R root:root /root/.ssh');
 
         $logger->info('building base build container', ['build' => $build->getId()]);
-        $docker->build($builder->getContext(), $build->getImageName());
+        $docker->build($builder->getContext(), $build->getImageName(), false, true, true);
 
         $buildContainer = new BuildContainer($build);
         $buildContainer->addEnv($build->getProject()->getContainerEnv());
