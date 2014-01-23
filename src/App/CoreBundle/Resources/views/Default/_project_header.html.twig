@@ -5,9 +5,12 @@
     <li{% if app.request.attributes.get('_route') == 'app_core_project_builds' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_builds', { id: project.id }) }}">Builds</a>
     </li>
+    
+    {% if project.getGithubPrivate %}
     <li{% if app.request.attributes.get('_route') == 'app_core_project_access' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_access', { id: project.id }) }}">Access</a>
     </li>
+    {% endif %}
 
     <li class="pull-right{% if app.request.attributes.get('_route') == 'app_core_project_admin' %} active{% endif %}">
         <a href="{{ path('app_core_project_admin', { id: project.id }) }}">Admin</a>

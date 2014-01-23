@@ -310,6 +310,11 @@ class Import
             return;
         }
 
+        if (!$project->getGithubPrivate()) {
+            # public projects don't have access management
+            return;
+        }
+
         # this is one special ip that cannot be revoked
         # it is used to keep the access list "existing"
         # thus activating auth on the staging areas

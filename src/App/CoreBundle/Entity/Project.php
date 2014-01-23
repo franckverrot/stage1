@@ -81,6 +81,14 @@ class Project implements WebsocketRoutable
      */
     protected $githubUrl;
 
+    /**
+     * @return string
+     */
+    public function getAccessList()
+    {
+        return 'auth:'.$this->getSlug();
+    }
+
     public function getGitUrl()
     {
         if ($this->getGithubPrivate()) {

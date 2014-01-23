@@ -265,6 +265,11 @@ class ProjectController extends Controller
         $this->setCurrentProjectId($id);
 
         $project = $this->findProject($id);
+
+        if (!$project->getGithubPrivate()) {
+            return $this->redirect($this->generateUrl('app_core_project_branches', ['id' => $project->getId()]));
+        }
+
         $accessList = $this->getProjectAccessList($project);
 
         return $this->render('AppCoreBundle:Project:access.html.twig', [
