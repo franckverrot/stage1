@@ -4,6 +4,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
+    <route id="app_admin_build_payload" pattern="/build/{id}/payload">
+        <default key="_controller">AppAdminBundle:Build:payload</default>
+    </route>
+
     <route id="app_admin_beta_email_send" pattern="/beta/{id}/email" methods="POST">
         <default key="_controller">AppAdminBundle:Beta:emailSend</default>
     </route>

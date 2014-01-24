@@ -68,6 +68,7 @@
             <th>Ref.</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Payload</th>
         </tr>
     </thead>
     <tbody>
@@ -78,6 +79,11 @@
             <td>{{ build.ref }}</td>
             <td><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></td>
             <td><span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></td>
+            <td>
+                {% if build.payload %}
+                <a href="{{ path('app_admin_build_payload', { id: build.id }) }}">payload</a>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

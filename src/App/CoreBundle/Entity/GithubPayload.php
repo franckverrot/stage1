@@ -34,6 +34,11 @@ class GithubPayload
      */
     private $build;
 
+    public function pretty()
+    {
+        return json_encode(json_decode($this->payload), JSON_PRETTY_PRINT);
+    }
+
 
     /**
      * Set payload

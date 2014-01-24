@@ -1,0 +1,14 @@
+{% extends '::admin.html.twig' %}
+
+{% block body %}
+
+<ul class="lead breadcrumb">
+    <li><a href="{{ path('app_admin_dashboard') }}">Admin</a> <span class="divider">/</span></li>
+    <li>{{ build.project.fullName }} <span class="divider">/</span></li>
+    <li>{{ build.ref }} <span class="divider">/</span></li>
+    <li>#{{ build.id }} <span class="divider">/</span></li>
+    <li>Payload</li>
+</ul>
+
+<pre>{{ build.payload.pretty }}</pre>
+{% endblock %}

@@ -10,4 +10,11 @@ class BuildController extends Controller
 
         return $this->render('AppAdminBundle:Build:output.html.twig', ['build' => $build]);
     }
+
+    public function payloadAction($id)
+    {
+        $build = $this->findBuild($id);
+
+        return $this->render('AppAdminBundle:Build:payload.html.twig', ['build' => $build]);
+    }
 }
