@@ -216,8 +216,25 @@ class DefaultController extends Controller
         try {
             $payload = json_decode($request->getContent());
 
+            $ref = substr($payload->ref, 11);
+            $hash = $payload->after;
+
             $em = $this->getDoctrine()->getManager();
+
             $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
+
+            if ($hash === '0000000000000000000000000000000000000000') {
+                $branch = $em
+                    ->getRepository('AppCoreBundle:Branch')
+                    ->findOneByProjectAndName($project, $ref);
+
+                $branch->setDeleted(true);
+
+                $em->persist($branch);
+                $em->flush();
+
+                return new JsonResponse(json_encode(null), 200);
+            }
 
             if (!$project) {
                 throw $this->createNotFoundException('Unknown Github project');
@@ -228,9 +245,6 @@ class DefaultController extends Controller
             }
 
             $scheduler = $this->get('app_core.build_scheduler');
-
-            $ref = substr($payload->ref, 11);
-            $hash = $payload->after;
 
             $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
 
