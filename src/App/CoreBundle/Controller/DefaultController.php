@@ -43,6 +43,11 @@ class DefaultController extends Controller
             }
         }
 
+        /**
+         * @todo application logs do not work yet, so we just force every request to display the build output
+         */
+        $forceTab = 'output';
+
         $streamLogs = false;
 
         if ($forceTab === 'output') {

@@ -55,6 +55,7 @@ stream_build_output($('#output'));
     </div>
 </fieldset>
 
+{#
 <ul class="nav nav-pills">
     <li{% if forceTab == 'output' %} class="active"{% endif %}>
         <a href="{{ path('app_core_build_output', { id: build.id }) }}">Build output</a>
@@ -63,6 +64,7 @@ stream_build_output($('#output'));
         <a href="{{ path('app_core_build_logs', { id: build.id }) }}">Application logs</a>
     </li>
 </ul>
+#}
 
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">
