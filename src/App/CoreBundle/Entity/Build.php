@@ -26,6 +26,8 @@ class Build implements WebsocketRoutable
 
     const STATUS_STOPPED = 9;
 
+    const STATUS_TIMEOUT = 10;
+
     const LOG_OUTPUT = 'output';
 
     const LOG_APPLICATION = 'application';
@@ -245,6 +247,7 @@ class Build implements WebsocketRoutable
             case self::STATUS_RUNNING:
                 return 'success';
             case self::STATUS_FAILED:
+            case self::STATUS_TIMEOUT:
                 return 'important';
             case self::STATUS_KILLED:
                 return 'warning';
@@ -274,6 +277,8 @@ class Build implements WebsocketRoutable
                 return 'obsolete';
             case self::STATUS_STOPPED:
                 return 'stopped';
+            case self::STATUS_TIMEOUT:
+                return 'timeout';
             default:
                 return 'unknown';
         }
