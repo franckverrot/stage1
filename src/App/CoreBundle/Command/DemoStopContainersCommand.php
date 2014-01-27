@@ -23,7 +23,7 @@ class DemoStopContainersCommand extends ContainerAwareCommand
             ->setDescription('Stops all demo containers')
             ->setDefinition([
                 new InputOption('ttl', 't', InputOption::VALUE_REQUIRED, 'The ttl of containers', 0),
-                new InputOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run'),
+                new InputOption('force', null, InputOption::VALUE_NONE, 'Use the force'),
             ]);
     }
 
@@ -51,28 +51,38 @@ class DemoStopContainersCommand extends ContainerAwareCommand
             ->getQuery()
             ->execute();
 
-        $client = $this->getContainer()->get('app_core.client.docker');
+        $docker = $this->getContainer()->get('app_core.docker');
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $dryRun = $input->getOption('dry-run');
+        $force = $input->getOption('force');
 
         foreach ($builds as $build) {
-            if ($dryRun) {
-                $output->writeln('would stop container <info>'.$build->getContainerId().'</info>');
-            } else {
-                $request = $client->post(['/containers/{id}/stop', ['id' => $build->getContainerId()]]);
-                $response = $request->send();
+            $output->writeln('stopping container <info>'.substr($build->getContainerId(), 0, 8).'</info>');
 
-                if ($response->getStatusCode() !== 204) {
-                    $output->writeln('error stopping container <info>'.$build->getContainerId().'</info>');
-                    $output->writeln(json_encode($response->json(), JSON_PRETTY_PRINT));
-                }
+            if (!$force) {
+                continue;
+            }
+
+            try {
+                $container = $build->getContainer();
+
+                $docker->getContainerManager()
+                    ->stop($container)
+                    ->remove($container);
 
                 $build->setStatus(Build::STATUS_STOPPED);
-                $em->persist($build);                
+                $em->persist($build);
+            } catch (\Exception $e) {
+                $output->writeln('  <error>could not stop container</error>');
+                $output->writeln(sprintf('  [%s] %s', get_class($e), $e->getMessage()));
             }
+
         }
 
-        $em->flush();
+        if ($force) {
+            $em->flush();
+        } else {
+            $output->writeln('<error>Use the --force.</error>');
+        }
     }
 }
