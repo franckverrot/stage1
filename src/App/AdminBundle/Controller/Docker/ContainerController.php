@@ -6,29 +6,21 @@ use App\AdminBundle\Controller\Controller;
 
 class ContainerController extends Controller
 {
-    private function getClient()
-    {
-        return $this->container->get('app_core.client.docker');
-    }
-
-    private function fetch($urlspec)
-    {
-        return $this->getClient()->get($urlspec)->send()->json();
-    }
-
     public function indexAction()
     {
+        $docker = $this->get('app_core.docker');
+
         return $this->render('AppAdminBundle:Docker/Container:index.html.twig', [
-            'containers' => $this->fetch('/containers/json'),
+            'containers' => $docker->getContainerManager()->findAll(),
         ]);
     }
 
     public function stopAction($id)
     {
-        $client = $this->getClient();
+        $docker = $this->get('app_core.docker');
+        $container = $docker->find($id);
 
-        $request = $client->post(['/containers/{id}/stop', ['id' => $id]]);
-        $request->send();
+        $docker->getContainerManager()->stop($container);
 
         $this->addFlash('success', 'The container has been stopped');
 
@@ -37,8 +29,10 @@ class ContainerController extends Controller
 
     public function inspectAction($id)
     {
+        $docker = $this->get('app_core.docker');
+
         return $this->render('AppAdminBundle:Docker/Container:inspect.html.twig', [
-            'container' => $this->fetch(['/containers/{id}/json', ['id' => $id]]),
+            'container' => $docker->find($id),
         ]);
     }
 
