@@ -167,6 +167,7 @@ class BuildConsumer implements ConsumerInterface
                 'exception' => $e,
                 'trace' => $e->getTraceAsString(),
             ]);
+            
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());
         }
@@ -178,7 +179,12 @@ class BuildConsumer implements ConsumerInterface
         try {
             $this->dispatcher->dispatch(BuildEvents::FINISHED, new BuildFinishedEvent($build));            
         } catch (Exception $e) {
-            $this->logger->error('build.finished listeners failed', ['build' => $build->getId(), 'exception' => $e]);
+            $this->logger->error('build.finished listeners failed', [
+                'build' => $build->getId(),
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());            
         }

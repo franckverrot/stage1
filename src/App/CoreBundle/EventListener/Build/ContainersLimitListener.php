@@ -6,7 +6,7 @@ use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Event\BuildFinishedEvent;
 
 use Docker\Docker;
-use Docker\Exception\ContainerNotFoundException;
+use Docker\Exception\UnexpectedStatusCodeException;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -101,8 +101,12 @@ class ContainersLimitListener
                 $manager
                     ->stop($container)
                     ->remove($container);
-            } catch (ContainerNotFoundException $e) {
-                $this->logger->warn('container not found', ['container' => $container->getId()]);
+            } catch (UnexpectedStatusCodeException $e) {
+                $this->logger->warn('could not stop excess container', [
+                    'build' => $build->getId(),
+                    'excess_build' => $excessBuild->getId(),
+                    'excess_container' => $container->getId()
+                ]);
             }
         }
     }
