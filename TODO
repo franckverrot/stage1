@@ -200,6 +200,8 @@ IDEES DE OUF
 * stage1 enregistre les actions des clients (clic la, clic la, tape ca, clic la)
     * faire gaffe aux infos sensibles (numeros de CB, telephone)
 * multiplexage de la session (tu vois ce que le client fait en live)
+    * possibilite de discuter avec lui via un chat integre
 * feature de "touring" sur la preprod
+* possibilite de setup des surveys pour poser des questions aux users
 * integration avec mailcatcher
 * integration avec gor (https://github.com/buger/gor)
