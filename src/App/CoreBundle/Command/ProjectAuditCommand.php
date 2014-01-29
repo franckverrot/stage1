@@ -33,6 +33,7 @@ class ProjectAuditCommand extends ContainerAwareCommand
         $project = $this->findProject($input->getArgument('project'));
 
         $infos['name'] = $project->getFullName();
+        $infos['github_id'] = $project->getGithubId();
         $infos['private'] = $project->getGithubPrivate();
         $infos['users'] = $project->getUsers()->map(function($user) { return $user->getUsername(); })->toArray();
         $infos['branches'] = $project->getBranches()->map(function($branch) { return $branch->getName(); })->toArray();
