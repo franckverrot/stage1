@@ -74,7 +74,8 @@ class Builder
         $logger->info('starting build', [
             'build' => $build->getId(),
             'project' => $build->getProject()->getGithubFullName(),
-            'branch' => $build->getRef(),
+            'project_id' => $build->getProject()->getId(),
+            'ref' => $build->getRef(),
             'timeout' => $timeout
         ]);
 
