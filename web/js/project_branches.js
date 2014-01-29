@@ -1,7 +1,7 @@
 (function($, window) {
     var branches = $('#branches');
 
-    $('#branches').on('click', '.branch button', function() {
+    $('#branches').on('click', '.branch button', function(event) {
         $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
 
         var inputs = $(this).parent().find('input:hidden');
@@ -10,6 +10,8 @@
         inputs.each(function(index, item) {
             data[item.name] = item.value;
         });
+
+        event.preventDefault();
 
         $.ajax({
             url: $(this).parent().attr('action'),
