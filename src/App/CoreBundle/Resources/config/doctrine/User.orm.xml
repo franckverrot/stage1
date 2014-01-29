@@ -19,6 +19,10 @@
         <!-- @todo remove nullable once all users have been migrated -->
         <field name="channel" type="string" length="255" nullable="true" />
 
-        <many-to-many field="projects" target-entity="App\CoreBundle\Entity\Project" mapped-by="users" />
+        <many-to-many field="projects" target-entity="App\CoreBundle\Entity\Project" mapped-by="users">
+            <order-by>
+                <order-by-field name="githubFullName" direction="ASC" />
+            </order-by>
+        </many-to-many>
     </entity>
 </doctrine-mapping>
