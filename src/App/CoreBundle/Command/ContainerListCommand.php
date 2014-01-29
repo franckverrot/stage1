@@ -22,6 +22,7 @@ class ContainerListCommand extends ContainerAwareCommand
                 new InputOption('username', 'u', InputOption::VALUE_REQUIRED, 'Filter by username'),
                 new InputOption('build_status', 'b', InputOption::VALUE_REQUIRED, 'Filter by build status'),
                 new InputOption('sort', null, InputOption::VALUE_REQUIRED, 'Sort results'),
+                new InputOption('container', 'c', InputOption::VALUE_NONE, 'Only display container id'),
             ]);
     }
 
@@ -32,7 +33,6 @@ class ContainerListCommand extends ContainerAwareCommand
         $containers = $docker->getContainerManager()->findAll();
 
         if (count($containers) === 0) {
-            $output->writeln('<error>No containers found.<error>');
             return;
         }
 
@@ -66,6 +66,8 @@ class ContainerListCommand extends ContainerAwareCommand
         $usernameFilter = $input->getOption('username');
         $buildStatusFilter = $input->getOption('build_status');
 
+        $onlyContainer = $input->getOption('container');
+
         $rows = [];
 
         foreach ($containers as $container) {
@@ -95,7 +97,7 @@ class ContainerListCommand extends ContainerAwareCommand
             $rows[] = [
                 $build->getId(),
                 $container->getImage()->getName(),
-                substr($container->getId(), 0, 8),
+                (!$onlyContainer && posix_isatty(STDOUT)) ? substr($container->getId(), 0, 8) : $container->getId(),
                 $projectName,
                 $build->getBranch()->getName(),
                 $username,
@@ -117,17 +119,29 @@ class ContainerListCommand extends ContainerAwareCommand
         }
 
         if (count($rows) === 0) {
-            $output->writeln('<error>No containers found.<error>');
             return;
         }
 
-        $table = $this->getHelperSet()->get('table');
+        if ($onlyContainer) {
+            foreach ($rows as $row) {
+                $output->writeln($row[2]);
+            }
 
-        $table->setHeaders(array_values($headers));
-        $table->setRows($rows);
-        $table->render($output);
+            return;
+        }
 
-        $output->writeln('');
-        $output->writeln('Found <info>'.count($rows).'</info> running containers');            
+        if (posix_isatty(STDOUT)) {
+            $table = $this->getHelperSet()->get('table');
+            $table->setHeaders(array_values($headers));
+            $table->setRows($rows);
+            $table->render($output);
+
+            $output->writeln('');
+            $output->writeln('Found <info>'.count($rows).'</info> running containers');                        
+        } else {
+            foreach ($rows as $row) {
+                $output->writeln(implode(',', $row));
+            }
+        }
     }
 }
