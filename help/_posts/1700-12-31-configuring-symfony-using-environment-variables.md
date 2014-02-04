@@ -16,4 +16,4 @@ And you're all set!
 > See the [setup custom environment variables in my containers]({% post_url 2000-12-26-setup-custom-environment-variables-in-my-containers %}/) help page to learn how to setup environment variables in your Stage1 projects.
 {:.note}
 
-Note that if you use [Incentive/ParameterHandler](https://github.com/Incenteev/ParameterHandler) to [manage your `parameters.yml` using environment variables](https://github.com/Incenteev/ParameterHandler#using-environment-variables-to-set-the-parameters), this will work just fine too.
+Note that if you use [Incenteev/ParameterHandler](https://github.com/Incenteev/ParameterHandler) to [manage your `parameters.yml` using environment variables](https://github.com/Incenteev/ParameterHandler#using-environment-variables-to-set-the-parameters), this will work just fine too.
