@@ -5,12 +5,13 @@
 
 $script = <<EOF
 cd /vagrant
+composer self-update
 composer install
 /vagrant/app/console doctrine:database:drop --force
 /vagrant/app/console doctrine:database:create
 /vagrant/app/console doctrine:schema:update --force
 /vagrant/app/console assetic:dump
-/vagrant/app/console demo:setup
+/vagrant/app/console stage1:demo:setup
 bundle install
 fab upstart_export
 sudo restart stage1
