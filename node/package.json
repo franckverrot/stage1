@@ -4,13 +4,11 @@
   "author": "Geoffrey Bachelet <geoffrey@stage1.io>",
   "description": "stage1.io's node subsystem",
   "dependencies": {
-    "amqplib": "0.0.2",
+    "aldis": "0.0.1",
     "primus": "~1.2.0",
     "ws": "~0.4.29",
     "redis": "~0.8.4",
     "colors": "~0.6.2",
-    "dockerode": "~0.1.3",
-    "node-getopt": "~0.2.3",
     "amqp": "~0.1.8"
   }
 }
