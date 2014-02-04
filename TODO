@@ -36,6 +36,15 @@ SCALING
 * feature switches for (almost) everything
 * read-only mode
 
+THIRD PARTY INTEGRATION
+=======================
+
+* https://github.com/marmelab/gaudi
+* http://wercker.com/
+* github deployment API
+* Gitlab
+* Bitbucket
+
 TODO
 ====
 
