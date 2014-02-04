@@ -34,7 +34,7 @@ RUN apt-get install -qy realpath vim curl git openssh-server vim ruby1.9.1 ca-ce
 # RUN gem install --no-ri --no-rdoc foreman
 
 ADD ./support/authorized_keys /root/.ssh/authorized_keys
-ADD ./support/ssh_config /root/.ssh/config
+ADD ./support/ssh_config /etc/ssh/ssh_config
 
 #####################################################
 # RUN chmod -R 600 /root/.ssh
