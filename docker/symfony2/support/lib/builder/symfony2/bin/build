@@ -13,6 +13,8 @@ if grep buildParameters composer.json > /dev/null; then
 elif [ -f app/config/parameters.yml.dist ]; then
     stage1_announce "using bundled parameters.yml.dist"
     stage1_exec "cp app/config/parameters.yml.dist app/config/parameters.yml"
+elif [ -f app/config/parameters.yml ]; then
+    stage1_announce "using project's parameters.yml"
 else
     stage1_announce "using default parameters.yml"
     stage1_exec "cp /etc/symfony/parameters.yml.dist app/config/parameters.yml"
