@@ -46,9 +46,9 @@ class ContainerListCommand extends ContainerAwareCommand
             'project' => 'Project',
             'branch' => 'Branch',
             'user' => 'User',
-            'build_status' => 'Build Status',
-            'container_status' => 'Cont. Status',
-            'ssh_port' => 'Ssh Port',
+            'build-status' => 'Build Status',
+            'container-status' => 'Cont. Status',
+            'ssh-port' => 'Ssh Port',
         ];
 
         if ((null !== $sort = $input->getOption('sort')) && !array_key_exists($sort, $headers)) {
