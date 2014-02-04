@@ -40,7 +40,7 @@ class BuildController extends Controller
 
             $offset += $perPage;
 
-            $string = implode(PHP_EOL, $logs);
+            $string = implode('', $logs);
 
             if ($gzip) {
                 gzwrite($tmp, $string);
