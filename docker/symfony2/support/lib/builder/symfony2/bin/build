@@ -28,6 +28,9 @@ if [ -f Makefile ] && grep -E '^install:' Makefile 2>&1 > /dev/null; then
     stage1_announce "detected Makefile, running \"make install\""
     stage1_exec "make install"
 else
+    stage1_announce "installing assets"
+    app/console assets:install web
+    
     if app/console list doctrine:database > /dev/null 2>&1; then
         stage1_announce "initializing database"
         stage1_websocket_step "initialize_database"
