@@ -39,7 +39,7 @@ fi
 
 stage1_announce "cloning repository $ssh_url"
 stage1_websocket_step "clone_repository"
-stage1_exec "git clone --depth 1 --branch $REF $SSH_URL $APP_ROOT"
+stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 
 cd $APP_ROOT
 
