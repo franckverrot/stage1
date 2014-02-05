@@ -44,6 +44,7 @@ THIRD PARTY INTEGRATION
 * github deployment API
 * Gitlab
 * Bitbucket
+* Pagodabox Boxfile
 
 TODO
 ====
@@ -65,6 +66,7 @@ TODO
 
 * instances
     * auth: have the reverse proxy render the auth page instead of redirecting to the php app (for custom domains)
+    * allow php.ini customization and set error_reporting back to E_ALL | E_STRICT
 
 * builds
     * check that the runtime container was successfuly built
