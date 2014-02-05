@@ -36,7 +36,7 @@ class ProjectAccessTableListener
 
         $this->redis->multi();
 
-        foreach ($user->getProjects() as $project) {
+        foreach ($user->getPrivateProjects() as $project) {
             $this->redis->sadd('auth:'.$project->getSlug(), $token);
         }
 

@@ -30,6 +30,10 @@ class ProjectAccessTableSubscriber implements EventSubscriber
     {
         $project = $args->getEntity();
 
+        if (!$project->getGithubPrivate()) {
+            return;
+        }
+
         if (!$project instanceof Project) {
             return;
         }

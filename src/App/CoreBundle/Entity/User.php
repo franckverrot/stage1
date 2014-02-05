@@ -311,6 +311,18 @@ class User implements UserInterface
     }
 
     /**
+     * Get private projects
+     * 
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPrivateProjects()
+    {
+        return $this->projects->filter(function($project) {
+            return $project->getGithubPrivate();
+        });
+    }
+
+    /**
      * Set status
      *
      * @param integer $status
