@@ -24,6 +24,7 @@ body {
 .jumbotron h1 {
   font-size: 62px;
   line-height: 1;
+  margin-bottom: .5em;
 }
 
 .jumbotron .btn-large {
