@@ -166,11 +166,10 @@ class DefaultController extends Controller
     {
         try {
             $project = $this->findProject($id);
-            $scheduler = $this->container->get('app_core.build_scheduler');
-
             $ref = $request->request->get('ref');
             $hash = $this->getHashFromRef($project, $ref);
 
+            $scheduler = $this->container->get('app_core.build_scheduler');
             $build = $scheduler->schedule($project, $ref, $hash, $this->getUser());
 
             return new JsonResponse([
@@ -247,6 +246,13 @@ class DefaultController extends Controller
 
             if ($project->getStatus() === Project::STATUS_HOLD) {
                 return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
+            }
+
+            $existingBuild = $em->getRepository('AppCoreBundle:Build')->findOneByHash($hash);
+
+            if (null !== $existingBuild) {
+                $this->get('logger')->warn('build already scheduled for hash', ['existing_build' => $build->getId(), 'hash' => $hash]);
+                return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);
             }
 
             $scheduler = $this->get('app_core.build_scheduler');

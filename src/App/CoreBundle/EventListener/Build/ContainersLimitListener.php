@@ -11,6 +11,9 @@ use Docker\Exception\UnexpectedStatusCodeException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Ensures a user does not go over his running instances quota
+ */
 class ContainersLimitListener
 {
     /**

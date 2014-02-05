@@ -47,7 +47,7 @@ class BuildBranchRelationSubscriber implements EventSubscriber
         $branch = $this
             ->getDoctrine()
             ->getRepository('AppCoreBundle:Branch')
-            ->findOneByName($build->getRef());
+            ->findOneByProjectAndName($build->getProject(), $build->getRef());
 
         if (!$branch) {
             $branch = new Branch();

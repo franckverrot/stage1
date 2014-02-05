@@ -11,6 +11,9 @@ use Swift_Message;
 
 use Exception;
 
+/**
+ * Sends an email once a demo build is finished
+ */
 class BuildDemoEmailListener
 {
     /**

@@ -13,6 +13,9 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Exception;
 
+/**
+ * Marks a previous build for a same ref obsolete
+ */
 class PreviousBuildListener
 {
     /**

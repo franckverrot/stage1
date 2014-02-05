@@ -11,6 +11,9 @@ use Psr\Log\LoggerInterface;
 
 use DateTime;
 
+/**
+ * Measures the time and memory consumption of a build
+ */
 class BuildStopwatchListener
 {
     /**

@@ -32,6 +32,12 @@ class BuildScheduler
 
     public function schedule(Project $project, $ref, $hash, User $initiator = null)
     {
+        $this->logger->info('scheduling build', [
+            'project' => $project->getId(),
+            'ref' => $ref,
+            'hash' => $hash,
+        ]);
+
         $em = $this->doctrine->getManager();
 
         $branch = $em
@@ -48,7 +54,11 @@ class BuildScheduler
             $em->persist($branch);
             $em->flush();
         } else {
-            $this->logger->info('branch found', ['project' => $project->getId(), 'branch' => $ref, 'id' => $branch->getId()]);
+            $this->logger->info('branch found', [
+                'project' => $project->getId(),
+                'branch' => $ref,
+                'id' => $branch->getId()
+            ]);
         }
 
         $build = new Build();
@@ -56,6 +66,9 @@ class BuildScheduler
         $build->setStatus(Build::STATUS_SCHEDULED);
         $build->setRef($ref);
         $build->setHash($hash);
+        $build->setBranch($branch);
+
+        $this->logger->info('saving build with branch_id '.$build->getBranch()->getId());
 
         if (null !== $initiator) {
             $build->setInitiator($initiator);

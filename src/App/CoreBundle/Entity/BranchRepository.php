@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 
 class BranchRepository extends EntityRepository
 {
@@ -11,12 +12,17 @@ class BranchRepository extends EntityRepository
      */
     public function findOneByProjectAndName(Project $project, $ref)
     {
-        foreach ($project->getBranches() as $branch) {
-            if ($branch->getName() === $ref) {
-                return $branch;
-            }
-        }
+        $query = $this->createQueryBuilder('b')
+            ->select()
+            ->where('b.project = ?1')
+            ->andWhere('b.name = ?2')
+            ->setParameters([1 => $project->getId(), 2 => $ref])
+            ->getQuery();
 
-        return null;
+        try {
+            return $query->getSingleResult();
+        } catch (NoResultException $e) {
+            return null;
+        }
     }
 }

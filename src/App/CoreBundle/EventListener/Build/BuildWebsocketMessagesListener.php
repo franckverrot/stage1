@@ -12,6 +12,9 @@ use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 use Psr\Log\LoggerInterface;
 
+/**
+ * Sends various lifecycle websocket messages
+ */
 class BuildWebsocketMessagesListener
 {
     /**

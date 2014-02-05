@@ -10,6 +10,8 @@ use Redis;
 
 /**
  * App\CoreBundle\EventListener\Build\BuildRoutingListener
+ * 
+ * Updates the routing table after a build
  */
 class BuildRoutingListener
 {
