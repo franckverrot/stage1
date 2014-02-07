@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Command;
 
+use App\CoreBundle\Entity\Build;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Symfony\Component\Console\Input\InputInterface;
