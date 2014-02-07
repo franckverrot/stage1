@@ -58,7 +58,7 @@ class BuildBranchRelationSubscriber implements EventSubscriber
             return;
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         
         $branch = $this->doctrine
             ->getRepository('AppCoreBundle:Branch')
