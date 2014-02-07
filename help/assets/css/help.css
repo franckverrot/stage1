@@ -89,3 +89,7 @@ code {
 .note.oneline p {
     padding-top: .5em;
 }
+
+p.center {
+    text-align: center;
+}
