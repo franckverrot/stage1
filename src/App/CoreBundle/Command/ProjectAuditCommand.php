@@ -32,6 +32,11 @@ class ProjectAuditCommand extends ContainerAwareCommand
 
         $project = $this->findProject($input->getArgument('project'));
 
+        if (!$project) {
+            $output->writeln('<error>Could not find project</error>');
+            exit(1);
+        }
+
         $infos['name'] = $project->getFullName();
         $infos['github_id'] = $project->getGithubId();
         $infos['private'] = $project->getGithubPrivate();
