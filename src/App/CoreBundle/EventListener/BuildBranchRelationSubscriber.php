@@ -10,6 +10,8 @@ use Doctrine\Common\EventSubscriber;
 use App\CoreBundle\Entity\Build;
 use App\CoreBundle\Entity\Branch;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Whenever a build is created, checks if there exists a corresponding
  * branch record. If not create it. in any case, create a relation between
@@ -17,23 +19,37 @@ use App\CoreBundle\Entity\Branch;
  */
 class BuildBranchRelationSubscriber implements EventSubscriber
 {
+    /**
+     * @var Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var Symfony\Bridge\Doctrine\RegistryInterface
+     */
     private $doctrine;
 
-    public function __construct(RegistryInterface $doctrine)
+    /**
+     * @param Psr\Log\LoggerInterface                   $logger
+     * @param Symfony\Bridge\Doctrine\RegistryInterface $doctrine
+     */
+    public function __construct(LoggerInterface $logger, RegistryInterface $doctrine)
     {
+        $this->logger = $logger;
         $this->doctrine = $doctrine;
     }
 
-    public function getDoctrine()
-    {
-        return $this->doctrine;
-    }
-
+    /**
+     * @return array
+     */
     public function getSubscribedEvents()
     {
         return ['prePersist'];
     }
 
+    /**
+     * @param LifecycleEventArgs
+     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $build = $args->getEntity();
@@ -44,22 +60,20 @@ class BuildBranchRelationSubscriber implements EventSubscriber
 
         $em = $this->getDoctrine()->getManager();
         
-        $branch = $this
-            ->getDoctrine()
+        $branch = $this->doctrine
             ->getRepository('AppCoreBundle:Branch')
             ->findOneByProjectAndName($build->getProject(), $build->getRef());
 
         if (!$branch) {
+            $this->logger->info('creating non-existing branch', ['project' => $project->getId(), 'branch' => $ref]);
+
             $branch = new Branch();
             $branch->setName($build->getRef());
             $branch->setProject($build->getProject());
 
             $em->persist($branch);
-
-            $build->getProject()->addBranch($branch);
         }
 
         $build->setBranch($branch);
-        $branch->addBuild($build);
     }
 }
