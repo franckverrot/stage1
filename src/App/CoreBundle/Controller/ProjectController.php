@@ -95,6 +95,24 @@ class ProjectController extends Controller
         return $this->redirect($this->generateUrl('app_core_project_admin', ['id' => $project->getId()]));
     }
 
+    /**
+     * @param Symfony\Component\HttpFoundation\Request $request
+     * @param integer $id
+     */
+    public function updateUrlsAction(Request $request, $id)
+    {
+        $project = $this->findProject($id);
+        $this->setCurrentProjectId($id);
+
+        $project->setUrls($request->request->get('project_urls'));
+
+        $this->persistAndFlush($project);
+
+        $this->addFlash('success', 'Project URLs saved');
+
+        return $this->redirect($this->generateUrl('app_core_project_admin', ['id' => $project->getId()]));
+    }
+
     public function branchesAction($id)
     {
         $this->setCurrentProjectId($id);

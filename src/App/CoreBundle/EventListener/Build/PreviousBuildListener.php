@@ -67,7 +67,7 @@ class PreviousBuildListener
         }
 
         if (!$previousBuild->hasContainer()) {
-            $this->logger->info('previous build does not have a container'. [
+            $this->logger->info('previous build does not have a container', [
                 'build' => $build->getId(),
                 'previous_build' => $previousBuild->getId()
             ]);

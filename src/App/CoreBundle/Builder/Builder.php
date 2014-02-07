@@ -68,6 +68,8 @@ class Builder
             $logger->info('dummy build, sleeping', ['duration' => $this->dummyBuildDuration]);
             sleep($this->dummyBuildDuration);
 
+            $build->setPort(42);
+
             return true;
         }
 

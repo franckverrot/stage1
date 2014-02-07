@@ -20,6 +20,10 @@
 
     <!-- private project routing -->
 
+    <route id="app_core_project_urls" pattern="/project/{id}/urls">
+        <default key="_controller">AppCoreBundle:Project:updateUrls</default>
+    </route>
+
     <route id="app_core_project_admin_base_image_update" pattern="/project/{id}/base_image" methods="POST">
         <default key="_controller">AppCoreBundle:Project:updateBaseImage</default>
     </route>

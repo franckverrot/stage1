@@ -89,28 +89,32 @@ class ContainersLimitListener
         foreach ($excessBuilds as $excessBuild) {
             $container = $excessBuild->getContainer();
 
-            $this->logger->info('stopping excess container', [
-                'build' => $build->getId(),
-                'excess_build' => $excessBuild->getId(),
-                'excess_container' => $container->getId()
-            ]);
+            if (!$container) {
+                $this->logger->info('excess build does not have a container', ['build' => $build->getId(), 'excess_build' => $excessBuild->getId()]);
+            } else {
+                $this->logger->info('stopping excess container', [
+                    'build' => $build->getId(),
+                    'excess_build' => $excessBuild->getId(),
+                    'excess_container' => $container->getId()
+                ]);
+
+                try {
+                    $manager
+                        ->stop($container)
+                        ->remove($container);
+                } catch (UnexpectedStatusCodeException $e) {
+                    $this->logger->warn('could not stop excess container', [
+                        'build' => $build->getId(),
+                        'excess_build' => $excessBuild->getId(),
+                        'excess_container' => $container->getId()
+                    ]);
+                }
+            }
 
             $excessBuild->setStatus(Build::STATUS_STOPPED);
             $excessBuild->setMessage('Per-user running containers limit reached');
 
             $em->persist($excessBuild);
-
-            try {
-                $manager
-                    ->stop($container)
-                    ->remove($container);
-            } catch (UnexpectedStatusCodeException $e) {
-                $this->logger->warn('could not stop excess container', [
-                    'build' => $build->getId(),
-                    'excess_build' => $excessBuild->getId(),
-                    'excess_container' => $container->getId()
-                ]);
-            }
         }
     }
 }

@@ -74,6 +74,8 @@ class Project implements WebsocketRoutable
 
     protected $env;
 
+    protected $urls;
+
     protected $dockerBaseImage = 'symfony2:latest';
 
     /**
@@ -867,5 +869,28 @@ class Project implements WebsocketRoutable
     public function getGithubUrl()
     {
         return $this->githubUrl;
+    }
+
+    /**
+     * Set urls
+     *
+     * @param string $urls
+     * @return Project
+     */
+    public function setUrls($urls)
+    {
+        $this->urls = $urls;
+    
+        return $this;
+    }
+
+    /**
+     * Get urls
+     *
+     * @return string 
+     */
+    public function getUrls()
+    {
+        return $this->urls;
     }
 }

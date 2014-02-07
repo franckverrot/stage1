@@ -26,6 +26,7 @@
         <field name="masterPassword" column="master_password" type="text" nullable="true" />
         <field name="status" column="status" type="integer" />
         <field name="env" column="env" type="text" nullable="true" />
+        <field name="urls" column="urls" type="text" nullable="true" />
         <field name="dockerBaseImage" column="docker_base_image" type="string" nullable="true" />
         <field name="githubPrivate" column="github_private" type="boolean" nullable="true" />
 

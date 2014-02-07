@@ -58,7 +58,7 @@ $('#project_name').on('keyup', function(event) {
             <div class="span6 help">
                 <p>Rules:</p>
                 <ul>
-                    <li>one variable per-line,</li>
+                    <li>one variable per line,</li>
                     <li>in the <code>NAME=VALUE</code> format,</li>
                     <li>no quoting</li>
                 </ul>
@@ -75,6 +75,39 @@ FOO=some value with spaces</pre>
 
         <div class="form-actions">
             <button class="btn btn-primary" type="submit">Save project's environment</button>
+        </div>
+    </form>
+</fieldset>
+
+<fieldset>
+    <legend>Project's URLs</legend>
+    <form id="form-project-urls" method="post" action="{{ path('app_core_project_urls', { id: project.id }) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+        <div class="row-fluid">
+            <div class="span6">
+                <textarea name="project_urls" id="project_urls">{{ project.urls }}</textarea>
+            </div>
+            <div class="span6 help">
+                <p>Rules:</p>
+                <ul>
+                    <li>One subdomain per line</li>
+                    <li>Subdomains are prepended to the base URL</li>
+                </ul>
+
+                <p>Example:</p>
+                <pre>foo
+bar</pre>
+                <p>Will produce 2 more URLs for your builds:</p>
+
+                <ul>
+                    <li><tt>foo.<em>branch</em>.{{ project.slug }}.stage1.io</tt></li>
+                    <li><tt>bar.<em>branch</em>.{{ project.slug }}.stage1.io</tt></li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save project's URLs</button>
         </div>
     </form>
 </fieldset>

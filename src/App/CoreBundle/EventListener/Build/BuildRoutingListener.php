@@ -61,9 +61,26 @@ class BuildRoutingListener
 
         $this->logger->info('configuring build routing', ['build' => $build->getId(), 'host' => $build->getHost()]);
 
-        $build_redis_list = 'frontend:'.$build->getHost();
+        $container_url = 'http://127.0.0.1:'.$build->getPort();
 
-        $this->redis->del($build_redis_list);
-        $this->redis->rpush($build_redis_list, $build->getImageName(), 'http://127.0.0.1:'.$build->getPort());
+        $redis = $this->redis;
+
+        $redis->multi();
+        $redis->del('frontend:'.$build->getHost());
+        $redis->rpush('frontend:'.$build->getHost(), $build->getImageName(), $container_url);
+
+        $urls = explode(PHP_EOL, $build->getProject()->getUrls());
+        $urls = array_map('trim', $urls);
+        $urls = array_filter($urls, function($url) { return strlen($url) > 0; });
+
+        $this->logger->info('adding custom build URLs', ['build' => $build->getId(), 'domains' => $urls]);
+
+        foreach ($urls as $domain) {
+            $host = $domain.'.'.$build->getHost();
+            $redis->del('frontend:'.$host);
+            $redis->rpush('frontend:'.$host, $build->getImageName(), $container_url);
+        }
+
+        $redis->exec();
     }
 }
