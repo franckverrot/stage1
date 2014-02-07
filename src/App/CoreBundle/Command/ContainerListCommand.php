@@ -76,13 +76,26 @@ class ContainerListCommand extends ContainerAwareCommand
             $data = $container->getData();
             $build = $rp->find($buildId);
 
-            $projectName = $build->getProject()->getGithubFullName();
+            if (!$build) {
+                $output->writeln('Could not find build for image <info>'.$container->getImage()->getRepository().'</info>');
+                continue;
+            }
+
+            if (null === $build->getProject()) {
+                $projectName = '';
+            } else {
+                $projectName = $build->getProject()->getGithubFullName();
+            }
 
             if (null !== $projectFilter && false === strpos($projectName, $projectFilter)) {
                 continue;
             }
 
-            $username = $build->getProject()->getUsers()->first()->getUsername();
+            if (null === $build->getProject()) {
+                $username = '';
+            } else {
+                $username = $build->getProject()->getUsers()->first()->getUsername();
+            }
 
             if (null !== $usernameFilter && false === strpos($username, $usernameFilter)) {
                 continue;
