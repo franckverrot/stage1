@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Command;
 
+use App\CoreBundle\Entity\Build;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,28 +30,39 @@ class ProjectContainersStopCommand extends ContainerAwareCommand
 
         $output->writeln('found project <info>'.$project->getGithubFullName().'</info>');
 
-        $client = $this->getContainer()->get('app_core.docker.http_client');
-        $request = $client->get('/containers/json');
-        $response = $client->send($request);
+        $docker = $this->getContainer()->get('app_core.docker');
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $rp = $em->getRepository('AppCoreBundle:Build');
+
+        $containers = $docker->getContainerManager()->findAll();
 
         $prefix = 'b/'.$project->getId();
         $prefixLength = strlen($prefix);
-
-        $containers = $response->json(true);
 
         $output->writeln('found <info>'.count($containers).'</info> running containers');
 
         $count = 0;
 
-        foreach ($response->json(true) as $container) {
-            if (substr($container['Image'], 0, $prefixLength) === $prefix) {
-                $output->writeln('stopping container <info>'.$container['Id'].'</info>');
-                $request = $client->post(['/containers/{id}/stop', ['id' => $container['Id']]]);
-                $request->send();
+        foreach ($containers as $container) {
+            if (substr($container->getImage()->getRepository(), 0, $prefixLength) === $prefix) {
+
+                list(,$projectId,,$buildId) = explode('/', $container->getImage()->getRepository());
+                $build = $rp->find($buildId);
+
+                if ($build) {
+                    $build->setStatus(Build::STATUS_STOPPED);
+                    $em->persist($build);
+                }
+
+                $docker->getContainerManager()->stop($container);
+
+                $output->writeln('stopping container <info>'.$container->getId().'</info>');
 
                 $count++;
             }
         }
+
+        $em->flush();
 
         $output->write(PHP_EOL);
         $output->writeln('stopped <info>'.$count.'</info> containers');
