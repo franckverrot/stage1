@@ -251,7 +251,7 @@ class DefaultController extends Controller
             $existingBuild = $em->getRepository('AppCoreBundle:Build')->findOneByHash($hash);
 
             if (null !== $existingBuild) {
-                $this->get('logger')->warn('build already scheduled for hash', ['existing_build' => $build->getId(), 'hash' => $hash]);
+                $this->get('logger')->warn('build already scheduled for hash', ['existing_build' => $existingBuild->getId(), 'hash' => $hash]);
                 return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);
             }
 
@@ -274,7 +274,11 @@ class DefaultController extends Controller
             ], 201);
         } catch (Exception $e) {
             $this->container->get('logger')->error($e->getMessage());
-            $this->container->get('logger')->error($e->getResponse()->getBody(true));
+
+            if (method_exists($e, 'getResponse')) {
+                $this->container->get('logger')->error($e->getResponse()->getBody(true));
+            }
+
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
         }
     }
