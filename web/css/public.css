@@ -16,6 +16,10 @@ h3 a:hover {
   text-decoration: none;
 }
 
+.masthead ul {
+  margin-top: 7px;
+}
+
 .footer {
   text-align: center;
 }
