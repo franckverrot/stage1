@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>Stage1</title>
     <link rel="icon" type="image/png" href="/cog.png" />
@@ -9,40 +9,45 @@
         'css/stage1.css'
         'css/public.css'
     %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
+        <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-  </head>
+</head>
 
-  <body>
+<body>
 
     <div class="container-narrow">
 
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
-          <li><a href="{{ path('app_core_blog') }}">Blog</a></li>
-          {% if not app.user or not is_granted('ROLE_USER') %}
-          <li><a href="{{ path('app_core_auth_github_authorize') }}">Signin</a></li>
-          {% endif %}
-          {# <li><a href="{{ path('app_core_demo') }}">Demo</a><li> #}
-        </ul>
-        <h3 class="muted"><a href="{{ path('app_core_homepage') }}">Stage1</a></h3>
-      </div>
+        <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
+                <li><a href="{{ path('app_core_blog') }}">Blog</a></li>
+                {% if not app.user or not is_granted('ROLE_USER') %}
+                <li><a href="{{ path('app_core_auth_github_authorize') }}">Signin</a></li>
+                {% endif %}
+                {# <li><a href="{{ path('app_core_demo') }}">Demo</a><li> #}
+            </ul>
+            <h3 class="muted">
+                <a href="{{ path('app_core_homepage') }}">
+                    <img src="/images/logo.png"  alt="Stage1" height="34" />
+                    <span>Stage1</span>
+                </a>
+            </h3>
+        </div>
 
-      <hr>
+        <hr>
 
-      {% block body %}{% endblock %}
+        {% block body %}{% endblock %}
 
-      <hr>
+        <hr>
 
-      <div class="footer">
-        <ul class="breadcrumb">
-            <li>Stage1 &copy; 2013-2014</li>
-        </ul>
-      </div>
+        <div class="footer">
+            <ul class="breadcrumb">
+                <li>Stage1 &copy; 2013-2014</li>
+            </ul>
+        </div>
 
     </div> <!-- /container -->
-  </body>
+</body>
 </html>
