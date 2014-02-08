@@ -4,7 +4,7 @@
 <script type="text/javascript">
 {% if build.building %}
 stream_build_output($('#output'));
-{% else %}
+{% elseif build.running %}
     {% if forceTab == 'output' and streamLogs %}
     Scroller($('#output')[0], build_logs_load_url.replace(/0/, {{ build.id }})).init();
     {% else %}
@@ -69,6 +69,7 @@ stream_build_output($('#output'));
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">
         {% if streamLogs %}
+        {% if build.running or build.building %}
         <div id="output-container">
             {% if build.building %}
             <div id="build-{{ build.id }}-progress" class="build-building-icon">
@@ -80,6 +81,9 @@ stream_build_output($('#output'));
             </div>
             <pre id="output"></pre>
         </div>
+        {% else %}
+        <p class="lead">There are no logs to show yet, come back later.</p>
+        {% endif %}
         {% else %}
         <p class="lead">This build has too much log and we cannot stream them efficiently.</p>
 
