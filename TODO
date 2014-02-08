@@ -30,6 +30,12 @@ TODO PRIVATE BETA
 * logs
     * application logs
 
+* nombre de builds en cours: tooltip qui explique ce que c'est exactement
+* possibilite d'avoir une cle ssh globale pour un utilisateur
+
+* 50-200 (30 containers en continu en meme temps + filtrage de branche + features de staging)
+* elevator pitch: expliquer aux agences qu'ils peuvent inclure le cout de stage1 dans les devis / factures
+
 SCALING
 =======
 
@@ -46,6 +52,7 @@ THIRD PARTY INTEGRATION
 * Bitbucket
 * Pagodabox Boxfile
 * http://voicechatapi.com/
+* phpci
 
 TODO
 ====
