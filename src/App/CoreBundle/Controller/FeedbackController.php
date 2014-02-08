@@ -33,8 +33,8 @@ class FeedbackController extends Controller
 
         $this->addFlash('success', 'Your feedback has been sent, we will reach out to you very soon!');
 
-        if (strlen($feedback->getUser()->getEmail()) > 0) {
-            $from = [$feedback->getUser()->getEmail() => $feedback->getUser()->getUsername()];
+        if (strlen($feedback->getEmail()) > 0) {
+            $from = [$feedback->getEmail() => $feedback->getUser()->getUsername()];
 
             $message = Swift_Message::newInstance()
                 ->setFrom($from)

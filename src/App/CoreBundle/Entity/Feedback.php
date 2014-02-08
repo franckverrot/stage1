@@ -161,6 +161,7 @@ class Feedback
     public function setUser(\App\CoreBundle\Entity\User $user = null)
     {
         $this->user = $user;
+        $this->setEmail($user->getEmail());
     
         return $this;
     }
