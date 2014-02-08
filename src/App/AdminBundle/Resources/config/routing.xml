@@ -4,6 +4,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
+    <route id="app_admin_feedback_show" pattern="/feedback/{id}">
+        <default key="_controller">AppAdminBundle:Feedback:show</default>
+    </route>
+
+    <route id="app_admin_feedback" pattern="/feedback">
+        <default key="_controller">AppAdminBundle:Feedback:index</default>
+    </route>
+
     <route id="app_admin_build_payload" pattern="/build/{id}/payload">
         <default key="_controller">AppAdminBundle:Build:payload</default>
     </route>

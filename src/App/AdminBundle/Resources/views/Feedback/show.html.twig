@@ -1,0 +1,10 @@
+{% extends '::admin.html.twig' %}
+
+{% block body %}
+<h3>Feedback</h3>
+<hr />
+
+<div>
+{{ entry.message | nl2br }}
+</div>
+{% endblock %}

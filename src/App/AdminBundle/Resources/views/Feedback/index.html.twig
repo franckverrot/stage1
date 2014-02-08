@@ -1,0 +1,35 @@
+{% extends '::admin.html.twig' %}
+
+{% block body %}
+<h3>Feedback</h3>
+<hr />
+
+{% if entries | length == 0 %}
+<p class="lead">No feedback found</p>
+{% else %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Project</th>
+            <th>Build</th>
+            <th>Email</th>
+            <th>Created At</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td>{% if entry.user %}{{ entry.user.username }}{% endif %}</td>
+            <td>{% if entry.project %}{{ entry.project.githubFullName }}{% endif %}</td>
+            <td>{% if entry.build %}<a href="{{ path('app_admin_build_show', { id: build.id }) }}">{{ build.id }}</a>{% endif %}</td>
+            <td>{{ entry.email }}</td>
+            <td><abbr class="timeago" title="{{ entry.createdAt | date('c') }}">{{ entry.createdat | date('Y-m-d H:i:s') }}</abbr></td>
+            <td><a href="{{ path('app_admin_feedback_show', { id: entry.id }) }}">show</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
