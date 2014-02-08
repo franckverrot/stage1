@@ -86,6 +86,19 @@ class Project implements WebsocketRoutable
     /**
      * @return string
      */
+    public function getDomain()
+    {
+        list($org, $project) = explode('/', $this->getGithubFullName());
+
+        $org = preg_replace('/[^a-z0-9\-]/', '-', strtolower($org));
+        $project = preg_replace('/[^a-z0-9\-]/', '-', strtolower($project));
+
+        return $org.'.'.$project;
+    }
+
+    /**
+     * @return string
+     */
     public function getAccessList()
     {
         return 'auth:'.$this->getSlug();

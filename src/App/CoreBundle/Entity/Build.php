@@ -187,7 +187,7 @@ class Build implements WebsocketRoutable
 
     public function getBranchDomain()
     {
-        return sprintf('%s.%s', $this->getNormRef(), $this->getProject()->getSlug());
+        return $this->getBranch()->getDomain();
     }
 
     public function getNormRef()

@@ -21,6 +21,16 @@ class Branch
     /** not persisted **/
 
     protected $lastBuild;
+
+    /**
+     * @return string
+     */
+    public function getDomain()
+    {
+        $name = preg_replace('/[^a-z0-9\-]/', '-', strtolower($this->getName()));
+
+        return sprintf('%s.%s', $name, $this->getProject()->getDomain());
+    }
     
     /**
      * Constructor

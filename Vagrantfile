@@ -36,10 +36,11 @@ Vagrant.configure("2") do |config|
 
     config.hostmanager.aliases = %w(
         stage1.dev
+        www.stage1.dev
         help.stage1.dev
-        feature-checkout.acmemuda-acmeshop.stage1.dev
-        master.acmemuda-acmeshop.stage1.dev
-        master.ubermuda-puphpet.stage1.dev
+        feature-checkout.acmemuda.acmeshop.stage1.dev
+        master.acmemuda.acmeshop.stage1.dev
+        master.ubermuda.puphpet.stage1.dev
     )
 
     config.vm.provision :shell, :inline => $script
