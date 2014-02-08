@@ -65,7 +65,10 @@ class BuildBranchRelationSubscriber implements EventSubscriber
             ->findOneByProjectAndName($build->getProject(), $build->getRef());
 
         if (!$branch) {
-            $this->logger->info('creating non-existing branch', ['project' => $project->getId(), 'branch' => $ref]);
+            $this->logger->info('creating non-existing branch', [
+                'project' => $build->getProject()->getId(),
+                'branch' => $build->getRef()
+            ]);
 
             $branch = new Branch();
             $branch->setName($build->getRef());
