@@ -1,6 +1,6 @@
 {
   "name": "stage1",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "author": "Geoffrey Bachelet <geoffrey@stage1.io>",
   "description": "stage1.io's node subsystem",
   "dependencies": {
