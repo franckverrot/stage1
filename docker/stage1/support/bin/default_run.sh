@@ -10,8 +10,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source $DIR/../lib/stage1.sh
 
-/usr/sbin/sshd
-
 declare -a services=(mysql php5-fpm nginx)
 declare -a tries=(index.php app.php)
 

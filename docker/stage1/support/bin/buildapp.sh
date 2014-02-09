@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #!/bin/bash -e
 
 if [ ! -z "$DEBUG" ]; then
@@ -41,37 +43,6 @@ stage1_announce "cloning repository $ssh_url"
 stage1_websocket_step "clone_repository"
 stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 
-cd $APP_ROOT
-
-# stage1_exec git reset --hard $hash
-
-BUILDERS_ROOT=$(realpath $DIR/../lib/builder)
-BUILDERS=($BUILDERS_ROOT/*)
-SELECTED_BUILDER=
-
-stage1_websocket_step "select_builder"
-
-if [ -n "$(stage1_get_config_build)" ]; then
-    BUILDER="$STAGE1_CONFIG_PATH"
-    stage1_announce "custom build detected"
-
-    stage1_get_config_build | while read cmd; do
-        stage1_announce running "$cmd"
-        stage1_exec "$cmd"
-    done
-else
-    for BUILDER in "${BUILDERS[@]}"; do
-        BUILDER_NAME=$($BUILDER/bin/detect "$APP_ROOT") && SELECTED_BUILDER=$BUILDER && break
-    done
-
-    if [ -n "$BUILDER_NAME" ]; then
-        stage1_announce "using \"$BUILDER_NAME\" builder"
-    else
-        stage1_announce "could not find a builder"
-        exit 1
-    fi
-
-    $BUILDER/bin/build
-fi
-
-stage1_build_common
+stage1_announce 'generating build script'
+php /root/yuhao/bin/yuhao -b /root/YuhaoDefaultBuilder.php build $APP_ROOT
+cd $APP_ROOT && bash ./build.sh

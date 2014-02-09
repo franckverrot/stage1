@@ -33,6 +33,7 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder ".", "/vagrant", :nfs => true
     config.vm.synced_folder "/Users/ash/Projects/docker-php", "/projects/docker-php", :nfs => true
     config.vm.synced_folder "/Users/ash/Projects/aldis", "/projects/aldis", :nfs => true
+    config.vm.synced_folder "/Users/ash/Projects/yuhao", "/projects/yuhao", :nfs => true
 
     config.hostmanager.aliases = %w(
         stage1.dev
