@@ -1,3 +1,7 @@
+.commit-hash {
+    white-space: nowrap;
+}
+
 .help p {
     text-align: justify;
 }

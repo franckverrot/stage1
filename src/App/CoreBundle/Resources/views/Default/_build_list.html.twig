@@ -16,10 +16,10 @@
             <td>{{ build.ref }}</td>
             <td>
                 {% if build.hash %}
-                <a href="https://github.com/{{ build.project.githubFullName }}/commit/{{ build.hash }}">
-                    <abbr title="{{ build.hash }}">{{ build.hash[0:8] }}</abbr>&nbsp;
-                    <i class="icon-github"></i>
-                </a>
+                    {% include 'AppCoreBundle:Default:_commit_hash.html.twig' with {
+                        project_full_name: build.project.githubFullName,
+                        hash: build.hash
+                    } %}
                 {% endif %}
             </td>
             <td><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></td>
