@@ -159,7 +159,7 @@ SSH
         $appContainer->addEnv($build->getProject()->getContainerEnv());
         $appContainer->setExposedPorts($ports);
 
-        $logger->info('running app container', ['build' => $build->getId()]);
+        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
         $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);
 
         return $appContainer;
