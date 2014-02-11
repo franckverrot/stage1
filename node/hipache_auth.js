@@ -8,7 +8,7 @@ module.exports = function(hipache, req, stack, next) {
         return next();
     }
 
-    var project = req.headers.host.split(/\./)[1];
+    var project = req.headers.host.split(/\./).splice(1, 2).join('-');
     var ip = req.connection.remoteAddress
 
     var cookies = {};
