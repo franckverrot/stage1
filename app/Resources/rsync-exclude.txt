@@ -5,6 +5,7 @@ rsync.log
 app/SymfonyRequirements.php
 app/check.php
 app/config/parameters.yml
+app/config/hipache_prod.json
 app/config/github.yml
 app/Resources/samples/
 app/cache/
@@ -52,10 +53,10 @@ composer.*
 */tests/
 */test-suite/
 
-*/GeneratorBundle/
-*/WebProfilerBundle/
+# */GeneratorBundle/
+# */WebProfilerBundle/
 
-/app/config/*_dev.yml
+# /app/config/*_dev.yml
 /app/config/*_test.yml
 /app/cache/
 /app/logs/

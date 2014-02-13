@@ -2,11 +2,11 @@
 old_sound_rabbit_mq:
     connections:
         default:
-            host:      'localhost'
+            host:      %rabbitmq_host%
             port:      5672
             user:      %rabbitmq_user%
             password:  %rabbitmq_user%
-            vhost:     '/'
+            vhost:     %rabbitmq_vhost%
     producers:
         build:
             connection: default

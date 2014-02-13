@@ -17,8 +17,16 @@ parameters:
     configured:             false
     build_host_mask:        %s.stage1.io
 
+    # redis
     redis_host:             127.0.0.1
     redis_port:             6379
+    redis_password:         ~
+
+    # rabbitmq credentials
+    rabbitmq_host: localhost
+    rabbitmq_vhost: /
+    rabbitmq_user: guest
+    rabbitmq_password: guest
 
     # various parameters
     build_logs_load_limit: 500

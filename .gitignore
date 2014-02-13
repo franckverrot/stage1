@@ -16,6 +16,7 @@ web/assets/
 # Configuration files
 app/config/parameters.ini
 app/config/parameters.yml
+app/config/hipache_prod.json
 app/SymfonyRequirements.php
 app/check.php
 

@@ -4,7 +4,7 @@ from time import sleep
 
 env.host_string = 'stage1.io'
 env.user = 'root'
-env.project_path = '/var/www'
+env.project_path = '/var/www/stage1'
 env.upstart_path = '/etc/init'
 env.remote_dump_path = '/root/dump'
 env.local_dump_path = '~/dump'

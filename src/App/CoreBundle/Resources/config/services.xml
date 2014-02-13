@@ -17,7 +17,7 @@
         </service>
 
         <service id="session.handler.redis" class="Drak\NativeSession\NativeRedisSessionHandler">
-            <argument>tcp://%redis_host%:%redis_port%?timeout=2</argument>
+            <argument>tcp://%redis_password%@%redis_host%:%redis_port%?timeout=2</argument>
         </service>
 
         <service id="app_core.message.factory" class="App\CoreBundle\Message\MessageFactory">
@@ -28,6 +28,9 @@
             <call method="connect">
                 <argument>%redis_host%</argument>
                 <argument>%redis_port%</argument>
+            </call>
+            <call method="auth">
+                <argument>%redis_password%</argument>
             </call>
         </service>
 

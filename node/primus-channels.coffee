@@ -1,5 +1,7 @@
 require 'colors'
 
+redis_password = '2ca3fae13875efeeb9a05685f919dda84f4c60ab07662a86479f3dae6d3dfcc9e61008e785919924edc878f9d9147f1bd76b9026e67507f2dedf9bdd6d57e447'
+
 redis  = require 'redis'
 events = require 'events'
 
@@ -22,6 +24,7 @@ events = require 'events'
     server: (primus, options) ->
         primus.channels = {}
         primus.redis = redis.createClient()
+        primus.redis.auth(redis_password)
 
         primus.Spark::subscribe = (channel, token) ->
             unless primus.channels[channel]?
