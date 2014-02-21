@@ -3,10 +3,12 @@
 namespace App\CoreBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-
 use Doctrine\ORM\NoResultException;
 
-class UserRepository extends EntityRepository
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+class UserRepository extends EntityRepository implements UserProviderInterface
 {
     public function findOneBySpec($spec)
     {
@@ -20,5 +22,25 @@ class UserRepository extends EntityRepository
     public function findOneByGithubUsername($username)
     {
         return $this->findOneByUsername($username);
+    }
+
+    public function loadUserByUsername($username) {
+        return $this->getEntityManager()
+            ->createQuery('SELECT u FROM
+                AppCoreBundle:User u
+                WHERE u.username = :username
+                OR u.email = :username')
+            ->setParameters(array(
+                'username' => $username
+            ))
+            ->getOneOrNullResult();
+    }
+
+    public function refreshUser(UserInterface $user) {
+        return $this->loadUserByUsername($user->getUsername());
+    }
+
+    public function supportsClass($class) {
+        return $class === 'App\CoreBundle\Entity\User';
     }
 }

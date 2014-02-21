@@ -4,7 +4,7 @@ namespace App\CoreBundle\Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
     const STATUS_DISABLED = 0;
 
@@ -43,28 +43,25 @@ class User implements UserInterface
         return (string) $this->username;
     }
 
+    public function serialize()
+    {
+        return serialize([$this->getId(), $this->getUsername()]);
+    }
+
+    public function unserialize($data)
+    {
+        $data = unserialize($data);
+
+        $this->id = $data[0];
+        $this->setUsername($data[1]);
+    }
+
     public function getRoles()
     {
         $roles = ['ROLE_USER'];
 
         if ($this->getUsername() === 'ubermuda') {
             $roles[] = 'ROLE_ADMIN';
-            $roles[] = 'ROLE_DEMO';
-        }
-
-        if ($this->getUsername() === 'ratibus') {
-            $roles[] = 'ROLE_DEMO';
-        }
-
-        if ($this->getUsername() === 'lvictorino') {
-            $roles[] = 'ROLE_DEMO';
-        }
-
-        if ($this->getUsername() === 'pmz') {
-            $roles[] = 'ROLE_DEMO';
-        }
-
-        if ($this->getUsername() === 'quantumecanique') {
             $roles[] = 'ROLE_DEMO';
         }
 

@@ -195,6 +195,7 @@ class SecurityController extends Controller
 
         if (isset($response->error)) {
             $this->addFlash('error', 'An error occured during authentication, please try again later.');
+            $this->get('logger')->error('An error occured during authentication', ['error' => $response->error]);
             return $this->redirect($this->generateUrl('app_core_homepage'));
         }
 
