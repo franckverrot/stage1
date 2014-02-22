@@ -34,11 +34,23 @@ class GithubPayload
      */
     private $build;
 
+    /**
+     * @var string
+     */
+    private $deliveryId;
+
+    /**
+     * @var string
+     */
+    private $event;
+
+    /**
+     * @return string
+     */
     public function pretty()
     {
         return json_encode(json_decode($this->payload), JSON_PRETTY_PRINT);
     }
-
 
     /**
      * Set payload
@@ -140,5 +152,51 @@ class GithubPayload
     public function getBuild()
     {
         return $this->build;
+    }
+
+    /**
+     * Set deliveryId
+     *
+     * @param string $deliveryId
+     * @return GithubPayload
+     */
+    public function setDeliveryId($deliveryId)
+    {
+        $this->deliveryId = $deliveryId;
+    
+        return $this;
+    }
+
+    /**
+     * Get deliveryId
+     *
+     * @return string 
+     */
+    public function getDeliveryId()
+    {
+        return $this->deliveryId;
+    }
+
+    /**
+     * Set event
+     *
+     * @param string $event
+     * @return GithubPayload
+     */
+    public function setEvent($event)
+    {
+        $this->event = $event;
+    
+        return $this;
+    }
+
+    /**
+     * Get event
+     *
+     * @return string 
+     */
+    public function getEvent()
+    {
+        return $this->event;
     }
 }

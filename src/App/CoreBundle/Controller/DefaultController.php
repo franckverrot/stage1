@@ -264,6 +264,8 @@ class DefaultController extends Controller
             $payload = new GithubPayload();
             $payload->setPayload($request->getContent());
             $payload->setBuild($build);
+            $payload->setDeliveryId($request->get('X-GitHub-Delivery'));
+            $payload->setEvent($request->get('X-GitHub-Event'));
 
             $em->persist($payload);
             $em->flush();
