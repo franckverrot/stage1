@@ -69,6 +69,7 @@
             <th>Date</th>
             <th>Status</th>
             <th>Payload</th>
+            <th>&nbsp;</th>
         </tr>
     </thead>
     <tbody>
@@ -83,6 +84,9 @@
                 {% if build.payload %}
                 <a href="{{ path('app_admin_build_payload', { id: build.id }) }}">payload</a>
                 {% endif %}
+            </td>
+            <td>
+                <a class="btn btn-small" href="{{ path('app_admin_project_trigger', { id: build.project.id, hash: build.hash }) }}">trigger</a>
             </td>
         </tr>
         {% endfor %}

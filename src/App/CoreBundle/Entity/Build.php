@@ -90,6 +90,8 @@ class Build implements WebsocketRoutable
 
     private $memoryUsage;
 
+    private $allowRebuild = false;
+
     /**
      * @var \App\CoreBundle\Entity\GithubPayload
      */
@@ -996,5 +998,28 @@ class Build implements WebsocketRoutable
     public function getPayload()
     {
         return $this->payload;
+    }
+
+    /**
+     * Set allowRebuild
+     *
+     * @param boolean $allowRebuild
+     * @return Build
+     */
+    public function setAllowRebuild($allowRebuild)
+    {
+        $this->allowRebuild = $allowRebuild;
+    
+        return $this;
+    }
+
+    /**
+     * Get allowRebuild
+     *
+     * @return boolean 
+     */
+    public function getAllowRebuild()
+    {
+        return $this->allowRebuild;
     }
 }

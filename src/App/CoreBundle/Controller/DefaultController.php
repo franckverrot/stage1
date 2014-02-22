@@ -251,8 +251,12 @@ class DefaultController extends Controller
             $existingBuild = $em->getRepository('AppCoreBundle:Build')->findOneByHash($hash);
 
             if (null !== $existingBuild) {
-                $this->get('logger')->warn('build already scheduled for hash', ['existing_build' => $existingBuild->getId(), 'hash' => $hash]);
-                return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);
+                if ($existingBuild->getAllowRebuild()) {
+                    $this->get('logger')->info('rebuilding hash', ['existing_build' => $existingBuild->getId(), 'hash' => $hash]);
+                } else {
+                    $this->get('logger')->warn('build already scheduled for hash', ['existing_build' => $existingBuild->getId(), 'hash' => $hash]);
+                    return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);                    
+                }
             }
 
             $scheduler = $this->get('app_core.build_scheduler');
@@ -264,8 +268,8 @@ class DefaultController extends Controller
             $payload = new GithubPayload();
             $payload->setPayload($request->getContent());
             $payload->setBuild($build);
-            $payload->setDeliveryId($request->get('X-GitHub-Delivery'));
-            $payload->setEvent($request->get('X-GitHub-Event'));
+            $payload->setDeliveryId($request->headers->get('X-GitHub-Delivery'));
+            $payload->setEvent($request->headers->get('X-GitHub-Event'));
 
             $em->persist($payload);
             $em->flush();

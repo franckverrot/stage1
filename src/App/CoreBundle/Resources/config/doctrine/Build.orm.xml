@@ -28,6 +28,7 @@
         <field name="endTime" column="end_time" type="datetime" nullable="true" />
         <field name="duration" column="duration" type="integer" nullable="true" />
         <field name="memoryUsage" column="memory_usage" type="integer" nullable="true" />
+        <field name="allowRebuild" column="allow_rebuild" type="boolean" />
 
         <many-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="builds">
             <cascade><persist /></cascade>

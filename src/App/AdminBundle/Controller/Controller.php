@@ -10,4 +10,9 @@ class Controller extends BaseController
     {
         return parent::findBuild($id, $checkAuth);
     }
+
+    protected function findProject($id, $checkAuth = false)
+    {
+        return parent::findProject($id, $checkAuth);
+    }
 }
