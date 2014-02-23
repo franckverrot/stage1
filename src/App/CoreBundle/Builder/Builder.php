@@ -31,26 +31,49 @@ class Builder
     private $docker;
 
     /**
-     * @var boolean
+     * @var Symfony\Bridge\Doctrine\RegistryInterface
      */
-    private $dummyBuild = false;
+    private $doctrine;
 
     /**
-     * @var integer
+     * @var array
      */
-    private $dummyBuildDuration = 10;
+    private $options = [
+        'dummy' => false,
+        'dummy_duration' => 10
+    ];
     
     /**
      * @param Psr\Log\LoggerInterface $logger
      * @param Docker\Docker $docker
+     * @param Symfony\Bridge\Doctrine\RegistryInterface $doctrine
      */
-    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine, $dummyBuild, $dummyBuildDuration)
+    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine)
     {
         $this->docker = $docker;
         $this->logger = $logger;
         $this->doctrine = $doctrine;
-        $this->dummyBuild = $dummyBuild;
-        $this->dummyBuildDuration = $dummyBuildDuration;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     * 
+     * @return App\CoreBundle\Builder\Builder
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+    }
+
+    /**
+     * @param string $name
+     * 
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        return $this->options[$name];
     }
 
     /**
@@ -64,9 +87,9 @@ class Builder
         $docker = $this->docker;
         $em = $this->doctrine->getManager();
 
-        if ($this->dummyBuild) {
-            $logger->info('dummy build, sleeping', ['duration' => $this->dummyBuildDuration]);
-            sleep($this->dummyBuildDuration);
+        if ($this->getOption('dummy')) {
+            $logger->info('dummy build, sleeping', ['duration' => $this->getOption('dummy_duration')]);
+            sleep($this->getOption('dummy_duration'));
 
             $build->setPort(42);
 
