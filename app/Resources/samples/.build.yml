@@ -1,3 +1,12 @@
+image: stage1/symfony2
+
+env:
+  SYMFONY_ENV: prod
+
+urls:
+  - foo
+  - bar
+
 build:
   - composer self-update
   - composer install --ansi --no-dev --no-interaction --prefer-dist --no-progress
