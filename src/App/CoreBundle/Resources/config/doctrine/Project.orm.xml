@@ -27,8 +27,11 @@
         <field name="status" column="status" type="integer" />
         <field name="env" column="env" type="text" nullable="true" />
         <field name="urls" column="urls" type="text" nullable="true" />
+
+        <!-- @todo make not nullable when everything has been migrated -->
         <field name="dockerBaseImage" column="docker_base_image" type="string" nullable="true" />
         <field name="githubPrivate" column="github_private" type="boolean" nullable="true" />
+        <field name="contentsUrl" type="string" column="contents_url" length="255" nullable="true" />
 
         <many-to-many field="users" target-entity="App\CoreBundle\Entity\User" inversed-by="projects">
             <join-table name="users_projects">

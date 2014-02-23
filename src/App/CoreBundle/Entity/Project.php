@@ -38,6 +38,8 @@ class Project implements WebsocketRoutable
 
     protected $hooksUrl;
 
+    protected $contentsUrl;
+
     protected $githubId;
 
     protected $githubFullName;
@@ -905,5 +907,28 @@ class Project implements WebsocketRoutable
     public function getUrls()
     {
         return $this->urls;
+    }
+
+    /**
+     * Set contentsUrl
+     *
+     * @param string $contentsUrl
+     * @return Project
+     */
+    public function setContentsUrl($contentsUrl)
+    {
+        $this->contentsUrl = $contentsUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get contentsUrl
+     *
+     * @return string 
+     */
+    public function getContentsUrl()
+    {
+        return $this->contentsUrl;
     }
 }

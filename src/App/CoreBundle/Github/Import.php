@@ -186,6 +186,7 @@ class Import
         $project->setSshUrl($infos['ssh_url']);
         $project->setKeysUrl($infos['keys_url']);
         $project->setHooksUrl($infos['hooks_url']);
+        $project->setContentsUrl($infos['contents_url']);
         $project->setDockerBaseImage('symfony2:latest');
         $project->setGithubPrivate($infos['private']);
 
