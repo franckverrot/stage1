@@ -223,9 +223,15 @@ class Build implements WebsocketRoutable
         return $this->getProject()->getDockerBaseImage();
     }
 
-    public function getImageName()
+    public function getImageName($suffix = null)
     {
-        return sprintf('b/%d/%s/%d', $this->getProject()->getId(), $this->getNormRef(), $this->getId());
+        $name = sprintf('b/%d/%s/%d', $this->getProject()->getId(), $this->getNormRef(), $this->getId());
+
+        if (null !== $suffix) {
+            $name .= '/'.$suffix;
+        }
+
+        return $name;
     }
 
     public function getImageTag()
@@ -1021,5 +1027,33 @@ class Build implements WebsocketRoutable
     public function getAllowRebuild()
     {
         return $this->allowRebuild;
+    }
+    /**
+     * @var \App\CoreBundle\Entity\BuildScript
+     */
+    private $script;
+
+
+    /**
+     * Set script
+     *
+     * @param \App\CoreBundle\Entity\BuildScript $script
+     * @return Build
+     */
+    public function setScript(\App\CoreBundle\Entity\BuildScript $script = null)
+    {
+        $this->script = $script;
+    
+        return $this;
+    }
+
+    /**
+     * Get script
+     *
+     * @return \App\CoreBundle\Entity\BuildScript 
+     */
+    public function getScript()
+    {
+        return $this->script;
     }
 }

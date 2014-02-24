@@ -1,9 +1,13 @@
-#!/bin/bash -e
+#!/bin/bash
 
-if [ -z "$1" ]; then
-    echo "Usage $0 <git repository>"
+set -e
+
+if [ -z "$1" -o -z "$2" ]; then
+    echo "Usage: $(basename $0) <repo> <ref>"
     exit 1
 fi
 
-git clone $1 /var/www/ > /dev/null
-php /root/yuhao/bin/yuhao --ansi --builder /root/YuhaoDefaultBuilder.php /var/www
+DEST=/root/repo
+
+git clone --depth 1 --branch $2 $1 $DEST > /dev/null
+php /root/yuhao/bin/yuhao --builder /root/YuhaoDefaultBuilder.php $DEST

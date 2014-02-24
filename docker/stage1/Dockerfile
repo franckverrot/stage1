@@ -17,8 +17,8 @@ RUN mkdir /var/run/sshd
 
 ADD ./support/ssh_config /etc/ssh/ssh_config
 
-# ADD ./support/bin/buildapp.sh /usr/local/bin/buildapp
-# ADD ./support/bin/runapp.sh /usr/local/bin/runapp
+ADD ./support/bin/buildapp.sh /usr/local/bin/buildapp
+ADD ./support/bin/runapp.sh /usr/local/bin/runapp
 
 ADD ./support/lib/stage1.sh /usr/local/lib/stage1.sh
 

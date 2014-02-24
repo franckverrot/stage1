@@ -3,15 +3,16 @@
 namespace App\CoreBundle\Builder;
 
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Entity\BuildScript;
+
 use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
+use App\CoreBundle\Docker\PrepareContainer;
 
 use Symfony\Component\Process\Process;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Docker\Docker;
-use Docker\Context\Context;
-use Docker\Context\ContextBuilder;
 use Docker\PortCollection;
 
 use Psr\Log\LoggerInterface;
@@ -90,7 +91,6 @@ class Builder
         if ($this->getOption('dummy')) {
             $logger->info('dummy build, sleeping', ['duration' => $this->getOption('dummy_duration')]);
             sleep($this->getOption('dummy_duration'));
-
             $build->setPort(42);
 
             return true;
@@ -104,32 +104,69 @@ class Builder
             'timeout' => $timeout
         ]);
 
-        $env  = 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'.PHP_EOL;
-        $env .= 'SYMFONY_ENV=prod'.PHP_EOL;
-        $env .= $build->getProject()->getEnv();
+        /**
+         * Generate build script using Yuhao
+         */
+        $logger->info('generating build script');
 
-        // @todo the base container can (and should?) be built during project import
-        //       that's one lest step during the build
-        // @todo also, move that to a BuildContext
-        $builder = new ContextBuilder();
-        $builder->setFormat(Context::FORMAT_TAR);
+        $builder = $build->getProject()->getDockerContextBuilder();
+        $builder->from('yuhao');
+
+        $docker->build($builder->getContext(), $build->getImageName('yuhao'), false, true, true);
+
+        $prepareContainer = new PrepareContainer($build);
+        $manager = $docker->getContainerManager();
+
+        $output = '';
+
+        $manager
+            ->run($prepareContainer)
+            ->attach($prepareContainer, function($type, $chunk) use (&$output) {
+                $output .= $chunk;
+            });
+
+        if ($prepareContainer->getExitCode() != 0) {
+            $exitCode = $prepareContainer->getExitCode();
+            $exitCodeLabel = Process::$exitCodes[$exitCode];
+
+            $message = sprintf('failed to generate build scripts (exit code %d (%s))', $exitCode, $exitCodeLabel);
+
+            $logger->error($message, [
+                'build' => $build->getId(),
+                'container' => $prepareContainer->getId(),
+                'container_name' => $prepareContainer->getName(),
+                'exit_code' => $exitCode,
+                'exit_code_label' => $exitCodeLabel,
+            ]);
+
+            $docker->commit($prepareContainer, [
+                'repo' => $build->getImageName('yuhao'),
+                'tag' => 'failed'
+            ]);
+
+            throw new Exception($message, $prepareContainer->getExitCode());
+        }
+
+        // @todo remove yuhao container
+        // $manager->remove($prepareContainer); => 406 ?!
+
+        $script = BuildScript::fromJson($output);
+        $script->setBuild($build);
+
+        $em->persist($script);
+
+        /**
+         * Launch actual build
+         */
+        $logger->info('building base build container', ['build' => $build->getId(), 'image_name' => $build->getImageName()]);
+
+        $builder = $build->getProject()->getDockerContextBuilder();
+        $builder->add('/usr/local/bin/yuhao_build', $script->getBuildScript());
+        $builder->add('/usr/local/bin/yuhao_run', $script->getRunScript());
+        $builder->run('chmod -R +x /usr/local/bin/');
         $builder->from($build->getBaseImageName());
-        $builder->add('/etc/environment', $env);
-        $builder->add('/root/.ssh/id_rsa', $build->getProject()->getPrivateKey());
-        $builder->add('/root/.ssh/id_rsa.pub', $build->getProject()->getPublicKey());
-        $builder->add('/root/.ssh/config', <<<SSH
-Host github.com
-    Hostname github.com
-    User git
-    IdentityFile /root/.ssh/id_rsa
-    StrictHostKeyChecking no
-SSH
-);
-        $builder->run('chmod -R 0600 /root/.ssh');
-        $builder->run('chown -R root:root /root/.ssh');
 
-        $logger->info('building base build container', ['build' => $build->getId()]);
-        $docker->build($builder->getContext(), $build->getImageName(), false, true, true);
+        $response = $docker->build($builder->getContext(), $build->getImageName(), false, true, true);
 
         $buildContainer = new BuildContainer($build);
         $buildContainer->addEnv($build->getProject()->getContainerEnv());
@@ -165,17 +202,26 @@ SSH
                 'exit_code_label' => $exitCodeLabel,
             ]);
 
-            $docker->commit($buildContainer, ['repo' => $build->getImageName(), 'tag' => 'failed']);
+            $docker->commit($buildContainer, [
+                'repo' => $build->getImageName(),
+                'tag' => 'failed'
+            ]);
 
             throw new Exception($message, $buildContainer->getExitCode());
         }
 
+        /**
+         * Build successful!
+         */
         $logger->info('build successful, committing', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
 
         $logger->info('removing build container', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
         $manager->remove($buildContainer);
 
+        /**
+         * Launch App container
+         */
         $ports = new PortCollection(80, 22);
 
         $appContainer = new AppContainer($build);

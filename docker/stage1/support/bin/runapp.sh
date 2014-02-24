@@ -14,6 +14,6 @@ source $DIR/../lib/stage1.sh
 
 APP_ROOT=/var/www
 
-stage1_announce 'generating run script'
-php /root/yuhao/bin/yuhao -b /root/YuhaoDefaultBuilder.php run $APP_ROOT
-cd $APP_ROOT && bash ./run.sh
+stage1_announce 'running run script'
+cd $APP_ROOT
+/usr/local/bin/yuhao_run

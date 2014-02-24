@@ -43,6 +43,7 @@ stage1_announce "cloning repository $ssh_url"
 stage1_websocket_step "clone_repository"
 stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 
-stage1_announce 'generating build script'
-php /root/yuhao/bin/yuhao -b /root/YuhaoDefaultBuilder.php build $APP_ROOT
-cd $APP_ROOT && bash ./build.sh
+stage1_announce 'running build script'
+
+cd $APP_ROOT
+/usr/local/bin/yuhao_build

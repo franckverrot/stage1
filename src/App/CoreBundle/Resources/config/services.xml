@@ -73,12 +73,12 @@
 
             <call method="setOption">
                 <argument>dummy</argument>
-                <argument>%stage1_dummy_build</argument>
+                <argument>%stage1_dummy_build%</argument>
             </call>
 
             <call method="setOption">
                 <argument>dummy_duration</argument>
-                <argument>%stage1_dummy_build_duration</argument>
+                <argument>%stage1_dummy_build_duration%</argument>
             </call>
         </service>
 

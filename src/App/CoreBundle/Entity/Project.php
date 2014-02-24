@@ -2,6 +2,9 @@
 
 namespace App\CoreBundle\Entity;
 
+use Docker\Context\Context;
+use Docker\Context\ContextBuilder;
+
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -84,6 +87,34 @@ class Project implements WebsocketRoutable
      * @var string
      */
     protected $githubUrl;
+
+    // @todo the base container can (and should?) be built during project import
+    //       that's one lest step during the build
+    // @todo also, move that to a BuildContext
+    public function getDockerContextBuilder()
+    {
+        $env  = 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'.PHP_EOL;
+        $env .= 'SYMFONY_ENV=prod'.PHP_EOL;
+        $env .= $this->getEnv();
+
+        $builder = new ContextBuilder();
+        $builder->setFormat(Context::FORMAT_TAR);
+        $builder->add('/etc/environment', $env);
+        $builder->add('/root/.ssh/id_rsa', $this->getPrivateKey());
+        $builder->add('/root/.ssh/id_rsa.pub', $this->getPublicKey());
+        $builder->add('/root/.ssh/config', <<<SSH
+Host github.com
+    Hostname github.com
+    User git
+    IdentityFile /root/.ssh/id_rsa
+    StrictHostKeyChecking no
+SSH
+);
+        $builder->run('chmod -R 0600 /root/.ssh');
+        $builder->run('chown -R root:root /root/.ssh');
+
+        return $builder;
+    }
 
     /**
      * @return string
