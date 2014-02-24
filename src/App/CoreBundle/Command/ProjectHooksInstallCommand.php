@@ -12,22 +12,23 @@ use Symfony\Component\Yaml\Yaml;
 
 use InvalidArgumentException;
 
-class ProjectKeysInstallCommand extends ContainerAwareCommand
+class ProjectHooksInstallCommand extends ContainerAwareCommand
 {
     public function configure()
     {
         $this
-            ->setName('stage1:project:keys:install')
-            ->setDescription('Install or reinstalls a project\'s keys')
+            ->setName('stage1:project:hooks:install')
+            ->setDescription('Reinstalls a project\'s hooks')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project\'s spec'),
-                new InputOption('delete', 'd', InputOption::VALUE_NONE, 'Delete other existing keys'),
             ]);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $project = $this->findProject($input->getArgument('project_spec'));
+
+        $output->writeln('installing hooks for project <info>'.$project->getGithubFullName().'</info>');
 
         if ($project->isDemo()) {
             $config = Yaml::parse($this->getContainer()->getParameter('kernel.root_dir').'/config/demo.yml');
@@ -42,53 +43,38 @@ class ProjectKeysInstallCommand extends ContainerAwareCommand
         $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
         $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
-        $request = $client->get($project->getKeysUrl());
+        $request = $client->get($project->getHooksUrl());
         $response = $request->send();
 
-        $keys = $response->json();
-        $projectDeployKey = $project->getPublicKey();
+        $hooks = $response->json();
 
-        $scheduleDelete = [];
-
-        foreach ($keys as $key) {
-            if ($key['key'] === $projectDeployKey) {
-                $installedKey = $key;
-                continue;
-            }
-
-            if (strpos($key['title'], 'stage1.io') === 0) {
-                $scheduleDelete[] = $key;
+        foreach ($hooks as $hook) {
+            if ($hook['name'] === 'web' && strpos($hook['config']['url'], 'stage1.io') !== false) {
+                $request = $client->delete($hook['url']);
+                $request->send();
             }
         }
 
-        if (!isset($installedKey)) {
-            $output->writeln('installing non-existent key');
-            $request = $client->post($project->getKeysUrl());
-            $request->setBody(json_encode([
-                'key' => $projectDeployKey,
-                'title' => 'stage1.io (added by support@stage1.io)',
-            ]), 'application/json');
+        $router = $this->getContainer()->get('router');
+        $githubHookUrl = $router->generate('app_core_hooks_github', [], true);
+        $githubHookUrl = str_replace('http://localhost', 'http://stage1.io', $githubHookUrl);
 
-            $response = $request->send();
-            $installedKey = $response->json();
-        } else {
-            $output->writeln('key already installed');
-        }
+        $request = $client->post($project->getHooksUrl());
+        $request->setBody(json_encode([
+            'name' => 'web',
+            'active' => true,
+            'events' => ['push'],
+            'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
+        ]), 'application/json');
 
-        $project->setGithubDeployKeyId($installedKey['id']);
+        $response = $request->send();
+        $installedHook = $response->json();
+
+        $project->setGithubHookId($installedHook['id']);
 
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->persist($project);
         $em->flush();
-
-        if ($input->getOption('delete') && count($scheduleDelete) > 0) {
-            if (count($scheduleDelete) > 0) {
-                foreach ($scheduleDelete as $key) {
-                    $request = $client->delete([$project->getKeysUrl(), ['key_id' => $key['id']]]);
-                    $response = $request->send();
-                }
-            }
-        }
     }
 
     private function findProject($spec)

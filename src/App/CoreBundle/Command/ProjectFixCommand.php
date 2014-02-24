@@ -56,6 +56,7 @@ class ProjectFixCommand extends ContainerAwareCommand
         if (!array_key_exists($project->getGithubFullName(), $this->githubInfos)) {
             $client = $this->getContainer()->get('app_core.client.github');
             $client->setDefaultOption('headers/Authorization', 'token '.$project->getUsers()->first()->getAccessToken());
+            $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
             $request = $client->get($project->getGithubUrl());
             $response = $request->send();
 

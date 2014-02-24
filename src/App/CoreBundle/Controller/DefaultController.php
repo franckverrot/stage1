@@ -227,6 +227,10 @@ class DefaultController extends Controller
 
             $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
 
+            if (!$project) {
+                throw $this->createNotFoundException('Unknown Github project');
+            }
+
             if ($hash === '0000000000000000000000000000000000000000') {
                 $branch = $em
                     ->getRepository('AppCoreBundle:Branch')
@@ -238,10 +242,6 @@ class DefaultController extends Controller
                 $em->flush();
 
                 return new JsonResponse(json_encode(null), 200);
-            }
-
-            if (!$project) {
-                throw $this->createNotFoundException('Unknown Github project');
             }
 
             if ($project->getStatus() === Project::STATUS_HOLD) {

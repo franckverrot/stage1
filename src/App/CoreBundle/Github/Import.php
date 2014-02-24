@@ -255,6 +255,8 @@ class Import
         $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
 
         # @todo the fuck is this?
+        # ok I get it, it must be when generating hooks url from the dev VM, we get
+        # an URL pointing to localhost but we really want one pointing to stage1.io
         $githubHookUrl = str_replace('http://localhost', 'http://stage1.io', $githubHookUrl);
 
         $request = $this->client->get($project->getHooksUrl());
