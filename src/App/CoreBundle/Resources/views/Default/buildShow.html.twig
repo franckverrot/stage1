@@ -4,7 +4,7 @@
 <script type="text/javascript">
 {% if build.building %}
 stream_build_output($('#output'));
-{% elseif build.running or build.failed %}
+{% elseif not build.scheduled %}
     {% if forceTab == 'output' and streamLogs %}
     Scroller($('#output')[0], build_logs_load_url.replace(/0/, {{ build.id }})).init();
     {% else %}
@@ -71,7 +71,7 @@ stream_build_output($('#output'));
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">
         {% if streamLogs %}
-        {% if build.running or build.building or build.failed %}
+        {% if not build.scheduled %}
         <div id="output-container">
             {% if build.building %}
             <div id="build-{{ build.id }}-progress" class="build-building-icon">
