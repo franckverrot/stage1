@@ -10,6 +10,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 use Psr\Log\LoggerInterface;
 
 use DateTime;
+use LogicException;
 
 /**
  * Measures the time and memory consumption of a build
@@ -57,11 +58,16 @@ class BuildStopwatchListener
     {
         $build = $event->getBuild();
 
-        $this->logger->info('stopping stopwatch for build #'.$build->getId());
-        $event = $this->stopwatch->stop($build->getChannel());
+        try {
+            $this->logger->info('stopping stopwatch for build #'.$build->getId());
+            $event = $this->stopwatch->stop($build->getChannel());
 
-        $build->setEndTime(new DateTime());
-        $build->setDuration($event->getDuration());
-        $build->setMemoryUsage($event->getMemory());
+            $build->setEndTime(new DateTime());
+            $build->setDuration($event->getDuration());
+            $build->setMemoryUsage($event->getMemory());
+
+        } catch (LogicException $e) {
+            $this->logger->info('stopwatch was not started');
+        }
     }
 }

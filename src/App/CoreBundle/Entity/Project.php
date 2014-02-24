@@ -7,6 +7,8 @@ use Docker\Context\ContextBuilder;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 /**
  * Project
  */
@@ -87,6 +89,29 @@ class Project implements WebsocketRoutable
      * @var string
      */
     protected $githubUrl;
+
+    public function getDefaultBuildOptions()
+    {
+        $options = new OptionsResolver();
+
+        $normalize = function($array) {
+            return array_filter(array_map('trim', $array), function($item) {
+                return strlen($item) > 0;
+            });
+        };
+
+        $options->setDefaults([
+            'image' => $this->getDockerBaseImage(),
+            'env' => $normalize($this->getContainerEnv()),
+            'urls' => $normalize(explode(PHP_EOL, $this->getUrls())),
+            'writable' => [],
+            'build' => [],
+        ]);
+
+        $options->setRequired(['image']);
+
+        return $options;
+    }
 
     // @todo the base container can (and should?) be built during project import
     //       that's one lest step during the build

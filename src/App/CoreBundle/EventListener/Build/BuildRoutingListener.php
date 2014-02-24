@@ -69,9 +69,7 @@ class BuildRoutingListener
         $redis->del('frontend:'.$build->getHost());
         $redis->rpush('frontend:'.$build->getHost(), $build->getImageName(), $container_url);
 
-        $urls = explode(PHP_EOL, $build->getProject()->getUrls());
-        $urls = array_map('trim', $urls);
-        $urls = array_filter($urls, function($url) { return strlen($url) > 0; });
+        $urls = $build->getOptions()['urls'];
 
         $this->logger->info('adding custom build URLs', ['build' => $build->getId(), 'domains' => $urls]);
 

@@ -126,50 +126,76 @@ class BuildConsumer implements ConsumerInterface
             return;
         }
 
-        $build->setStatus(Build::STATUS_BUILDING);
-        $build->setPid(posix_getpid());
+        // check for other builds with the same hash
+        $sameHashBuilds = $buildRepository->findByHash($build->getHash());
 
-        $this->logger->info('starting build', ['pid' => $build->getPid()]);
+        $allowBuild = true;
 
-        $em->persist($build);
-        $em->flush();
+        if (null !== $build->getPayload() && count($sameHashBuilds) > 0) {
+            $allowBuild = array_reduce($sameHashBuilds, function($result, $b) {
+                /**
+                 * - If at least one other build is NOT scheduled, it means it has already been built.
+                 *   so we don't want to rebuild the same hash
+                 * - Otherwise, we might be the first build of a duplicate serie, so we want to build.
+                 */
+                return $b->isScheduled() ? $result : false;
+            }, true);
+        }
 
-        try {
-            $this->dispatcher->dispatch(BuildEvents::STARTED, new BuildStartedEvent($build));
 
-            $container = $this->builder->run($build, $this->timeout);
+        if (!$allowBuild) {
+            $this->logger->warn('aborting build for already built hash', [
+                'build' => $build->getId(),
+                'hash' => $build->getHash()
+            ]);
 
-            $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => ($container instanceof Container ? $container->getId() : '-')]);
+            $build->setStatus(Build::STATUS_DUPLICATE);
+        } else {
+            $build->setStatus(Build::STATUS_BUILDING);
+            $build->setPid(posix_getpid());
 
-            if ($container instanceof Container) {
-                $build->setContainer($container);
-                $build->setPort($container->getMappedPort(80)->getHostPort());                
+            $this->logger->info('starting build', ['pid' => $build->getPid()]);
+
+            $em->persist($build);
+            $em->flush();
+
+            try {
+                $this->dispatcher->dispatch(BuildEvents::STARTED, new BuildStartedEvent($build));
+
+                $container = $this->builder->run($build, $this->timeout);
+
+                $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => ($container instanceof Container ? $container->getId() : '-')]);
+
+                if ($container instanceof Container) {
+                    $build->setContainer($container);
+                    $build->setPort($container->getMappedPort(80)->getHostPort());                
+                }
+
+                $build->setStatus(Build::STATUS_RUNNING);
+            } catch (\Docker\Http\Exception\ParseErrorException $e) {
+                $this->logger->error('build failed (response parse error)', [
+                    'build' => $build->getId(),
+                    'exception' => $e
+                ]);
+
+                $this->logger->error((string) $e->getRequest());
+                $this->logger->error($e->getContent());
+
+                $build->setStatus(Build::STATUS_FAILED);
+                $build->setMessage(get_class($e).': '.$e->getMessage());
+            } catch (\Docker\Http\Exception\TimeoutException $e) {
+                $this->logger->error('build failed (timeout)', ['build' => $build->getId(), 'exception' => $e]);
+                $build->setStatus(Build::STATUS_TIMEOUT);
+            } catch (Exception $e) {
+                $this->logger->error('build failed', [
+                    'build' => $build->getId(),
+                    'exception' => $e,
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                
+                $build->setStatus(Build::STATUS_FAILED);
+                $build->setMessage(get_class($e).': '.$e->getMessage());
             }
-
-            $build->setStatus(Build::STATUS_RUNNING);
-        } catch (\Docker\Http\Exception\ParseErrorException $e) {
-            $this->logger->error('build failed (response parse error)', [
-                'build' => $build->getId(),
-                'exception' => $e
-            ]);
-
-            $this->logger->error((string) $e->getRequest());
-            $this->logger->error($e->getContent());
-
-            $build->setStatus(Build::STATUS_FAILED);
-            $build->setMessage(get_class($e).': '.$e->getMessage());
-        } catch (\Docker\Http\Exception\TimeoutException $e) {
-            $this->logger->error('build failed (timeout)', ['build' => $build->getId(), 'exception' => $e]);
-            $build->setStatus(Build::STATUS_TIMEOUT);
-        } catch (Exception $e) {
-            $this->logger->error('build failed', [
-                'build' => $build->getId(),
-                'exception' => $e,
-                'trace' => $e->getTraceAsString(),
-            ]);
-            
-            $build->setStatus(Build::STATUS_FAILED);
-            $build->setMessage(get_class($e).': '.$e->getMessage());
         }
 
         /**

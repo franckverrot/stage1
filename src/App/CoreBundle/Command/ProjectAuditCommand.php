@@ -59,11 +59,21 @@ class ProjectAuditCommand extends ContainerAwareCommand
 
         $response = $client->get($project->getKeysUrl())->send();
 
-        $infos['has_deploy_key'] = 'no';        
+        $infos['has_deploy_key'] = 0;
 
         foreach ($response->json() as $githubKey) {
             if ($githubKey['key'] === $project->getPublicKey()) {
-                $infos['has_deploy_key'] = 'yes';
+                $infos['has_deploy_key']++;
+            }
+        }
+
+        $response = $client->get($project->getHooksUrl())->send();
+
+        $infos['has_hook'] = 0;
+
+        foreach ($response->json() as $githubHook) {
+            if ($githubHook['name'] === 'web' && strpos($githubHook['config']['url'], 'stage1.io') !== false) {
+                $infos['has_hook']++;
             }
         }
 

@@ -96,10 +96,12 @@ class Builder
             return true;
         }
 
+        $project = $build->getProject();
+
         $logger->info('starting build', [
             'build' => $build->getId(),
-            'project' => $build->getProject()->getGithubFullName(),
-            'project_id' => $build->getProject()->getId(),
+            'project' => $project->getGithubFullName(),
+            'project_id' => $project->getId(),
             'ref' => $build->getRef(),
             'timeout' => $timeout
         ]);
@@ -109,7 +111,7 @@ class Builder
          */
         $logger->info('generating build script');
 
-        $builder = $build->getProject()->getDockerContextBuilder();
+        $builder = $project->getDockerContextBuilder();
         $builder->from('yuhao');
 
         $docker->build($builder->getContext(), $build->getImageName('yuhao'), false, true, true);
@@ -155,21 +157,28 @@ class Builder
 
         $em->persist($script);
 
+        $options = $project->getDefaultBuildOptions();
+        $options = $options->resolve($script->getNormalizedConfig());
+
+        $build->setOptions($options);
+
+        $logger->info('resolved options', ['options' => $options]);
+
         /**
          * Launch actual build
          */
         $logger->info('building base build container', ['build' => $build->getId(), 'image_name' => $build->getImageName()]);
 
-        $builder = $build->getProject()->getDockerContextBuilder();
+        $builder = $project->getDockerContextBuilder();
         $builder->add('/usr/local/bin/yuhao_build', $script->getBuildScript());
         $builder->add('/usr/local/bin/yuhao_run', $script->getRunScript());
         $builder->run('chmod -R +x /usr/local/bin/');
-        $builder->from($build->getBaseImageName());
+        $builder->from($options['image']);
 
         $response = $docker->build($builder->getContext(), $build->getImageName(), false, true, true);
 
         $buildContainer = new BuildContainer($build);
-        $buildContainer->addEnv($build->getProject()->getContainerEnv());
+        $buildContainer->addEnv($options['env']);
 
         $manager = $this->docker->getContainerManager();
 

@@ -28,6 +28,8 @@ class Build implements WebsocketRoutable
 
     const STATUS_TIMEOUT = 10;
 
+    const STATUS_DUPLICATE = 11;
+
     const LOG_OUTPUT = 'output';
 
     const LOG_APPLICATION = 'application';
@@ -91,6 +93,8 @@ class Build implements WebsocketRoutable
     private $memoryUsage;
 
     private $allowRebuild = false;
+
+    private $options = [];
 
     /**
      * @var \App\CoreBundle\Entity\GithubPayload
@@ -258,6 +262,7 @@ class Build implements WebsocketRoutable
             case self::STATUS_TIMEOUT:
                 return 'important';
             case self::STATUS_KILLED:
+            case self::STATUS_DUPLICATE:
                 return 'warning';
             default:
                 return 'default';
@@ -287,6 +292,8 @@ class Build implements WebsocketRoutable
                 return 'stopped';
             case self::STATUS_TIMEOUT:
                 return 'timeout';
+            case self::STATUS_DUPLICATE:
+                return 'duplicate';
             default:
                 return 'unknown';
         }
@@ -1055,5 +1062,28 @@ class Build implements WebsocketRoutable
     public function getScript()
     {
         return $this->script;
+    }
+
+    /**
+     * Set options
+     *
+     * @param array $options
+     * @return Build
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    
+        return $this;
+    }
+
+    /**
+     * Get options
+     *
+     * @return array 
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }

@@ -9,7 +9,7 @@ RUN echo "Europe/Paris" > /etc/timezone; dpkg-reconfigure tzdata
 RUN grep -v rootfs /proc/mounts > /etc/mtab
 
 RUN apt-get update -y
-RUN apt-get install -q -y git curl openssh-server vim php5-cli php5-json
+RUN apt-get install -q -y git curl openssh-server vim php5-cli php5-json ruby2.0
 
 RUN mkdir /root/.ssh
 RUN chmod -R 600 /root/.ssh

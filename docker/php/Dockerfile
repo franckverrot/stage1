@@ -1,7 +1,7 @@
 FROM stage1
 MAINTAINER Geoffrey Bachelet <geoffrey.bachelet@gmail.com>
 
-RUN apt-get install -qy realpath ruby1.9.1 ca-certificates-java openjdk-7-jre-headless || true
+RUN apt-get install -qy realpath ca-certificates-java openjdk-7-jre-headless || true
 
 # php5-sqlite is mainly for prestacms
 # php5-json is for composer
