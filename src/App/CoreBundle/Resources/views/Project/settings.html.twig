@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{% include 'AppCoreBundle:Default:_project_header.html.twig' %}
+
+{{ form_start(form) }}
+
+{{ form_row(form.buildYml) }}
+
+<div class="form-actions">
+    {{ form_widget(form.save) }}
+    {{ form_widget(form.save_and_build) }}
+</div>
+{{ form_end(form) }}
+
+{% endblock %}

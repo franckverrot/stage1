@@ -85,6 +85,8 @@ class Project implements WebsocketRoutable
 
     protected $dockerBaseImage = 'symfony2:latest';
 
+    protected $settings;
+
     /**
      * @var string
      */
@@ -138,6 +140,7 @@ SSH
 );
         $builder->run('chmod -R 0600 /root/.ssh');
         $builder->run('chown -R root:root /root/.ssh');
+        $builder->add('/root/build_local.yml', $this->getSettings()->getBuildYml());
 
         return $builder;
     }
@@ -987,5 +990,28 @@ SSH
     public function getContentsUrl()
     {
         return $this->contentsUrl;
+    }
+
+    /**
+     * Set settings
+     *
+     * @param \App\CoreBundle\Entity\ProjectSettings $settings
+     * @return Project
+     */
+    public function setSettings(\App\CoreBundle\Entity\ProjectSettings $settings = null)
+    {
+        $this->settings = $settings;
+    
+        return $this;
+    }
+
+    /**
+     * Get settings
+     *
+     * @return \App\CoreBundle\Entity\ProjectSettings 
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

@@ -21,7 +21,7 @@ stage1_websocket_step "select_builder"
 
 if [ -n "$(stage1_get_config_build)" ]; then
     BUILDER="$STAGE1_CONFIG_PATH"
-    stage1_announce "custom build detected"
+    # stage1_announce "custom build detected"
 
     stage1_get_config_build | while read cmd; do
         stage1_announce running "$cmd"

@@ -18,6 +18,7 @@ use Docker\PortCollection;
 use Psr\Log\LoggerInterface;
 
 use Exception;
+use RuntimeException;
 
 class Builder
 {
@@ -103,7 +104,8 @@ class Builder
             'project' => $project->getGithubFullName(),
             'project_id' => $project->getId(),
             'ref' => $build->getRef(),
-            'timeout' => $timeout
+            'timeout' => $timeout,
+            'force_local_build_yml' => $build->getForceLocalBuildYml(),
         ]);
 
         /**
@@ -117,6 +119,11 @@ class Builder
         $docker->build($builder->getContext(), $build->getImageName('yuhao'), false, true, true);
 
         $prepareContainer = new PrepareContainer($build);
+
+        if ($build->getForceLocalBuildYml()) {
+            $prepareContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+        }
+
         $manager = $docker->getContainerManager();
 
         $manager
@@ -179,6 +186,10 @@ class Builder
          */
         $logger->info('building base build container', ['build' => $build->getId(), 'image_name' => $build->getImageName()]);
 
+        if (explode(':', $options['image'])[0] !== 'symfony2') {
+            throw new RuntimeException(sprintf('Only the "symfony2" image is supported right now'));
+        }
+
         $builder = $project->getDockerContextBuilder();
         $builder->add('/usr/local/bin/yuhao_build', $script->getBuildScript());
         $builder->add('/usr/local/bin/yuhao_run', $script->getRunScript());
@@ -189,6 +200,10 @@ class Builder
 
         $buildContainer = new BuildContainer($build);
         $buildContainer->addEnv($options['env']);
+
+        if ($build->getForceLocalBuildYml()) {
+            $buildContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+        }
 
         $manager = $this->docker->getContainerManager();
 
@@ -246,6 +261,10 @@ class Builder
         $appContainer = new AppContainer($build);
         $appContainer->addEnv($build->getProject()->getContainerEnv());
         $appContainer->setExposedPorts($ports);
+
+        if ($build->getForceLocalBuildYml()) {
+            $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+        }
 
         $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
         $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);

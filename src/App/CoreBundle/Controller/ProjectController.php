@@ -37,6 +37,68 @@ class ProjectController extends Controller
     /**
      * @param integer $id
      */
+    public function settingsAction($id)
+    {
+        $project = $this->findProject($id);
+        $this->setCurrentProjectId($id);
+
+        $form = $this->createForm('project_settings', $project->getSettings(), [
+            'action' => $this->generateUrl('app_core_project_settings_update', ['id' => $project->getId()]),
+            'method' => 'POST',
+        ]);
+
+        return $this->render('AppCoreBundle:Project:settings.html.twig', [
+            'form' => $form->createView(),
+            'project' => $project
+        ]);
+    }
+
+    /**
+     * @param integer $id
+     */
+    public function settingsUpdateAction(Request $request, $id)
+    {
+        $project = $this->findProject($id);
+        $this->setCurrentProjectId($id);
+
+        $form = $this->createForm('project_settings', $project->getSettings(), [
+            'action' => $this->generateUrl('app_core_project_settings_update', ['id' => $project->getId()]),
+            'method' => 'POST',
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $form->getData()->setProject($project);
+
+            $em = $this->get('doctrine')->getManager();
+            $em->persist($form->getData());
+            $em->flush();
+
+            if ($form->get('save_and_build')->isClicked()) {
+                $ref = 'master';
+
+                $hash = $this->getHashFromRef($project, $ref);
+                $scheduler = $this->container->get('app_core.build_scheduler');
+                $build = $scheduler->schedule($project, $ref, $hash, $this->getUser(), [
+                    'force_local_build_yml' => true,
+                ]);
+
+                return $this->redirect($this->generateUrl('app_core_build_output', ['id' => $build->getId()]));
+            }
+
+            return $this->redirect($this->generateUrl('app_core_project_settings', ['id' => $project->getId()]));
+        }
+
+        return $this->render('AppCoreBundle:Project:settings.html.twig', [
+            'form' => $form->createView(),
+            'project' => $project
+        ]);
+    }
+
+    /**
+     * @param integer $id
+     */
     public function adminAction($id)
     {
         $project = $this->findProject($id);

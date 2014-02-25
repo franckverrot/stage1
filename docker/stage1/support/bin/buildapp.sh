@@ -43,7 +43,12 @@ stage1_announce "cloning repository $ssh_url"
 stage1_websocket_step "clone_repository"
 stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 
-stage1_announce 'running build script'
+if [ ! -f $APP_ROOT/.build.yml -o -n "$FORCE_LOCAL_BUILD_YML" ]; then
+    stage1_announce "using local .build.yml"
+    cp /root/build_local.yml $APP_ROOT/.build.yml
+fi
+
+# stage1_announce 'running build script'
 
 cd $APP_ROOT
 /usr/local/bin/yuhao_build

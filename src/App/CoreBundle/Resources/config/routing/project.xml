@@ -36,6 +36,14 @@
         <default key="_controller">AppCoreBundle:Project:admin</default>
     </route>
 
+    <route id="app_core_project_settings" pattern="/project/{id}/settings" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:settings</default>
+    </route>
+
+    <route id="app_core_project_settings_update" pattern="/project/{id}/settings" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:settingsUpdate</default>
+    </route>
+
     <route id="app_core_project_branches" pattern="/project/{id}/branches" methods="GET">
         <default key="_controller">AppCoreBundle:Project:branches</default>
     </route>

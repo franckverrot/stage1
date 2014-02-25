@@ -193,3 +193,8 @@ textarea#project_env, textarea#project_urls {
 .disabled.pane-title a:hover {
     border-color: transparent;
 }
+
+/*#project_settings_build_yml {
+    width: 50%;
+    height: 15em;
+}*/

@@ -38,7 +38,7 @@ class BuildScheduler
      * 
      * @see App\CoreBundle\EventListener\BuildBranchRelationSubscriber for automatic creation of non-existing branches
      */
-    public function schedule(Project $project, $ref, $hash, User $initiator = null)
+    public function schedule(Project $project, $ref, $hash, User $initiator = null, $options = [])
     {
         $this->logger->info('scheduling build', [
             'project' => $project->getId(),
@@ -58,6 +58,14 @@ class BuildScheduler
             $build->setInitiator($initiator);
         }
 
+        if (isset($options['force_local_build_yml']) && $options['force_local_build_yml']) {
+            $build->setForceLocalBuildYml(true);
+        }
+
+        /**
+         * @todo move this outside, it belongs in a controller
+         *       this will allow to remove the $options argument
+         */
         $em->persist($build);
         $em->flush();
 

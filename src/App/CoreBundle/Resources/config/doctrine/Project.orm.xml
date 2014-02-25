@@ -51,6 +51,8 @@
         <one-to-many field="branches" target-entity="App\CoreBundle\Entity\Branch" mapped-by="project">
             <cascade><persist /></cascade>
         </one-to-many>
+
+        <one-to-one field="settings" target-entity="App\CoreBundle\Entity\ProjectSettings" mapped-by="project" />
     </entity>
 
 </doctrine-mapping>

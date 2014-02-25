@@ -96,6 +96,8 @@ class Build implements WebsocketRoutable
 
     private $options = [];
 
+    private $forceLocalBuildYml = false;
+
     /**
      * @var \App\CoreBundle\Entity\GithubPayload
      */
@@ -1085,5 +1087,28 @@ class Build implements WebsocketRoutable
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * Set forceLocalBuildYml
+     *
+     * @param boolean $forceLocalBuildYml
+     * @return Build
+     */
+    public function setForceLocalBuildYml($forceLocalBuildYml)
+    {
+        $this->forceLocalBuildYml = $forceLocalBuildYml;
+    
+        return $this;
+    }
+
+    /**
+     * Get forceLocalBuildYml
+     *
+     * @return boolean 
+     */
+    public function getForceLocalBuildYml()
+    {
+        return $this->forceLocalBuildYml;
     }
 }
