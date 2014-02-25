@@ -8,10 +8,11 @@ docker images | grep -E 'none|b/' | awk '{print $3}' | $XARGS docker rmi
 
 if [ "$1" == "-f" ]; then
     echo "seriously cleaning..."
-    rm -rf /var/lib/docker/containers/*
-    rm -rf /var/lib/docker/grap/*
 
-    docker pull ubuntu:precise
+    sudo rm -rf /var/lib/docker/containers/*
+    sudo rm -rf /var/lib/docker/graph/*
+    sudo rm -rf /var/lib/docker/aufs/diff/*
+    sudo rm -rf /var/lib/docker/aufs/mnt/*
 
-    pkill docker
+    sudo restart docker
 fi

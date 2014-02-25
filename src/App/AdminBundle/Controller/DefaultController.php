@@ -21,7 +21,7 @@ class DefaultController extends Controller
         $builds = $doctrine
             ->getRepository('AppCoreBundle:Build')
             ->findBy([
-                'status' => [Build::STATUS_BUILDING, Build::STATUS_RUNNING, Build::STATUS_FAILED, Build::STATUS_TIMEOUT],
+                'status' => [Build::STATUS_SCHEDULED, Build::STATUS_BUILDING, Build::STATUS_RUNNING, Build::STATUS_FAILED, Build::STATUS_TIMEOUT],
             ], [
                 'createdAt' => 'DESC'
             ], 20);

@@ -106,6 +106,7 @@ class Project implements WebsocketRoutable
             'urls' => $normalize(explode(PHP_EOL, $this->getUrls())),
             'writable' => [],
             'build' => [],
+            'script' => [], // @todo this is legacy but needs to be here else OptionsResolver will die because the option is not known
         ]);
 
         $options->setRequired(['image']);

@@ -47,8 +47,8 @@ class ContainerListCommand extends ContainerAwareCommand
             'branch' => 'Branch',
             'user' => 'User',
             'build-status' => 'Build Status',
-            'container-status' => 'Cont. Status',
-            'ssh-port' => 'Ssh Port',
+            // 'container-status' => 'Cont. Status',
+            // 'ssh-port' => 'Ssh Port',
         ];
 
         if ((null !== $sort = $input->getOption('sort')) && !array_key_exists($sort, $headers)) {
@@ -109,14 +109,14 @@ class ContainerListCommand extends ContainerAwareCommand
 
             $rows[] = [
                 $build->getId(),
-                $container->getImage()->getName(),
+                explode(':', $container->getImage()->getName())[0],
                 (!$onlyContainer && posix_isatty(STDOUT)) ? substr($container->getId(), 0, 8) : $container->getId(),
                 $projectName,
                 $build->getBranch()->getName(),
                 $username,
                 $build->getStatusLabel(),
-                $data['Status'],
-                $data['Ports'][1]['PublicPort']
+                // $data['Status'],
+                // isset($data['Ports'][1]) ? $data['Ports'][1]['PublicPort'] : null
             ];
         }
 

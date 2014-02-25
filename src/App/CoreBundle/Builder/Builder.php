@@ -119,13 +119,9 @@ class Builder
         $prepareContainer = new PrepareContainer($build);
         $manager = $docker->getContainerManager();
 
-        $output = '';
-
         $manager
             ->run($prepareContainer)
-            ->attach($prepareContainer, function($type, $chunk) use (&$output) {
-                $output .= $chunk;
-            });
+            ->wait($prepareContainer);
 
         if ($prepareContainer->getExitCode() != 0) {
             $exitCode = $prepareContainer->getExitCode();
@@ -152,7 +148,19 @@ class Builder
         // @todo remove yuhao container
         // $manager->remove($prepareContainer); => 406 ?!
 
-        $logger->info('got response from yuhao', ['build' => $build->getId(), 'response' => json_decode($output, true)]);
+        $logger->info('yuhao finished executing, retrieving build script', ['build' => $build->getId()]);
+
+        $output = '';
+
+        $manager->attach($prepareContainer, function($type, $chunk) use (&$output) {
+            $output .= $chunk;
+        }, true, false, false, true, true);
+
+        $logger->info('got response from yuhao', [
+            'build' => $build->getId(),
+            'response' => $output,
+            'parsed_response' => json_decode($output, true)
+        ]);
 
         $script = BuildScript::fromJson($output);
         $script->setBuild($build);

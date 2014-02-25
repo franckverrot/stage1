@@ -63,51 +63,55 @@ class KillConsumer implements ConsumerInterface
             return;
         }
 
-        if (!$build->getPid()) {
-            $logger->warn('build has no pid', ['build' => $build->getId()]);
-            return;
-        }
-
         $terminated = true;
 
-        if (false === posix_kill($build->getPid(), SIGTERM)) {
-            $logger->info('build found but pid does not exist, marking as killed', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+        if ($build->getPid()) {
 
-            $build->setStatus(Build::STATUS_KILLED);
-            $em = $this->doctrine->getManager();
-            $em->persist($build);
-            $em->flush();
+            if (false === posix_kill($build->getPid(), SIGTERM)) {
+                $logger->info('build found but pid does not exist, marking as killed', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+
+                $build->setStatus(Build::STATUS_KILLED);
+                $em = $this->doctrine->getManager();
+                $em->persist($build);
+                $em->flush();
+            } else {
+                $logger->info('pid found, sent SIGTERM', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+
+                $terminated = false;
+
+                for ($i = 0; $i <= $this->timeout; $i++) {
+                    if (false === posix_kill($build->getPid(), 0)) {
+                        $terminated = true;
+                        break;
+                    }
+
+                    $logger->info('build still alive...', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+
+                    sleep(1);
+                }            
+            }
+        }
+
+        if (null === $container = $build->getContainer()) {
+            $logger->warn('could not find a container');
         } else {
-            $logger->info('pid found, sent SIGTERM', ['build' => $build->getId(), 'pid' => $build->getPid()]);
+            $logger->info('trying to stop container anyways', [
+                'build' => $build->getId(),
+                'container' => $container->getId()
+            ]);
 
-            $terminated = false;
-
-            for ($i = 0; $i <= $this->timeout; $i++) {
-                if (false === posix_kill($build->getPid(), 0)) {
-                    $terminated = true;
-                    break;
+            try {            
+                
+                $this->docker->getContainerManager()->stop($container);
+            } catch (UnexpectedStatusCodeException $e) {
+                if ($e->getCode() !== 404) {
+                    throw $e;
                 }
-
-                $logger->info('build still alive...', ['build' => $build->getId(), 'pid' => $build->getPid()]);
-
-                sleep(1);
-            }            
+            }
         }
 
         if (!$terminated) {
             $logger->info('sending SIGKILL', ['build' => $build->getId(), 'pid' => $build->getPid()]);
-
-            if (null === $container = $build->getContainer()) {
-                $logger->warn('could not find a container');
-            } else {
-                $logger->info('trying to stop container before SIGKILL', [
-                    'build' => $build->getId(),
-                    'container' => $container->getId()
-                ]);
-                
-                $this->docker->getContainerManager()->stop($container);
-            }
-
             posix_kill($build->getPid(), SIGKILL);
         }
 

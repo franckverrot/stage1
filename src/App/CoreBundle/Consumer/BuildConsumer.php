@@ -132,13 +132,13 @@ class BuildConsumer implements ConsumerInterface
         $allowBuild = true;
 
         if (null !== $build->getPayload() && count($sameHashBuilds) > 0) {
-            $allowBuild = array_reduce($sameHashBuilds, function($result, $b) {
+            $allowBuild = array_reduce($sameHashBuilds, function($result, $b) use($build) {
                 /**
                  * - If at least one other build is NOT scheduled, it means it has already been built.
                  *   so we don't want to rebuild the same hash
                  * - Otherwise, we might be the first build of a duplicate serie, so we want to build.
                  */
-                return $b->isScheduled() ? $result : false;
+                return ($b->getId() === $build->getId() || $b->isScheduled()) ? $result : false;
             }, true);
         }
 
@@ -184,6 +184,7 @@ class BuildConsumer implements ConsumerInterface
                 $build->setStatus(Build::STATUS_FAILED);
                 $build->setMessage(get_class($e).': '.$e->getMessage());
             } catch (\Docker\Http\Exception\TimeoutException $e) {
+                // @todo kill the container if it is still running
                 $this->logger->error('build failed (timeout)', ['build' => $build->getId(), 'exception' => $e]);
                 $build->setStatus(Build::STATUS_TIMEOUT);
             } catch (Exception $e) {

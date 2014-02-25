@@ -248,15 +248,21 @@ class DefaultController extends Controller
                 return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
             }
 
-            $existingBuild = $em->getRepository('AppCoreBundle:Build')->findOneByHash($hash);
+            $sameHashBuilds = $em->getRepository('AppCoreBundle:Build')->findByHash($hash);
 
-            if (null !== $existingBuild) {
-                if ($existingBuild->getAllowRebuild()) {
-                    $this->get('logger')->info('rebuilding hash', ['existing_build' => $existingBuild->getId(), 'hash' => $hash]);
-                } else {
-                    $this->get('logger')->warn('build already scheduled for hash', ['existing_build' => $existingBuild->getId(), 'hash' => $hash]);
-                    return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);                    
-                }
+            $allowBuild = true;
+
+            if (count($sameHashBuilds) > 0) {
+                $allowBuild = array_reduce($sameHashBuilds, function($result, $b) {
+                    return $result || $b->getAllowRebuild();
+                }, $allowBuild);
+            }
+
+            if (!$allowBuild) {
+                $this->get('logger')->warn('build already scheduled for hash', ['hash' => $hash]);
+                return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);                    
+            } else {
+                $this->get('logger')->info('scheduling build for hash', ['hash' => $hash]);
             }
 
             $scheduler = $this->get('app_core.build_scheduler');
