@@ -184,3 +184,12 @@ textarea#project_env, textarea#project_urls {
     width: 98%;
     height: 15em;
 }
+
+
+.disabled.pane-title a {
+    color: black;
+}
+
+.disabled.pane-title a:hover {
+    border-color: transparent;
+}

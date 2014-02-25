@@ -1,4 +1,8 @@
 <ul class="nav nav-tabs">
+    {% if is_granted('ROLE_ADMIN') %}
+    <li class="disabled pane-title"><a href=""><strong>{{ project.githubFullName }}</strong></a></li>
+    {% endif %}
+
     <li{% if app.request.attributes.get('_route') == 'app_core_project_branches' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_branches', { id: project.id }) }}">Branches</a>
     </li>
