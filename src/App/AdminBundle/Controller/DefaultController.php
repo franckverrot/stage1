@@ -32,4 +32,11 @@ class DefaultController extends Controller
             'builds' => $builds,
         ]);
     }
+
+    public function switchUserAction()
+    {
+        return $this->render('AppAdminBundle:Default:switchUser.html.twig', [
+            'users' => $this->get('doctrine')->getRepository('AppCoreBundle:User')->findAll()
+        ]);
+    }
 }

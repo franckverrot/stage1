@@ -1,0 +1,14 @@
+{% block body %}
+<form class="navbar-search">
+    <select id="_switch_user" name="_switch_user">
+        <option>Logged in as {{ app.user.username }}</option>
+        <optgroup label="Switch to...">
+        {% for user in users %}
+        {% if user.username != app.user.username %}
+        <option value="{{ user.username }}">{{ user.username }}</option>
+        {% endif %}
+        {% endfor %}
+        </optgroup>
+    </select>
+</form>
+{% endblock %}

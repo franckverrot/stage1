@@ -22,7 +22,8 @@ framework:
     session:
         name: STAGE1SESSID
         # handler_id: session.handler.redis
-    fragments:       ~
+    fragments:
+        path: /_fragment
 
 # Twig Configuration
 twig:

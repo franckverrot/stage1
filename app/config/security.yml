@@ -25,7 +25,8 @@ security:
                 failure_path: /
                 login_path: /login/github
             logout: true
-            anonymous: true            
+            anonymous: true
+            switch_user: { role: ROLE_ADMIN }
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
