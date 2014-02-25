@@ -220,6 +220,10 @@ class DefaultController extends Controller
         try {
             $payload = json_decode($request->getContent());
 
+            if (!isset($payload->ref)) {
+                return new JsonResponse(json_encode(null), 400);
+            }
+
             $ref = substr($payload->ref, 11);
             $hash = $payload->after;
 
