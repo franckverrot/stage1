@@ -152,6 +152,8 @@ class Builder
         // @todo remove yuhao container
         // $manager->remove($prepareContainer); => 406 ?!
 
+        $logger->info('got response from yuhao', ['build' => $build->getId(), 'response' => json_decode($output, true)]);
+
         $script = BuildScript::fromJson($output);
         $script->setBuild($build);
 

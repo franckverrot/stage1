@@ -36,8 +36,8 @@ class BuildCheckTimeoutCommand extends ContainerAwareCommand
         $builds = $rp->findTimeouted($ttl);
 
         foreach ($builds as $build) {
-            $output->writeln('marking build #<info>'.$build->getId().'</info> as timeouted');
-            $build->setStatus(Build::STATUS_FAILED);
+            $output->writeln('marking build <info>'.$build->getId().'</info> as timeouted');
+            $build->setStatus(Build::STATUS_TIMEOUT);
             $em->persist($build);
         }
 

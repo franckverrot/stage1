@@ -39,7 +39,7 @@ class ProjectContainersStopCommand extends ContainerAwareCommand
         $prefix = 'b/'.$project->getId();
         $prefixLength = strlen($prefix);
 
-        $output->writeln('found <info>'.count($containers).'</info> running containers');
+        $output->writeln('found <info>'.count($containers).'</info> total running containers');
 
         $count = 0;
 
