@@ -140,7 +140,7 @@ SSH
 );
         $builder->run('chmod -R 0600 /root/.ssh');
         $builder->run('chown -R root:root /root/.ssh');
-        $builder->add('/root/build_local.yml', $this->getSettings()->getBuildYml());
+        $builder->add('/root/build_local.yml', ($this->getSettings() ? $this->getSettings()->getBuildYml() : ''));
 
         return $builder;
     }
