@@ -14,3 +14,5 @@ if [ -x /usr/local/bin/stage1_image_init_run ]; then
 fi
 
 /usr/local/bin/yuhao_run
+
+tail -F /var/log/nginx/*.log $APP_ROOT/app/logs/*.log /var/log/php5-fpm.log

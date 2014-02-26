@@ -71,7 +71,6 @@ class ContainerListCommand extends ContainerAwareCommand
         $rows = [];
 
         foreach ($containers as $container) {
-
             list(,$projectId,,$buildId) = explode('/', $container->getImage()->getRepository());
             $data = $container->getData();
             $build = $rp->find($buildId);

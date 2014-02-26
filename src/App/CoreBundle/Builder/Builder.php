@@ -271,8 +271,8 @@ class Builder
             $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
         }
 
-        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
         $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);
+        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
 
         return $appContainer;
     }
