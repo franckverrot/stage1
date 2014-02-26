@@ -185,7 +185,12 @@ class BuildConsumer implements ConsumerInterface
                 $build->setMessage(get_class($e).': '.$e->getMessage());
             } catch (\Docker\Http\Exception\TimeoutException $e) {
                 // @todo kill the container if it is still running
-                $this->logger->error('build failed (timeout)', ['build' => $build->getId(), 'exception' => $e]);
+                $this->logger->error('build failed (timeout)', [
+                    'build' => $build->getId(),
+                    'exception' => $e,
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                
                 $build->setStatus(Build::STATUS_TIMEOUT);
             } catch (Exception $e) {
                 $this->logger->error('build failed', [
