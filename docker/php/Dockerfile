@@ -21,7 +21,8 @@ RUN apt-get install -qy \
     php5-json \
     zip
 
-RUN curl -sS https://getcomposer.org/installer | php;  mv composer.phar /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php
+RUN mv composer.phar /usr/local/bin/composer
 
 # just in case something's wrong with innodb
 RUN rm -f /var/lib/mysql/ib_logfile*
@@ -31,5 +32,4 @@ RUN gem install --no-ri --no-rdoc compass sass; ln -s /usr/local/bin/compass /us
 ADD ./support/nginx.conf /etc/nginx/sites-available/default
 ADD ./support/php.ini /etc/php5/fpm/php.ini
 ADD ./support/php.ini /etc/php5/cli/php.ini
-ADD ./support/parameters.yml.dist /etc/symfony/parameters.yml.dist
 ADD ./support/my.cnf /etc/mysql/my.cnf

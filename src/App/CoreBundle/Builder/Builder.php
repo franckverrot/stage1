@@ -246,6 +246,11 @@ class Builder
 
         /**
          * Build successful!
+         * 
+         * @todo the commit can timeout for no obvious reason, while actually committing
+         *       catch the timeout and check if the image has been commited
+         *          if yes, proceed
+         *          if not, retry (3 times ?)
          */
         $logger->info('build successful, committing', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);

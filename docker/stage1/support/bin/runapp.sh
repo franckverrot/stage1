@@ -1,19 +1,16 @@
 #!/bin/bash
 
-# @todo move to symfony2 specific stuff
-
-if [ ! -z "$DEBUG" ]; then
-    set -x
-fi
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-source $DIR/../lib/stage1.sh
+source /usr/local/lib/stage1.sh
 
 /usr/sbin/sshd
 
-APP_ROOT=/var/www
-
-stage1_announce 'running run script'
+APP_ROOT=/app
 cd $APP_ROOT
+
+STAGE1_STAGE='run'
+
+if [ -x /usr/local/bin/stage1_image_init_run ]; then
+    stage1_image_init_run
+fi
+
 /usr/local/bin/yuhao_run

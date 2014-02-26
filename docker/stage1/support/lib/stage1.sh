@@ -3,12 +3,17 @@
 set -o errexit
 set -o pipefail
 
+if [ ! -z "$DEBUG" ]; then
+    set -x
+fi
+
 trap 'exit $?' ERR
 
 STAGE1_CONFIG_PATH=".build.yml"
 
 stage1_announce() {
-    echo -e "\033[33mstage1\033[0m> $@"
+    # echo -e "\033[33mstage1\033[0m> $@"
+    echo -e "  $@"
 }
 
 stage1_get_config_key() {
@@ -32,18 +37,24 @@ stage1_get_config_run() {
 }
 
 stage1_exec() {
+    echo -e "\$ $@"
     (bash -c "$@")
 }
 
 stage1_exec_bg() {
+    echo -e "\$ $@"
     (bash -c "$@" &)
 }
 
-function stage1_websocket_step {
-    stage1_websocket_message "build.step" "{ \"step\": \"$1\" }"
+stage1_composer_configure() {
+    mkdir -p /.composer
+    cat > /.composer/config.json <<EOF
+{
+    "config": {
+        "github-oauth": {
+            "github.com": "$1"
+        }
+    }
 }
-
-stage1_websocket_message() {
-    true
-    # echo "[websocket:$1:$2]"
+EOF
 }

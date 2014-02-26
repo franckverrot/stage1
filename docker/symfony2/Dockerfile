@@ -1,6 +1,7 @@
 FROM php
 MAINTAINER Geoffrey Bachelet <geoffrey.bachelet@gmail.com>
 
-ADD ./support/lib/builder/ /usr/local/lib/builder/
+ADD ./support/bin/stage1_image_init_build.sh /usr/local/bin/stage1_image_init_build
+ADD ./support/bin/stage1_image_init_run.sh /usr/local/bin/stage1_image_init_run
 
-RUN chmod -R +x /usr/local/lib/builder/
+RUN chmod +x /usr/local/bin/stage1_image_init_*

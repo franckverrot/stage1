@@ -1,54 +1,36 @@
 #!/bin/bash
 
-#!/bin/bash -e
+source /usr/local/lib/stage1.sh
 
-if [ ! -z "$DEBUG" ]; then
-    set -x
-fi
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-source $DIR/../lib/stage1.sh
-
-# stage1_announce "starting MySQL server"
-stage1_exec "/etc/init.d/mysql start 2>&1 > /dev/null"
-
-# composer configuration to avoid hitting github's api rate limit
-# @todo this has to be moved to the symfony builder
-# but it must be ran even when the project provides a custom builder
-# so maybe a $builder/bin/before script could be useful
-stage1_announce "configuring composer with token $ACCESS_TOKEN"
-
-stage1_exec "mkdir -p /.composer"
-stage1_exec "$(cat <<EXEC
-cat > /.composer/config.json <<EOF
-{
-    "config": {
-        "github-oauth": {
-            "github.com": "$ACCESS_TOKEN"
-        }
-    }
-}
-EOF
-EXEC
-)"
-
-APP_ROOT=/var/www
+APP_ROOT=/app
 
 if [ -d $APP_ROOT ]; then
     rm -rf $APP_ROOT
 fi
 
-stage1_announce "cloning repository $ssh_url"
-stage1_websocket_step "clone_repository"
+# stage1_announce "cloning repository $ssh_url"
 stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 
-if [ ! -f $APP_ROOT/.build.yml -o -n "$FORCE_LOCAL_BUILD_YML" ]; then
-    stage1_announce "using local .build.yml"
-    cp /root/build_local.yml $APP_ROOT/.build.yml
+cd $APP_ROOT
+
+# composer configuration to avoid hitting github's api rate limit
+# @todo this has to be moved to the symfony builder
+# but it must be ran even when the project provides a custom builder
+# so maybe a $builder/bin/before script could be useful
+if [ -f composer.json ]; then
+    # stage1_announce "configuring composer with token $ACCESS_TOKEN"
+    stage1_composer_configure $ACCESS_TOKEN
 fi
 
-# stage1_announce 'running build script'
+if [ ! -f ./.build.yml -o -n "$FORCE_LOCAL_BUILD_YML" ]; then
+    stage1_announce "using local .build.yml"
+    cp /root/build_local.yml ./.build.yml
+fi
 
-cd $APP_ROOT
+STAGE1_STAGE='build'
+
+if [ -x /usr/local/bin/stage1_image_init_build ]; then
+    stage1_image_init_build
+fi
+
 /usr/local/bin/yuhao_build
