@@ -15,63 +15,10 @@ stream_build_output($('#output'));
 {% endblock javascripts %}
 
 {% block body %}
+
 {% include 'AppCoreBundle:Default:_project_header.html.twig' with { project: build.project } %}
-
-<fieldset id="build-metadata">
-    <ul class="lead breadcrumb">
-        <li><a href="{{ path('app_core_build_show', { id: build.id }) }}">#{{ build.id }}</a> <span class="divider">/</span></li>
-        <li>{{ build.ref }}</li>
-        <li id="build-{{ build.id }}-link" data-template="{{ '<span class="divider">/</span> <a href="{{ build_url }}">{{ build_url }}</a>' | e }}">
-            {% if build.running and build.url %}
-            <span class="divider">/</span>
-            <a href="{{ build.url }}">{{ build.url }}</a>
-            {% endif %}
-        </li>
-    </ul>
-    <div class="row-fluid">
-        <dl class="span3">
-            <dt>Status</dt>
-            <dd><span data-status="{{ build.status }}" id="build-{{ build.id }}-status" class="label label-{{ build.statusLabelClass }}">{{ build.statusLabel }}</span></dd>
-        </dl>
-
-        <dl class="span3">
-            <dt>Created</dt>
-            <dd><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></dd>
-        </dl>
-
-        <dl class="span3">
-            <dt>Duration</dt>
-            <dd><abbr title="{{ (build.duration / 1000) | round }} seconds">{{ (build.duration / 1000 / 60) | round }} minutes</abbr></dd>
-        </dl>
-
-        <dl class="span3">
-            <dt>Ref.</dt>
-            <dd>
-                {{ build.ref }}
-
-                {% if build.hash %}
-                <nowrap>(
-                {% include 'AppCoreBundle:Default:_commit_hash.html.twig' with {
-                    project_full_name: build.project.githubFullName,
-                    hash: build.hash
-                } %}
-                )</nowrap>
-                {% endif %}
-            </dd>
-        </dl>
-    </div>
-</fieldset>
-
-{#
-<ul class="nav nav-pills">
-    <li{% if forceTab == 'output' %} class="active"{% endif %}>
-        <a href="{{ path('app_core_build_output', { id: build.id }) }}">Build output</a>
-    </li>
-    <li{% if forceTab == 'logs' %} class="active"{% endif %}>
-        <a href="{{ path('app_core_build_logs', { id: build.id }) }}">Application logs</a>
-    </li>
-</ul>
-#}
+{% include 'AppCoreBundle:Build:_metadata.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
 
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">

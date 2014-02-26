@@ -108,6 +108,7 @@ class Project implements WebsocketRoutable
             'urls' => $normalize(explode(PHP_EOL, $this->getUrls())),
             'writable' => [],
             'build' => [],
+            'run' => [],
             'script' => [], // @todo this is legacy but needs to be here else OptionsResolver will die because the option is not known
         ]);
 
@@ -140,7 +141,10 @@ SSH
 );
         $builder->run('chmod -R 0600 /root/.ssh');
         $builder->run('chown -R root:root /root/.ssh');
-        $builder->add('/root/build_local.yml', ($this->getSettings() ? $this->getSettings()->getBuildYml() : ''));
+
+        if ($this->getSettings() && strlen($this->getSettings()->getBuildYml()) > 0) {
+            $builder->add('/root/build_local.yml', $this->getSettings()->getBuildYml());
+        }
 
         return $builder;
     }

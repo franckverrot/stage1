@@ -10,6 +10,18 @@ use Symfony\Component\Process\ProcessBuilder;
 
 class BuildController extends Controller
 {
+    public function infosAction($id)
+    {
+        $build = $this->findBuild($id);
+
+        $this->setCurrentBuildId($build->getId());
+        $this->setCurrentProjectId($build->getProject()->getId());
+
+        return $this->render('AppCoreBundle:Build:infos.html.twig', [
+            'build' => $build,
+        ]);
+    }
+
     public function logsDownloadAction(Request $request, $id)
     {
         $build = $this->findBuild($id);

@@ -17,6 +17,10 @@
         <default key="forceTab">output</default>
     </route>
 
+    <route id="app_core_build_infos" pattern="/build/{id}/infos" methods="GET">
+        <default key="_controller">AppCoreBundle:Build:infos</default>
+    </route>
+
     <route id="app_core_build_logs_load" pattern="/build/{id}/logs/load" methods="GET">
         <default key="_controller">AppCoreBundle:Build:logsLoad</default>
     </route>

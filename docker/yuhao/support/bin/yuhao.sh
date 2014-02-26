@@ -11,8 +11,9 @@ APP_ROOT=/app
 
 git clone --depth 1 --branch $2 $1 $APP_ROOT > /dev/null
 
-if [ ! -f $APP_ROOT/.build.yml -o -n "$FORCE_LOCAL_BUILD_YML" ]; then
-    cp /root/build_local.yml $APP_ROOT/.build.yml
+# check if we must (or want to) use the local build.yml configuration
+if [[ -n "$FORCE_LOCAL_BUILD_YML" || (! -f ./.build.yml && -f /root/build_local.yml) ]]; then
+    cp /root/build_local.yml ./.build.yml
 fi
 
 yuhao.phar $APP_ROOT

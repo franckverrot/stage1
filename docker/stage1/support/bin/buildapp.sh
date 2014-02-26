@@ -14,16 +14,17 @@ stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
 cd $APP_ROOT
 
 # composer configuration to avoid hitting github's api rate limit
-# @todo this has to be moved to the symfony builder
-# but it must be ran even when the project provides a custom builder
-# so maybe a $builder/bin/before script could be useful
 if [ -f composer.json ]; then
     # stage1_announce "configuring composer with token $ACCESS_TOKEN"
     stage1_composer_configure $ACCESS_TOKEN
 fi
 
-if [ ! -f ./.build.yml -o -n "$FORCE_LOCAL_BUILD_YML" ]; then
-    stage1_announce "using local .build.yml"
+# check if we must (or want to) use the local build.yml configuration
+if [ -n "$FORCE_LOCAL_BUILD_YML" ]; then
+    stage1_announce "forcing local .build.yml"
+    cp /root/build_local.yml ./.build.yml
+elif [[ ( ! -f ./.build.yml && -f /root/build_local.yml ) ]]; then
+    stage1_announce "no .build.yml found, using local .build.yml"
     cp /root/build_local.yml ./.build.yml
 fi
 

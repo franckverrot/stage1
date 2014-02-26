@@ -1,12 +1,19 @@
 {% extends '::base.html.twig' %}
 
-{% block body %}
+{% block javascripts %}
+<script type="text/javascript">$(function() { ace.edit('project_settings_buildYml_ace').focus(); });</script>{% endblock %}
 
+{% block body %}
 {% include 'AppCoreBundle:Default:_project_header.html.twig' %}
 
 {{ form_start(form) }}
 
-{{ form_row(form.buildYml) }}
+<fieldset>
+    <legend>Build configuration</legend>
+    <p>Here you can configure a build for your project without having to commit a <code>.build.yml</code> file.</p>
+    {{ form_errors(form.buildYml) }}
+    {{ form_widget(form.buildYml) }}
+</fieldset>
 
 <div class="form-actions">
     {{ form_widget(form.save) }}

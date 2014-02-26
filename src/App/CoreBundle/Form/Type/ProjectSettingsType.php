@@ -13,8 +13,13 @@ class ProjectSettingsType extends AbstractType
         $builder
             ->add('buildYml', 'ace_editor', [
                 'mode' => 'ace/mode/yaml',
-                'width' => '50%',
+                'theme' => 'ace/theme/dawn',
+                'width' => 'undefined',
                 'tab_size' => 2,
+                'show_print_margin' => false,
+                'font_size' => 13,
+                'height' => 400,
+                'label' => 'Build configuration'
             ])
             ->add('save', 'submit', [
                 'label' => 'Save settings',

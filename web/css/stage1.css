@@ -76,12 +76,15 @@ table.build-list tr.status-running td {
     color: black;
 }
 
+pre#output, pre#logs, pre.terminal {
+    background: black;
+    color: lightgray;
+}
+
 pre#output, pre#logs {
     max-height: 35em;
     min-height: 35em;
     overflow: auto;
-    background: black;
-    color: lightgray;
 }
 
 #output-container, #logs-container {
@@ -96,7 +99,7 @@ pre#output, pre#logs {
 
 #build-metadata dt {
     float: left;
-    width: 7em;
+    width: 5em;
     line-height: 30px;
 }
 
