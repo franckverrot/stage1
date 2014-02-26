@@ -1,27 +1,29 @@
+{% set current_route = app.request.attributes.get('_route') %}
+
 <ul class="nav nav-tabs">
     {% if is_granted('ROLE_ADMIN') %}
     <li class="disabled pane-title"><a href=""><strong>{{ project.githubFullName }}</strong></a></li>
     {% endif %}
 
-    <li{% if app.request.attributes.get('_route') == 'app_core_project_branches' %} class="active"{% endif %}>
+    <li{% if current_route == 'app_core_project_branches' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_branches', { id: project.id }) }}">Branches</a>
     </li>
-    <li{% if app.request.attributes.get('_route') == 'app_core_project_builds' %} class="active"{% endif %}>
+    <li{% if current_route == 'app_core_project_builds' or current_route | slice(0, 14) == 'app_core_build' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_builds', { id: project.id }) }}">Builds</a>
     </li>
     
     {% if project.getGithubPrivate %}
-    <li{% if app.request.attributes.get('_route') == 'app_core_project_access' %} class="active"{% endif %}>
+    <li{% if current_route == 'app_core_project_access' %} class="active"{% endif %}>
         <a href="{{ path('app_core_project_access', { id: project.id }) }}">Access</a>
     </li>
     {% endif %}
 
-    <li class="pull-right{% if app.request.attributes.get('_route') == 'app_core_project_admin' %} active{% endif %}">
+    <li class="pull-right{% if current_route == 'app_core_project_admin' %} active{% endif %}">
         <a href="{{ path('app_core_project_admin', { id: project.id }) }}">Admin</a>
     </li>
 
     {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVIOUS_ADMIN') %}
-    <li class="pull-right{% if app.request.attributes.get('_route') == 'app_core_project_settings' %} active{% endif %}">
+    <li class="pull-right{% if current_route == 'app_core_project_settings' %} active{% endif %}">
         <a href="{{ path('app_core_project_settings', { id: project.id }) }}">Settings</a>
     </li>
     {% endif %}

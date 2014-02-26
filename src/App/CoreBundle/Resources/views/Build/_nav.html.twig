@@ -1,0 +1,11 @@
+{% set current_route = app.request.attributes.get('_route') %}
+
+<ul class="nav nav-tabs">
+    <li{% if current_route == 'app_core_build_output' or current_route == 'app_core_build_show' %} class="active"{% endif %}>
+        <a href="{{ path('app_core_build_output', { id: build.id }) }}">Output</a>
+    </li>
+
+    <li{% if current_route == 'app_core_build_infos' %} class="active"{% endif %}>
+        <a href="{{ path('app_core_build_infos', { id: build.id }) }}">Infos</a>
+    </li>
+</ul>

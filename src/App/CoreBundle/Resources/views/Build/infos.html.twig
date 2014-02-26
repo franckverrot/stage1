@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{% include 'AppCoreBundle:Default:_project_header.html.twig' with { project: build.project } %}
+{% include 'AppCoreBundle:Build:_metadata.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
+
+{% if build.script %}
+<p class="lead">These are the scripts and configuration used during this build.</p>
+
+<fieldset>
+    <legend>Build script</legend>
+    {% if build.script.buildScript | length == 0 %}
+    <p class="lead">This build has no build script (this should not happen).</p>
+    {% else %}
+    <div class="build_infos" id="build_infos_build_script">
+        <pre class="terminal">{{ build.script.buildScript }}</pre>
+    </div>
+    {% endif %}
+</fieldset>
+
+<fieldset>
+    <legend>Run script</legend>
+    {% if build.script.runScript | length == 0 %}
+    <p class="lead">This build has no run script.</p>
+    {% else %}
+    <div class="build_infos" id="build_infos_run_script">
+        <pre class="terminal">{{ build.script.runScript }}</pre>
+    </div>
+    {% endif %}
+</fieldset>
+
+<fieldset>
+    <legend>Configuration</legend>
+    {% if build.script.config | length == 0 %}
+    <p class="lead">This build has no configuration.</p>
+    {% else %}
+    <div class="build_infos" id="build_infos_config">
+        <pre class="terminal">{{ build.script.config | json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+    </div>
+    {% endif %}
+</fieldset>
+{% else %}
+    <p class="lead">This build has no debug information (yet).</p>
+{% endif %}
+{% endblock %}
