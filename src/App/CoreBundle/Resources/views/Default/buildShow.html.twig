@@ -50,12 +50,12 @@ stream_build_output($('#output'));
                 {{ build.ref }}
 
                 {% if build.hash %}
-                (
+                <nowrap>(
                 {% include 'AppCoreBundle:Default:_commit_hash.html.twig' with {
                     project_full_name: build.project.githubFullName,
                     hash: build.hash
                 } %}
-                )
+                )</nowrap>
                 {% endif %}
             </dd>
         </dl>
