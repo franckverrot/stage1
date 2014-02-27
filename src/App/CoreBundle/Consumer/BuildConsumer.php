@@ -127,6 +127,22 @@ class BuildConsumer implements ConsumerInterface
             return;
         }
 
+        // check if there are newer scheduled builds for our ref
+        $newerScheduledBuilds = $buildRepository->findNewerScheduledBuilds($build);
+
+        if (count($newerScheduledBuilds) > 0) {
+            $this->logger->warn('newer scheduled builds found for this ref', [
+                'build' => $build->getId(),
+                'ref' => $build->getRef()
+            ]);
+
+            $build->setStatus(Build::STATUS_CANCELED);
+            $em->persist($build);
+            $em->flush();
+
+            return;
+        }
+
         // check for other builds with the same hash
         $sameHashBuilds = $buildRepository->findByHash($build->getHash());
 

@@ -90,8 +90,12 @@
         <default key="_controller">AppCoreBundle:Default:projectShow</default>
     </route>
 
-    <route id="app_core_hooks_github" pattern="/hooks/github">
-        <default key="_controller">AppCoreBundle:Default:hooksGithub</default>
+    <route id="app_core_hooks_schedule" pattern="/hooks/schedule" methods="POST">
+        <default key="_controller">AppCoreBundle:Hooks:schedule</default>
+    </route>
+
+    <route id="app_core_hooks_github" pattern="/hooks/github" methods="POST">
+        <default key="_controller">AppCoreBundle:Hooks:github</default>
     </route>
 
     <route id="app_core_auth_github_authorize" pattern="/login/github">

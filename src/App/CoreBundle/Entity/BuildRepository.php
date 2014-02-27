@@ -9,6 +9,49 @@ use Doctrine\ORM\NoResultException;
 
 class BuildRepository extends EntityRepository
 {
+    public function findNewerScheduledBuilds(Build $build)
+    {
+        $query = $this->createQueryBuilder('b')
+            ->select()
+            ->leftJoin('b.project', 'p')
+            ->where('p.id = ?1')
+            ->andWhere('b.ref = ?2')
+            ->andWhere('b.createdAt > ?3')
+            ->setParameters([
+                1 => $build->getProject()->getId(),
+                2 => $build->getRef(),
+                3 => $build->getCreatedAt()->format('Y-m-d H:i:s'),
+            ])
+            ->getQuery();
+
+        return $query->execute();
+    }
+
+    /**
+     * @param App\CoreBundle\Entity\Project $project
+     * @param string                        $ref
+     * 
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function findPendingByRef(Project $project, $ref)
+    {
+        $query = $this->createQueryBuilder('b')
+            ->select()
+            ->leftJoin('b.project', 'p')
+            ->where('p.id = ?1')
+            ->andWhere('b.ref = ?2')
+            ->andWhere('b.status IN (?3)')
+            ->setParameters([
+                1 => $project->getId(),
+                2 => $ref,
+                3 => [Build::STATUS_SCHEDULED, Build::STATUS_BUILDING]
+            ])
+            ->getQuery();
+
+        return $query->execute();
+
+    }
+
     /**
      * @param integer $ttl
      * 

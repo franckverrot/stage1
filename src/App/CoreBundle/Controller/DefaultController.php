@@ -88,11 +88,6 @@ class DefaultController extends Controller
     public function buildKillAction($id)
     {
         try {
-            $build = $this->findBuild($id);
-            $build->setStatus(Build::STATUS_KILLED);
-
-            $this->persistAndFlush($build);
-
             $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
 
             return new JsonResponse(null, 200);
@@ -213,89 +208,5 @@ class DefaultController extends Controller
         ]));
 
         return new JsonResponse(json_encode(true));
-    }
-
-    public function hooksGithubAction(Request $request)
-    {
-        try {
-            $payload = json_decode($request->getContent());
-
-            if (!isset($payload->ref)) {
-                return new JsonResponse(json_encode(null), 400);
-            }
-
-            $ref = substr($payload->ref, 11);
-            $hash = $payload->after;
-
-            $em = $this->getDoctrine()->getManager();
-
-            $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
-
-            if (!$project) {
-                throw $this->createNotFoundException('Unknown Github project');
-            }
-
-            if ($hash === '0000000000000000000000000000000000000000') {
-                $branch = $em
-                    ->getRepository('AppCoreBundle:Branch')
-                    ->findOneByProjectAndName($project, $ref);
-
-                $branch->setDeleted(true);
-
-                $em->persist($branch);
-                $em->flush();
-
-                return new JsonResponse(json_encode(null), 200);
-            }
-
-            if ($project->getStatus() === Project::STATUS_HOLD) {
-                return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
-            }
-
-            $sameHashBuilds = $em->getRepository('AppCoreBundle:Build')->findByHash($hash);
-
-            $allowBuild = true;
-
-            if (count($sameHashBuilds) > 0) {
-                $allowBuild = array_reduce($sameHashBuilds, function($result, $b) {
-                    return $result || $b->getAllowRebuild();
-                }, $allowBuild);
-            }
-
-            if (!$allowBuild) {
-                $this->get('logger')->warn('build already scheduled for hash', ['hash' => $hash]);
-                return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);                    
-            } else {
-                $this->get('logger')->info('scheduling build for hash', ['hash' => $hash]);
-            }
-
-            $scheduler = $this->get('app_core.build_scheduler');
-
-            $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
-
-            $build = $scheduler->schedule($project, $ref, $hash);
-
-            $payload = new GithubPayload();
-            $payload->setPayload($request->getContent());
-            $payload->setBuild($build);
-            $payload->setDeliveryId($request->headers->get('X-GitHub-Delivery'));
-            $payload->setEvent($request->headers->get('X-GitHub-Event'));
-
-            $em->persist($payload);
-            $em->flush();
-
-            return new JsonResponse([
-                'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
-                'build' => $build->asMessage(),
-            ], 201);
-        } catch (Exception $e) {
-            $this->container->get('logger')->error($e->getMessage());
-
-            if (method_exists($e, 'getResponse')) {
-                $this->container->get('logger')->error($e->getResponse()->getBody(true));
-            }
-
-            return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);
-        }
     }
 }

@@ -20,15 +20,18 @@ class BuildScheduler
 
     private $buildProducer;
 
+    private $killProducer;
+
     private $websocketProducer;
 
     private $messageFactory;
 
-    public function __construct(LoggerInterface $logger, RegistryInterface $doctrine, Producer $buildProducer, Producer $websocketProducer, MessageFactory $messageFactory)
+    public function __construct(LoggerInterface $logger, RegistryInterface $doctrine, Producer $buildProducer, Producer $killProducer, Producer $websocketProducer, MessageFactory $messageFactory)
     {
         $this->logger = $logger;
         $this->doctrine = $doctrine;
         $this->buildProducer = $buildProducer;
+        $this->killProducer = $killProducer;
         $this->websocketProducer = $websocketProducer;
         $this->messageFactory = $messageFactory;
     }
@@ -40,13 +43,32 @@ class BuildScheduler
      */
     public function schedule(Project $project, $ref, $hash, User $initiator = null, $options = [])
     {
-        $this->logger->info('scheduling build', [
+        $logger = $this->logger;
+
+        $logger->info('scheduling build', [
             'project' => $project->getId(),
             'ref' => $ref,
             'hash' => $hash,
         ]);
 
         $em = $this->doctrine->getManager();
+
+        // @todo I guess this should be in a build.scheduled event listener
+        $alreadyRunningBuilds = $em->getRepository('AppCoreBundle:Build')->findPendingByRef($project, $ref);
+
+        foreach ($alreadyRunningBuilds as $build) {
+            // @todo instead of retrieving then updating builds to be canceled, directly issue an UPDATE
+            //       it should avoid most race conditions
+            if ($build->isScheduled()) {
+                $logger->info('canceling same ref build', ['ref' => $ref, 'canceled_build' => $build->getId()]);
+                $build->setStatus(Build::STATUS_CANCELED);
+                $em->persist($build);
+                $em->flush();
+            } else {
+                $logger->info('killing same ref build', ['ref' => $ref, 'canceled_build' => $build->getId()]);
+                $this->killProducer->publish(json_encode(['build_id' => $build->getId()]));
+            }
+        }
 
         $build = new Build();
         $build->setProject($project);

@@ -63,17 +63,18 @@ class KillConsumer implements ConsumerInterface
             return;
         }
 
+        $build->setStatus(Build::STATUS_KILLED);
+
+        $em = $this->doctrine->getManager();
+        $em->persist($build);
+        $em->flush();
+
         $terminated = true;
 
         if ($build->getPid()) {
 
             if (false === posix_kill($build->getPid(), SIGTERM)) {
                 $logger->info('build found but pid does not exist, marking as killed', ['build' => $build->getId(), 'pid' => $build->getPid()]);
-
-                $build->setStatus(Build::STATUS_KILLED);
-                $em = $this->doctrine->getManager();
-                $em->persist($build);
-                $em->flush();
             } else {
                 $logger->info('pid found, sent SIGTERM', ['build' => $build->getId(), 'pid' => $build->getPid()]);
 
@@ -88,20 +89,19 @@ class KillConsumer implements ConsumerInterface
                     $logger->info('build still alive...', ['build' => $build->getId(), 'pid' => $build->getPid()]);
 
                     sleep(1);
-                }            
+                }
             }
         }
 
         if (null === $container = $build->getContainer()) {
             $logger->warn('could not find a container');
         } else {
-            $logger->info('trying to stop container anyways', [
+            $logger->info('trying to stop container', [
                 'build' => $build->getId(),
                 'container' => $container->getId()
             ]);
 
             try {            
-                
                 $this->docker->getContainerManager()->stop($container);
             } catch (UnexpectedStatusCodeException $e) {
                 if ($e->getCode() !== 404) {
