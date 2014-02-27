@@ -44,12 +44,7 @@ class BuildScheduler
     public function schedule(Project $project, $ref, $hash, User $initiator = null, $options = [])
     {
         $logger = $this->logger;
-
-        $logger->info('scheduling build', [
-            'project' => $project->getId(),
-            'ref' => $ref,
-            'hash' => $hash,
-        ]);
+        $logger->info('scheduling build', ['project' => $project->getId(), 'ref' => $ref, 'hash' => $hash]);
 
         $em = $this->doctrine->getManager();
 

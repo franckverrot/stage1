@@ -42,6 +42,7 @@ class HooksController extends Controller
     public function githubAction(Request $request)
     {
         try {
+            $logger = $this->get('logger');
             $payload = json_decode($request->getContent());
 
             if (!isset($payload->ref)) {
@@ -87,10 +88,10 @@ class HooksController extends Controller
             }
 
             if (!$allowBuild) {
-                $this->get('logger')->warn('build already scheduled for hash', ['hash' => $hash]);
+                $logger->warn('build already scheduled for hash', ['hash' => $hash]);
                 return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);                    
             } else {
-                $this->get('logger')->info('scheduling build for hash', ['hash' => $hash]);
+                $logger->info('scheduling build for hash', ['hash' => $hash]);
             }
 
             $scheduler = $this->get('app_core.build_scheduler');
@@ -98,6 +99,7 @@ class HooksController extends Controller
             $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
 
             $build = $scheduler->schedule($project, $ref, $hash);
+            $logger->info('scheduled build', ['build' => $build->get(), 'ref' => $build->getRef()]);
 
             $payload = new GithubPayload();
             $payload->setPayload($request->getContent());
@@ -113,10 +115,10 @@ class HooksController extends Controller
                 'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
-            $this->container->get('logger')->error($e->getMessage());
+            $logger->error($e->getMessage());
 
             if (method_exists($e, 'getResponse')) {
-                $this->container->get('logger')->error($e->getResponse()->getBody(true));
+                $logger->error($e->getResponse()->getBody(true));
             }
 
             return new JsonResponse(['class' => 'danger', 'message' => $e->getMessage()], 500);

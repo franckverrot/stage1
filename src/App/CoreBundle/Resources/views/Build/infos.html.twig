@@ -7,6 +7,19 @@
 {% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
 
 {% if build.script %}
+
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVIOUS_ADMIN') %}
+<fieldset>
+    <legend>Container information</legend>
+
+    <p class="lead"><strong>Container Id</strong>: {{ build.containerId }}</p>
+    <p class="lead"><strong>Container Image</strong>: {{ build.imageName }}</p>
+</fieldset>
+
+<hr />
+
+{% endif %}
+
 <p class="lead">These are the scripts and configuration used during this build.</p>
 
 <fieldset>
