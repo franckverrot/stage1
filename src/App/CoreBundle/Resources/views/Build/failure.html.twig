@@ -12,7 +12,9 @@
 <fieldset>
     <h3>{{ build.failure.exception }}</h3>
 
+    {% if build.failure.message %}
     <p class="lead">The builder failed with the following message: <strong>{{ build.failure.message }}</strong>.
+    {% endif %}
 
     {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVIOUS_ADMIN') %}
     <div><pre class="terminal" style="max-width: 1023px; overflow: scroll; white-space: nowrap">{{ build.failure.trace | nl2br }}</pre></div>
