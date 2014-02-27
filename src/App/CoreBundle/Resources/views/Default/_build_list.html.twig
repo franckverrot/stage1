@@ -47,8 +47,8 @@
                 {% endverbatim %}
                 </script>
 
-                {% if build.failed and build.message %}
-                <a href="#modal-inspect-{{ build.id }}" data-toggle="modal" class="inspect btn btn-small">inspect</a>
+                {% if build.failure %}
+                <a href="#build-failure-{{ build.id }}" data-toggle="modal" class="inspect btn btn-small">inspect</a>
                 {% endif %}
 
                 <span id="build-{{ build.id }}-link">
@@ -64,11 +64,8 @@
 
 <div id="modals">
 {% for build in builds %}
-    {% include '::modal.html.twig' with {
-        id: 'inspect-' ~ build.id,
-        title: 'Build #' ~ build.id ~' failed',
-        body: '<p class="lead"><pre>' ~ build.message ~ '</pre></p>',
-        class: 'inspect'
-    } %}
+    {% if build.failure %}
+        {% include 'AppCoreBundle:Build:_failure.html.twig' with { build: build } %}
+    {% endif %}
 {% endfor %}
 </div>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CoreBundle\Entity\BuildFailure" table="build_failure">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="exception" column="exception" type="text" />
+        <field name="message" column="message" type="text" />
+        <field name="code" column="code" type="integer" />
+        <field name="trace" column="trace" type="text" />
+
+        <one-to-one field="build" target-entity="App\CoreBundle\Entity\Build" inversed-by="script">
+            <cascade><persist /></cascade>
+            <join-column name="build_id" reference-column-name="id" on-delete="CASCADE" />
+        </one-to-one>
+    </entity>
+
+</doctrine-mapping>

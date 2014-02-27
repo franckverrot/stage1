@@ -1111,4 +1111,32 @@ class Build implements WebsocketRoutable
     {
         return $this->forceLocalBuildYml;
     }
+    /**
+     * @var \App\CoreBundle\Entity\BuildFailure
+     */
+    private $failure;
+
+
+    /**
+     * Set failure
+     *
+     * @param \App\CoreBundle\Entity\BuildFailure $failure
+     * @return Build
+     */
+    public function setFailure(\App\CoreBundle\Entity\BuildFailure $failure = null)
+    {
+        $this->failure = $failure;
+    
+        return $this;
+    }
+
+    /**
+     * Get failure
+     *
+     * @return \App\CoreBundle\Entity\BuildFailure 
+     */
+    public function getFailure()
+    {
+        return $this->failure;
+    }
 }

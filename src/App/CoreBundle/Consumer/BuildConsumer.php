@@ -4,6 +4,7 @@ namespace App\CoreBundle\Consumer;
 
 use App\CoreBundle\Builder\Builder;
 use App\CoreBundle\Entity\Build;
+use App\CoreBundle\Entity\BuildFailure;
 
 use App\CoreBundle\BuildEvents;
 use App\CoreBundle\Event\BuildStartedEvent;
@@ -182,7 +183,13 @@ class BuildConsumer implements ConsumerInterface
                 $this->logger->error($e->getContent());
 
                 $build->setStatus(Build::STATUS_FAILED);
+
+                // @todo remove this, it's deprecated by BuildFailure
                 $build->setMessage(get_class($e).': '.$e->getMessage());
+
+                $failure = BuildFailure::fromException($e);
+                $failure->setBuild($build);
+                $em->persist($failure);
             } catch (\Docker\Http\Exception\TimeoutException $e) {
                 // @todo kill the container if it is still running
                 $this->logger->error('build failed (timeout)', [
@@ -192,6 +199,9 @@ class BuildConsumer implements ConsumerInterface
                 ]);
                 
                 $build->setStatus(Build::STATUS_TIMEOUT);
+                $failure = BuildFailure::fromException($e);
+                $failure->setBuild($build);
+                $em->persist($failure);
             } catch (Exception $e) {
                 $this->logger->error('build failed', [
                     'build' => $build->getId(),
@@ -201,6 +211,10 @@ class BuildConsumer implements ConsumerInterface
                 
                 $build->setStatus(Build::STATUS_FAILED);
                 $build->setMessage(get_class($e).': '.$e->getMessage());
+
+                $failure = BuildFailure::fromException($e);
+                $failure->setBuild($build);
+                $em->persist($failure);
             }
         }
 
@@ -219,6 +233,9 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus(Build::STATUS_FAILED);
             $build->setMessage(get_class($e).': '.$e->getMessage());            
+            $failure = BuildFailure::fromException($e);
+            $failure->setBuild($build);
+            $em->persist($failure);
         }
 
         $em->persist($build);
