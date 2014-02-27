@@ -128,7 +128,7 @@ class Builder
 
         $manager
             ->run($prepareContainer)
-            ->wait($prepareContainer);
+            ->wait($prepareContainer, $timeout);
 
         if ($prepareContainer->getExitCode() != 0) {
             $exitCode = $prepareContainer->getExitCode();

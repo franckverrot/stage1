@@ -10,6 +10,8 @@
         <field name="message" column="message" type="text" />
         <field name="code" column="code" type="integer" />
         <field name="trace" column="trace" type="text" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="updatedAt" column="updated_at" type="datetime" />
 
         <one-to-one field="build" target-entity="App\CoreBundle\Entity\Build" inversed-by="script">
             <cascade><persist /></cascade>
