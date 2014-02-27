@@ -132,7 +132,12 @@ class Builder
 
         if ($prepareContainer->getExitCode() != 0) {
             $exitCode = $prepareContainer->getExitCode();
-            $exitCodeLabel = Process::$exitCodes[$exitCode];
+
+            if (isset(Process::$exitCodes[$exitCode])) {
+                $exitCodeLabel = Process::$exitCodes[$exitCode];
+            } else {
+                $exitCodeLabel = '';
+            }
 
             $message = sprintf('failed to generate build scripts (exit code %d (%s))', $exitCode, $exitCodeLabel);
 
