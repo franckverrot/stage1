@@ -8,10 +8,12 @@ declare -a files=(index.php app.php)
 
 for file in ${files[@]}; do
     if [ -f ./web/$file ]; then
-        sed -e "s/%frontcontroller%/$file/" -i /etc/nginx/sites-enabled/default
+        sed -e "s/%app_front_controller%/$file/" -i /etc/nginx/sites-enabled/default
         break;
     fi
 done;
+
+sed -e "s/%app_root%/$APP_ROOT/" -i /etc/nginx/sites-enabled/default
 
 # start services
 
