@@ -79,18 +79,16 @@ class HooksController extends Controller
 
             $sameHashBuilds = $em->getRepository('AppCoreBundle:Build')->findByHash($hash);
 
-            $allowBuild = true;
-
             if (count($sameHashBuilds) > 0) {
                 $logger->warn('found builds with same hash', ['cound' => count($sameHashBuilds)]);
-                $allowBuild = array_reduce($sameHashBuilds, function($result, $b) {
+                $allowRebuild = array_reduce($sameHashBuilds, function($result, $b) {
                     return $result || $b->getAllowRebuild();
-                }, $allowBuild);
+                }, false);
             }
 
-            if (!$allowBuild) {
+            if (isset($allowRebuild) && !$allowRebuild) {
                 $logger->warn('build already scheduled for hash', ['hash' => $hash]);
-                return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash']);                    
+                return new JsonResponse(['class' => 'danger', 'message' => 'Build already scheduled for hash'], 400);                    
             } else {
                 $logger->info('scheduling build for hash', ['hash' => $hash]);
             }
