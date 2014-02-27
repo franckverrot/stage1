@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+{% include 'AppCoreBundle:Default:_project_header.html.twig' with { project: build.project } %}
+{% include 'AppCoreBundle:Build:_metadata.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
+
+{% if not build.failure %}
+<p class="lead">This build has no known failure.</p>
+{% else %}
+<fieldset>
+    <h3>{{ build.failure.exception }}</h3>
+
+    <p class="lead">The builder failed with the following message: <strong>{{ build.failure.message }}</strong>.
+
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVIOUS_ADMIN') %}
+    <div><pre class="terminal" style="max-width: 1023px; overflow: scroll; white-space: nowrap">{{ build.failure.trace | nl2br }}</pre></div>
+    {% endif %}
+</fieldset>
+{% endif %}
+
+{% endblock %}

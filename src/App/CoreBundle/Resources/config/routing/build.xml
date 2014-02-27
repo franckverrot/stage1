@@ -21,6 +21,10 @@
         <default key="_controller">AppCoreBundle:Build:infos</default>
     </route>
 
+    <route id="app_core_build_failure" pattern="/build/{id}/failure" methods="GET">
+        <default key="_controller">AppCoreBundle:Build:failure</default>
+    </route>
+
     <route id="app_core_build_logs_load" pattern="/build/{id}/logs/load" methods="GET">
         <default key="_controller">AppCoreBundle:Build:logsLoad</default>
     </route>

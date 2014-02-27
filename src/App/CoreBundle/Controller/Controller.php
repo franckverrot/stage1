@@ -177,14 +177,31 @@ class Controller extends BaseController
         $em->flush();
     }
 
+    /**
+     * @deprecated
+     */
     protected function setCurrentProjectId($id)
     {
         $this->get('request')->attributes->set('current_project_id', (integer) $id);
     }
 
+    /**
+     * @deprecated
+     */
     protected function setCurrentBuildId($id)
     {
         $this->get('request')->attributes->set('current_build_id', (integer) $id);
+    }
+
+    protected function setCurrentProject(Project $project)
+    {
+        $this->get('request')->attributes->set('current_project_id', (integer) $project->getId());
+    }
+
+    protected function setCurrentBuild(Build $build)
+    {
+        $this->get('request')->attributes->set('current_build_id', (integer) $build->getId());
+        $this->SetCurrentProject($build->getProject());
     }
 
     protected function findUserByUsername($username)
