@@ -82,6 +82,7 @@ class HooksController extends Controller
             $allowBuild = true;
 
             if (count($sameHashBuilds) > 0) {
+                $logger->warn('found builds with same hash', ['cound' => count($sameHashBuilds)]);
                 $allowBuild = array_reduce($sameHashBuilds, function($result, $b) {
                     return $result || $b->getAllowRebuild();
                 }, $allowBuild);
@@ -99,7 +100,7 @@ class HooksController extends Controller
             $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
 
             $build = $scheduler->schedule($project, $ref, $hash);
-            $logger->info('scheduled build', ['build' => $build->get(), 'ref' => $build->getRef()]);
+            $logger->info('scheduled build', ['build' => $build->getId(), 'ref' => $build->getRef()]);
 
             $payload = new GithubPayload();
             $payload->setPayload($request->getContent());
@@ -115,7 +116,7 @@ class HooksController extends Controller
                 'build' => $build->asMessage(),
             ], 201);
         } catch (Exception $e) {
-            $logger->error($e->getMessage());
+            $logger->error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             if (method_exists($e, 'getResponse')) {
                 $logger->error($e->getResponse()->getBody(true));
