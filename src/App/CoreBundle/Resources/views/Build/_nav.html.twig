@@ -5,9 +5,11 @@
         <a href="{{ path('app_core_build_output', { id: build.id }) }}">Output</a>
     </li>
 
+    {% if build.script %}
     <li{% if current_route == 'app_core_build_infos' %} class="active"{% endif %}>
         <a href="{{ path('app_core_build_infos', { id: build.id }) }}">Infos</a>
     </li>
+    {% endif %}
 
     {% if build.failure %}
     <li{% if current_route == 'app_core_build_failure' %} class="active"{% endif %}>
