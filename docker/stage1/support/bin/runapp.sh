@@ -4,7 +4,8 @@ source /usr/local/lib/stage1.sh
 
 /usr/sbin/sshd
 
-APP_ROOT=/app
+# @todo move that to container ENV (maybe from Project's config)
+export APP_ROOT=/app
 cd $APP_ROOT
 
 STAGE1_STAGE='run'
@@ -15,4 +16,4 @@ fi
 
 /usr/local/bin/yuhao_run
 
-tail -F /var/log/nginx/*.log $APP_ROOT/app/logs/*.log /var/log/php5-fpm.log
+tail -F /var/log/syslog $LOG_FILES

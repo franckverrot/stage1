@@ -2,7 +2,8 @@
 
 source /usr/local/lib/stage1.sh
 
-APP_ROOT=/app
+# @todo move that to container ENV (maybe from Project's config)
+export APP_ROOT=/app
 
 if [ -d $APP_ROOT ]; then
     rm -rf $APP_ROOT
