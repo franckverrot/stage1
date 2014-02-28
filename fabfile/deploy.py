@@ -3,6 +3,11 @@ from utils import *
 from git import *
 from symfony import *
 
+@task(default=True)
+def web_and_docker():
+    web()
+    docker()
+
 @task
 @roles('help')
 def help():
@@ -32,7 +37,6 @@ def docker():
     with cd(env.project_path):
         symfony_reset_remote_environment()
 
-@task(default=True)
 @roles('web')
 def web():
     ref = git_branch()
