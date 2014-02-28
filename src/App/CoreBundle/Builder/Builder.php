@@ -181,7 +181,7 @@ class Builder
         $em->persist($script);
 
         $options = $project->getDefaultBuildOptions();
-        $options = $options->resolve($script->getNormalizedConfig());
+        $options = $options->resolve($script->getConfig());
 
         $build->setOptions($options);
 

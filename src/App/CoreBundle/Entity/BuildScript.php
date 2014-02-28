@@ -35,40 +35,6 @@ class BuildScript
     private $build;
 
     /**
-     * @return array
-     */
-    public function getContainerEnv()
-    {
-        $config = $this->getConfig();
-
-        $env = [];
-
-        if (!array_key_exists('env', $config)) {
-            return $env;
-        }
-
-        foreach ($config['env'] as $key => $value) {
-            $env[] = sprintf('%s=%s', $key, $value);
-        }
-
-        return $env;
-    }
-
-    /**
-     * @return array
-     */
-    public function getNormalizedConfig()
-    {
-        $config = $this->getConfig();
-
-        if (array_key_exists('env', $config)) {
-            $config['env'] = $this->getContainerEnv();
-        }
-
-        return $config;
-    }
-
-    /**
      * @param string $json
      * 
      * @return App\CoreBundle\Entity\BuildScript
