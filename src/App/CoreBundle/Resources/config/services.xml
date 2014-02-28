@@ -76,6 +76,21 @@
             <tag name="monolog.logger" channel="build" />
 
             <call method="setOption">
+                <argument>composer_enable_global_cache</argument>
+                <argument>%composer_enable_global_cache%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>composer_enable_project_cache</argument>
+                <argument>%composer_enable_project_cache%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>composer_cache_path</argument>
+                <argument>%composer_cache_path%</argument>
+            </call>
+
+            <call method="setOption">
                 <argument>dummy</argument>
                 <argument>%stage1_dummy_build%</argument>
             </call>

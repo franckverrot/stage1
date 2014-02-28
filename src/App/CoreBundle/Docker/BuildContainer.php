@@ -38,7 +38,8 @@ class BuildContainer extends Container
                 // 'STAGE1__DATABASE_PASSWORD=~',
             ],
             'Image' => $build->getImageName(),
-            'Cmd' => ['buildapp']
+            'Cmd' => ['buildapp'],
+            'Volumes' => ['/.composer/cache' => []]
         ]);
     }
 }

@@ -42,7 +42,10 @@ class Builder
      */
     private $options = [
         'dummy' => false,
-        'dummy_duration' => 10
+        'dummy_duration' => 10,
+        'composer_enable_global_cache' => false,
+        'composer_enable_project_cache' => false,
+        'composer_cache_path' => '/usr/local/share/composer/cache/'
     ];
     
     /**
@@ -220,6 +223,23 @@ class Builder
             'timeout' => $timeout,
         ]);
 
+        $hostConfig = [];
+
+        if ($this->getOption('composer_enable_global_cache')) {
+            $logger->info('enabling composer global cache', ['build' => $build->getId()]);
+            $hostConfig['Binds'] = [$this->getOption('composer_cache_path').'/global:/.composer/cache'];
+        } elseif ($this->getOption('composer_enable_project_cache')) {
+            $cachePath = $this->getOption('composer_cache_path').'/'.$project->getGithubFullName();
+            $logger->info('enabling composer project cache', ['build' => $build->getId(), 'project' => $project->getGithubFullName(), 'cache_path' => $cachePath]);
+
+            if (!is_dir($cachePath)) {
+                mkdir($cachePath, 0777, true);
+            }
+
+            $hostConfig['Binds'] = [$cachePath.':/.composer/cache'];
+
+        }
+
         $manager->create($buildContainer);
 
         $build->setContainer($buildContainer);
@@ -227,7 +247,7 @@ class Builder
         $em->persist($build);
         $em->flush();
         
-        $manager->start($buildContainer);
+        $manager->start($buildContainer, $hostConfig);
         $manager->wait($buildContainer, $timeout);
 
         if ($buildContainer->getExitCode() !== 0) {

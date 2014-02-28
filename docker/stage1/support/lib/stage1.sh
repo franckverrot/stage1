@@ -47,7 +47,10 @@ stage1_exec_bg() {
 }
 
 stage1_composer_configure() {
-    mkdir -p /.composer
+    if [ ! -d /.composer ]; then
+        mkdir -p /.composer
+    fi
+    
     cat > /.composer/config.json <<EOF
 {
     "config": {
