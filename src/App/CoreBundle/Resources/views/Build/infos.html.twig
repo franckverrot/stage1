@@ -16,6 +16,13 @@
     <p class="lead"><strong>Container Image</strong>: {{ build.imageName }}</p>
 </fieldset>
 
+<fieldset>
+    <legend>Runtime environment</legend>
+    <div class="build_infos" id="build_infos_runtime_env">
+        <pre class="terminal">{{ build.script.runtimeEnv | join(constant('PHP_EOL')) }}</pre>
+    </div>
+</fieldset>
+
 <hr />
 
 {% endif %}

@@ -6,9 +6,10 @@
             <generator strategy="AUTO"/>
         </id>
 
-        <field name="buildScript" column="build_script" type="text" />
-        <field name="runScript" column="run_script" type="text" />
-        <field name="config" column="config" type="json_array" />
+        <field name="buildScript" column="build_script" type="text" nullable="true" />
+        <field name="runScript" column="run_script" type="text" nullable="true" />
+        <field name="config" column="config" type="json_array" nullable="true" />
+        <field name="runtimeEnv" column="runtime_env" type="json_array" nullable="true" />
 
         <one-to-one field="build" target-entity="App\CoreBundle\Entity\Build" inversed-by="script">
             <join-column name="build_id" reference-column-name="id" on-delete="CASCADE" />

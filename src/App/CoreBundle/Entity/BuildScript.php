@@ -187,4 +187,32 @@ class BuildScript
     {
         return $this->build;
     }
+    /**
+     * @var array
+     */
+    private $runtimeEnv;
+
+
+    /**
+     * Set runtimeEnv
+     *
+     * @param array $runtimeEnv
+     * @return BuildScript
+     */
+    public function setRuntimeEnv($runtimeEnv)
+    {
+        $this->runtimeEnv = $runtimeEnv;
+    
+        return $this;
+    }
+
+    /**
+     * Get runtimeEnv
+     *
+     * @return array 
+     */
+    public function getRuntimeEnv()
+    {
+        return $this->runtimeEnv;
+    }
 }

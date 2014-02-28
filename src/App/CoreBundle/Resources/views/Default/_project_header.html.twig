@@ -22,9 +22,7 @@
         <a href="{{ path('app_core_project_admin', { id: project.id }) }}">Admin</a>
     </li>
 
-    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVIOUS_ADMIN') %}
     <li class="pull-right{% if current_route == 'app_core_project_settings' %} active{% endif %}">
         <a href="{{ path('app_core_project_settings', { id: project.id }) }}">Settings</a>
     </li>
-    {% endif %}
 </ul>

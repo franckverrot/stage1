@@ -127,7 +127,8 @@ class Builder
         $manager = $docker->getContainerManager();
 
         $manager
-            ->run($prepareContainer)
+            ->create($prepareContainer)
+            ->start($prepareContainer)
             ->wait($prepareContainer, $timeout);
 
         if ($prepareContainer->getExitCode() != 0) {
@@ -164,9 +165,9 @@ class Builder
 
         $output = '';
 
-        $manager->attach($prepareContainer, function($type, $chunk) use (&$output) {
+        $manager->attach($prepareContainer, true, false, false, true, true)->readAttach(function($type, $chunk) use (&$output) {
             $output .= $chunk;
-        }, true, false, false, true, true);
+        });
 
         $logger->info('got response from yuhao', [
             'build' => $build->getId(),
@@ -205,6 +206,8 @@ class Builder
 
         $buildContainer = new BuildContainer($build);
         $buildContainer->addEnv($options['env']);
+
+        $script->setRuntimeEnv($buildContainer->getEnv());
 
         if ($build->getForceLocalBuildYml()) {
             $buildContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
@@ -276,7 +279,10 @@ class Builder
             $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
         }
 
-        $manager->run($appContainer, ['PortBindings' => $ports->toSpec()]);
+        $manager
+            ->create($appContainer)
+            ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
+
         $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
 
         return $appContainer;
