@@ -54,7 +54,9 @@ class DefaultController extends Controller
             $logsList = $build->getLogsList();
             $logsLength = $this->get('app_core.redis')->llen($logsList);
 
-            if ($logsLength < $this->container->getParameter('build_logs_stream_limit')) {
+            $streamLimit = $this->container->getParameter('build_logs_stream_limit');
+
+            if ($streamLimit === 0 || $logsLength < $streamLimit) {
                 $streamLogs = true;
             }
         }
