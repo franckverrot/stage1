@@ -47,7 +47,7 @@ You can configure additionnal custom domains with the `urls` key:
       - foo
       - bar
 
-> [Learn more about custom domains]({% post_url 2000-12-26-configuring-custom-urls-for-my-staging-environment %}/).
+> [Learn more about custom domains]({% post_url 2000-12-25-configuring-custom-urls-for-my-staging-environment %}/).
 {:.note.oneline}
 
 ### Configuring writable files and folders
