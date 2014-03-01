@@ -5,6 +5,10 @@ published: true
 category: general
 ---
 
+You can setup custom environment variables to be set up in your containers at build and run time.
+
+### Configuring environment variables through the web UI
+
 Setting up custom environment variables is supported via the project's **Admin** tab:
 
 ![Administration tab then environment variables form](/assets/screenshots/project-env.png)
@@ -21,5 +25,11 @@ Example:
     FOO_API_KEY=7BMnTzAIoTeVg
     FOO=some value with spaces
 
-> Environment variables are exported both in the build and the app containers, so you can use them anytime!
-{:.note}
+### Configuring environment variables in the `.build.yml` file
+
+You can also configure custom environment variables in your `.build.yml` file, using the `env` configuration key:
+
+    env:
+        - SYMFONY_ENV=prod
+        - FOO_API_KEY=7BMnTzAIoTeVg
+        - FOO=some value with spaces

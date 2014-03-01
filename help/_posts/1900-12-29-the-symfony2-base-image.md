@@ -14,5 +14,5 @@ The **Symfony2** base image is a Docker image based on [the Ubuntu Precise (12.0
 
 ### Configuration
 
-* Nginx serves whether `index.php` or `app.php` in `/var/www/web` as a front controller.
+* Nginx serves whether `index.php` or `app.php` in `/app/web` as a front controller.
 * MySQL has a super-user called `root` that does not have a password.
