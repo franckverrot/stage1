@@ -141,6 +141,12 @@ class Project implements WebsocketRoutable
             $builder->add('/root/.ssh/id_organization.pub', $this->getOrganization()->getPublicKey());
         }
 
+        foreach ($this->getUsers() as $user) {
+            $identities[] = sprintf('/root/.ssh/id_%s', $user->getUsername());
+            $builder->add(sprintf('/root/.ssh/id_%s', $user->getUsername()), $user->getPrivateKey());
+            $builder->add(sprintf('/root/.ssh/id_%s.pub', $user->getUsername()), $user->getPublicKey());
+        }
+
         $sshIdentityFile = implode(PHP_EOL, array_map(function($identity) {
             return 'IdentityFile '.$identity;
         }, $identities));
