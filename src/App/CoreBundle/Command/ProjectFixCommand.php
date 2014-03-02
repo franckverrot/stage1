@@ -47,6 +47,10 @@ class ProjectFixCommand extends ContainerAwareCommand
 
             if (strlen($project->getContentsUrl()) === 0) {
                 $output->writeln('fixing github contents url for <info>'.$project->getGithubFullName().'</info>');
+                if (!isset($githubInfos['contents_url'])) {
+                    $output->writeln('<error>could not find a <info>contents_url</info> for <info>'.$project->getGithubFullName().'</info></error>');
+                }
+                
                 $project->setContentsUrl($githubInfos['contents_url']);
             }
 
