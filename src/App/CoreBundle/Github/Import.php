@@ -12,13 +12,18 @@ use App\CoreBundle\SshKeys;
 use App\CoreBundle\Entity\User;
 use App\CoreBundle\Entity\Project;
 use App\CoreBundle\Entity\Branch;
+use App\CoreBundle\Entity\Organization;
 use App\CoreBundle\Value\ProjectAccess;
+
+use Psr\Log\LoggerInterface;
 
 use Closure;
 use Redis;
 
 class Import
 {
+    private $loggerInterface;
+
     private $client;
 
     private $doctrine;
@@ -41,8 +46,9 @@ class Import
 
     private $delete_old_keys = false;
 
-    public function __construct(Client $client, RegistryInterface $doctrine, Redis $redis, Router $router)
+    public function __construct(LoggerInterface $logger, Client $client, RegistryInterface $doctrine, Redis $redis, Router $router)
     {
+        $this->logger = $logger;
         $this->client = $client;
         $this->doctrine = $doctrine;
         $this->redis = $redis;
@@ -118,21 +124,27 @@ class Import
         }
 
         $callback(['id' => 'inspect', 'label' => 'Inspecting project']);
+        $this->logger->info('running inspect step', ['project' => $githubFullName]);
         $this->doInspect($project);
 
         $callback(['id' => 'keys', 'label' => 'Generating keys']);
+        $this->logger->info('running keys step', ['project' => $githubFullName]);
         $this->doKeys($project);
 
         $callback(['id' => 'deploy_key', 'label' => 'Adding deploy key']);
+        $this->logger->info('running deploy_key step', ['project' => $githubFullName]);
         $this->doDeployKey($project);
 
         $callback(['id' => 'webhook', 'label' => 'Configuring webhook']);
+        $this->logger->info('running webhook step', ['project' => $githubFullName]);
         $this->doWebhook($project);
 
         $callback(['id' => 'branches', 'label' => 'Importing branches']);
+        $this->logger->info('running branches step', ['project' => $githubFullName]);
         $this->doBranches($project);
 
         $callback(['id' => 'access', 'label' => 'Granting default access']);
+        $this->logger->info('running access step', ['project' => $githubFullName]);
         $this->doAccess($project);
 
         $em = $this->doctrine->getManager();
@@ -189,6 +201,27 @@ class Import
         $project->setContentsUrl($infos['contents_url']);
         $project->setDockerBaseImage('symfony2:latest');
         $project->setGithubPrivate($infos['private']);
+
+        if (isset($infos['organization'])) {
+            $this->logger->info('attaching project\'s organization', ['organization' => $infos['organization']['login']]);
+    
+            $rp = $this->doctrine->getRepository('AppCoreBundle:Organization');
+
+            if (null === $org = $rp->findOneByName($infos['organization']['login'])) {
+                $this->logger->info('organization not found, creating', ['organization' => $infos['organization']['login']]);
+                $orgKeys = SshKeys::generate();
+
+                $org = new Organization();
+                $org->setName($infos['organization']['login']);
+                $org->setGithubId($infos['organization']['id']);
+                $org->setPublicKey($orgKeys['public']);
+                $org->setPrivateKey($orgKeys['private']);
+            }
+
+            $project->setOrganization($org);
+        } else {
+            $this->logger->info('project has no organization, skipping');
+        }
 
         # @todo does this really belong here?
         if (null !== $this->getUser()) {

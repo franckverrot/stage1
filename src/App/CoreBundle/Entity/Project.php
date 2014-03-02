@@ -1018,4 +1018,32 @@ SSH
     {
         return $this->settings;
     }
+    /**
+     * @var \App\CoreBundle\Entity\Organization
+     */
+    private $organization;
+
+
+    /**
+     * Set organization
+     *
+     * @param \App\CoreBundle\Entity\Organization $organization
+     * @return Project
+     */
+    public function setOrganization(\App\CoreBundle\Entity\Organization $organization = null)
+    {
+        $this->organization = $organization;
+    
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return \App\CoreBundle\Entity\Organization 
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
 }
