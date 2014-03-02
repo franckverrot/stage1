@@ -2,6 +2,8 @@
 
 namespace App\CoreBundle\Command;
 
+use App\CoreBundle\SshKeys;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -57,6 +59,13 @@ class UserFixCommand extends ContainerAwareCommand
                 }
 
                 $output->writeln('');
+            }
+
+            if (strlen($user->getPublicKey()) === 0) {
+                $output->writeln('generating ssh keys for <info>'.$user->getUsername().'</info>');
+                $keys = SshKeys::generate();
+                $user->setPublicKey($keys['public']);
+                $user->setPrivateKey($keys['private']);
             }
 
             $em->persist($user);

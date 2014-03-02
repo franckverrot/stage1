@@ -38,6 +38,10 @@ class User implements UserInterface, \Serializable
 
     protected $channel;
 
+    protected $publicKey;
+
+    protected $privateKey;
+
     public function __toString()
     {
         return (string) $this->username;
@@ -390,5 +394,51 @@ class User implements UserInterface, \Serializable
         }
 
         return 'user.'.$this->getId();
+    }
+
+    /**
+     * Set publicKey
+     *
+     * @param string $publicKey
+     * @return User
+     */
+    public function setPublicKey($publicKey)
+    {
+        $this->publicKey = $publicKey;
+    
+        return $this;
+    }
+
+    /**
+     * Get publicKey
+     *
+     * @return string 
+     */
+    public function getPublicKey()
+    {
+        return $this->publicKey;
+    }
+
+    /**
+     * Set privateKey
+     *
+     * @param string $privateKey
+     * @return User
+     */
+    public function setPrivateKey($privateKey)
+    {
+        $this->privateKey = $privateKey;
+    
+        return $this;
+    }
+
+    /**
+     * Get privateKey
+     *
+     * @return string 
+     */
+    public function getPrivateKey()
+    {
+        return $this->privateKey;
     }
 }

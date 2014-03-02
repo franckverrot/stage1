@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Controller;
 
 use App\CoreBundle\Entity\User;
+use App\CoreBundle\SshKeys;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +78,10 @@ class SecurityController extends Controller
         if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result['id']))) {
             $user = User::fromGithubResponse($result);
             $user->setStatus(User::STATUS_WAITING_LIST);
+
+            $keys = SshKeys::generate();
+            $user->setPublicKey($keys['public']);
+            $user->setPrivateKey($keys['private']);
         }
 
         if (strlen($user->getEmail()) === 0) {
