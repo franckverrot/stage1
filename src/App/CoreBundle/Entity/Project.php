@@ -129,14 +129,30 @@ class Project implements WebsocketRoutable
         $builder = new ContextBuilder();
         $builder->setFormat(Context::FORMAT_TAR);
         $builder->add('/etc/environment', $env);
-        $builder->add('/root/.ssh/id_rsa', $this->getPrivateKey());
-        $builder->add('/root/.ssh/id_rsa.pub', $this->getPublicKey());
+
+        $identities = ['/root/.ssh/id_project'];
+
+        $builder->add('/root/.ssh/id_project', $this->getPrivateKey());
+        $builder->add('/root/.ssh/id_project.pub', $this->getPublicKey());
+
+        if (null !== $this->getOrganization()) {
+            $identities[] = '/root/.ssh/id_organization';
+            $builder->add('/root/.ssh/id_organization', $this->getOrganization()->getPrivateKey());
+            $builder->add('/root/.ssh/id_organization.pub', $this->getOrganization()->getPublicKey());
+        }
+
+        $sshIdentityFile = implode(PHP_EOL, array_map(function($identity) {
+            return 'IdentityFile '.$identity;
+        }, $identities));
+
         $builder->add('/root/.ssh/config', <<<SSH
+$sshIdentityFile
+
+StrictHostKeyChecking no
+
 Host github.com
     Hostname github.com
     User git
-    IdentityFile /root/.ssh/id_rsa
-    StrictHostKeyChecking no
 SSH
 );
         $builder->run('chmod -R 0600 /root/.ssh');

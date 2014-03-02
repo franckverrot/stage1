@@ -113,19 +113,20 @@ bar</pre>
 </fieldset>
 
 <fieldset>
-    <legend>Project's public key</legend>
-    <div class="row-fluid">
-        <div class="span6">
-            <pre>{{ project.publicKey }}</pre>
-        </div>
-        <div class="span6 help">
-            <p>This is your project's public key. You can use it as a deploy key in your private dependencies so that Stage1 can fetch them.</p>
+    <legend>Project's public keys</legend>
+    <p class="lead">These are all the public keys you can use to give Stage1 access to private dependencies for your project.</p>
 
-            {# @todo
-            <p class="readmore"><a href="http://help.stage1.io/article/fetching-private-dependencies/"><i class="icon-question-sign"></i> Read more about private dependencies</p></a>
-            #}
-        </div>
-    </div>
+    {% include 'AppCoreBundle:Project:_public_key.html.twig' with {
+        label: 'Project',
+        key: project.publicKey
+    } %}
+
+    {% if project.organization %}
+        {% include 'AppCoreBundle:Project:_public_key.html.twig' with {
+            label: project.organization.name,
+            key: project.organization.publicKey
+        } %}
+    {% endif %}    
 </fieldset>
 
 <form id="form-delete" class="form-inline" method="post" action="{{ path('app_core_project_delete', { id: project.id }) }}">
