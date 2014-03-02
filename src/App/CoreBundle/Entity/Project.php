@@ -155,6 +155,8 @@ class Project implements WebsocketRoutable
 $sshIdentityFile
 
 StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+LogLevel QUIET
 
 Host github.com
     Hostname github.com
