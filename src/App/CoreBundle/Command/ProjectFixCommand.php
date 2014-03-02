@@ -3,10 +3,13 @@
 namespace App\CoreBundle\Command;
 
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\Organization;
+use App\CoreBundle\SshKeys;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 
 class ProjectFixCommand extends ContainerAwareCommand
 {
@@ -25,6 +28,8 @@ class ProjectFixCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         foreach ($repository->findAll() as $project) {
+            $githubInfos = $this->getGithubInfos($project);
+
             if (strlen($project->getDockerBaseImage()) === 0) {
                 $output->writeln('fixing base image for <info>'.$project->getGithubFullName().'</info>');
                 $project->setDockerBaseImage('symfony2:latest');
@@ -37,12 +42,24 @@ class ProjectFixCommand extends ContainerAwareCommand
 
             if (null === $project->getGithubPrivate()) {
                 $output->writeln('fixing github private status for <info>'.$project->getGithubFullName().'</info>');
-                $project->setGithubPrivate($this->getGithubInfos($project)['private']);
+                $project->setGithubPrivate($githubInfos['private']);
             }
 
             if (strlen($project->getContentsUrl()) === 0) {
                 $output->writeln('fixing github contents url for <info>'.$project->getGithubFullName().'</info>');
-                $project->setContentsUrl($this->getGithubInfos($project)['contents_url']);
+                $project->setContentsUrl($githubInfos['contents_url']);
+            }
+
+            if (null === $project->getOrganization() && isset($githubInfos['organization'])) {
+                $output->writeln('fixing organization for <info>'.$project->getGithubFullName().'</info>');
+                $orgKeys = SshKeys::generate();
+                $org = new Organization();
+                $org->setName($githubInfos['organization']['login']);
+                $org->setGithubId($githubInfos['organization']['id']);
+                $org->setPublicKey($orgKeys['public']);
+                $org->setPrivateKey($orgKeys['private']);
+
+                $project->setOrganization($org);
             }
 
             $em->persist($project);

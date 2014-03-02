@@ -193,6 +193,7 @@ class Import
         $project->setGithubId($infos['id']);
         $project->setGithubOwnerLogin($infos['owner']['login']);
         $project->setGithubFullName($infos['full_name']);
+        $project->setGithubUrl($infos['url']);
         $project->setName($infos['name']);
         $project->setCloneUrl($infos['clone_url']);
         $project->setSshUrl($infos['ssh_url']);
@@ -202,7 +203,7 @@ class Import
         $project->setDockerBaseImage('symfony2:latest');
         $project->setGithubPrivate($infos['private']);
 
-        if (isset($infos['organization'])) {
+        if (false && isset($infos['organization'])) {
             $this->logger->info('attaching project\'s organization', ['organization' => $infos['organization']['login']]);
     
             $rp = $this->doctrine->getRepository('AppCoreBundle:Organization');
