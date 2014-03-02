@@ -37,6 +37,7 @@ def docker():
     with cd(env.project_path):
         symfony_reset_remote_environment()
 
+@task
 @roles('web')
 def web():
     ref = git_branch()
