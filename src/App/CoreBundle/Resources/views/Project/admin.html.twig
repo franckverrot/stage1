@@ -126,7 +126,14 @@ bar</pre>
             label: project.organization.name,
             key: project.organization.publicKey
         } %}
-    {% endif %}    
+    {% endif %}
+
+    {% for user in project.users %}
+        {% include 'AppCoreBundle:Project:_public_key.html.twig' with {
+            label: user.username,
+            key: user.publicKey
+        } %}
+    {% endfor %}
 </fieldset>
 
 <form id="form-delete" class="form-inline" method="post" action="{{ path('app_core_project_delete', { id: project.id }) }}">
