@@ -148,6 +148,8 @@ class Github
 
         $client->send($composerRequests);
 
+        $allowedPackages = ['symfony/symfony', 'laravel/laravel'];
+
         foreach ($composerRequests as $repoRequest) {
             $fullName = (string) $repoRequest->getHeader('x-full-name');
             $repoResponse = $repoRequest->getResponse();
@@ -159,8 +161,16 @@ class Github
 
             $data = $repoResponse->json();
 
-            if (!isset($data['require']) || !isset($data['require']['symfony/symfony'])) {
-                $this->addNonImportableProject($fullName, 'symfony/symfony package not found in composer.json');
+            $hasSatisfactoryPackage = false;
+
+            foreach ($allowedPackages as $name) {
+                if (isset($data['require']) && isset($data['require'][$name])) {
+                    $hasSatisfactoryPackage = true;
+                }
+            }
+
+            if (!isset($data['require']) || !$hasSatisfactoryPackage) {
+                $this->addNonImportableProject($fullName, 'Satisfactory package not found in composer.json');
                 continue;
             }
 
