@@ -5,6 +5,7 @@ RUN apt-get install -qy realpath ca-certificates-java openjdk-7-jre-headless || 
 
 # php5-sqlite is mainly for prestacms
 # php5-json is for composer
+# php5-mcrypt is for laravel
 # zip is mainly for puphpet
 
 RUN apt-get install -qy \
@@ -19,7 +20,11 @@ RUN apt-get install -qy \
     php5-gd \
     php5-sqlite \
     php5-json \
+    php5-mcrypt \
     zip
+
+RUN echo 'extension=mcrypt.so' > /etc/php5/cli/conf.d/20-mcrypt.ini
+RUN echo 'extension=mcrypt.so' > /etc/php5/fpm/conf.d/20-mcrypt.ini
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
