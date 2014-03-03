@@ -110,6 +110,8 @@ class Project implements WebsocketRoutable
             'build' => [],
             'run' => [],
             'script' => [], // @todo this is legacy but needs to be here else OptionsResolver will die because the option is not known
+            'writables' =>[],
+            'options' => [],
         ]);
 
         $options->setRequired(['image']);
