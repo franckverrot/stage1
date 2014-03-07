@@ -27,7 +27,10 @@ RUN mv composer.phar /usr/local/bin/composer
 # just in case something's wrong with innodb
 RUN rm -f /var/lib/mysql/ib_logfile*
 
-RUN gem install --no-ri --no-rdoc compass sass; ln -s /usr/local/bin/compass /usr/bin/compass; ln -s /usr/local/bin/sass /usr/bin/sass
+RUN gem install --no-ri --no-rdoc compass sass bundler
+RUN ln -s /usr/local/bin/compass /usr/bin/compass
+RUN ln -s /usr/local/bin/sass /usr/bin/sass
+RUN ln -s /usr/local/bin/bundle /usr/bin/bundle
 
 ADD ./support/nginx.conf /etc/nginx/sites-available/default
 ADD ./support/php.ini /etc/php5/fpm/php.ini
