@@ -29,6 +29,8 @@ class SettingsController extends Controller
             $em->persist($settings);
             $em->flush();
 
+            $this->get('session')->getFlashBag()->add('success', 'Build policy has been saved.');
+
             if ($this->get('session')->has('return')) {
                 return $this->redirect($this->get('session')->get('return'));
             }
