@@ -11,6 +11,7 @@ use Guzzle\Http\Client;
 use App\CoreBundle\SshKeys;
 use App\CoreBundle\Entity\User;
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\ProjectSettings;
 use App\CoreBundle\Entity\Branch;
 use App\CoreBundle\Entity\Organization;
 use App\CoreBundle\Value\ProjectAccess;
@@ -147,8 +148,17 @@ class Import
         $this->logger->info('running access step', ['project' => $githubFullName]);
         $this->doAccess($project);
 
+        # set default build policy
+        $settings = new ProjectSettings();
+        $settings->setProject($project);
+        $settings->setPolicy(ProjectSettings::POLICY_ALL);
+
         $em = $this->doctrine->getManager();
+        
         $em->persist($project);
+        $em->flush();
+
+        $em->persist($settings);
         $em->flush();
 
         return $project;
