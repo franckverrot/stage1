@@ -1,7 +1,59 @@
 {% extends '::base.html.twig' %}
 
+{% block javascripts %}
+<script type="text/javascript">
+$(function() {
+    $(':radio').on('change', function() {
+        $('#fieldset_project_policy_branchPatterns').toggle(this.value === 'patterns');
+    });
+});
+</script>
+{% endblock %}
+
 {% block body %}
 
 {% include 'AppCoreBundle:Project:_header.html.twig' %}
+{% include 'AppCoreBundle:Project/Settings:_nav.html.twig' %}
+
+{{ form_start(form, { attr: { 'novalidate': '' }}) }}
+
+<fieldset>
+    <legend>Build policy</legend>
+
+    <p>The <em>build policy</em> determines which branches are automatically built, and which are not.</p>
+
+    <div>
+        {{ form_errors(form.policy) }}
+        {{ form_widget(form.policy) }}
+    </div>
+</fieldset>
+
+<fieldset id="fieldset_project_policy_branchPatterns" {% if not project.settings or project.settings.policy != 'patterns' %}style="display: none;"{% endif %}>
+    <legend>Branch patterns</legend>
+
+    <div class="row-fluid">
+        <div class="span6">
+            {{ form_errors(form.branchPatterns) }}
+            {{ form_widget(form.branchPatterns) }}
+        </div>
+
+        <div class="span6 help">
+            <p>One glob pattern per line.</p>
+
+            <p>Example:</p>
+
+            <pre>master
+feature/*</pre>
+            <p>This will automatically build the <code>master</code> branch and all branches prefixed with <code>feature/</code>.</p>
+        </div>
+    </div>
+</fieldset>
+
+<div class="form-actions">
+    {{ form_widget(form.save) }}
+</div>
+
+{{ form_end(form) }}
+
 
 {% endblock %}

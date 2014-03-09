@@ -20,7 +20,7 @@
 
     <!-- private project routing -->
 
-    <route id="app_core_project_settings_policy" pattern="/project/{id}/policy">
+    <route id="app_core_project_settings_policy" pattern="/project/{id}/policy" methods="GET,POST">
         <default key="_controller">AppCoreBundle:Project/Settings:policy</default>
     </route>
 
