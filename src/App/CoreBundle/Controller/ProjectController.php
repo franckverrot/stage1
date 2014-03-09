@@ -180,6 +180,10 @@ class ProjectController extends Controller
         $this->setCurrentProjectId($id);
         $project = $this->findProject($id);
 
+        if ($project->getSettings() && strlen($project->getSettings()->getPolicy()) === 0) {
+            return $this->redirect('app_core_project_settings_policy', ['id' => $project->getId()]);
+        }
+
         $builds = $this
             ->getDoctrine()
             ->getRepository('AppCoreBundle:Build')

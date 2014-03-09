@@ -416,6 +416,7 @@ SSH
         $this->builds = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
         $this->branches = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->settings = new ProjectSettings();
     }
     
     /**
