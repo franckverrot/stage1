@@ -11,6 +11,7 @@
         <field name="branchPatterns" column="branch_patterns" type="text" nullable="true" />
 
         <one-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="settings">
+            <cascade><persist /></cascade>
             <join-column name="project_id" reference-column-name="id" on-delete="CASCADE" />
         </one-to-one>
     </entity>
