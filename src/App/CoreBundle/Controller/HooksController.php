@@ -52,6 +52,39 @@ class HooksController extends Controller
             $ref = substr($payload->ref, 11);
             $hash = $payload->after;
 
+            # check if ref is configured to be automatically built
+
+            $doBuild = false;
+
+            switch ($project->getSettings()->getPolicy()) {
+                case ProjectSettings::POLICY_ALL:
+                    $doBuild = true;
+                    break;
+                case ProjectSettings::POLICY_NONE:
+                    $doBuild = false;
+                    break;
+                case ProjectSettings::POLICY_PATTERNS:
+                    $patterns = explode(PHP_EOL, $project->getSettings()->getBranchPatterns());
+
+                    foreach ($patterns as $pattern) {
+                        $regex = strtr($pattern, ['*' => '.*', '?' => '.']);
+
+                        if (preg_match('/'.$regex.'/i', $ref)) {
+                            $doBuild = true;
+                        }
+                    }
+                    break;
+                default:
+                    $logger->error('could not find a suitable build policy', ['project' => $project->getId(), 'ref' => $ref]);
+
+                    throw new InvalidArgumentException('Unknown policy "%s"', $project->getSettings()->getPolicy());
+            }
+
+            if (!$doBuild) {
+                $logger->info('build policy declined build', ['project' => $project->getId(), 'ref' => $ref]);
+                return;
+            }
+
             $em = $this->getDoctrine()->getManager();
 
             $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
