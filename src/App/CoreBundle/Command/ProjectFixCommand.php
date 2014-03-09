@@ -3,6 +3,7 @@
 namespace App\CoreBundle\Command;
 
 use App\CoreBundle\Entity\Project;
+use App\CoreBundle\Entity\ProjectSettings;
 use App\CoreBundle\Entity\Organization;
 use App\CoreBundle\SshKeys;
 
@@ -64,6 +65,16 @@ class ProjectFixCommand extends ContainerAwareCommand
                 $org->setPrivateKey($orgKeys['private']);
 
                 $project->setOrganization($org);
+            }
+
+            if (!$project->getSettings() || strlen($project->getSettings()->getPolicy()) === 0) {
+                $output->writeln('fixing build policy for <info>'.$project->getGithubFullName().'</info>');
+
+                $settings = $project->getSettings() ?: new ProjectSettings();
+                $settings->setPolicy(ProjectSettings::POLICY_ALL);
+                $settings->setProject($project);
+
+                $em->persist($settings);
             }
 
             $em->persist($project);
