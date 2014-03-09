@@ -183,7 +183,7 @@ class ProjectController extends Controller
         if ($project->getSettings() && strlen($project->getSettings()->getPolicy()) === 0) {
             $this->get('session')->set('return', $this->generateUrl('app_core_project_branches', ['id' => $project->getId()]));
             
-            return $this->redirect('app_core_project_settings_policy', ['id' => $project->getId()]);
+            return $this->redirect($this->generateUrl('app_core_project_settings_policy', ['id' => $project->getId()]));
         }
 
         $builds = $this
