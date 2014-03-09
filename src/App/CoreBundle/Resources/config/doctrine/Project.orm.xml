@@ -52,7 +52,9 @@
             <cascade><persist /></cascade>
         </one-to-many>
 
-        <one-to-one field="settings" target-entity="App\CoreBundle\Entity\ProjectSettings" mapped-by="project" />
+        <one-to-one field="settings" target-entity="App\CoreBundle\Entity\ProjectSettings" mapped-by="project">
+            <cascade><persist /></cascade>
+        </one-to-one>
 
         <many-to-one field="organization" target-entity="App\CoreBundle\Entity\Organization" inversed-by="projects">
             <cascade><persist /></cascade>
