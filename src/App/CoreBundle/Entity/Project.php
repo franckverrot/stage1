@@ -218,7 +218,7 @@ SSH
 
     public function __toString()
     {
-        return json_encode($this->asWebsocketMessage());
+        return json_encode($this->asMessage());
     }
 
     public function getChannel()
