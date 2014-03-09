@@ -2,7 +2,7 @@
 
 {% block body %}
 
-{% include 'AppCoreBundle:Default:_project_header.html.twig' with { project: build.project } %}
+{% include 'AppCoreBundle:Project:_header.html.twig' with { project: build.project } %}
 {% include 'AppCoreBundle:Build:_metadata.html.twig' with { build: build } %}
 {% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
 

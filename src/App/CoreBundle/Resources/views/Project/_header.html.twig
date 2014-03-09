@@ -22,7 +22,7 @@
         <a href="{{ path('app_core_project_admin', { id: project.id }) }}">Admin</a>
     </li>
 
-    <li class="pull-right{% if current_route == 'app_core_project_settings' %} active{% endif %}">
+    <li class="pull-right{% if current_route | slice(0, 25) == 'app_core_project_settings' %} active{% endif %}">
         <a href="{{ path('app_core_project_settings', { id: project.id }) }}">Settings</a>
     </li>
 </ul>
