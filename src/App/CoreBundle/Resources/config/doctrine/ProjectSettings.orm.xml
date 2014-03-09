@@ -7,7 +7,7 @@
         </id>
 
         <field name="buildYml" column="build_yml" type="text" />
-        <field name="branchPolicy" column="branch_policy" type="text" />
+        <field name="policy" column="policy" type="text" />
         <field name="branchPatterns" column="branch_patterns" type="json_array" />
 
         <one-to-one field="project" target-entity="App\CoreBundle\Entity\Project" inversed-by="settings">
