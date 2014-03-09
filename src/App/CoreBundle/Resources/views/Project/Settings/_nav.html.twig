@@ -1,0 +1,11 @@
+{% set current_route = app.request.attributes.get('_route') %}
+
+<ul class="nav nav-tabs">
+    <li{% if current_route == 'app_core_project_settings' %} class="active"{% endif %}>
+        <a href="{{ path('app_core_project_settings', { id: project.id }) }}">Configuration</a>
+    </li>
+
+    <li{% if current_route == 'app_core_project_settings_policy' %} class="active"{% endif %}>
+        <a href="{{ path('app_core_project_settings_policy', { id: project.id }) }}">Policy</a>
+    </li>
+</ul>

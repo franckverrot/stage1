@@ -162,9 +162,9 @@ div#logs-loading-indicator {
     vertical-align: inherit;
 }
 
-textarea#project_env, textarea#project_urls {
+textarea.per-line-settings {
     width: 95%;
-    height: 7em;
+    height: 7em;    
 }
 
 #project-import-footer {

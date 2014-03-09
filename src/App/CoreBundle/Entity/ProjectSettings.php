@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProjectSettings
 {
+    const POLICY_ALL = 'all';
+    const POLICY_NONE = 'none';
+    const POLICY_PATTERNS = 'patterns';
+    
     /**
      * @var string
      */

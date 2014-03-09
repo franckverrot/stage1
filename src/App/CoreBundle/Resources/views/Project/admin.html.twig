@@ -53,7 +53,7 @@ $('#project_name').on('keyup', function(event) {
 
         <div class="row-fluid">
             <div class="span6">
-                <textarea name="project_env" id="project_env">{{ project.env }}</textarea>
+                <textarea class="per-line-settings" name="project_env" id="project_env">{{ project.env }}</textarea>
             </div>
             <div class="span6 help">
                 <p>Rules:</p>
@@ -86,7 +86,7 @@ FOO=some value with spaces</pre>
 
         <div class="row-fluid">
             <div class="span6">
-                <textarea name="project_urls" id="project_urls">{{ project.urls }}</textarea>
+                <textarea class="per-line-settings" name="project_urls" id="project_urls">{{ project.urls }}</textarea>
             </div>
             <div class="span6 help">
                 <p>Rules:</p>
