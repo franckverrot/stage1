@@ -92,29 +92,6 @@ class ProjectSettings
 
 
     /**
-     * Set branchPolicy
-     *
-     * @param string $branchPolicy
-     * @return ProjectSettings
-     */
-    public function setBranchPolicy($branchPolicy)
-    {
-        $this->branchPolicy = $branchPolicy;
-    
-        return $this;
-    }
-
-    /**
-     * Get branchPolicy
-     *
-     * @return string 
-     */
-    public function getBranchPolicy()
-    {
-        return $this->branchPolicy;
-    }
-
-    /**
      * Set branchPatterns
      *
      * @param array $branchPatterns
@@ -135,5 +112,33 @@ class ProjectSettings
     public function getBranchPatterns()
     {
         return $this->branchPatterns;
+    }
+    /**
+     * @var string
+     */
+    private $policy;
+
+
+    /**
+     * Set policy
+     *
+     * @param string $policy
+     * @return ProjectSettings
+     */
+    public function setPolicy($policy)
+    {
+        $this->policy = $policy;
+    
+        return $this;
+    }
+
+    /**
+     * Get policy
+     *
+     * @return string 
+     */
+    public function getPolicy()
+    {
+        return $this->policy;
     }
 }
