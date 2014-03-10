@@ -1,6 +1,7 @@
 FROM stage1
 MAINTAINER Geoffrey Bachelet <geoffrey.bachelet@gmail.com>
 
+RUN apt-get update -y
 RUN apt-get install -qy realpath ca-certificates-java openjdk-7-jre-headless || true
 
 # php5-sqlite is mainly for prestacms
