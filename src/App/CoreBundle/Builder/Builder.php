@@ -252,7 +252,7 @@ class Builder
 
         if ($buildContainer->getExitCode() !== 0) {
             $exitCode = $buildContainer->getExitCode();
-            $exitCodeLabel = Process::$exitCodes[$exitCode];
+            $exitCodeLabel = isset(Process::$exitCodes[$exitCode]) ? Process::$exitCodes[$exitCode] : '';
 
             $message = sprintf('build container stopped with exit code %d (%s)', $exitCode, $exitCodeLabel);
 
