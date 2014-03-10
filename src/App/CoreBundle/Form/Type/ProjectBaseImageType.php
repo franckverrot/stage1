@@ -14,8 +14,8 @@ class ProjectBaseImageType extends AbstractType
             ->add('docker_base_image', 'choice', [
                 'label' => false,
                 'choices' => [
-                    'ubuntu:precise' => 'Ubuntu Precise (12.04)',
-                    'symfony2:latest' => 'Symfony 2',
+                    'stage1' => 'Stage1 Base',
+                    'symfony2' => 'Symfony2',
                 ]
             ])
             ->add('save', 'submit', ['label' => 'Save project\'s base image']);
