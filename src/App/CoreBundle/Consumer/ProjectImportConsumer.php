@@ -29,6 +29,7 @@ class ProjectImportConsumer implements ConsumerInterface
         $this->websocket = $websocket;
         $this->router = $router;
 
+        # @todo
         echo '== initializing ProjectImportConsumer'.PHP_EOL;
     }
 
