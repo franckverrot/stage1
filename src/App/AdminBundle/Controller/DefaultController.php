@@ -2,7 +2,7 @@
 
 namespace App\AdminBundle\Controller;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 class DefaultController extends Controller
 {
@@ -11,15 +11,15 @@ class DefaultController extends Controller
         $doctrine = $this->getDoctrine();
 
         $projects = $doctrine
-            ->getRepository('AppCoreBundle:Project')
+            ->getRepository('Model:Project')
             ->findBy([], ['createdAt' => 'DESC'], 5);
             
         $users = $doctrine
-            ->getRepository('AppCoreBundle:User')
+            ->getRepository('Model:User')
             ->findBy([], ['createdAt' => 'DESC'], 5);
 
         $builds = $doctrine
-            ->getRepository('AppCoreBundle:Build')
+            ->getRepository('Model:Build')
             ->findBy([
                 'status' => [Build::STATUS_SCHEDULED, Build::STATUS_BUILDING, Build::STATUS_RUNNING, Build::STATUS_FAILED, Build::STATUS_TIMEOUT],
             ], [
@@ -36,7 +36,7 @@ class DefaultController extends Controller
     public function switchUserAction()
     {
         return $this->render('AppAdminBundle:Default:switchUser.html.twig', [
-            'users' => $this->get('doctrine')->getRepository('AppCoreBundle:User')->findAll()
+            'users' => $this->get('doctrine')->getRepository('Model:User')->findAll()
         ]);
     }
 }

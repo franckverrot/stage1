@@ -5,9 +5,9 @@ namespace App\CoreBundle\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\User;
-use App\CoreBundle\Entity\WebsocketRoutable;
+use App\Model\Project;
+use App\Model\User;
+use App\Model\WebsocketRoutable;
 
 use Psr\Log\LoggerInterface;
 
@@ -51,7 +51,7 @@ class WebsocketRoutingTableSubscriber implements EventSubscriber
     }
 
     /**
-     * @param App\CoreBundle\Entity\WebsocketRoutable
+     * @param App\Model\WebsocketRoutable
      * 
      * @return array
      */

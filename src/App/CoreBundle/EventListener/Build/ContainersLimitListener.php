@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\EventListener\Build;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 use App\CoreBundle\Event\BuildFinishedEvent;
 
 use Docker\Docker;
@@ -63,7 +63,7 @@ class ContainersLimitListener
         }
 
         $em = $this->doctrine->getManager();
-        $buildRepository = $em->getRepository('AppCoreBundle:Build');
+        $buildRepository = $em->getRepository('Model:Build');
 
         $user = $build->getProject()->getUsers()->first();
 

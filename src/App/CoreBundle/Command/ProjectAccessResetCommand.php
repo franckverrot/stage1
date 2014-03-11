@@ -25,7 +25,7 @@ class ProjectAccessResetCommand extends ContainerAwareCommand
         $redis = $this->getContainer()->get('app_core.redis');
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $rp = $em->getRepository('AppCoreBundle:Project');
+        $rp = $em->getRepository('Model:Project');
 
         if ($input->getOption('public')) {
             $projects = $rp->findByGithubPrivate(false);

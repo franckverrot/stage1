@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use App\CoreBundle\Value\ProjectAccess;
-use App\CoreBundle\Entity\Project;
+use App\Model\Project;
 
 class ProjectController extends Controller
 {
@@ -188,7 +188,7 @@ class ProjectController extends Controller
 
         $builds = $this
             ->getDoctrine()
-            ->getRepository('AppCoreBundle:Build')
+            ->getRepository('Model:Build')
             ->findLastByRefs($project);
 
         foreach ($builds as $build) {     
@@ -215,7 +215,7 @@ class ProjectController extends Controller
 
         $githubIds = array_values(array_map(function($p) { return $p['github_id']; }, $projects));
 
-        $queryBuilder = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->createQueryBuilder('p');
+        $queryBuilder = $this->getDoctrine()->getRepository('Model:Project')->createQueryBuilder('p');
         $queryBuilder->where('p.githubId IN(?1)');
         $queryBuilder->setParameter(1, $githubIds);
 
@@ -238,7 +238,7 @@ class ProjectController extends Controller
 
     public function joinAction(Request $request, $id)
     {
-        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
+        $project = $this->getDoctrine()->getRepository('Model:Project')->find($id);
 
         if (!$project) {
             throw $this->createNotFoundException();

@@ -28,7 +28,7 @@ class GithubCommand extends ContainerAwareCommand
         $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
         if ($input->getOption('user')) {
-            $repo = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
+            $repo = $this->getContainer()->get('doctrine')->getRepository('Model:User');
             $user = $repo->findOneBySpec($input->getOption('user'));
 
             if (!$user) {

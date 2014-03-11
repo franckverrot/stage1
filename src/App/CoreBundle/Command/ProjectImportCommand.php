@@ -38,7 +38,7 @@ class ProjectImportCommand extends ContainerAwareCommand
 
     private function findUser($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:User');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

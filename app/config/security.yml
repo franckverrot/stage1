@@ -11,7 +11,7 @@ security:
 
     providers:
         main:
-            entity: { class: AppCoreBundle:User }
+            entity: { class: Model:User }
 
     firewalls:
         dev:

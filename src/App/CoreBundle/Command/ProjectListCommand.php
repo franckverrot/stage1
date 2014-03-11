@@ -18,7 +18,7 @@ class ProjectListCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:Project');
 
         foreach ($repository->findAll() as $project) {
             $output->writeln(sprintf('<info>%- 4d</info> %s', $project->getId(), $project->getSlug()));

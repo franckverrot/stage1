@@ -93,7 +93,7 @@ class ProjectKeysInstallCommand extends ContainerAwareCommand
 
     private function findProject($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:Project');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

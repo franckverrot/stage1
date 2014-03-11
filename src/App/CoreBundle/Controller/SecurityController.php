@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Controller;
 
-use App\CoreBundle\Entity\User;
+use App\Model\User;
 use App\CoreBundle\SshKeys;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,7 +28,7 @@ class SecurityController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('AppCoreBundle:BetaSignup');
+        $repo = $em->getRepository('Model:BetaSignup');
 
         return (null !== $repo->findByBetaKey($betaKey));
     }
@@ -46,7 +46,7 @@ class SecurityController extends Controller
         $token = uniqid(mt_rand(), true);            
 
         if (strlen($channel) > 0) {
-            $repo = $this->getDoctrine()->getRepository('AppCoreBundle:User');
+            $repo = $this->getDoctrine()->getRepository('Model:User');
             $authUser = $repo->findByChannel($channel);
 
             if ($authUser !== $this->getUser()) {
@@ -75,7 +75,7 @@ class SecurityController extends Controller
 
         $result = $githubResponse->json();
 
-        if (null === ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByGithubId($result['id']))) {
+        if (null === ($user = $this->getDoctrine()->getRepository('Model:User')->findOneByGithubId($result['id']))) {
             $user = User::fromGithubResponse($result);
             $user->setStatus(User::STATUS_WAITING_LIST);
 
@@ -120,7 +120,7 @@ class SecurityController extends Controller
     private function createBetaSignup(User $user)
     {
         $em = $this->get('doctrine')->getManager();
-        $repo = $em->getRepository('AppCoreBundle:BetaSignup');
+        $repo = $em->getRepository('Model:BetaSignup');
 
         if (null === $beta = $repo->findOneByEmail($user->getEmail())) {
             $beta = new BetaSignup();
@@ -135,7 +135,7 @@ class SecurityController extends Controller
     public function authorizeAction(Request $request)
     {
         if ($this->container->getParameter('kernel.environment') === 'dev') {
-            if (null !== ($user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByUsername('ubermuda'))) {
+            if (null !== ($user = $this->getDoctrine()->getRepository('Model:User')->findOneByUsername('ubermuda'))) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.context')->setToken($token);
 

@@ -27,7 +27,7 @@ class BuildDumpKeysCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $build = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Build')->find($input->getArgument('build_id'));
+        $build = $this->getContainer()->get('doctrine')->getRepository('Model:Build')->find($input->getArgument('build_id'));
 
         if (!$build) {
             throw new InvalidArgumentException('Could not find build');

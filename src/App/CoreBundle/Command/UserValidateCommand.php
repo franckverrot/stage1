@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use App\CoreBundle\Entity\User;
+use App\Model\User;
 
 class UserValidateCommand extends ContainerAwareCommand
 {
@@ -37,7 +37,7 @@ class UserValidateCommand extends ContainerAwareCommand
 
     private function findUser($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:User');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

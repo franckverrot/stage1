@@ -18,7 +18,7 @@ class UserListCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:User');
 
         foreach ($repository->findAll() as $user) {
             $output->writeln(sprintf('<info>%- 4d</info> %s', $user->getId(), $user->getUsername()));

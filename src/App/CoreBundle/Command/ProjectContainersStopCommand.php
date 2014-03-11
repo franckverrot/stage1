@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -32,7 +32,7 @@ class ProjectContainersStopCommand extends ContainerAwareCommand
 
         $docker = $this->getContainer()->get('app_core.docker');
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $rp = $em->getRepository('Model:Build');
 
         $containers = $docker->getContainerManager()->findAll();
 
@@ -70,7 +70,7 @@ class ProjectContainersStopCommand extends ContainerAwareCommand
 
     private function findProject($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:Project');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

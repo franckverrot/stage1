@@ -3,7 +3,7 @@
 namespace App\CoreBundle\Controller\Project;
 
 use App\CoreBundle\Controller\Controller;
-use App\CoreBundle\Entity\ProjectSettings;
+use App\Model\ProjectSettings;
 use Symfony\Component\HttpFoundation\Request;
 
 class SettingsController extends Controller

@@ -2,11 +2,11 @@
 
 namespace App\CoreBundle\Controller;
 
-use App\CoreBundle\Entity\Branch;
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\ProjectSettings;
-use App\CoreBundle\Entity\GithubPayload;
+use App\Model\Branch;
+use App\Model\Build;
+use App\Model\Project;
+use App\Model\ProjectSettings;
+use App\Model\GithubPayload;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,7 +56,7 @@ class HooksController extends Controller
             # first, find project!
             $em = $this->getDoctrine()->getManager();
 
-            $project = $em->getRepository('AppCoreBundle:Project')->findOneByGithubId($payload->repository->id);
+            $project = $em->getRepository('Model:Project')->findOneByGithubId($payload->repository->id);
 
             if (!$project) {
                 throw $this->createNotFoundException('Unknown Github project');
@@ -95,7 +95,7 @@ class HooksController extends Controller
 
             if ($hash === '0000000000000000000000000000000000000000') {
                 $branch = $em
-                    ->getRepository('AppCoreBundle:Branch')
+                    ->getRepository('Model:Branch')
                     ->findOneByProjectAndName($project, $ref);
 
                 $branch->setDeleted(true);
@@ -110,7 +110,7 @@ class HooksController extends Controller
                 return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
             }
 
-            $sameHashBuilds = $em->getRepository('AppCoreBundle:Build')->findByHash($hash);
+            $sameHashBuilds = $em->getRepository('Model:Build')->findByHash($hash);
 
             if (count($sameHashBuilds) > 0) {
                 $logger->warn('found builds with same hash', ['cound' => count($sameHashBuilds)]);
@@ -128,7 +128,7 @@ class HooksController extends Controller
 
             $scheduler = $this->get('app_core.build_scheduler');
 
-            $initiator = $em->getRepository('AppCoreBundle:User')->findOneByGithubUsername($payload->pusher->name);
+            $initiator = $em->getRepository('Model:User')->findOneByGithubUsername($payload->pusher->name);
 
             $build = $scheduler->schedule($project, $ref, $hash);
             $logger->info('scheduled build', ['build' => $build->getId(), 'ref' => $build->getRef()]);

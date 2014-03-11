@@ -2,10 +2,10 @@
 
 namespace App\CoreBundle;
 
-use App\CoreBundle\Entity\Branch;
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\User;
+use App\Model\Branch;
+use App\Model\Build;
+use App\Model\Project;
+use App\Model\User;
 use App\CoreBundle\Message\MessageFactory;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Psr\Log\LoggerInterface;
@@ -49,7 +49,7 @@ class BuildScheduler
         $em = $this->doctrine->getManager();
 
         // @todo I guess this should be in a build.scheduled event listener
-        $alreadyRunningBuilds = $em->getRepository('AppCoreBundle:Build')->findPendingByRef($project, $ref);
+        $alreadyRunningBuilds = $em->getRepository('Model:Build')->findPendingByRef($project, $ref);
 
         foreach ($alreadyRunningBuilds as $build) {
             // @todo instead of retrieving then updating builds to be canceled, directly issue an UPDATE

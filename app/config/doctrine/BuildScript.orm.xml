@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Model\BuildScript" table="build_script">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="buildScript" column="build_script" type="text" nullable="true" />
+        <field name="runScript" column="run_script" type="text" nullable="true" />
+        <field name="config" column="config" type="json_array" nullable="true" />
+        <field name="runtimeEnv" column="runtime_env" type="json_array" nullable="true" />
+
+        <one-to-one field="build" target-entity="App\Model\Build" inversed-by="script">
+            <join-column name="build_id" reference-column-name="id" on-delete="CASCADE" />
+        </one-to-one>
+    </entity>
+
+</doctrine-mapping>

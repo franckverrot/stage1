@@ -7,8 +7,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Branch;
+use App\Model\Build;
+use App\Model\Branch;
 
 use Psr\Log\LoggerInterface;
 
@@ -61,7 +61,7 @@ class BuildBranchRelationSubscriber implements EventSubscriber
         $em = $this->doctrine->getManager();
         
         $branch = $this->doctrine
-            ->getRepository('AppCoreBundle:Branch')
+            ->getRepository('Model:Branch')
             ->findOneByProjectAndName($build->getProject(), $build->getRef());
 
         if (!$branch) {

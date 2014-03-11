@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 class BuildCheckTimeoutCommand extends ContainerAwareCommand
 {
@@ -25,7 +25,7 @@ class BuildCheckTimeoutCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $rp = $em->getRepository('Model:Build');
 
         if (null === $input->getOption('ttl')) {
             $ttl = $this->getContainer()->getParameter('stage1_build_timeout');

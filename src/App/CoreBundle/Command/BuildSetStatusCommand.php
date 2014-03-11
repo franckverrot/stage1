@@ -28,7 +28,7 @@ class BuildSetStatusCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $build = $em->getRepository('AppCoreBundle:Build')->find($input->getArgument('build_id'));
+        $build = $em->getRepository('Model:Build')->find($input->getArgument('build_id'));
 
         if (!$build) {
             throw new InvalidArgumentException('Could not find build');

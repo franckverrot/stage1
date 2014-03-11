@@ -5,8 +5,8 @@ namespace App\CoreBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\Build;
+use App\Model\Project;
+use App\Model\Build;
 use App\CoreBundle\Message\MessageInterface;
 use App\CoreBundle\Value\ProjectAccess;
 
@@ -123,7 +123,7 @@ class Controller extends BaseController
 
     protected function findBuild($id, $checkAuth = true)
     {
-        $build = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->find($id);
+        $build = $this->getDoctrine()->getRepository('Model:Build')->find($id);
 
         if (!$build) {
             throw $this->createNotFoundException('Build not found');
@@ -145,7 +145,7 @@ class Controller extends BaseController
      */
     protected function findPendingBuilds(Project $project)
     {
-        $qb = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
+        $qb = $this->getDoctrine()->getRepository('Model:Build')->createQueryBuilder('b');
 
         $qb
             ->where($qb->expr()->eq('b.project', ':project'))
@@ -206,7 +206,7 @@ class Controller extends BaseController
 
     protected function findUserByUsername($username)
     {
-        $user = $this->getDoctrine()->getRepository('AppCoreBundle:User')->findOneByUsername($username);
+        $user = $this->getDoctrine()->getRepository('Model:User')->findOneByUsername($username);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -217,7 +217,7 @@ class Controller extends BaseController
 
     protected function findProject($id, $checkAuth = true)
     {
-        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->find($id);
+        $project = $this->getDoctrine()->getRepository('Model:Project')->find($id);
 
         if (!$project) {
             throw $this->createNotFoundException('Project not found');
@@ -236,7 +236,7 @@ class Controller extends BaseController
 
     protected function findProjectsBySlug($slug)
     {
-        $projects = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findBySlug($slug);
+        $projects = $this->getDoctrine()->getRepository('Model:Project')->findBySlug($slug);
 
         if (count($projects) === 0) {
             throw $this->createNotFoundException(sprintf('Could not find projects with slug "%s"', $slug));
@@ -247,7 +247,7 @@ class Controller extends BaseController
 
     protected function findProjectBySlug($slug)
     {
-        $project = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findOneBySlug($slug);
+        $project = $this->getDoctrine()->getRepository('Model:Project')->findOneBySlug($slug);
 
         if (!$project) {
             throw $this->createNotFoundException(sprintf('Could not find project with slug "%s"', $slug));

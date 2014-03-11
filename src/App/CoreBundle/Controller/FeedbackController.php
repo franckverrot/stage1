@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Controller;
 
-use App\CoreBundle\Entity\Feedback;
+use App\Model\Feedback;
 use Symfony\Component\HttpFoundation\Request;
 
 use Swift_Message;

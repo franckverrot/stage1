@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Message;
 
-use App\CoreBundle\Entity\BuildLog;
+use App\Model\BuildLog;
 
 class BuildLogMessage extends AbstractMessage
 {

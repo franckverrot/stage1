@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Event;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use Symfony\Component\EventDispatcher\Event;
 

@@ -4,7 +4,7 @@ namespace App\CoreBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use App\CoreBundle\Entity\BetaSignup;
+use App\Model\BetaSignup;
 
 class BetaController extends Controller
 {
@@ -17,7 +17,7 @@ class BetaController extends Controller
         $beta_key = md5(uniqid(mt_rand(), true));
         $session->set('beta_email', $email);
 
-        $beta = $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email);
+        $beta = $this->getDoctrine()->getRepository('Model:BetaSignup')->findOneByEmail($email);
 
         if (!$beta) {
             $beta = new BetaSignup();
@@ -35,7 +35,7 @@ class BetaController extends Controller
     public function landingAction(Request $request)
     {
         $email = $request->getSession()->get('beta_email');
-        $beta = $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findOneByEmail($email);
+        $beta = $this->getDoctrine()->getRepository('Model:BetaSignup')->findOneByEmail($email);
 
         if (null === $beta) {
             return $this->render('AppCoreBundle:Default:index.html.twig');
@@ -49,7 +49,7 @@ class BetaController extends Controller
     public function enterAction(Request $request, $betaKey)
     {
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('AppCoreBundle:BetaSignup');
+        $repo = $em->getRepository('Model:BetaSignup');
 
         $betaSignup = $repo->findByBetaKey($betaKey);
 

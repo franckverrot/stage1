@@ -25,7 +25,7 @@ class WebsocketRoutingRebuildCommand extends ContainerAwareCommand
         }
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('AppCoreBundle:User');
+        $repo = $em->getRepository('Model:User');
 
         foreach ($repo->findAll() as $user) {
             $output->writeln('rebuilding routing for user <info>'.$user->getUsername().'</info>');

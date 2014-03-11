@@ -2,8 +2,8 @@
 
 namespace App\CoreBundle\Builder;
 
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\BuildScript;
+use App\Model\Build;
+use App\Model\BuildScript;
 
 use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
@@ -82,7 +82,7 @@ class Builder
     }
 
     /**
-     * @param App\CoreBundle\Entity\Build $build
+     * @param App\Model\Build $build
      * 
      * @return Docker\Container
      */

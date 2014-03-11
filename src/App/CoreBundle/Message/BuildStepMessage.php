@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Message;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 class BuildStepMessage extends AbstractMessage
 {

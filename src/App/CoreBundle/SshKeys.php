@@ -4,7 +4,7 @@ namespace App\CoreBundle;
 
 use Symfony\Component\Process\ProcessBuilder;
 
-use App\CoreBundle\Entity\Project;
+use App\Model\Project;
 
 use RuntimeException;
 

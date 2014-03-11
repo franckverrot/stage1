@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Yaml\Yaml;
 
-use App\CoreBundle\Entity\User;
+use App\Model\User;
 
 class DemoSetupCommand extends ContainerAwareCommand
 {
@@ -30,7 +30,7 @@ class DemoSetupCommand extends ContainerAwareCommand
 
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $userRepo = $em->getRepository('AppCoreBundle:User');
+        $userRepo = $em->getRepository('Model:User');
 
         if (null === $user = $userRepo->findOneByUsername($config['username'])) {
             $user = new User();
@@ -46,7 +46,7 @@ class DemoSetupCommand extends ContainerAwareCommand
         $importer = $this->getContainer()->get('app_core.github.import');
         $importer->setUser($user);
 
-        $projectRepo = $em->getRepository('AppCoreBundle:Project');
+        $projectRepo = $em->getRepository('Model:Project');
         $websocketChannels = [];
 
         foreach ($config['projects'] as $fullName) {

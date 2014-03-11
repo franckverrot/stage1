@@ -37,7 +37,7 @@ class ContainerListCommand extends ContainerAwareCommand
         }
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $rp = $em->getRepository('Model:Build');
 
         $headers = [
             'id' => 'Id',

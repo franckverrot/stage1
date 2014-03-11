@@ -2,9 +2,9 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\ProjectSettings;
-use App\CoreBundle\Entity\Organization;
+use App\Model\Project;
+use App\Model\ProjectSettings;
+use App\Model\Organization;
 use App\CoreBundle\SshKeys;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -25,7 +25,7 @@ class ProjectFixCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:Project');
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         foreach ($repository->findAll() as $project) {

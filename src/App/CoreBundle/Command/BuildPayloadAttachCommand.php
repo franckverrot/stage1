@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\GithubPayload;
+use App\Model\GithubPayload;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,7 +28,7 @@ class BuildPayloadAttachCommand extends ContainerAwareCommand
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $rp = $em->getRepository('Model:Build');
         $build = $rp->find($input->getArgument('build_id'));
 
         if (!$build) {

@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\Project;
+use App\Model\Project;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,7 +37,7 @@ class ProjectHoldCommand extends ContainerAwareCommand
 
     private function findProject($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:Project');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

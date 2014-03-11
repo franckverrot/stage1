@@ -7,7 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use App\CoreBundle\Entity\Branch;
+use App\Model\Branch;
 use InvalidArgumentException;
 
 class ProjectBranchImportCommand extends ContainerAwareCommand
@@ -55,7 +55,7 @@ class ProjectBranchImportCommand extends ContainerAwareCommand
             $builds = $this
                 ->getContainer()
                 ->get('doctrine')
-                ->getRepository('AppCoreBundle:Build')
+                ->getRepository('Model:Build')
                 ->createQueryBuilder('b')
                 ->where('b.ref = ?1 AND b.project = ?2')
                 ->setParameters([1 => $branch->getName(), 2 => $project->getId()])
@@ -79,7 +79,7 @@ class ProjectBranchImportCommand extends ContainerAwareCommand
 
     private function findProject($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Project');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:Project');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

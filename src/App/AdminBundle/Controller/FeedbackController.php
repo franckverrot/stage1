@@ -6,7 +6,7 @@ class FeedbackController extends Controller
 {
     public function indexAction()
     {
-        $rp = $this->get('doctrine')->getRepository('AppCoreBundle:Feedback');
+        $rp = $this->get('doctrine')->getRepository('Model:Feedback');
 
         return $this->render('AppAdminBundle:Feedback:index.html.twig', [
             'entries' => $rp->findAll(),
@@ -15,7 +15,7 @@ class FeedbackController extends Controller
 
     public function showAction($id)
     {
-        $rp = $this->get('doctrine')->getRepository('AppCoreBundle:Feedback');
+        $rp = $this->get('doctrine')->getRepository('Model:Feedback');
 
         $entry = $rp->find($id);
 

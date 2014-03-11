@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Docker;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use Docker\Container;
 

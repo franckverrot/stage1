@@ -67,7 +67,16 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
+        entity_managers:
+            default:
+                mappings:
+                    model:
+                        mapping: true
+                        type: xml
+                        dir: %kernel.root_dir%/config/doctrine
+                        prefix: App\Model
+                        alias: Model
+                        is_bundle: false
 
 # Swiftmailer Configuration
 swiftmailer:

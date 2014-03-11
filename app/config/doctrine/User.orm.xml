@@ -1,0 +1,31 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Model\User" table="user" repository-class="App\Model\UserRepository">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+        <field name="githubId" column="github_id" type="integer" nullable="true" />
+        <field name="username" column="username" type="string" length="255" />
+        <field name="email" column="email" type="string" length="255" nullable="true" />
+        <field name="accessToken" column="access_token" type="string" length="255" nullable="true" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="updatedAt" column="updated_at" type="datetime" />
+        <field name="lastLoginAt" column="last_login_at" type="datetime" nullable="true" />
+        <field name="status" column="status" type="integer" />
+        <field name="waitingList" column="waiting_list" type="integer" />
+        <!-- @todo remove nullable once all users have been migrated -->
+        <field name="channel" type="string" length="255" nullable="true" />
+
+        <field name="publicKey" column="public_key" type="text" />
+        <field name="privateKey" column="private_key" type="text" />
+
+        <many-to-many field="projects" target-entity="App\Model\Project" mapped-by="users">
+            <order-by>
+                <order-by-field name="githubFullName" direction="ASC" />
+            </order-by>
+        </many-to-many>
+    </entity>
+</doctrine-mapping>

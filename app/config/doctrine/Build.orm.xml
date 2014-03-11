@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Model\Build" table="build" repository-class="App\Model\BuildRepository">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="status" column="status" type="integer" />
+        <field name="ref" column="ref" type="string" length="255" />
+        <field name="hash" column="hash" type="string" length="255" nullable="true" />
+        <field name="port" column="port" type="string" length="5" nullable="true" />
+        <field name="host" column="host" type="string" length="255" nullable="true" />
+        <field name="channel" column="channel" type="string" length="255" nullable="true" />
+        <field name="streamOutput" column="stream_output" type="boolean" />
+        <field name="streamSteps" column="stream_steps" type="boolean" />
+        <field name="pid" column="pid" type="integer" nullable="true" />
+        <field name="containerId" column="container_id" type="string" length="255" nullable="true" />
+        <field name="containerName" column="container_name" type="string" length="255" nullable="true" />
+        <field name="imageId" column="image_id" type="string" length="255" nullable="true" />
+        <field name="message" column="message" type="text" nullable="true" />
+        <field name="exitCode" column="exit_code" type="integer" nullable="true" />
+        <field name="exitCodeText" column="exit_code_text" type="string" length="255" nullable="true" />
+        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="updatedAt" column="updated_at" type="datetime" />
+        <field name="isDemo" column="is_demo" type="boolean" />
+        <field name="startTime" column="start_time" type="datetime" nullable="true" />
+        <field name="endTime" column="end_time" type="datetime" nullable="true" />
+        <field name="duration" column="duration" type="integer" nullable="true" />
+        <field name="memoryUsage" column="memory_usage" type="integer" nullable="true" />
+        <field name="allowRebuild" column="allow_rebuild" type="boolean" />
+        <field name="options" column="options" type="json_array" nullable="true" />
+        <field name="forceLocalBuildYml" column="force_local_build_yml" type="boolean" />
+
+        <many-to-one field="project" target-entity="App\Model\Project" inversed-by="builds">
+            <cascade><persist /></cascade>
+            <join-column name="project_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+
+        <many-to-one field="initiator" target-entity="App\Model\User">
+            <join-column name="user_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+
+        <many-to-one field="branch" target-entity="App\Model\Branch" inversed-by="builds">
+            <cascade><persist /></cascade>
+            <join-column name="branch_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+
+        <one-to-many field="logs" target-entity="App\Model\BuildLog" mapped-by="build">
+            <order-by>
+                <order-by-field name="microtime" direction="ASC" />
+            </order-by>
+        </one-to-many>
+
+        <one-to-one field="demo" target-entity="App\Model\Demo" mapped-by="build" />
+        <one-to-one field="payload" target-entity="App\Model\GithubPayload" mapped-by="build" />
+        <one-to-one field="script" target-entity="App\Model\BuildScript" mapped-by="build" />
+        <one-to-one field="failure" target-entity="App\Model\BuildFailure" mapped-by="build" />
+    </entity>
+
+</doctrine-mapping>

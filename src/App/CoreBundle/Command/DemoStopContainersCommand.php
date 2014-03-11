@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use DateTime;
 
@@ -35,7 +35,7 @@ class DemoStopContainersCommand extends ContainerAwareCommand
             $ttl = strtotime($config['default_ttl'], 0);
         }
 
-        $queryBuilder = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
+        $queryBuilder = $this->getContainer()->get('doctrine')->getRepository('Model:Build')->createQueryBuilder('b');
 
         $builds = $queryBuilder
             ->leftJoin('b.project', 'p')

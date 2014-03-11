@@ -2,10 +2,10 @@
 
 namespace App\CoreBundle\Controller;
 
-use App\CoreBundle\Entity\Branch;
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\GithubPayload;
+use App\Model\Branch;
+use App\Model\Build;
+use App\Model\Project;
+use App\Model\GithubPayload;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -133,7 +133,7 @@ class DefaultController extends Controller
 
         $project = $this->findProject($id);
 
-        $qb = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->createQueryBuilder('b');
+        $qb = $this->getDoctrine()->getRepository('Model:Build')->createQueryBuilder('b');
 
         $builds = $qb
             ->leftJoin('b.branch', 'br')

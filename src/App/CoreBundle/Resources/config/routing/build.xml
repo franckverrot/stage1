@@ -18,19 +18,19 @@
     </route>
 
     <route id="app_core_build_infos" pattern="/build/{id}/infos" methods="GET">
-        <default key="_controller">AppCoreBundle:Build:infos</default>
+        <default key="_controller">Model:Build:infos</default>
     </route>
 
     <route id="app_core_build_failure" pattern="/build/{id}/failure" methods="GET">
-        <default key="_controller">AppCoreBundle:Build:failure</default>
+        <default key="_controller">Model:Build:failure</default>
     </route>
 
     <route id="app_core_build_logs_load" pattern="/build/{id}/logs/load" methods="GET">
-        <default key="_controller">AppCoreBundle:Build:logsLoad</default>
+        <default key="_controller">Model:Build:logsLoad</default>
     </route>
 
     <route id="app_core_build_logs_download" pattern="/build/{id}/logs/download" methods="GET">
-        <default key="_controller">AppCoreBundle:Build:logsDownload</default>
+        <default key="_controller">Model:Build:logsDownload</default>
     </route>
 
     <route id="app_core_build_logs" pattern="/build/{id}/logs" methods="GET">

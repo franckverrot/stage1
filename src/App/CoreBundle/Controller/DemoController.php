@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\Demo;
+use App\Model\Build;
+use App\Model\Project;
+use App\Model\Demo;
 
 use RuntimeException;
 
@@ -134,7 +134,7 @@ class DemoController extends Controller
             $slugs[] = preg_replace('/[^a-z0-9\-]/', '-', strtolower($project));
         }
 
-        $projects = $this->getDoctrine()->getRepository('AppCoreBundle:Project')->findBySlug($slugs);
+        $projects = $this->getDoctrine()->getRepository('Model:Project')->findBySlug($slugs);
 
         if (count($projects) === 0) {
             throw new RuntimeException('No demo projects found');
@@ -212,7 +212,7 @@ class DemoController extends Controller
         $build->setHost(sprintf($this->container->getParameter('build_host_mask'), $subdomain.'.demo'));
         $build->setIsDemo(true);
 
-        $previousBuild = $this->getDoctrine()->getRepository('AppCoreBundle:Build')->findPreviousBuild($build, false);
+        $previousBuild = $this->getDoctrine()->getRepository('Model:Build')->findPreviousBuild($build, false);
 
         $demo = new Demo();
         $demo->setEmail($email);

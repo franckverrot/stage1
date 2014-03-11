@@ -28,7 +28,7 @@ class ProjectBranchPruneCommand extends ContainerAwareCommand
             ->get('doctrine')
             ->getManager();
 
-        $rp = $em->getRepository('AppCoreBundle:Project');
+        $rp = $em->getRepository('Model:Project');
 
         if (null === $input->getArgument('project_spec')) {
             $projects = $rp->findAll();

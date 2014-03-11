@@ -26,7 +26,7 @@ class UserAuditCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('AppCoreBundle:User');
+        $repo = $em->getRepository('Model:User');
 
         $user = $repo->findOneBySpec($input->getArgument('user_spec'));
 
@@ -35,7 +35,7 @@ class UserAuditCommand extends ContainerAwareCommand
         $infos['username'] = $user->getUsername();
         $infos['email'] = $user->getEmail();
         $infos['token'] = $user->getAccessToken();
-        $infos['running_builds'] = count($em->getRepository('AppCoreBundle:Build')->findRunningBuildsByUser($user));
+        $infos['running_builds'] = count($em->getRepository('Model:Build')->findRunningBuildsByUser($user));
         $infos['created_at'] = $user->getCreatedAt()->format('r');
 
         $infos['projects'] = [];

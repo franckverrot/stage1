@@ -7,7 +7,7 @@ use Doctrine\Common\EventSubscriber;
 
 use Psr\Log\LoggerInterface;
 
-use App\CoreBundle\Entity\Project;
+use App\Model\Project;
 
 use Redis;
 

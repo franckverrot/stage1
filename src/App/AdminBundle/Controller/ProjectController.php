@@ -9,7 +9,7 @@ class ProjectController extends Controller
         $project = $this->findProject($id);
 
         $em = $this->get('doctrine')->getManager();
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $rp = $em->getRepository('Model:Build');
 
         foreach ($rp->findByHash($hash) as $build) {
             $build->setAllowRebuild(true);

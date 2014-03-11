@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -33,8 +33,8 @@ class BuildEnforceLimitsCommand extends ContainerAwareCommand
 
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $users = $em->getRepository('AppCoreBundle:User')->findAll();
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $users = $em->getRepository('Model:User')->findAll();
+        $rp = $em->getRepository('Model:Build');
         $docker = $this->getContainer()->get('app_core.docker');
 
         $totalBuildsCount = $excessBuildsCount = $stoppedBuildsCount = 0;

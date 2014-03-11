@@ -2,7 +2,7 @@
 
 namespace App\AdminBundle\Controller;
 
-use App\CoreBundle\Entity\BetaSignup;
+use App\Model\BetaSignup;
 use Symfony\Component\HttpFoundation\Request;
 
 use DateTime;
@@ -13,7 +13,7 @@ class BetaController extends Controller
     public function emailSendAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-        $beta = $em->getRepository('AppCoreBundle:BetaSignup')->find($id);
+        $beta = $em->getRepository('Model:BetaSignup')->find($id);
 
         $mailContent = $this->renderView('AppAdminBundle:Beta:_email.html.twig', [
             'beta' => $beta
@@ -39,7 +39,7 @@ class BetaController extends Controller
 
     public function indexAction()
     {
-        $signups = $this->getDoctrine()->getRepository('AppCoreBundle:BetaSignup')->findBy([], ['createdAt' => 'DESC']);
+        $signups = $this->getDoctrine()->getRepository('Model:BetaSignup')->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('AppAdminBundle:Beta:index.html.twig', ['signups' => $signups]);
     }

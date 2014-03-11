@@ -9,11 +9,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Guzzle\Http\Client;
 
 use App\CoreBundle\SshKeys;
-use App\CoreBundle\Entity\User;
-use App\CoreBundle\Entity\Project;
-use App\CoreBundle\Entity\ProjectSettings;
-use App\CoreBundle\Entity\Branch;
-use App\CoreBundle\Entity\Organization;
+use App\Model\User;
+use App\Model\Project;
+use App\Model\ProjectSettings;
+use App\Model\Branch;
+use App\Model\Organization;
 use App\CoreBundle\Value\ProjectAccess;
 
 use Psr\Log\LoggerInterface;
@@ -216,7 +216,7 @@ class Import
         if (false && isset($infos['organization'])) {
             $this->logger->info('attaching project\'s organization', ['organization' => $infos['organization']['login']]);
     
-            $rp = $this->doctrine->getRepository('AppCoreBundle:Organization');
+            $rp = $this->doctrine->getRepository('Model:Organization');
 
             if (null === $org = $rp->findOneByName($infos['organization']['login'])) {
                 $this->logger->info('organization not found, creating', ['organization' => $infos['organization']['login']]);

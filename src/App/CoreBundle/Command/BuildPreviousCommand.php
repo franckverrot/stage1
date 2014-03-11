@@ -24,7 +24,7 @@ class BuildPreviousCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $repo = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:Build');
+        $repo = $this->getContainer()->get('doctrine')->getRepository('Model:Build');
 
         $build = $repo->find($input->getArgument('build_id'));
 

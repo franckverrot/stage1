@@ -9,7 +9,7 @@ use Guzzle\Http\Message\Response;
 
 use Psr\Log\LoggerInterface;
 
-use App\CoreBundle\Entity\User;
+use App\Model\User;
 
 class Github
 {

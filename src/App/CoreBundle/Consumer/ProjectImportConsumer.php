@@ -70,7 +70,7 @@ class ProjectImportConsumer implements ConsumerInterface
 
         $body = json_decode($message->body);
 
-        $user = $this->doctrine->getRepository('AppCoreBundle:User')->find($body->user_id);
+        $user = $this->doctrine->getRepository('Model:User')->find($body->user_id);
 
         $this->importer->setUser($user);
         $this->importer->setInitialProjectAccess(new ProjectAccess($body->client_ip, $body->session_id));

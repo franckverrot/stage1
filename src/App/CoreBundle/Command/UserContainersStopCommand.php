@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Command;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -68,7 +68,7 @@ class UserContainersStopCommand extends ContainerAwareCommand
 
     private function findUser($spec)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:User');
 
         if (is_numeric($spec)) {
             return $repository->find((integer) $spec);

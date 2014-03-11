@@ -3,8 +3,8 @@
 namespace App\CoreBundle\Consumer;
 
 use App\CoreBundle\Builder\Builder;
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\BuildFailure;
+use App\Model\Build;
+use App\Model\BuildFailure;
 
 use App\CoreBundle\BuildEvents;
 use App\CoreBundle\Event\BuildStartedEvent;
@@ -108,7 +108,7 @@ class BuildConsumer implements ConsumerInterface
         $body = json_decode($message->body);
 
         $em = $this->doctrine->getManager();
-        $buildRepository = $em->getRepository('AppCoreBundle:Build');
+        $buildRepository = $em->getRepository('Model:Build');
 
         $this->build = $build = $buildRepository->find($body->build_id);
 

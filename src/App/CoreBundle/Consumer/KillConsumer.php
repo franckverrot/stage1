@@ -2,8 +2,8 @@
 
 namespace App\CoreBundle\Consumer;
 
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Project;
+use App\Model\Build;
+use App\Model\Project;
 use App\CoreBundle\Message\MessageFactory;
 
 use Docker\Docker;
@@ -55,7 +55,7 @@ class KillConsumer implements ConsumerInterface
 
         $logger->info('received kill order', ['build' => $body->build_id]);
 
-        $buildRepo = $this->doctrine->getRepository('AppCoreBundle:Build');
+        $buildRepo = $this->doctrine->getRepository('Model:Build');
         $build = $buildRepo->find($body->build_id);
 
         if (!$build) {

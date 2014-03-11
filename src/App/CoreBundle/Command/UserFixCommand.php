@@ -21,7 +21,7 @@ class UserFixCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('AppCoreBundle:User');
+        $repository = $this->getContainer()->get('doctrine')->getRepository('Model:User');
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         $env = $this->getContainer()->getParameter('kernel.environment');

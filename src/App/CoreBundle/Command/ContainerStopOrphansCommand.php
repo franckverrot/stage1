@@ -33,7 +33,7 @@ class ContainerStopOrphansCommand extends ContainerAwareCommand
         }
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $rp = $em->getRepository('AppCoreBundle:Build');
+        $rp = $em->getRepository('Model:Build');
 
         foreach ($containers as $container) {
 

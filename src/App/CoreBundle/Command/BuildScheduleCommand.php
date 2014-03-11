@@ -7,8 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use App\CoreBundle\Entity\Build;
-use App\CoreBundle\Entity\Project;
+use App\Model\Build;
+use App\Model\Project;
 
 use InvalidArgumentException;
 
@@ -30,7 +30,7 @@ class BuildScheduleCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         $project = $em
-            ->getRepository('AppCoreBundle:Project')
+            ->getRepository('Model:Project')
             ->findOneBySpec($input->getArgument('project_spec'));
 
         if (!$project) {

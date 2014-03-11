@@ -2,7 +2,7 @@
 
 namespace App\CoreBundle\Consumer;
 
-use App\CoreBundle\Entity\Build;
+use App\Model\Build;
 
 use Docker\Docker;
 
