@@ -1,0 +1,19 @@
+build:
+  - apt-get install -y software-properties-common
+  - apt-add-repository -y ppa:chris-lea/node.js
+  - apt-get update -y
+  - apt-get install -y build-essential libpq-dev nodejs
+  - "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
+  - gem install bundler
+  - bundle install
+
+run:
+  - god -c config/app.god
+
+writable:
+  - log
+  - tmp/pids
+  - /.god
+
+env:
+  - APP_ENV=staging
