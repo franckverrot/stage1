@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use App\CoreBundle\Entity\Branch;
+use InvalidArgumentException;
 
 class ProjectBranchImportCommand extends ContainerAwareCommand
 {
