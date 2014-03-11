@@ -62,7 +62,7 @@ class BuildRepository extends EntityRepository
         $query = 'SELECT b.* FROM build AS b WHERE TIME_TO_SEC(TIMEDIFF(NOW(), b.created_at)) >= ? AND b.status = ?';
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata('App\\CoreBundle\\Entity\\Build', 'b');
+        $rsm->addRootEntityFromClassMetadata('App\\Model\\Build', 'b');
         $query = $this->getEntityManager()->createNativeQuery($query, $rsm);
 
         $query->setParameter(1, $ttl);
@@ -125,7 +125,7 @@ class BuildRepository extends EntityRepository
         $query = 'SELECT b.* FROM (SELECT * FROM build WHERE build.project_id = ? ORDER BY created_at DESC) b GROUP BY b.ref';
 
         $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-        $rsm->addRootEntityFromClassMetadata('App\\CoreBundle\\Entity\\Build', 'b');
+        $rsm->addRootEntityFromClassMetadata('App\\Model\\Build', 'b');
         $query = $this->getEntityManager()->createNativeQuery($query, $rsm);
         $query->setParameter(1, $project->getId());
 
