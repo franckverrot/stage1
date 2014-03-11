@@ -3,8 +3,8 @@
 {% block body %}
 
 {% include 'AppCoreBundle:Project:_header.html.twig' with { project: build.project } %}
-{% include 'Model:Build:_metadata.html.twig' with { build: build } %}
-{% include 'Model:Build:_nav.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_metadata.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
 
 {% if not build.failure %}
 <p class="lead">This build has no known failure.</p>

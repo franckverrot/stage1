@@ -17,8 +17,8 @@ stream_build_output($('#output'));
 {% block body %}
 
 {% include 'AppCoreBundle:Project:_header.html.twig' with { project: build.project } %}
-{% include 'Model:Build:_metadata.html.twig' with { build: build } %}
-{% include 'Model:Build:_nav.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_metadata.html.twig' with { build: build } %}
+{% include 'AppCoreBundle:Build:_nav.html.twig' with { build: build } %}
 
 <div class="tab-content">
     <div class="tab-pane{% if forceTab == 'output' %} active{% endif %}" id="build-output">

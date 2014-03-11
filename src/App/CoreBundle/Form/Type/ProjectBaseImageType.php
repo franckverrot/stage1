@@ -24,7 +24,7 @@ class ProjectBaseImageType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\\CoreBundle\\Entity\\Project',
+            'data_class' => 'App\\Model\\Project',
         ]);
     }
 

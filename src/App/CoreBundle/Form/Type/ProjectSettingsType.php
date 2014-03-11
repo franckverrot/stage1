@@ -34,7 +34,7 @@ class ProjectSettingsType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\\CoreBundle\\Entity\\ProjectSettings',
+            'data_class' => 'App\\Model\\ProjectSettings',
         ]);
     }
 
