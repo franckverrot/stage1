@@ -32,6 +32,14 @@ parameters:
     build_logs_load_limit: 500
     build_logs_stream_limit: 1000
 
+    composer_enable_global_cache: false
+    composer_enable_project_cache: true
+    composer_cache_path: /usr/local/share/composer/cache/
+
+    rubygems_enable_global_cache: false
+    rubygems_enable_project_cache: true
+    rubygems_cache_path: /usr/local/share/rubygems/cache/
+
     # features switches
     feature_ip_access_list:     false
     feature_token_access_list:  true
