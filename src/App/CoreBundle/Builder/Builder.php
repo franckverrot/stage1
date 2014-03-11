@@ -195,10 +195,6 @@ class Builder
          */
         $logger->info('building base build container', ['build' => $build->getId(), 'image_name' => $build->getImageName()]);
 
-        if (explode(':', $options['image'])[0] !== 'symfony2') {
-            throw new RuntimeException(sprintf('Only the "symfony2" image is supported right now'));
-        }
-
         $builder = $project->getDockerContextBuilder();
         $builder->add('/usr/local/bin/yuhao_build', $script->getBuildScript());
         $builder->add('/usr/local/bin/yuhao_run', $script->getRunScript());
