@@ -23,6 +23,7 @@ parameters:
     redis_password:         ~
 
     stage1_builder_host:    ~
+    stage1_builder_host_allow: ~
 
     # rabbitmq credentials
     rabbitmq_host: localhost

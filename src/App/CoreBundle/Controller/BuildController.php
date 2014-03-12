@@ -194,7 +194,15 @@ class BuildController extends Controller
     public function killAction($id)
     {
         try {
-            $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
+            $build = $this->findBuild($id);
+            $routingKey = $build->getBuilderHost();
+
+            $this->get('logger')->info('sending kill order', [
+                'build' => $id,
+                'routing_key' => $routingKey
+            ]);
+
+            $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]), $routingKey);
 
             return new JsonResponse(null, 200);
         } catch (Exception $e) {
