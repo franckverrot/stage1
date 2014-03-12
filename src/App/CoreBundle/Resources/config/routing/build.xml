@@ -5,15 +5,15 @@
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="app_core_build_cancel" pattern="/build/{id}/cancel">
-        <default key="_controller">AppCoreBundle:Default:buildCancel</default>
+        <default key="_controller">AppCoreBundle:Build:cancel</default>
     </route>
 
     <route id="app_core_build_kill" pattern="/build/{id}/kill">
-        <default key="_controller">AppCoreBundle:Default:buildKill</default>
+        <default key="_controller">AppCoreBundle:Build:kill</default>
     </route>
 
     <route id="app_core_build_output" pattern="/build/{id}/output" methods="GET">
-        <default key="_controller">AppCoreBundle:Default:buildShow</default>
+        <default key="_controller">AppCoreBundle:Build:show</default>
         <default key="forceTab">output</default>
     </route>
 
@@ -34,11 +34,11 @@
     </route>
 
     <route id="app_core_build_logs" pattern="/build/{id}/logs" methods="GET">
-        <default key="_controller">AppCoreBundle:Default:buildShow</default>
+        <default key="_controller">AppCoreBundle:Build:show</default>
         <default key="forceTab">logs</default>
     </route>
 
     <route id="app_core_build_show" pattern="/build/{id}">
-        <default key="_controller">AppCoreBundle:Default:buildShow</default>
+        <default key="_controller">AppCoreBundle:Build:show</default>
     </route>
 </routes>
