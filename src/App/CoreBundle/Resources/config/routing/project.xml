@@ -20,6 +20,27 @@
 
     <!-- private project routing -->
 
+    <route id="app_core_project_builds" pattern="/project/{id}/builds" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:builds</default>
+    </route>
+
+    <route id="app_core_project_builds_all" pattern="/project/{id}/builds/all" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:builds</default>
+        <default key="all">1</default>
+    </route>
+
+    <route id="app_core_project_schedule_build" pattern="/project/{id}/build" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:scheduleBuild</default>
+    </route>
+
+    <route id="app_core_project_delete" pattern="/project/{id}/delete" methods="POST">
+        <default key="_controller">AppCoreBundle:Project:delete</default>
+    </route>
+
+    <route id="app_core_project_show" pattern="/project/{id}" methods="GET">
+        <default key="_controller">AppCoreBundle:Project:show</default>
+    </route>
+
     <route id="app_core_project_settings_policy" pattern="/project/{id}/policy" methods="GET,POST">
         <default key="_controller">AppCoreBundle:Project/Settings:policy</default>
     </route>
