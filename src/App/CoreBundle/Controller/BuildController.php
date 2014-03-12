@@ -129,4 +129,74 @@ class BuildController extends Controller
 
         return new JsonResponse($response, 200);
     }
+
+    public function showAction($id, $forceTab = null)
+    {
+        $this->setCurrentBuildId($id);
+
+        $build = $this->findBuild($id);
+        $this->setCurrentProjectId($build->getProject()->getId());
+
+        if (null === $forceTab) {
+            if ($build->isRunning()) {
+                $forceTab = 'logs';
+            } else {
+                $forceTab = 'output';
+            }
+        }
+
+        /**
+         * @todo application logs do not work yet, so we just force every request to display the build output
+         */
+        $forceTab = 'output';
+
+        $streamLogs = false;
+
+        if ($forceTab === 'output') {
+            $logsList = $build->getLogsList();
+            $logsLength = $this->get('app_core.redis')->llen($logsList);
+
+            $streamLimit = $this->container->getParameter('build_logs_stream_limit');
+
+            if ($streamLimit === 0 || $logsLength < $streamLimit) {
+                $streamLogs = true;
+            }
+        }
+
+        return $this->render('AppCoreBundle:Build:show.html.twig', [
+            'build' => $build,
+            'forceTab' => $forceTab,
+            'streamLogs' => $streamLogs,
+        ]);
+    }
+
+    public function cancelAction($id)
+    {
+        try {
+            $build = $this->findBuild($id);
+            $build->setStatus(Build::STATUS_CANCELED);
+
+            $this->persistAndFlush($build);
+
+            $factory = $this->get('app_core.message.factory');
+            $message = $factory->createBuildCanceled($build);
+
+            $this->publishWebsocket($message);
+
+            return new JsonResponse(null, 200);
+        } catch (Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function killAction($id)
+    {
+        try {
+            $this->get('old_sound_rabbit_mq.kill_producer')->publish(json_encode(['build_id' => $id]));
+
+            return new JsonResponse(null, 200);
+        } catch (Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], 500);
+        }
+    }
 }
