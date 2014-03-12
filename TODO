@@ -55,17 +55,15 @@ TODO
 ====
 
 * nombre de builds en cours: tooltip qui explique ce que c'est exactement
-* possibilite d'avoir une cle ssh globale pour un utilisateur
 
-* 50-200 (30 containers en continu en meme temps + filtrage de branche + features de staging)
-* elevator pitch: expliquer aux agences qu'ils peuvent inclure le cout de stage1 dans les devis / factures
+* pricing
+    * 50-200 (30 containers en continu en meme temps + filtrage de branche + features de staging)
+    * elevator pitch: expliquer aux agences qu'ils peuvent inclure le cout de stage1 dans les devis / factures
 
 * Github
     * periodically check for access_token validity and warn user if it expired
 
 * Commands
-    * project:audit
-        * is the webhook configured?
     * commands to empty redis
 
 * REST API / webhooks
@@ -93,16 +91,11 @@ TODO
             * redis/memcached
     * disallow scheduling a build if a running instance for the same hash exists
     * log trigger source (manual / push)
-    * before build: check that the app is actually buildable (eg: there is a composer.json)
     * before starting a build, check that the required docker image is present
     * rewrite the build system, with extensibility in mind
         * build steps could be infered at import time (or pre-build time)
-        * a build file could be generated with said steps
-        * the builder would iterate through the build file, run steps and check their exit status
-        * if a step fails, the builder fails
         * also, if a specific step fail, we know what it exactly is, so we can try and guess why it did fail and
           tell the user steps to take to fix it (or maybe fix it automatically, I'm looking at you, missing deploy key)
-    * checkbox "go to this build when it's finished" (?)
     * container ports should be bound on local private IPs instead of stage1.io public IP
     * alerts
         * push notif
@@ -112,9 +105,6 @@ TODO
 
 * projects
     * last_build_at + last_build_ref (last_build_id ?)
-    * allow per-project docker image selection
-        This should not be in the UI, it's an admin (as in, me) only feature for now
-        This will be used for non-symfony alpha testers and to PoC the per-project-image thingy
     * access (?)
         * implement "one-time-access-granting" URLs
         * implement "one-time" passwords
@@ -193,7 +183,6 @@ THE DISTANT FUTURE
     * premium option to allow a user to build his own docker image and then assign it to his projects
     * internal docker registry where users can push their own runtimes
     * support buildpacks, packer, chef, puppet
-
 
 * misc
     * pusher private channels to receive push notif about your projects' builds
