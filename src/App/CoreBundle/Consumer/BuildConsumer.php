@@ -41,7 +41,10 @@ class BuildConsumer implements ConsumerInterface
 
     private $build;
 
-    private $timeout = null;
+    private $options = array(
+        'builder_host' => null,
+        'timeout' => null,
+    );
 
     public function __construct(LoggerInterface $logger, EventDispatcherInterface $dispatcher, RegistryInterface $doctrine, Builder $builder, Docker $docker)
     {
@@ -59,11 +62,25 @@ class BuildConsumer implements ConsumerInterface
         $logger->info('initialized '.__CLASS__, ['pid' => posix_getpid()]);
     }
 
-    public function setTimeout($timeout)
+    /**
+     * @param string $name
+     * @param mixed  $value
+     * 
+     * @return App\CoreBundle\Builder\Builder
+     */
+    public function setOption($name, $value)
     {
-        $this->timeout = $timeout;
+        $this->options[$name] = $value;
+    }
 
-        return $this;
+    /**
+     * @param string $name
+     * 
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        return $this->options[$name];
     }
 
     public function execute(AMQPMessage $message)
@@ -131,20 +148,27 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus(Build::STATUS_DUPLICATE);
         } else {
+            $build->setBuilderHost($this->getOption('builder_host'));
             $build->setStatus(Build::STATUS_BUILDING);
             $build->setPid(posix_getpid());
-
-            $this->logger->info('starting build', ['pid' => $build->getPid()]);
 
             $em->persist($build);
             $em->flush();
 
+            $this->logger->info('starting build', [
+                'pid' => $build->getPid(),
+                'builder_host' => $this->getOption('builder_host')
+            ]);
+
             try {
                 $this->dispatcher->dispatch(BuildEvents::STARTED, new BuildStartedEvent($build));
 
-                $container = $this->builder->run($build, $this->timeout);
+                $container = $this->builder->run($build, $this->getOption('timeout'));
 
-                $this->logger->info('builder finished', ['build' => $build->getId(), 'container' => ($container instanceof Container ? $container->getId() : '-')]);
+                $this->logger->info('builder finished', [
+                    'build' => $build->getId(),
+                    'container' => ($container instanceof Container ? $container->getId() : '-')
+                ]);
 
                 if ($container instanceof Container) {
                     $build->setContainer($container);

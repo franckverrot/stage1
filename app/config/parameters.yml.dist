@@ -22,6 +22,8 @@ parameters:
     redis_port:             6379
     redis_password:         ~
 
+    stage1_builder_host:    ~
+
     # rabbitmq credentials
     rabbitmq_host: localhost
     rabbitmq_vhost: /

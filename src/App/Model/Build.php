@@ -98,6 +98,8 @@ class Build implements WebsocketRoutable
 
     private $forceLocalBuildYml = false;
 
+    private $builderHost = null;
+
     /**
      * @var \App\Model\GithubPayload
      */
@@ -1075,6 +1077,16 @@ class Build implements WebsocketRoutable
         return $this->script;
     }
 
+    public function hasOption($name)
+    {
+        return isset($this->options[$name]);
+    }
+
+    public function getOption($name, $default = null)
+    {
+        return $this->hasOption($name) ? $this->options[$name] : $default;
+    }
+
     /**
      * Set options
      *
@@ -1147,5 +1159,28 @@ class Build implements WebsocketRoutable
     public function getFailure()
     {
         return $this->failure;
+    }
+
+    /**
+     * Set builderHost
+     *
+     * @param string $builderHost
+     * @return Build
+     */
+    public function setBuilderHost($builderHost)
+    {
+        $this->builderHost = $builderHost;
+    
+        return $this;
+    }
+
+    /**
+     * Get builderHost
+     *
+     * @return string 
+     */
+    public function getBuilderHost()
+    {
+        return $this->builderHost;
     }
 }

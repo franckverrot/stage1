@@ -14,23 +14,31 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use App\CoreBundle\Value\ProjectAccess;
 use App\CoreBundle\Github\Import;
 
+use Psr\Log\LoggerInterface;
+
 class ProjectImportConsumer implements ConsumerInterface
 {
+    private $logger;
+
     private $importer;
+
+    private $doctrine;
 
     private $websocket;
 
+    private $router;
+
     private $websocketChannel;
 
-    public function __construct(Import $importer, RegistryInterface $doctrine, Producer $websocket, Router $router)
+    public function __construct(LoggerInterface $logger, Import $importer, RegistryInterface $doctrine, Producer $websocket, Router $router)
     {
+        $this->logger = $logger;
         $this->importer = $importer;
         $this->doctrine = $doctrine;
         $this->websocket = $websocket;
         $this->router = $router;
 
-        # @todo
-        echo '== initializing ProjectImportConsumer'.PHP_EOL;
+        $logger->info('initialized '.__CLASS__, ['pid' => posix_getpid()]);
     }
 
     private function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)

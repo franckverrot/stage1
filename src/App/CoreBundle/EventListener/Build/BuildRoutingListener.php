@@ -75,22 +75,18 @@ class BuildRoutingListener
         $redis->del('frontend:'.$build->getHost());
         $redis->rpush('frontend:'.$build->getHost(), $build->getImageName(), $container_url);
 
-        $options = $build->getOptions();
+        $urls = $build->getOption('urls', []);
 
-        if (!isset($options['urls'])) {
-            return;
+        if (count($urls) > 0) {
+            $this->logger->info('adding custom build URLs', ['build' => $build->getId(), 'domains' => $urls]);
+
+            foreach ($urls as $domain) {
+                $host = $domain.'.'.$build->getHost();
+                $redis->del('frontend:'.$host);
+                $redis->rpush('frontend:'.$host, $build->getImageName(), $container_url);
+            }
+
+            $redis->exec();
         }
-
-        $urls = $options['urls'];
-
-        $this->logger->info('adding custom build URLs', ['build' => $build->getId(), 'domains' => $urls]);
-
-        foreach ($urls as $domain) {
-            $host = $domain.'.'.$build->getHost();
-            $redis->del('frontend:'.$host);
-            $redis->rpush('frontend:'.$host, $build->getImageName(), $container_url);
-        }
-
-        $redis->exec();
     }
 }

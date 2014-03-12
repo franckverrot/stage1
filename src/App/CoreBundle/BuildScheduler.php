@@ -26,6 +26,8 @@ class BuildScheduler
 
     private $messageFactory;
 
+    private $options = array('builder_host_allow' => null);
+
     public function __construct(LoggerInterface $logger, RegistryInterface $doctrine, Producer $buildProducer, Producer $killProducer, Producer $websocketProducer, MessageFactory $messageFactory)
     {
         $this->logger = $logger;
@@ -34,6 +36,27 @@ class BuildScheduler
         $this->killProducer = $killProducer;
         $this->websocketProducer = $websocketProducer;
         $this->messageFactory = $messageFactory;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     * 
+     * @return App\CoreBundle\Builder\Builder
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+    }
+
+    /**
+     * @param string $name
+     * 
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        return $this->options[$name];
     }
 
     /**
@@ -86,9 +109,20 @@ class BuildScheduler
         $em->persist($build);
         $em->flush();
 
+        $routingKey = null;
+
+        if (count($builderHostAllow = $this->getOption('builder_host_allow')) > 0) {
+            $routingKey = $builderHostAllow[array_rand($builderHostAllow)];
+        }
+
+        $this->logger->info('sending build order', [
+            'build' => $build->getId(),
+            'routing_key' => $routingKey
+        ]);
+
         $this->buildProducer->publish(json_encode([
             'build_id' => $build->getId()
-        ]));
+        ]), $routingKey);
 
         $message = $this->messageFactory->createBuildScheduled($build);
         $this->websocketProducer->publish($message);

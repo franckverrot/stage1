@@ -11,10 +11,10 @@ old_sound_rabbit_mq:
     producers:
         build:
             connection: default
-            exchange_options: { name: 'build', type: direct }
+            exchange_options: { name: 'build', type: topic }
         kill:
             connection: default
-            exchange_options: { name: 'kill', type: direct }
+            exchange_options: { name: 'kill', type: topic }
         project_import:
             connection: default
             exchange_options: { name: 'project_import', type: direct }
@@ -24,16 +24,16 @@ old_sound_rabbit_mq:
     consumers:
         build:
             connection: default
-            exchange_options: { name: 'build', type: direct }
-            queue_options:    { name: 'build' }
-            callback:         app_core.consumer.build
+            exchange_options: { name: 'build', type: topic }
+            queue_options:    { name: 'build', routing_keys: [%stage1_builder_host%] }
             qos_options:      { prefetch_count: 1 }
+            callback:         app_core.consumer.build
         kill:
             connection: default
-            exchange_options: { name: 'kill', type: direct }
-            queue_options:    { name: 'kill' }
-            callback:         app_core.consumer.kill
+            exchange_options: { name: 'kill', type: topic }
+            queue_options:    { name: 'kill', routing_keys: [%stage1_builder_host%] }
             qos_options:      { prefetch_count: 1 }
+            callback:         app_core.consumer.kill
         project_import:
             connection: default
             exchange_options: { name: 'project_import', type: direct }

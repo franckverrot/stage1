@@ -15,6 +15,11 @@
             <argument type="service" id="old_sound_rabbit_mq.kill_producer" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
             <argument type="service" id="app_core.message.factory" />
+
+            <call method="setOption">
+                <argument>builder_host_allow</argument>
+                <argument>%stage1_builder_host_allow%</argument>
+            </call>
         </service>
 
         <service id="session.handler.redis" class="Drak\NativeSession\NativeRedisSessionHandler">
@@ -112,9 +117,15 @@
             <argument type="service" id="doctrine" />
             <argument type="service" id="app_core.builder" />
             <argument type="service" id="app_core.docker" />
-            <argument>%build_host_mask%</argument>
-            <call method="setTimeout">
+
+            <call method="setOption">
+                <argument>timeout</argument>
                 <argument>%stage1_build_timeout%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>builder_host</argument>
+                <argument>%stage1_builder_host%</argument>
             </call>
 
             <tag name="monolog.logger" channel="build" />
@@ -131,10 +142,12 @@
         </service>
 
         <service id="app_core.consumer.project_import" class="App\CoreBundle\Consumer\ProjectImportConsumer">
+            <argument type="service" id="logger" />
             <argument type="service" id="app_core.github.import" />
             <argument type="service" id="doctrine" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
             <argument type="service" id="router" />
+            <tag name="monolog.logger" channel="build" />
         </service>
 
         <service id="app_core.consumer.docker_output" class="App\CoreBundle\Consumer\DockerOutputConsumer">
