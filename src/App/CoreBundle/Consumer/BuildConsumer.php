@@ -66,43 +66,6 @@ class BuildConsumer implements ConsumerInterface
         return $this;
     }
 
-    // public function terminate($signo)
-    // {
-    //     $this->logger->info('received signal', ['signo' => $signo, 'pid' => posix_getpid()]);
-
-    //     if (null !== $this->build) {
-    //         $build = $this->build;
-    //         $docker = $this->docker;
-
-    //         $this->logger->info('cleaning things before exiting', ['build' => $build->getId()]);
-
-    //         if (($container = $build->getContainer()) instanceof Container) {
-    //             $this->logger->info('stopping container', [
-    //                 'build' => $build->getId(),
-    //                 'container' => $container->getId(),
-    //             ]);
-
-    //             $docker->getContainerManager()->stop($container);
-    //         } else {
-    //             $this->logger->warn('expected container, got something else', [
-    //                 'type' => gettype($container),
-    //                 'class' => get_class($container)
-    //             ]);
-    //         }
-
-    //         $build->setStatus(Build::STATUS_KILLED);
-    //         $build->setMessage('Build terminated with signal '.$signo);
-
-    //         $em = $this->doctrine->getManager();
-    //         $em->persist($build);
-    //         $em->flush();
-
-    //         $this->dispatcher->dispatch(BuildEvents::KILLED, new BuildKilledEvent($build));
-    //     }
-
-    //     exit(0);
-    // }
-
     public function execute(AMQPMessage $message)
     {
         $body = json_decode($message->body);
