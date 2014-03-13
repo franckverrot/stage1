@@ -6,10 +6,14 @@
         "maxSockets": 100,
         "deadBackendTTL": 30,
         "address": ["0.0.0.0"],
-        "stack": ["/vagrant/node/hipache_auth.js"],
+        "stack": [
+            "/vagrant/node/hipache_inject.js"
+        ],
         "config": {
             "auth_url": "http://stage1.dev/p/{slug}",
-            "cookie_name": "STAGE1SESSID"
+            "cookie_name": "STAGE1SESSID",
+            "url_format": "^([a-z0-9-]+)\\.([a-z0-9-]+)\\.([a-z0-9-]+)\\.stage1\\.dev$",
+            "inject_script_url": "//stage1.dev/js/inject.js"
         }
     }
 }

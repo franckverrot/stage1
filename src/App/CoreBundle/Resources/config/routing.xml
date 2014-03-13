@@ -6,9 +6,14 @@
 
     <import resource="@AppCoreBundle/Resources/config/routing/project.xml" />
     <import resource="@AppCoreBundle/Resources/config/routing/build.xml" />
+    <import resource="@AppCoreBundle/Resources/config/routing/proxy.xml" />
 
     <route id="app_core_blog" pattern="/blog/" methods="GET" />
     <route id="app_core_blog_post" pattern="/blog/{slug}/" methods="GET" />
+
+    <route id="app_core_overlay" pattern="/overlay" methods="GET">
+        <default key="_controller">AppCoreBundle:Default:overlay</default>
+    </route>
 
     <route id="app_core_feedback_create" pattern="/feedback" methods="POST">
         <default key="_controller">AppCoreBundle:Feedback:create</default>

@@ -2,7 +2,6 @@
 'use strict';
 
 module.exports = function(hipache, req, stack, next) {
-
     if (req.headers.host.match(/^(?:[a-z0-9-]+\.)?stage1\.(?:io|dev)$/)) {
         console.log('regular domain detected (' + req.headers.host + '), not checking auth');
         return next();

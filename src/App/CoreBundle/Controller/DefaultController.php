@@ -9,11 +9,24 @@ use App\Model\GithubPayload;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 use Exception;
 
 class DefaultController extends Controller
 {
+    public function overlayAction()
+    {
+        $response = $this->render('AppCoreBundle:Default:overlay.html.twig');
+
+        $response->headers->set('Access-Control-Allow-Methods', 'GET POST OPTIONS');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, *');
+
+        return $response;
+    }
+
     public function indexAction()
     {
         if ($this->get('security.context')->isGranted('ROLE_USER')) {
