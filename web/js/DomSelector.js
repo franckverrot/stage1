@@ -14,6 +14,10 @@ var DomSelector = function($, callback) {
     };
 
     this.clickCallback = function(event) {
+        if ($('#stage1-sidebar').find(event.target).length > 0) {
+            return;
+        }
+
         if (self.isOverlay(event.target)) {
             self.unlock();
             self.calc(event.target);
@@ -21,7 +25,7 @@ var DomSelector = function($, callback) {
             self.callback(event.target);
         }
 
-        event.stopPropagation();
+        event.preventDefault();
     };
 
     this.keydownCallback = function(event) {
@@ -107,6 +111,8 @@ DomSelector.prototype.disable = function () {
         .off('mouseover', this.mouseoverCallback)
         .off('click', this.clickCallback)
         .off('keydown', this.keydownCallback);
+
+    this.unlock();
 
     this.enabled = false;
 }

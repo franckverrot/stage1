@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Guzzle\Http\Exception\ClientErrorResponseException;
+
 class GithubCommand extends ContainerAwareCommand
 {
     public function configure()
@@ -18,7 +20,9 @@ class GithubCommand extends ContainerAwareCommand
             ->setDescription('Runs requests against the Github API')
             ->setDefinition([
                 new InputOption('user', 'u', InputOption::VALUE_REQUIRED, 'User to get an access token from'),
-                new InputArgument('path', InputArgument::REQUIRED, 'Path to query')
+                new InputOption('method', 'm', InputOption::VALUE_REQUIRED, 'The HTTP method', 'GET'),
+                new InputArgument('path', InputArgument::REQUIRED, 'Path to query'),
+                new InputArgument('body', InputArgument::OPTIONAL, 'The request body', null)
             ]);
     }
 
@@ -40,9 +44,37 @@ class GithubCommand extends ContainerAwareCommand
             $client->setDefaultOption('headers/Authorization', 'token '.$user->getAccessToken());
         }
 
-        $request = $client->get($input->getArgument('path'));
-        $response = $request->send();
+        $method = strtolower($input->getOption('method'));
 
-        $output->writeln(json_encode($response->json(), JSON_PRETTY_PRINT));    
+        $request = $client->$method($input->getArgument('path'));
+
+        if (null !== $input->getArgument('body')) {
+            $request->setBody($input->getArgument('body'));
+        }
+
+        try {
+            $response = $request->send();
+        } catch (ClientErrorResponseException $e) {
+            $output->writeln('<error>Error sending request</error>');
+
+            $output->writeln('');
+            $output->writeln('<info>Request</info>');
+            $output->writeln(sprintf('<comment>Request URL</comment>  => %s', $request->getUrl()));
+            $output->writeln(sprintf('<comment>Request Body</comment> => %s', (string) $request->getBody()));
+
+            $output->writeln('');
+            $output->writeln('<info>Response</info>');
+            $output->writeln(sprintf('<comment>Status Code</comment>   => %s', $e->getResponse()->getStatusCode()));
+            $output->writeln(sprintf('<comment>Reason Phrase</comment> => %s', $e->getResponse()->getReasonPhrase()));
+
+            $output->writeln('');
+            $output->writeln('<info>Response Body</info>');
+            $output->writeln('');
+            $output->writeln((string) $e->getResponse()->getBody());
+        }
+
+        if (isset($response)) {
+            $output->writeln(json_encode($response->json(), JSON_PRETTY_PRINT));    
+        }
     }
 }

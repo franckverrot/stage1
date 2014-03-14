@@ -20,7 +20,7 @@ div#stage1-sidebar {
     /*right: 0;*/
     width: 400px;
     height: 100%;
-    z-index: 9999;
+    z-index: 10000;
     background: white;
     box-shadow: 10px 10px 10px 10px black;
 }
@@ -34,7 +34,11 @@ div#stage1-sidebar-content {
     padding: 1em;
 }
 
-textarea#stage1-input {
+input#stage1-issue-title {
+    width: 100%;
+}
+
+textarea#stage1-issue-body {
     width: 100%;
     height: 10em;
 }

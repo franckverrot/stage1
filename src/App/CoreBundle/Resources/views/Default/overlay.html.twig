@@ -8,10 +8,23 @@
     </div>
 
     <div id="stage1-sidebar-content">
-        <form id="stage1-form" method="post" action="//stage1.dev/proxy/issue">
-            <textarea id="stage1-input" name="stage1-input"></textarea>
+        <form id="stage1-form" method="post" action="//stage1.dev/proxy/issues">
+            <div>
+                <label for="stage1-issue-title">Title</label>
+                <input type="text" id="stage1-issue-title" name="stage1-issue-title" />
+            </div>
+
+            <br />
+
+            <div>
+                <label for="stage1-issue-body">Body</label>
+                <textarea id="stage1-issue-body" name="stage1-issue-body"></textarea>
+            </div>
             <input type="hidden" name="stage1-project" data-value="project" />
-            <div class="form-actions"><button id="stage1-submit">Send feedback</button></div>
+            <div class="form-actions">
+                <a data-toggle="selector">Select element</a>
+                <button id="stage1-submit">Create issue</button>
+            </div>
         </form>
     </div>
 </div>
