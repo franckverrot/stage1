@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/bin/bash -xe
+
 YUHAO_DIR=/projects/yuhao
 
 if [ -d $YUHAO_DIR ]; then
     cd $YUHAO_DIR
-    box build
+    bin/box build
     cd - > /dev/null
     mv $YUHAO_DIR/yuhao.phar /vagrant/docker/yuhao/support/bin/yuhao.phar
 fi;
