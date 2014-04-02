@@ -164,6 +164,15 @@
         <service id="app_core.listener.build.pull_request" class="App\CoreBundle\EventListener\Build\PullRequestListener">
             <argument type="service" id="logger" />
             <argument type="service" id="app_core.client.github" />
+            <argument>%stage1_enable_pr_comments%</argument>
+            <tag name="monolog.logger" channel="build" />
+            <tag name="kernel.event_listener" priority="0" event="build.finished" method="onBuildFinished" />
+        </service>
+
+        <service id="app_core.listener.build.commit_statuses" class="App\CoreBundle\EventListener\Build\CommitStatusesListener">
+            <argument type="service" id="logger" />
+            <argument type="service" id="app_core.client.github" />
+            <argument>%stage1_enable_commit_statuses%</argument>
             <tag name="monolog.logger" channel="build" />
             <tag name="kernel.event_listener" priority="0" event="build.finished" method="onBuildFinished" />
         </service>

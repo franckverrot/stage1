@@ -12,7 +12,7 @@ use Exception;
 /**
  * Marks a previous build for a same ref obsolete
  */
-class PullRequestListener
+class CommitStatusesListener
 {
     /**
      * @var Psr\Log\LoggerInterface
@@ -36,7 +36,8 @@ class PullRequestListener
      */
     public function __construct(LoggerInterface $logger, Client $github, $enabled)
     {
-        $github->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
+        // $github->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
+        $github->setDefaultOption('headers/Accept', 'application/vnd.github.she-hulk-preview+json');
 
         $this->logger = $logger;
         $this->github = $github;
@@ -60,27 +61,28 @@ class PullRequestListener
         $project = $build->getProject();
 
         $this->github->setDefaultOption('headers/Authorization', 'token '.$project->getUsers()->first()->getAccessToken());
-        $request = $this->github->get(['/repos/'.$project->getGithubFullName().'/pulls{?data*}', [
-            'state' => 'open',
-            'head' => str_replace('/', ':', $build->getPullRequestHead())
+
+        $request = $this->github->post(['/repos/'.$project->getGithubFullName().'/statuses/{sha}', [
+            'sha' => $build->getHash(),
         ]]);
 
-        $response = $request->send();
+        $request->setBody(json_encode([
+            'state' => 'success',
+            'target_url' => $build->getUrl(),
+            'description' => 'Stage1 instance ready',
+            'context' => 'stage1',
+        ]));
 
-        foreach ($response->json() as $pr) {
-            $this->logger->info('sending pull request comment', [
-                'build' => $build->getId(),
-                'project' => $project->getGithubFullNAme(),
-                'pr' => $pr['number'],
-                'pr_url' => $pr['html_url']
-            ]);
+        $this->logger->info('sending commit status', [
+            'build' => $build->getId(),
+            'project' => $project->getGithubFullNAme(),
+            'sha' => $build->getHash(),
+        ]);
 
-            $commentRequest = $this->github->post($pr['comments_url']);
-            $commentRequest->setBody(json_encode([
-                'body' => 'Stage1 build finished, url: '.$build->getUrl(),
-            ]));
-
-            $commentRequest->send();
+        try {
+            $request->send();
+        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+            throw new \RuntimeException((string) $e->getResponse()->getBody());
         }
     }
 }
