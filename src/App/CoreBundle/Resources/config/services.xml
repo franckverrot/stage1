@@ -161,6 +161,13 @@
             <tag name="kernel.event_listener" priority="0" event="build.finished" />
         </service>
 
+        <service id="app_core.listener.build.pull_request" class="App\CoreBundle\EventListener\Build\PullRequestListener">
+            <argument type="service" id="logger" />
+            <argument type="service" id="app_core.client.github" />
+            <tag name="monolog.logger" channel="build" />
+            <tag name="kernel.event_listener" priority="0" event="build.finished" method="onBuildFinished" />
+        </service>
+
         <service id="app_core.listener.build.containers_limit" class="App\CoreBundle\EventListener\Build\ContainersLimitListener">
             <argument type="service" id="logger" />
             <argument type="service" id="doctrine" />

@@ -122,6 +122,15 @@ class Build implements WebsocketRoutable
         return json_encode($this->asWebsocketMessage());
     }
 
+    public function getPullRequestHead()
+    {
+        $project = $this->getProject();
+
+        list($name,) = explode('/', $project->getGithubFullName());
+
+        return $name.':'.$this->getRef();
+    }
+
     public function getLogsList()
     {
         return 'build:output:'.$this->getId();

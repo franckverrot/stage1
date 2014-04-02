@@ -58,6 +58,11 @@ class Import
         $this->client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
     }
 
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function getSteps()
     {
         return [
@@ -125,27 +130,27 @@ class Import
         }
 
         $callback(['id' => 'inspect', 'label' => 'Inspecting project']);
-        $this->logger->info('running inspect step', ['project' => $githubFullName]);
+        $this->logger->debug('running inspect step', ['project' => $githubFullName]);
         $this->doInspect($project);
 
         $callback(['id' => 'keys', 'label' => 'Generating keys']);
-        $this->logger->info('running keys step', ['project' => $githubFullName]);
+        $this->logger->debug('running keys step', ['project' => $githubFullName]);
         $this->doKeys($project);
 
         $callback(['id' => 'deploy_key', 'label' => 'Adding deploy key']);
-        $this->logger->info('running deploy_key step', ['project' => $githubFullName]);
+        $this->logger->debug('running deploy_key step', ['project' => $githubFullName]);
         $this->doDeployKey($project);
 
         $callback(['id' => 'webhook', 'label' => 'Configuring webhook']);
-        $this->logger->info('running webhook step', ['project' => $githubFullName]);
+        $this->logger->debug('running webhook step', ['project' => $githubFullName]);
         $this->doWebhook($project);
 
         $callback(['id' => 'branches', 'label' => 'Importing branches']);
-        $this->logger->info('running branches step', ['project' => $githubFullName]);
+        $this->logger->debug('running branches step', ['project' => $githubFullName]);
         $this->doBranches($project);
 
         $callback(['id' => 'access', 'label' => 'Granting default access']);
-        $this->logger->info('running access step', ['project' => $githubFullName]);
+        $this->logger->debug('running access step', ['project' => $githubFullName]);
         $this->doAccess($project);
 
         # set default build policy

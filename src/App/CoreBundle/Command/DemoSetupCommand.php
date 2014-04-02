@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
 use App\Model\User;
+use App\CoreBundle\SshKeys;
 
 class DemoSetupCommand extends ContainerAwareCommand
 {
@@ -35,6 +36,11 @@ class DemoSetupCommand extends ContainerAwareCommand
         if (null === $user = $userRepo->findOneByUsername($config['username'])) {
             $user = new User();
             $user->setUsername($config['username']);
+
+            $keys = SshKeys::generate();
+
+            $user->setPublicKey($keys['public']);
+            $user->setPrivateKey($keys['private']);
 
             $output->writeln('user <info>'.$config['username'].'</info> not found, creating one');
         }
