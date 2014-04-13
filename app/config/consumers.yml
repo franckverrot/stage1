@@ -5,7 +5,7 @@ old_sound_rabbit_mq:
             host:      %rabbitmq_host%
             port:      5672
             user:      %rabbitmq_user%
-            password:  %rabbitmq_user%
+            password:  %rabbitmq_password%
             vhost:     %rabbitmq_vhost%
             lazy:      true
     producers:
