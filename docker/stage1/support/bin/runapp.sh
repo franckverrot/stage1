@@ -16,4 +16,5 @@ fi
 
 /usr/local/bin/yuhao_run
 
-tail -F /var/log/syslog $LOG_FILES
+# @todo this is symfony specific
+tail -F /var/log/nginx/*.log $APP_ROOT/app/logs/*.log /var/log/php.log

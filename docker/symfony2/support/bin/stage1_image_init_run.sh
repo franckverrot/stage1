@@ -23,4 +23,8 @@ for service in ${services[@]}; do
     /etc/init.d/$service start 2>&1 > /dev/null
 done;
 
-LOG_FILES="/var/log/nginx/*.log $APP_ROOT/app/logs/*.log /var/log/php5-fpm.log"
+# @todo this should not be necessary
+mkdir -p $APP_ROOT/app/logs/
+touch $APP_ROOT/app/logs/prod.log
+
+chmod -R 777 $APP_ROOT/app/logs $APP_ROOT/app/cache
