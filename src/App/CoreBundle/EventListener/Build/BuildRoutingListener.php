@@ -35,11 +35,12 @@ class BuildRoutingListener
      * @param Redis $redis
      * @param string $buildHostMask
      */
-    public function __construct(LoggerInterface $logger, Redis $redis, $buildHostMask)
+    public function __construct(LoggerInterface $logger, Redis $redis, $buildHostMask, $builderIp)
     {
         $this->logger = $logger;
         $this->redis = $redis;
         $this->buildHostMask = $buildHostMask;
+        $this->builderIp = $builderIp;
 
         $logger->info('initialized '.__CLASS__);
     }
@@ -61,7 +62,7 @@ class BuildRoutingListener
 
         $this->logger->info('configuring build routing', ['build' => $build->getId(), 'host' => $build->getHost()]);
 
-        $container_url = 'http://127.0.0.1:'.$build->getPort();
+        $container_url = 'http://'.$this->builderIp.':'.$build->getPort();
 
         $redis = $this->redis;
 

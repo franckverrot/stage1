@@ -149,6 +149,7 @@
             <argument type="service" id="logger" />
             <argument type="service" id="app_core.redis" />
             <argument>%build_host_mask%</argument>
+            <argument>%stage1_builder_ip%</argument>
             <tag name="monolog.logger" channel="build" />
             <tag name="kernel.event_listener" priority="100" event="build.finished" />
         </service>

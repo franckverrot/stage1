@@ -63,3 +63,9 @@ parameters:
     # google_analytics_tracking_code: UA-45690665-2
     google_analytics_tracking_code: ~
     google_analytics_site: stage1.io
+
+    stage1_builder_host: vm
+    stage1_builder_host_allow: ['vm']
+    stage1_builder_ip: 127.0.0.1
+
+    help_site_url: http://help.stage1.dev/
