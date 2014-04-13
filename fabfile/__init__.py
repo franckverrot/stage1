@@ -3,15 +3,15 @@ from time import sleep
 
 import deploy
 
-env.hosts = ['batcave.stage1.io', 'alpha.stage1.io']
+# env.hosts = ['batcave.stage1.io', 'alpha.stage1.io']
 
-env.roledefs = {
-    'web': ['batcave.stage1.io'],
-    'help': ['batcave.stage1.io'],
-    'blog': ['batcave.stage1.io'],
-    'worker': ['batcave.stage1.io'],
-    'docker': ['alpha.stage1.io'],
-}
+# env.roledefs = {
+#     'web': ['batcave.stage1.io'],
+#     'help': ['batcave.stage1.io'],
+#     'blog': ['batcave.stage1.io'],
+#     'worker': ['batcave.stage1.io'],
+#     'docker': ['alom.fr'],
+# }
 
 # env.host_string = 'stage1.io'
 env.user = 'root'
@@ -41,6 +41,17 @@ env.log_files = [
     '/var/log/php5-fpm.log',
     '/var/log/mysql/error.log',
 ]
+
+@task
+def upstart_deploy():
+    local('sudo rm -rf /tmp/init/*')
+    local('sudo foreman export upstart /tmp/init -u root -a stage1')
+    local('sudo find /tmp/init -type f -exec sed -e \'s!/vagrant!%s!\' -e \'s! export PORT=.*;!!\' -i "{}" \;' % env.project_path)
+    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete /tmp/init/* %(user)s@%(host)s:%(remote)s' % {
+        'user': env.user,
+        'host': env.host_string,
+        'remote': env.upstart_path
+    })
 
 # @task
 # def backup():
