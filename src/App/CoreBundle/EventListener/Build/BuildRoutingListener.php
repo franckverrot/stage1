@@ -85,8 +85,8 @@ class BuildRoutingListener
                 $redis->del('frontend:'.$host);
                 $redis->rpush('frontend:'.$host, $build->getImageName(), $container_url);
             }
-
-            $redis->exec();
         }
+
+        $redis->exec();
     }
 }

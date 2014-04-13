@@ -54,11 +54,6 @@ class BuildConsumer implements ConsumerInterface
         $this->builder = $builder;
         $this->docker = $docker;
 
-        // needed for signal handling
-        // declare(ticks = 1);
-
-        // pcntl_signal(SIGTERM, [$this, 'terminate']);
-
         $logger->info('initialized '.__CLASS__, ['pid' => posix_getpid()]);
     }
 
