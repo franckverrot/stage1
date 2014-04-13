@@ -64,6 +64,11 @@ class BuildRoutingListener
 
         $container_url = 'http://'.$this->builderIp.':'.$build->getPort();
 
+        $this->logger->info('configuring build instance routing', [
+            'build' => $build->getId(),
+            'backend' => $container_url
+        ]);
+
         $redis = $this->redis;
 
         $redis->multi();
