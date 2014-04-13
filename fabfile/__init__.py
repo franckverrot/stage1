@@ -3,15 +3,15 @@ from time import sleep
 
 import deploy
 
-# env.hosts = ['batcave.stage1.io', 'alpha.stage1.io']
+# env.hosts = ['batcave.stage1.io', 'alpha.stage1.io', 'alom.fr']
 
-# env.roledefs = {
-#     'web': ['batcave.stage1.io'],
-#     'help': ['batcave.stage1.io'],
-#     'blog': ['batcave.stage1.io'],
-#     'worker': ['batcave.stage1.io'],
-#     'docker': ['alom.fr'],
-# }
+env.roledefs = {
+    'web': ['batcave.stage1.io'],
+    'help': ['batcave.stage1.io'],
+    'blog': ['batcave.stage1.io'],
+    'worker': ['batcave.stage1.io'],
+    'docker': ['alom.fr'],
+}
 
 # env.host_string = 'stage1.io'
 env.user = 'root'
