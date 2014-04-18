@@ -43,6 +43,7 @@ Vagrant.configure("2") do |config|
         jira.dev
         sflive.dev
         mytepee.dev
+        mytepee.example.com
     )
 
     config.vm.provision :shell, :inline => $script
