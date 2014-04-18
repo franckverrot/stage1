@@ -10,7 +10,7 @@ env.roledefs = {
     'help': ['batcave.stage1.io'],
     'blog': ['batcave.stage1.io'],
     'worker': ['batcave.stage1.io'],
-    'docker': ['alom.fr'],
+    'docker': ['alom.fr', 'alpha.stage1.io'],
 }
 
 # env.host_string = 'stage1.io'
