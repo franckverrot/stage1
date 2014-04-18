@@ -9,4 +9,4 @@ if [ -d $YUHAO_DIR ]; then
     mv $YUHAO_DIR/yuhao.phar /vagrant/docker/yuhao/support/bin/yuhao.phar
 fi;
 
-docker build --tag yuhao --rm --no-cache docker/yuhao
+docker build --tag stage1/yuhao --rm --no-cache docker/yuhao

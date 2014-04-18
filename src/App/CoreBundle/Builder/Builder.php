@@ -117,7 +117,7 @@ class Builder
         $logger->info('generating build script');
 
         $builder = $project->getDockerContextBuilder();
-        $builder->from('yuhao');
+        $builder->from('stage1/yuhao');
 
         $docker->build($builder->getContext(), $build->getImageName('yuhao'), false, true, true);
 
@@ -193,13 +193,20 @@ class Builder
         /**
          * Launch actual build
          */
-        $logger->info('building base build container', ['build' => $build->getId(), 'image_name' => $build->getImageName()]);
+        $logger->info('building base build container', [
+            'build' => $build->getId(),
+            'image_name' => $build->getImageName()
+        ]);
+
+        $baseImage = strpos($options['image'], 'stage1/') !== 0
+            ? 'stage1/'.$options['image']
+            : $options['image'];
 
         $builder = $project->getDockerContextBuilder();
         $builder->add('/usr/local/bin/yuhao_build', $script->getBuildScript());
         $builder->add('/usr/local/bin/yuhao_run', $script->getRunScript());
         $builder->run('chmod -R +x /usr/local/bin/');
-        $builder->from($options['image']);
+        $builder->from($baseImage);
 
         $response = $docker->build($builder->getContext(), $build->getImageName(), false, true, true);
 

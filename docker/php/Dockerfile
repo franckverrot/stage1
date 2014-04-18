@@ -1,4 +1,4 @@
-FROM stage1
+FROM stage1/base
 MAINTAINER Geoffrey Bachelet <geoffrey.bachelet@gmail.com>
 
 RUN apt-get update -y

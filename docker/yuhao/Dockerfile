@@ -1,4 +1,4 @@
-FROM stage1
+FROM stage1/base
 
 ADD ./support/php.ini /etc/php5/cli/php.ini
 ADD ./support/bin/yuhao.phar /usr/local/bin/yuhao.phar
