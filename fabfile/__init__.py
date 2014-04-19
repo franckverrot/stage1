@@ -43,6 +43,10 @@ env.log_files = [
 ]
 
 @task
+def upstart_export():
+    local('sudo foreman export upstart /etc/init -u root -a stage1')
+
+@task
 def upstart_deploy():
     local('sudo rm -rf /tmp/init/*')
     local('sudo foreman export upstart /tmp/init -u root -a stage1')

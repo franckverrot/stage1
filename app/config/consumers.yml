@@ -15,6 +15,9 @@ old_sound_rabbit_mq:
         kill:
             connection: default
             exchange_options: { name: 'kill', type: topic }
+        stop:
+            connection: default
+            exchange_options: { name: 'stop', type: topic }
         project_import:
             connection: default
             exchange_options: { name: 'project_import', type: direct }
@@ -34,6 +37,12 @@ old_sound_rabbit_mq:
             queue_options:    { name: 'kill', routing_keys: [%stage1_builder_host%] }
             qos_options:      { prefetch_count: 1 }
             callback:         app_core.consumer.kill
+        stop:
+            connection: default
+            exchange_options: { name: 'stop', type: 'topic' }
+            queue_options:    { name: 'stop', routing_keys: [%stage1_builder_host%] }
+            qos_options:      { prefetch_count: 1 }
+            callback:         app_core.consumer.stop
         project_import:
             connection: default
             exchange_options: { name: 'project_import', type: direct }

@@ -124,6 +124,11 @@ class Build implements WebsocketRoutable
         return json_encode($this->asWebsocketMessage());
     }
 
+    public function getRoutingKey()
+    {
+        return $this->getBuilderHost();
+    }
+
     public function getPullRequestHead()
     {
         $project = $this->getProject();

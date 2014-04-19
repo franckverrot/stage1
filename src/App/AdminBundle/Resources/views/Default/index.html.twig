@@ -64,6 +64,7 @@
     <thead>
         <tr>
             <th width="2">Id</th>
+            <th>Routing Key</th>
             <th>Project</th>
             <th>Ref.</th>
             <th>Date</th>
@@ -76,6 +77,7 @@
         {% for build in builds %}
         <tr>
             <td><a href="{{ path('app_core_build_output', { id: build.id }) }}">#{{ build.id }}</a></td>
+            <td>{{ build.routingKey }}</td>
             <td>{{ build.project.fullName}} (#{{ build.project.id }})</td>
             <td>{{ build.ref }}</td>
             <td><abbr class="timeago" title="{{ build.createdAt | date('c') }}">{{ build.createdAt | date('Y-m-d H:i:s') }}</abbr></td>

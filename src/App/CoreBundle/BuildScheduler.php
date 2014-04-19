@@ -102,6 +102,18 @@ class BuildScheduler
             $build->setForceLocalBuildYml(true);
         }
 
+        $builderHost = null;
+
+        $logger->info('electing builder', [
+            'builder_host_allow' => $this->getOption('builder_host_allow'),
+        ]);
+
+        if (count($builderHostAllow = $this->getOption('builder_host_allow')) > 0) {
+            $builderHost = $builderHostAllow[array_rand($builderHostAllow)];
+        }
+
+        $build->setBuilderHost($builderHost);
+
         /**
          * @todo move this outside, it belongs in a controller
          *       this will allow to remove the $options argument
@@ -109,20 +121,14 @@ class BuildScheduler
         $em->persist($build);
         $em->flush();
 
-        $routingKey = null;
-
-        if (count($builderHostAllow = $this->getOption('builder_host_allow')) > 0) {
-            $routingKey = $builderHostAllow[array_rand($builderHostAllow)];
-        }
-
         $this->logger->info('sending build order', [
             'build' => $build->getId(),
-            'routing_key' => $routingKey
+            'builder_host' => $builderHost
         ]);
 
         $this->buildProducer->publish(json_encode([
             'build_id' => $build->getId()
-        ]), $routingKey);
+        ]), $build->getRoutingKey());
 
         $message = $this->messageFactory->createBuildScheduled($build);
         $this->websocketProducer->publish($message);

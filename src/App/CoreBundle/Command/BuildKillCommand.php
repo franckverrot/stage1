@@ -21,7 +21,31 @@ class BuildKillCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $logger = $this->getContainer()->get('logger');
+
+        $build = $this
+            ->getContainer()
+            ->get('doctrine')
+            ->getRepository('Model:Build')
+            ->find($input->getArgument('build_id'));
+
+        if (!$build) {
+            $this->writeln('<error>Build not found</error>');
+        }
+
+        $builderHostAllow = $this->getContainer()->getParameter('stage1_builder_host_allow');
+
+        if (strlen($build->getRoutingKey()) === 0 && count($builderHostAllow) > 0) {
+            $builderHost = $builderHostAllow[array_rand($builderHostAllow)];
+            $build->setBuilderHost($builderHost);
+        }
+
+        $logger->info('sending kill order', [
+            'build' => $build->getId(),
+            'routing_key' => $build->getRoutingKey(),
+        ]);
+
         $producer = $this->getContainer()->get('old_sound_rabbit_mq.kill_producer');
-        $producer->publish(json_encode(['build_id' => $input->getArgument('build_id')]));
+        $producer->publish(json_encode(['build_id' => $input->getArgument('build_id')]), $build->getRoutingKey());
     }
 }

@@ -195,7 +195,7 @@ class BuildController extends Controller
     {
         try {
             $build = $this->findBuild($id);
-            $routingKey = $build->getBuilderHost();
+            $routingKey = $build->getRoutingKey();
 
             $this->get('logger')->info('sending kill order', [
                 'build' => $id,
