@@ -28,6 +28,10 @@ parameters:
     rabbitmq_user: guest
     rabbitmq_password: guest
 
+    stage1_queue_build: build_vm
+    stage1_queue_kill: kill_vm
+    stage1_queue_stop: kill_stop
+
     # various parameters
     build_logs_load_limit: 500
     build_logs_stream_limit: 1000

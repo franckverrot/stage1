@@ -1,3 +1,4 @@
+/service/**/supervise/
 .DS_Store
 /output-vmware/
 github.json

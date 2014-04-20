@@ -28,19 +28,19 @@ old_sound_rabbit_mq:
         build:
             connection: default
             exchange_options: { name: 'build', type: topic }
-            queue_options:    { name: 'build', routing_keys: [%stage1_builder_host%] }
+            queue_options:    { name: '%stage1_queue_build%', routing_keys: [%stage1_builder_host%] }
             qos_options:      { prefetch_count: 1 }
             callback:         app_core.consumer.build
         kill:
             connection: default
             exchange_options: { name: 'kill', type: topic }
-            queue_options:    { name: 'kill', routing_keys: [%stage1_builder_host%] }
+            queue_options:    { name: '%stage1_queue_kill%', routing_keys: [%stage1_builder_host%] }
             qos_options:      { prefetch_count: 1 }
             callback:         app_core.consumer.kill
         stop:
             connection: default
             exchange_options: { name: 'stop', type: 'topic' }
-            queue_options:    { name: 'stop', routing_keys: [%stage1_builder_host%] }
+            queue_options:    { name: '%stage1_queue_stop%', routing_keys: [%stage1_builder_host%] }
             qos_options:      { prefetch_count: 1 }
             callback:         app_core.consumer.stop
         project_import:
