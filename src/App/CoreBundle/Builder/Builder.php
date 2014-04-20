@@ -239,7 +239,7 @@ class Builder
                 mkdir($cachePath, 0777, true);
             }
 
-            $hostConfig['Binds'] = [$cachePath.':/.composer/cache'];
+            $hostConfig['Binds'] = [realpath($cachePath).':/.composer/cache'];
 
         }
 
