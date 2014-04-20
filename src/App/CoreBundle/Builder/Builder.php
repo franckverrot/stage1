@@ -8,6 +8,8 @@ use App\Model\BuildScript;
 use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
 use App\CoreBundle\Docker\PrepareContainer;
+use App\CoreBundle\Builder\Strategy\DockerfileStrategy;
+use App\CoreBundle\Builder\Strategy\DefaultStrategy;
 
 use Symfony\Component\Process\Process;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -190,124 +192,14 @@ class Builder
 
         $logger->info('resolved options', ['options' => $options]);
 
-        /**
-         * Launch actual build
-         */
-        $logger->info('building base build container', [
-            'build' => $build->getId(),
-            'image_name' => $build->getImageName()
+        $strategy = array_key_exists('path', $options['dockerfile'])
+            ? new DockerfileStrategy($logger, $docker, $em, $this->options)
+            : new DefaultStrategy($logger, $docker, $em, $this->options);
+
+        $logger->info('elected strategy', [
+            'strategy' => get_class($strategy),
         ]);
 
-        $baseImage = strpos($options['image'], 'stage1/') !== 0
-            ? 'stage1/'.$options['image']
-            : $options['image'];
-
-        $builder = $project->getDockerContextBuilder();
-        $builder->add('/usr/local/bin/yuhao_build', $script->getBuildScript());
-        $builder->add('/usr/local/bin/yuhao_run', $script->getRunScript());
-        $builder->run('chmod -R +x /usr/local/bin/');
-        $builder->from($baseImage);
-
-        $response = $docker->build($builder->getContext(), $build->getImageName(), false, true, true);
-
-        $buildContainer = new BuildContainer($build);
-        $buildContainer->addEnv($options['env']);
-
-        $script->setRuntimeEnv($buildContainer->getEnv());
-
-        if ($build->getForceLocalBuildYml()) {
-            $buildContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
-        }
-
-        $manager = $this->docker->getContainerManager();
-
-        $logger->info('starting actual build', [
-            'build' => $build->getId(),
-            'timeout' => $timeout,
-        ]);
-
-        $hostConfig = [];
-
-        if ($this->getOption('composer_enable_global_cache')) {
-            $logger->info('enabling composer global cache', ['build' => $build->getId()]);
-            $hostConfig['Binds'] = [$this->getOption('composer_cache_path').'/global:/.composer/cache'];
-        } elseif ($this->getOption('composer_enable_project_cache')) {
-            $cachePath = $this->getOption('composer_cache_path').'/'.$project->getGithubFullName();
-            $logger->info('enabling composer project cache', ['build' => $build->getId(), 'project' => $project->getGithubFullName(), 'cache_path' => $cachePath]);
-
-            if (!is_dir($cachePath)) {
-                mkdir($cachePath, 0777, true);
-            }
-
-            $hostConfig['Binds'] = [realpath($cachePath).':/.composer/cache'];
-
-        }
-
-        $manager->create($buildContainer);
-
-        $build->setContainer($buildContainer);
-
-        $em->persist($build);
-        $em->flush();
-        
-        $manager->start($buildContainer, $hostConfig);
-        $manager->wait($buildContainer, $timeout);
-
-        if ($buildContainer->getExitCode() !== 0) {
-            $exitCode = $buildContainer->getExitCode();
-            $exitCodeLabel = isset(Process::$exitCodes[$exitCode]) ? Process::$exitCodes[$exitCode] : '';
-
-            $message = sprintf('build container stopped with exit code %d (%s)', $exitCode, $exitCodeLabel);
-
-            $logger->error($message, [
-                'build' => $build->getId(),
-                'container' => $buildContainer->getId(),
-                'container_name' => $buildContainer->getName(),
-                'exit_code' => $exitCode,
-                'exit_code_label' => $exitCodeLabel,
-            ]);
-
-            $docker->commit($buildContainer, [
-                'repo' => $build->getImageName(),
-                'tag' => 'failed'
-            ]);
-
-            throw new Exception($message, $buildContainer->getExitCode());
-        }
-
-        /**
-         * Build successful!
-         * 
-         * @todo the commit can timeout for no obvious reason, while actually committing
-         *       catch the timeout and check if the image has been commited
-         *          if yes, proceed
-         *          if not, retry (3 times ?)
-         */
-        $logger->info('build successful, committing', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
-        $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
-
-        $logger->info('removing build container', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
-        $manager->remove($buildContainer);
-
-        /**
-         * Launch App container
-         */
-        $ports = new PortCollection(80, 22);
-
-        $appContainer = new AppContainer($build);
-        $appContainer->addEnv($build->getProject()->getContainerEnv());
-        $appContainer->setExposedPorts($ports);
-
-        if ($build->getForceLocalBuildYml()) {
-            $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
-        }
-
-        $manager
-            ->create($appContainer)
-            ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
-
-        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
-
-        return $appContainer;
+        return $strategy->build($build, $script);
     }
 }
