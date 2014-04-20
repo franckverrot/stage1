@@ -12,6 +12,7 @@ def export():
 def deploy():
     execute(deploy_build)
     execute(deploy_web)
+    execute(deploy_router)
     execute(ensure_executable)
 
 @task
@@ -19,20 +20,25 @@ def deploy():
 def ensure_executable():
     run('find /etc/service -name run -exec chmod +x {} \;')
 
+def rsync(type, user, host):
+    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete ./service/%(type)s/ %(user)s@%(host)s:/etc/service/' % {
+        'type': type,
+        'user': user,
+        'host': host
+    })
+
+
 @task
 @roles('build')
 def deploy_build():
-    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete ./service/build/ %(user)s@%(host)s:/etc/service/' % {
-        'project_path': env.project_path,
-        'user': env.user,
-        'host': env.host_string
-    })
+    rsync('build', env.user, env.host_string)
 
 @task
 @roles('web')
 def deploy_web():
-    local('rsync --verbose --rsh=ssh --progress -crDpLt --force --delete ./service/web/ %(user)s@%(host)s:/etc/service/' % {
-        'project_path': env.project_path,
-        'user': env.user,
-        'host': env.host_string    
-    })
+    rsync('web', env.user, env.host_string)
+
+@task
+@roles('router')
+def deploy_router():
+    rsync('router', env.user, env.host_string)

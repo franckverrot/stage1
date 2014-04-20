@@ -1,3 +1,9 @@
 #!/bin/bash
-exec node /var/www/stage1/node/node_modules/aldis/aldis.js -A -E CHANNEL -E BUILD_ID -l -a batcave.stage1.io \
+if [ -f /usr/bin/nodejs ]; then
+    NODE=/usr/bin/nodejs
+else
+    NODE=/usr/bin/env node
+fi
+
+exec $NODE /var/www/stage1/node/node_modules/aldis/aldis.js -A -E CHANNEL -E BUILD_ID -l -a batcave.stage1.io \
     >> /var/log/stage1/aldis.log 2>&1

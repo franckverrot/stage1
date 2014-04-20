@@ -3,10 +3,16 @@ from utils import *
 from git import *
 from symfony import *
 
+@task
+@roles('web', 'build')
+def ensure_service_executable():
+    run('find %(project_path)s/service -name run -exec chmod +x {} \;' % { 'project_path': env.project_path })
+
 @task(default=True)
 def web_and_build():
     execute(web)
     execute(build)
+    execute(ensure_service_executable)
 
 @task
 @roles('help')

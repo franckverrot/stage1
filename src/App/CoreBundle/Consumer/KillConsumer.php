@@ -103,10 +103,9 @@ class KillConsumer implements ConsumerInterface
 
             try {            
                 $this->docker->getContainerManager()->stop($container);
-            } catch (UnexpectedStatusCodeException $e) {
-                if ($e->getCode() !== 404) {
-                    throw $e;
-                }
+            } catch (\Exception $e) {
+                $logger->error($e->getMessage());
+                return;
             }
         }
 
