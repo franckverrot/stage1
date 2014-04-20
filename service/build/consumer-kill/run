@@ -1,0 +1,3 @@
+#!/bin/bash
+exec /var/www/stage1/app/console rabbitmq:consumer -vvv -m 1 -w kill \
+    >> /var/log/stage1/consumer-kill.log 2>&1

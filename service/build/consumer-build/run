@@ -1,0 +1,3 @@
+#!/bin/bash
+exec /var/www/stage1/app/console rabbitmq:consumer -vvv -m 1 -w build \
+    >> /var/log/stage1/consumer-build.log 2>&1

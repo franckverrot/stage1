@@ -1,0 +1,3 @@
+#!/bin/bash
+exec coffee /var/www/stage1/node/websocket.coffee \
+    >> /var/log/stage1/websocket.log 2>&1

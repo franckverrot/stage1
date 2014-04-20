@@ -1,0 +1,3 @@
+#!/bin/bash
+exec /var/www/stage1/app/console rabbitmq:consumer -vvv -m 100 -w docker_output \
+    >> /var/log/stage1/consumer-docker-output.log 2>&1

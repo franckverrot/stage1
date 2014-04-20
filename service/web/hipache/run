@@ -1,0 +1,4 @@
+#!/bin/bash
+source /etc/environment
+exec hipache --config /var/www/stage1/app/config/hipache_$STAGE1_ENV.json \
+    >> /var/log/stage1/hipache.log 2>&1

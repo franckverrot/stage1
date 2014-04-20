@@ -4,9 +4,9 @@ from git import *
 from symfony import *
 
 @task(default=True)
-def web_and_docker():
-    web()
-    docker()
+def web_and_build():
+    execute(web)
+    execute(build)
 
 @task
 @roles('help')
@@ -20,8 +20,8 @@ def help():
     })
 
 @task
-@roles('docker')
-def docker():
+@roles('build')
+def build():
     ref = git_branch()
 
     info('deploying branch "%s"' % ref)

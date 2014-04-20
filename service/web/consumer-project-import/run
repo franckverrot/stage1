@@ -1,0 +1,3 @@
+#!/bin/bash
+exec /var/www/stage1/app/console rabbitmq:consumer -vvv -m 1 -w project_import \
+    >> /var/log/stage1/consumer-project-import.log 2>&1
