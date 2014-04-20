@@ -9,7 +9,7 @@ class BuildMessage extends AbstractMessage
     public function __construct(Build $build, $message)
     {
         $this->setExtra([
-            'content' => $message,
+            'message' => $message,
             'lenght' => strlen($message),
             'type' => 'output',
             'stream' => 1,

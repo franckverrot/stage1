@@ -120,41 +120,42 @@ class Project implements WebsocketRoutable
         return $options;
     }
 
-    // @todo the base container can (and should?) be built during project import
-    //       that's one lest step during the build
-    // @todo also, move that to a BuildContext
-    public function getDockerContextBuilder()
+    public function dumpSshKeys($identityRoot, $owner = 'root', $put = 'file_put_contents', $exec = 'exec')
     {
-        $env  = 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'.PHP_EOL;
-        $env .= 'SYMFONY_ENV=prod'.PHP_EOL;
-        $env .= $this->getEnv();
-
-        $builder = new ContextBuilder();
-        $builder->setFormat(Context::FORMAT_TAR);
-        $builder->add('/etc/environment', $env);
-
-        $identities = ['/root/.ssh/id_project'];
-
-        $builder->add('/root/.ssh/id_project', $this->getPrivateKey());
-        $builder->add('/root/.ssh/id_project.pub', $this->getPublicKey());
+        $put($identityRoot.'/id_project', $this->getPrivateKey());
+        $put($identityRoot.'/id_project.pub', $this->getPublicKey());
 
         if (null !== $this->getOrganization()) {
-            $identities[] = '/root/.ssh/id_organization';
-            $builder->add('/root/.ssh/id_organization', $this->getOrganization()->getPrivateKey());
-            $builder->add('/root/.ssh/id_organization.pub', $this->getOrganization()->getPublicKey());
+            $put($identityRoot.'/id_organization', $this->getOrganization()->getPrivateKey());
+            $put($identityRoot.'/id_organization.pub', $this->getOrganization()->getPublicKey());
         }
 
         foreach ($this->getUsers() as $user) {
-            $identities[] = sprintf('/root/.ssh/id_%s', $user->getUsername());
-            $builder->add(sprintf('/root/.ssh/id_%s', $user->getUsername()), $user->getPrivateKey());
-            $builder->add(sprintf('/root/.ssh/id_%s.pub', $user->getUsername()), $user->getPublicKey());
+            $put($identityRoot.'/id_'.$user->getUsername(), $user->getPrivateKey());
+            $put($identityRoot.'/id_'.$user->getUsername().'.pub', $user->getPublicKey());            
+        }
+
+        $exec('chmod -R 0600 '.$identityRoot);
+        $exec('chown -R '.$owner.':'.$owner.' '.$identityRoot);
+    }
+
+    public function getSshConfig($identityRoot)
+    {
+        $identities = [$identityRoot.'/id_project'];
+
+        if (null !== $this->getOrganization()) {
+            $identities[] = $identityRoot.'/id_organization';
+        }
+
+        foreach ($this->getUsers() as $user) {
+            $identities[] = $identityRoot.'/id_'.$user->getUsername();
         }
 
         $sshIdentityFile = implode(PHP_EOL, array_map(function($identity) {
             return 'IdentityFile '.$identity;
         }, $identities));
 
-        $builder->add('/root/.ssh/config', <<<SSH
+        return <<<SSH
 $sshIdentityFile
 
 StrictHostKeyChecking no
@@ -164,10 +165,24 @@ LogLevel QUIET
 Host github.com
     Hostname github.com
     User git
-SSH
-);
-        $builder->run('chmod -R 0600 /root/.ssh');
-        $builder->run('chown -R root:root /root/.ssh');
+SSH;
+    }
+
+    // @todo the base container can (and should?) be built during project import
+    //       that's one lest step during the build
+    // @todo also, move that to a BuildContext
+    public function getDockerContextBuilder($identityRoot = '/root/.ssh')
+    {
+        $env  = 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'.PHP_EOL;
+        $env .= 'SYMFONY_ENV=prod'.PHP_EOL;
+        $env .= $this->getEnv();
+
+        $builder = new ContextBuilder();
+        $builder->setFormat(Context::FORMAT_TAR);
+        $builder->add('/etc/environment', $env);
+
+        $this->dumpSshKeys($identityRoot, 'root', [$builder, 'add'], [$builder, 'run']);
+        $builder->add('/root/.ssh/config', $this->getSshConfig('/root/.ssh'));
 
         if ($this->getSettings() && strlen($this->getSettings()->getBuildYml()) > 0) {
             $builder->add('/root/build_local.yml', $this->getSettings()->getBuildYml());

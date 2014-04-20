@@ -10,13 +10,14 @@ use App\CoreBundle\Docker\BuildContainer;
 use App\CoreBundle\Docker\PrepareContainer;
 use App\CoreBundle\Builder\Strategy\DockerfileStrategy;
 use App\CoreBundle\Builder\Strategy\DefaultStrategy;
-
+use App\CoreBundle\Message\BuildMessage;
 use Symfony\Component\Process\Process;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Docker\Docker;
 use Docker\PortCollection;
 
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Psr\Log\LoggerInterface;
 
 use Exception;
@@ -40,6 +41,11 @@ class Builder
     private $doctrine;
 
     /**
+     * @var OldSound\RabbitMqBundle\RabbitMq\Producer
+     */
+    private $websocketProducer;
+
+    /**
      * @var array
      */
     private $options = [
@@ -55,11 +61,12 @@ class Builder
      * @param Docker\Docker $docker
      * @param Symfony\Bridge\Doctrine\RegistryInterface $doctrine
      */
-    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine)
+    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine, Producer $websocketProducer)
     {
         $this->docker = $docker;
         $this->logger = $logger;
         $this->doctrine = $doctrine;
+        $this->websocketProducer = $websocketProducer;
     }
 
     /**
@@ -90,9 +97,15 @@ class Builder
      */
     public function run(Build $build, $timeout = null)
     {
+        $producer = $this->websocketProducer;
         $logger = $this->logger;
         $docker = $this->docker;
         $em = $this->doctrine->getManager();
+
+        $publish = function($content) use ($build, $producer) {
+            $message = new BuildMessage($build, $content);
+            $producer->publish((string) $message);
+        };
 
         if ($this->getOption('dummy')) {
             $logger->info('dummy build, sleeping', ['duration' => $this->getOption('dummy_duration')]);
@@ -117,6 +130,7 @@ class Builder
          * Generate build script using Yuhao
          */
         $logger->info('generating build script');
+        $publish('  generating build script'.PHP_EOL);
 
         $builder = $project->getDockerContextBuilder();
         $builder->from('stage1/yuhao');
@@ -193,13 +207,36 @@ class Builder
         $logger->info('resolved options', ['options' => $options]);
 
         $strategy = array_key_exists('path', $options['dockerfile'])
-            ? new DockerfileStrategy($logger, $docker, $em, $this->options)
-            : new DefaultStrategy($logger, $docker, $em, $this->options);
+            ? new DockerfileStrategy($logger, $docker, $em, $this->websocketProducer, $this->options)
+            : new DefaultStrategy($logger, $docker, $em, $this->websocketProducer, $this->options);
 
         $logger->info('elected strategy', [
             'strategy' => get_class($strategy),
         ]);
 
-        return $strategy->build($build, $script);
+        $strategy->build($build, $script, $timeout);
+
+        /**
+         * Launch App container
+         */
+        $ports = new PortCollection(80, 22);
+
+        # @todo DefaultStrategy containers should have an entrypoint
+        #       so we don't need to provide an actual command
+        $appContainer = new AppContainer($build, $strategy->getCmd());
+        $appContainer->addEnv($build->getProject()->getContainerEnv());
+        $appContainer->setExposedPorts($ports);
+
+        if ($build->getForceLocalBuildYml()) {
+            $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+        }
+
+        $manager
+            ->create($appContainer)
+            ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
+
+        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
+
+        return $appContainer;
     }
 }

@@ -22,13 +22,16 @@ class DefaultStrategy
 
     private $objectManager;
 
+    private $websocketProducer;
+
     private $options = [];
 
-    public function __construct(LoggerInterface $logger, Docker $docker, ObjectManager $objectManager, array $options)
+    public function __construct(LoggerInterface $logger, Docker $docker, ObjectManager $objectManager, Producer $websocketProducer, array $options)
     {
         $this->logger = $logger;
         $this->docker = $docker;
         $this->objectManager = $objectManager;
+        $this->websocketProducer = $websocketProducer;
         $this->options = $options;
     }
 
@@ -37,7 +40,12 @@ class DefaultStrategy
         return $this->options[$name];
     }
 
-    public function build(Build $build, BuildScript $script)
+    public function getCmd()
+    {
+        return ['runapp'];
+    }
+
+    public function build(Build $build, BuildScript $script, $timeout)
     {
         $logger = $this->logger;
         $docker = $this->docker;
@@ -144,26 +152,5 @@ class DefaultStrategy
 
         $logger->info('removing build container', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
         $manager->remove($buildContainer);
-
-        /**
-         * Launch App container
-         */
-        $ports = new PortCollection(80, 22);
-
-        $appContainer = new AppContainer($build);
-        $appContainer->addEnv($build->getProject()->getContainerEnv());
-        $appContainer->setExposedPorts($ports);
-
-        if ($build->getForceLocalBuildYml()) {
-            $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
-        }
-
-        $manager
-            ->create($appContainer)
-            ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
-
-        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
-
-        return $appContainer;
     }
 }
