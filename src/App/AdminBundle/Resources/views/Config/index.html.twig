@@ -13,7 +13,9 @@
         <tr>
             <td>{{ key }}</td>
             <td>
-                {% if value is iterable %}
+                {% if key|slice(-8) == 'password' %}
+                <em>redacted</en>
+                {% elseif value is iterable %}
                     {{ value|json_encode(constant('JSON_PRETTY_PRINT'))|replace({' ': '&nbsp;'})|raw|nl2br }}
                 {% else %}
                     {{ value }}
