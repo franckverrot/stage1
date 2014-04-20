@@ -71,9 +71,8 @@ class ContainerListCommand extends ContainerAwareCommand
         $rows = [];
 
         foreach ($containers as $container) {
-            list(,$projectId,,$buildId) = explode('/', $container->getImage()->getRepository());
-            $data = $container->getData();
-            $build = $rp->find($buildId);
+            // list(,$projectId,,$buildId) = explode('/', $container->getImage()->getRepository());
+            $build = $rp->findOneByContainerId($buildId);
 
             if (!$build) {
                 $output->writeln('Could not find build for image <info>'.$container->getImage()->getRepository().'</info>');
@@ -105,6 +104,8 @@ class ContainerListCommand extends ContainerAwareCommand
             if (null !== $buildStatusFilter && false === strpos($buildStatus, $buildStatusFilter)) {
                 continue;
             }
+
+            $data = $container->getData();
 
             $rows[] = [
                 $build->getId(),
