@@ -75,7 +75,9 @@ class ContainerListCommand extends ContainerAwareCommand
             $build = $rp->findOneByContainerId($container->getId());
 
             if (!$build) {
-                $output->writeln('Could not find build for image <info>'.$container->getImage()->getRepository().'</info>');
+                if (!$input->getOption('container')) {
+                    $output->writeln('Could not find build for container <info>'.$container->getId().'</info>');
+                }
                 continue;
             }
 
