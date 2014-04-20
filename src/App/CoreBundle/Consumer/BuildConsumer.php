@@ -143,7 +143,6 @@ class BuildConsumer implements ConsumerInterface
 
             $build->setStatus(Build::STATUS_DUPLICATE);
         } else {
-            $build->setBuilderHost($this->getOption('builder_host'));
             $build->setStatus(Build::STATUS_BUILDING);
             $build->setPid(posix_getpid());
 

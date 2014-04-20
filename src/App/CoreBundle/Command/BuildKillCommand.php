@@ -33,13 +33,6 @@ class BuildKillCommand extends ContainerAwareCommand
             $this->writeln('<error>Build not found</error>');
         }
 
-        $builderHostAllow = $this->getContainer()->getParameter('stage1_builder_host_allow');
-
-        if (strlen($build->getRoutingKey()) === 0 && count($builderHostAllow) > 0) {
-            $builderHost = $builderHostAllow[array_rand($builderHostAllow)];
-            $build->setBuilderHost($builderHost);
-        }
-
         $logger->info('sending kill order', [
             'build' => $build->getId(),
             'routing_key' => $build->getRoutingKey(),

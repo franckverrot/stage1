@@ -123,11 +123,6 @@
                 <argument>%stage1_build_timeout%</argument>
             </call>
 
-            <call method="setOption">
-                <argument>builder_host</argument>
-                <argument>%stage1_builder_host%</argument>
-            </call>
-
             <tag name="monolog.logger" channel="build" />
         </service>
 
