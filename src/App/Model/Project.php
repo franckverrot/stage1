@@ -181,8 +181,8 @@ SSH;
         $builder->setFormat(Context::FORMAT_TAR);
         $builder->add('/etc/environment', $env);
 
-        $this->dumpSshKeys($identityRoot, 'root', [$builder, 'add'], [$builder, 'run']);
         $builder->add('/root/.ssh/config', $this->getSshConfig('/root/.ssh'));
+        $this->dumpSshKeys($identityRoot, 'root', [$builder, 'add'], [$builder, 'run']);
 
         if ($this->getSettings() && strlen($this->getSettings()->getBuildYml()) > 0) {
             $builder->add('/root/build_local.yml', $this->getSettings()->getBuildYml());

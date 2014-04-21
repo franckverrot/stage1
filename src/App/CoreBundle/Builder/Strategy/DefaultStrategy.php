@@ -4,11 +4,13 @@ namespace App\CoreBundle\Builder\Strategy;
 
 use App\CoreBundle\Docker\AppContainer;
 use App\CoreBundle\Docker\BuildContainer;
+use App\CoreBundle\Message\BuildMessage;
 use App\Model\Build;
 use App\Model\BuildScript;
 use Docker\Docker;
 use Docker\PortCollection;
 use Doctrine\Common\Persistence\ObjectManager;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
@@ -50,6 +52,12 @@ class DefaultStrategy
         $logger = $this->logger;
         $docker = $this->docker;
         $objectManager = $this->objectManager;
+        $websocketProducer = $this->websocketProducer;
+
+        $publish = function ($content) use ($build, $websocketProducer) {
+            $message = new BuildMessage($build, $content);
+            $websocketProducer->publish((string) $message);
+        };
 
         $options = $build->getOptions();
         $project = $build->getProject();
@@ -61,6 +69,7 @@ class DefaultStrategy
             'build' => $build->getId(),
             'image_name' => $build->getImageName()
         ]);
+        // $publish('  building base container'.PHP_EOL);
 
         $baseImage = strpos($options['image'], 'stage1/') !== 0
             ? 'stage1/'.$options['image']
@@ -90,6 +99,8 @@ class DefaultStrategy
             'timeout' => $timeout,
         ]);
 
+        // $publish('  starting actual build'.PHP_EOL);
+
         $hostConfig = [];
 
         if ($this->getOption('composer_enable_global_cache')) {
@@ -110,9 +121,6 @@ class DefaultStrategy
         $manager->create($buildContainer);
 
         $build->setContainer($buildContainer);
-
-        $objectManager->persist($build);
-        $objectManager->flush();
         
         $manager->start($buildContainer, $hostConfig);
         $manager->wait($buildContainer, $timeout);
@@ -148,9 +156,11 @@ class DefaultStrategy
          *          if not, retry (3 times ?)
          */
         $logger->info('build successful, committing', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
+        // $publish('  committing app container'.PHP_EOL);
         $docker->commit($buildContainer, ['repo' => $build->getImageName()]);
 
         $logger->info('removing build container', ['build' => $build->getId(), 'container' => $buildContainer->getId()]);
+        // $publish('  removing build container'.PHP_EOL);
         $manager->remove($buildContainer);
     }
 }

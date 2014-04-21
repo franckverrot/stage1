@@ -107,6 +107,8 @@ class Builder
             $producer->publish((string) $message);
         };
 
+        // $publish('  build started ('.date('r').')');
+
         if ($this->getOption('dummy')) {
             $logger->info('dummy build, sleeping', ['duration' => $this->getOption('dummy_duration')]);
             sleep($this->getOption('dummy_duration'));
@@ -130,7 +132,7 @@ class Builder
          * Generate build script using Yuhao
          */
         $logger->info('generating build script');
-        $publish('  generating build script'.PHP_EOL);
+        // $publish('  generating build script'.PHP_EOL);
 
         $builder = $project->getDockerContextBuilder();
         $builder->from('stage1/yuhao');
@@ -161,6 +163,8 @@ class Builder
 
             $message = sprintf('failed to generate build scripts (exit code %d (%s))', $exitCode, $exitCodeLabel);
 
+            $publish($message.PHP_EOL);
+
             $logger->error($message, [
                 'build' => $build->getId(),
                 'container' => $prepareContainer->getId(),
@@ -184,9 +188,11 @@ class Builder
 
         $output = '';
 
-        $manager->attach($prepareContainer, true, false, false, true, true)->readAttach(function($type, $chunk) use (&$output) {
-            $output .= $chunk;
-        });
+        $manager
+            ->attach($prepareContainer, true, false, false, true, true)
+            ->readAttach(function($type, $chunk) use (&$output) {
+                $output .= $chunk;
+            });
 
         $logger->info('got response from yuhao', [
             'build' => $build->getId(),
@@ -196,8 +202,6 @@ class Builder
 
         $script = BuildScript::fromJson($output);
         $script->setBuild($build);
-
-        $em->persist($script);
 
         $options = $project->getDefaultBuildOptions();
         $options = $options->resolve($script->getConfig());
@@ -214,7 +218,15 @@ class Builder
             'strategy' => get_class($strategy),
         ]);
 
+        $em->persist($build);
+        $em->persist($script);
+        $em->flush();
+
         $strategy->build($build, $script, $timeout);
+
+        $em->persist($build);
+        $em->persist($script);
+        $em->flush();
 
         /**
          * Launch App container
@@ -236,6 +248,8 @@ class Builder
             ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
 
         $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
+
+        // $publish('  build finished ('.date('r').')'.PHP_EOL);
 
         return $appContainer;
     }
