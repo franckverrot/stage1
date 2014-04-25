@@ -1,19 +1,14 @@
 body {
-  padding-top: 20px;
-  padding-bottom: 40px;
+  padding-top: 0px;
 }
 
-h3 img {
-  height: 34px;
+h1 a {
+  color: gray;
 }
 
-h3 span {
-  vertical-align: middle;
-  font-size: 34px;
-}
-
-h3 a:hover {
+h1 a:hover {
   text-decoration: none;
+  color: gray;
 }
 
 .masthead ul {
@@ -24,43 +19,39 @@ h3 a:hover {
   text-align: center;
 }
 
-/* Custom container */
-.container-narrow {
-  margin: 0 auto;
-  max-width: 700px;
-}
-.container-narrow > hr {
-  margin: 30px 0;
+.container {
+  width: 940px;
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
-  margin: 60px 0;
+.jumbotron, .footer {
+  padding: 5em 0;
+  background-color: #1c2336;
+  color: white;
+}
+
+.footer {
+  margin-top: 2em;
+}
+
+.jumbotron h2 {
+  text-align: center;
+  color: yellow;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0 0.005em #2d3958, 0.005em 0 #2d3958, 0.005em 0.01em #2d3958, 0.01em 0.005em #2d3958, 0.01em 0.015em #2d3958, 0.015em 0.01em #2d3958, 0.015em 0.02em #2d3958, 0.02em 0.015em #2d3958, 0.02em 0.025em #2d3958, 0.025em 0.02em #2d3958, 0.025em 0.03em #2d3958, 0.03em 0.025em #2d3958, 0.03em 0.035em #2d3958, 0.035em 0.03em #2d3958, 0.035em 0.04em #2d3958, 0.04em 0.035em #2d3958, 0.04em 0.045em #2d3958, 0.045em 0.04em #2d3958, 0.045em 0.05em #2d3958, 0.05em 0.045em #2d3958, 0.05em 0.055em #2d3958, 0.055em 0.05em #2d3958, 0.055em 0.06em #2d3958, 0.06em 0.055em #2d3958, 0.06em 0.065em #2d3958, 0.065em 0.06em #2d3958, 0.065em 0.07em #2d3958, 0.07em 0.065em #2d3958, 0.07em 0.075em #2d3958, 0.075em 0.07em #2d3958, 0.075em 0.08em #2d3958, 0.08em 0.075em #2d3958, 0.08em 0.085em #2d3958, 0.085em 0.08em #2d3958, 0.085em 0.09em #2d3958, 0.09em 0.085em #2d3958, 0.09em 0.095em #2d3958, 0.095em 0.09em #2d3958, 0.095em 0.1em #2d3958, 0.1em 0.095em #2d3958, 0.1em 0.105em #2d3958, 0.105em 0.1em #2d3958, 0.105em 0.11em #2d3958, 0.11em 0.105em #2d3958;
+  -webkit-transform: rotate(-9deg);
+  line-height: 1em;
+  margin-bottom: 0.8em;
+  font-size: 5em;
+}
+
+.beta-register {
+  margin-top: 40px;
   text-align: center;
 }
-.jumbotron h1 {
-  font-size: 62px;
-  line-height: 1;
-  margin-bottom: .5em;
-}
 
-.jumbotron .btn-large {
-  width: 210px;
-  padding: 14px 24px;
-}
-
-.jumbotron .btn-large {
-  font-size: 31px;
-  padding: 14px 24px;
-}
-
-.jumbotron .btn-large {
-  font-weight: bold;
-}
-
-.jumbotron .btn-large small {
-  font-size: 12px;
-  font-weight: normal;
+.subline {
+  text-align: center;
+  margin-top: 4em;
 }
 
 /* Supporting marketing content */
@@ -72,12 +63,21 @@ h3 a:hover {
   padding: 0px 35px;
 }
 
-.marketing p + h4 {
-  margin-top: 28px;
+.marketing h4 {
+  padding-left: 65px;
 }
 
 .marketing p {
   text-align: justify;
+  margin-bottom: 3em;
+}
+
+.marketing p > i {
+  float: left;
+  padding-right: 20px;
+  color: #0088cc;
+  min-width: 45px;
+  text-align: center;
 }
 
 

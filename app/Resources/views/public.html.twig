@@ -17,37 +17,33 @@
 
 <body>
 
-    <div class="container-narrow">
-
+    <div class="container">
         <div class="masthead">
             <ul class="nav nav-pills pull-right">
-                <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li>
-                <li><a href="{{ path('app_core_blog') }}">Blog</a></li>
+                {# <li class="active"><a href="{{ path('app_core_homepage') }}">Home</a></li> #}
+                {#<li><a href="{{ path('app_core_blog') }}">Blog</a></li>#}
                 {% if not app.user or not is_granted('ROLE_USER') %}
-                <li><a href="{{ path('app_core_auth_github_authorize') }}">Login</a></li>
+                <li><a href="{{ path('app_core_auth_github_authorize') }}"><i class="fa fa-github"></i> Login</a></li>
                 {% endif %}
                 {# <li><a href="{{ path('app_core_demo') }}">Demo</a><li> #}
             </ul>
-            <h3 class="muted">
-                <a href="{{ path('app_core_homepage') }}">
-                    <img src="/images/logo.png"  alt="Stage1" />
-                    <span>Stage1</span>
-                </a>
-            </h3>
+                
+            <h1><a href="{{ path('app_core_homepage') }}">STAGE1</a></h1>
         </div>
+    </div>
 
-        <hr>
+    {% block body %}{% endblock %}
 
-        {% block body %}{% endblock %}
-
-        <hr>
-
-        <div class="footer">
-            <ul class="breadcrumb">
-                <li>Stage1 &copy; 2013-2014</li>
-            </ul>
+    {% block footer %}
+    <div class="row-fluid footer">
+        <div class="container">
+            <p>Stage1 &copy; 2013-2014</p>
+            <br />
+            <a href="https://github.com/stage1"><i class="fa fa-github-square fa-4x"></i></a>
+            &nbsp;
+            <a href="https://twitter.com/stage1hq"><i class="fa fa-twitter-square fa-4x"></i></a>
         </div>
-
-    </div> <!-- /container -->
+    </div>
+    {% endblock %}
 </body>
 </html>

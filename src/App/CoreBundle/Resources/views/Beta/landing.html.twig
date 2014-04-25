@@ -1,9 +1,10 @@
 {% extends '::public.html.twig' %}
 
-{% block body %}
-<div class="jumbotron">
-    <h1>Thank you!</h1>
+{% block footer %}{% endblock %}
 
+{% block body %}
+<div class="row-fluid subline">
+    <h1>Thank you!</h1>
     {% if beta.tries >= 10 %}
     <p class="lead">Ok we get it, you REALLY want to use <strong>Stage1</strong>, thanks!</p>
 
@@ -15,8 +16,14 @@
     {% endspaceless %}registering to <strong>Stage1</strong>'s private beta.</p>
     {% endif %}
 
-    <p><a href="{{ path('app_core_survey') }}">You can still fill in our quick survey!</a></p>
+    <p>We will get back to you as soon as possible.</p>
 
-    <p><a href="{{ path('app_core_blog') }}">And read the blog.</a></p>
+    <p><small>You can now proceed to stalk us on <a href="https://github.com/stage1">GitHub</a> and <a href="https://twitter.com/stage1hq">Twitter</a>.</small></p>
+
+    <p><small><small>I know, this page looks terrible.</small></small></p>
+
+    <p><small><small><small>But honestly, we have better things to do than designing landing pages.</small></small></small></p>
+    
 </div>
+
 {% endblock body %}

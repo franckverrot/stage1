@@ -1,41 +1,35 @@
 {% extends '::public.html.twig' %}
 
 {% block body %}
-<div class="jumbotron">
-    <h1>Every day is demo day.</h1>
-    <p class="lead"><strong>Stage1</strong> streamlines communication between developers and product owners by enabling <b>automatic</b> and <b>frictionless</b> staging environments.</p>
-
-    {#
-    <a class="btn btn-large btn-success" href="{{ path('app_core_auth_github_authorize') }}">
-        Sign up today<br />
-        <small>You will need a GitHub account</small>
-    </a>
-    #}
-    
-
-    <hr />
-
-    <br /><br />
-
-    <p>Don't be let behind, <strong>signup now</strong> for the private beta!</p>
-
-    <form method="post" action="{{ path('app_core_beta_signup') }}">
-        <div class="input-append">
-            <input type="text" name="email" placeholder="john.doe@gmail.com" />
-            <button class="btn btn-success">Go</button>
+<div class="row-fluid jumbotron">
+    <div class="container">
+        <div class="span6">
+            <h2>Every day<br />is demo day.</h2>
         </div>
-    </form>
 
-    <br />
+        <div class="span5 offset1 beta-register">
 
-    <p><a target="_blank" href="{{ path('app_core_survey') }}">You can also fill-in our quick survey!</a></p>
+            <p class="lead"><strong>Register now</strong> for the private beta.</p>
+            
+            <form method="post" action="{{ path('app_core_beta_signup') }}">
+                <div class="input-append">
+                    <input type="text" name="email" placeholder="john.doe@gmail.com" />
+                    <button class="btn btn-success">Register</button>
+                </div>
+            </form>
 
-    <p><a target="_blank" href="{{ path('app_core_blog_post', { slug: 'redesigning-the-staging-experience' }) }}">What's this all about?</a></p>
-
-    {# <p><a href="{{ path('app_core_demo') }}">You can also try the demo, it's free!</a></p> #}
+        </div>
+    </div>
 </div>
 
-<hr />
+<div class="container subline">
+    <p class="lead">Streamline your communication<br />with <b>automatic</b>, <b>frictionless</b> and <b>interactive</b> staging environments.</p>
+</div>
+
 
 {% include 'AppCoreBundle:Default:_marketing.html.twig' %}
+
+<div class="container subline">
+    <p class="lead">There should be some screenshots or event a screencast here.<br />We're working on it, thanks for noticing.</p>
+</div>
 {% endblock body %}
