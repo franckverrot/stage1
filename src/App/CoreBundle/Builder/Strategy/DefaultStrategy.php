@@ -115,7 +115,6 @@ class DefaultStrategy
             }
 
             $hostConfig['Binds'] = [realpath($cachePath).':/.composer/cache'];
-
         }
 
         $manager->create($buildContainer);

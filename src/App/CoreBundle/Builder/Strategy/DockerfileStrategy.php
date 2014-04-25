@@ -40,7 +40,7 @@ class DockerfileStrategy
 
     public function getCmd()
     {
-        return [];
+        return null;
     }
 
     public function build(Build $build, BuildScript $script, $timeout)
@@ -71,7 +71,7 @@ class DockerfileStrategy
         file_put_contents($workdir.'/ssh/config', $project->getSshConfig($workdir.'/ssh'));
 
         $clone =
-            ProcessBuilder::create(['git', 'clone', $project->getGitUrl(), $workdir.'/source'])
+            ProcessBuilder::create(['git', 'clone', '--quiet', '--depth', '1', '--branch', $build->getRef(), $project->getGitUrl(), $workdir.'/source'])
             ->setEnv('GIT_SSH', '/usr/bin/ssh -F '.$workdir.'/ssh/config')
             ->getProcess();
 
