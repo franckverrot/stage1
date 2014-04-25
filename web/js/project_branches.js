@@ -2,7 +2,7 @@
     var branches = $('#branches');
 
     $('#branches').on('click', '.branch button', function(event) {
-        $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
+        $(this).html('<i class="fa fa-refresh fa-spin"></i>').attr('disabled', 'disabled');
 
         var inputs = $(this).parent().find('input:hidden');
         var data = {};
@@ -21,7 +21,7 @@
             context: this
         }).fail(function(jqXHR) {
             $(this)
-                .html('<i class="icon-remove"></i> ' + jqXHR.responseJSON.message)
+                .html('<i class="fa fa-times"></i> ' + jqXHR.responseJSON.message)
                 .addClass('btn-' + jqXHR.responseJSON.class);
         }).done(function(response) {
             if (!$(this).hasClass('btn-success')) {

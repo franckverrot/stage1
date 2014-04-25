@@ -46,8 +46,8 @@
         }
 
         update_ref(build.normRef, 'schedule-form', function(el) {
-            if ($('button i', el).hasClass('icon-refresh')) {
-                $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
+            if ($('button i', el).hasClass('fa-refresh')) {
+                $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="fa fa-check"></i>');
                 setTimeout(function() { el.remove(); }, 1000);                    
             } else {
                 el.remove();
@@ -55,8 +55,8 @@
         });
 
         update_ref(build.normRef, 'kill-form', function(el) {
-            if ($('button i', el).hasClass('icon-refresh')) {
-                $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
+            if ($('button i', el).hasClass('fa-refresh')) {
+                $('button', el).removeClass().addClass('btn btn-small btn-success').html('<i class="fa fa-check"></i>');
                 setTimeout(function() { el.remove(); }, 1000);                    
             } else {
                 el.remove();
@@ -64,8 +64,8 @@
         });
 
         update_ref(build.normRef, 'cancel-form', function(el) {
-            if ($('button i', el).hasClass('icon-refresh')) {
-                $('button', el).addClass('btn btn-small btn-success').html('<i class="icon-ok"></i>');
+            if ($('button i', el).hasClass('fa-refresh')) {
+                $('button', el).addClass('btn btn-small btn-success').html('<i class="fa fa-check"></i>');
                 setTimeout(function() { el.remove(); }, 1000);                    
             } else {
                 el.remove();

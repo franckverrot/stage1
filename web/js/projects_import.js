@@ -32,14 +32,14 @@
                 .addClass('done')
                 .find('i')
                     .removeClass()
-                    .addClass('icon-ok');
+                    .addClass('fa fa-check');
 
             $('#steps li#' + data.step)
                 .removeClass('pending')
                 .addClass('running')
                     .find('i')
                         .removeClass()
-                        .addClass('icon-refresh icon-spin');
+                        .addClass('fa fa-refresh fa-spin');
         });
 
         on('project.import.finished', function(data) {
@@ -48,7 +48,7 @@
                 .addClass('done')
                 .find('i')
                     .removeClass()
-                    .addClass('icon-ok');
+                    .addClass('fa fa-check');
 
             $('#organisations button.btn-import')
                 .not('#candidate-' + data.project_github_id + ' button')
@@ -56,7 +56,7 @@
                 .not('.btn-info')
                 .attr('disabled', false);
 
-            $('#candidate-' + data.project_github_id + ' button i').removeClass().addClass('icon-ok');
+            $('#candidate-' + data.project_github_id + ' button i').removeClass().addClass('fa fa-check');
 
             try {
 
@@ -82,7 +82,7 @@
     });
 
     $('#organisations').on('click', '.candidate button.btn-join', function() {
-        $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
+        $(this).html('<i class="fa fa-refresh fa-spin"></i>').attr('disabled', 'disabled');
 
         $.ajax({
             url: $(this).data('join-url'),
@@ -96,12 +96,12 @@
                 var message = 'An unexpected error has occured (' + e.message + ')';
             }
 
-            $('button', this).html('<i class="icon-remove"></i> ' + message).addClass('btn-danger');
+            $('button', this).html('<i class="fa fa-times"></i> ' + message).addClass('btn-danger');
         }).then(function(data) {
             data = JSON.parse(data);
 
             if (data.status == 'ok') {
-                $('button', this).addClass('btn-success').html('<i class="icon-ok"></i>');
+                $('button', this).addClass('btn-success').html('<i class="fa fa-check"></i>');
 
                 var project_link = tpl_project_link({ url: data.project_url, name: data.project_full_name });
 
@@ -115,7 +115,7 @@
     });
 
     $('#organisations').on('click', '.candidate button.btn-import', function() {
-        $(this).html('<i class="icon-refresh icon-spin"></i>').attr('disabled', 'disabled');
+        $(this).html('<i class="fa fa-refresh fa-spin"></i>').attr('disabled', 'disabled');
         $('#organisations button.btn-import').attr('disabled', 'disabled');
 
         var inputs = $(this).parent().find('input:hidden');
@@ -143,7 +143,7 @@
             }
 
             $('button', this)
-                .html('<i class="icon-remove"></i> ' + message)
+                .html('<i class="fa fa-times"></i> ' + message)
                 .addClass('btn-danger');                
         });
     });
@@ -168,7 +168,7 @@
 
                 $('#projects_import_status i')
                     .removeClass()
-                    .addClass('icon-remove');
+                    .addClass('fa fa-times');
 
                 $('#projects_import_status span')
                     .text('No Symfony2 projects found in any of your organisations.');
@@ -231,9 +231,8 @@
                     .addClass('alert-success');
 
                 $('#projects_import_status i')
-                    .removeClass('icon-refresh')
-                    .removeClass('icon-spin')
-                    .addClass('icon-ok');
+                    .removeClass()
+                    .addClass('fa fa-check');
 
                 $('#projects_import_status span')
                     .text('Found ' + candidates_count + ' Symfony2 project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');

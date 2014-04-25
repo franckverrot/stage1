@@ -28,7 +28,7 @@
                             <li><a href="{{ path('app_core_demo') }}">Demo</a></li>
                             {% endif %}
                             <li class="divider-vertical"></li>
-                            <li><a href="{{ path('app_core_logout') }}"><i class="icon-off"></i></a></li>
+                            <li><a href="{{ path('app_core_logout') }}"><i class="fa fa-power-off"></i></a></li>
                             {% else %}
                             <li><a href="{{ path('app_core_auth_github_authorize') }}" id="login">Login with github</a></li>
                             {% endif %}
@@ -46,13 +46,13 @@
                 <div class="span10">
                     {% for message in app.session.flashbag.get('success') %}
                         <div class="alert alert-success">
-                            <i class="icon-ok"></i>
+                            <i class="fa fa-check"></i>
                             {{ message | raw }}
                         </div>
                     {% endfor %}
                     {% for message in app.session.flashbag.get('error') %}
                         <div class="alert alert-error">
-                            <i class="icon-ok"></i>
+                            <i class="fa fa-check"></i>
                             {{ message | raw }}
                         </div>
                     {% endfor %}

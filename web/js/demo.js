@@ -76,7 +76,7 @@ function demo_websocket_listen(websocketChannel) {
                             .addClass('done')
                             .find('i')
                                 .removeClass()
-                                .addClass('icon-ok');
+                                .addClass('fa fa-check');
 
                     $('#steps li#' + step_id)
                         .prevAll()
@@ -84,14 +84,14 @@ function demo_websocket_listen(websocketChannel) {
                             .addClass('done')
                             .find('i')
                                 .removeClass()
-                                .addClass('icon-ok')
+                                .addClass('fa fa-check')
                             .end()
                         .end()
                         .removeClass('pending')
                         .addClass('running')
                             .find('i')
                                 .removeClass()
-                                .addClass('icon-refresh icon-spin');
+                                .addClass('fa fa-refresh fa-spin');
 
                 }
             }
@@ -153,7 +153,7 @@ function demo_websocket_listen(websocketChannel) {
                 .addClass('running')
                 .find('i')
                     .removeClass()
-                    .addClass('icon-refresh icon-spin');
+                    .addClass('fa fa-refresh fa-spin');
             return;
         }
 
@@ -171,7 +171,7 @@ function demo_websocket_listen(websocketChannel) {
                     .addClass('done')
                     .find('i')
                         .removeClass()
-                        .addClass('icon-ok');
+                        .addClass('fa fa-check');
 
                 var url = Mustache.render($('#tpl-url').text(), {
                     url: message.data.build.url,

@@ -87,8 +87,8 @@
             }
 
             update_build(build.id, 'kill-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).html('<i class="icon-ok"></i>');
+                if ($('button i', el).hasClass('fa-refresh')) {
+                    $('button', el).html('<i class="fa fa-check"></i>');
                     setTimeout(function() { el.remove(); }, 1000);                    
                 } else {
                     el.remove();
@@ -96,8 +96,8 @@
             });
 
             update_build(build.id, 'cancel-form', function(el) {
-                if ($('button i', el).hasClass('icon-refresh')) {
-                    $('button', el).html('<i class="icon-ok"></i>');
+                if ($('button i', el).hasClass('fa-refresh')) {
+                    $('button', el).html('<i class="fa fa-check"></i>');
                     setTimeout(function() { el.remove(); }, 1000);                    
                 } else {
                     el.remove();

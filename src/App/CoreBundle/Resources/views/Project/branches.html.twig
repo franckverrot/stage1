@@ -34,20 +34,20 @@
                 <td class="actions" id="ref-{{ branch.normName }}-form-container">
                     {% if not branch.lastBuild or not branch.lastBuild.pending %}
                         <form id="ref-{{ branch.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
-                            <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">build</button>
+                            <button data-success-class="fa fa-refresh fa-spin" data-success-message="" class="btn btn-small">build</button>
                             <input type="hidden" name="ref" value="{{ branch.name }}" />
                         </form>
                     {% endif %}
 
                     {% if branch.lastBuild and branch.lastBuild.building %}
                         <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: branch.lastBuild.id }) }}">
-                            <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
+                            <button type="submit" class="btn btn-small btn-danger" data-success-class="fa fa-refresh fa-spin" data-success-message="">kill</button>
                         </form>
                     {% endif %}
 
                     {% if branch.lastBuild and branch.lastBuild.scheduled %}
                         <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: branch.lastBuild.id }) }}">
-                            <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
+                            <button type="submit" class="btn btn-small btn-warning" data-success-class="fa fa-refresh fa-spin" data-success-message="">cancel</button>
                         </form>
                     {% endif %}
                 </td>
@@ -68,7 +68,7 @@
 <script type="text/mustache" id="tpl-ref-kill-form">
 {% verbatim %}
 <form id="ref-{{ normName }}-kill-form" method="post" action="{{ kill_url }}">
-    <button type="submit" class="btn btn-small btn-danger" data-success-class="icon-refresh icon-spin" data-success-message="">kill</button>
+    <button type="submit" class="btn btn-small btn-danger" data-success-class="fa fa-refresh fa-spin" data-success-message="">kill</button>
 </form>
 {% endverbatim %}
 </script>
@@ -76,7 +76,7 @@
 <script type="text/mustache" id="tpl-ref-cancel-form">
 {% verbatim %}
 <form id="ref-{{ normName }}-cancel-form" method="post" action="{{ cancel_url }}">
-    <button type="submit" class="btn btn-small btn-warning" data-success-class="icon-refresh icon-spin" data-success-message="">cancel</button>
+    <button type="submit" class="btn btn-small btn-warning" data-success-class="fa fa-refresh fa-spin" data-success-message="">cancel</button>
 </form>
 {% endverbatim %}
 </script>
@@ -84,7 +84,7 @@
 <script type="text/mustache" id="tpl-ref-schedule-form">
 {% verbatim %}
 <form id="ref-{{ normName }}-schedule-form" method="post" action="{{ schedule_build_url }}">
-    <button data-success-class="icon-refresh icon-spin" data-success-message="" class="btn btn-small">build</button>
+    <button data-success-class="fa fa-refresh fa-spin" data-success-message="" class="btn btn-small">build</button>
     {{#data}}
     <input type="hidden" name="{{ name }}" value="{{ value }}" />
     {{/data}}
