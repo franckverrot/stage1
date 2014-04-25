@@ -73,3 +73,6 @@ parameters:
     stage1_builder_ip: 127.0.0.1
 
     help_site_url: http://help.stage1.dev/
+
+    stage1_enable_pr_comments: false
+    stage1_enable_commit_statuses: false
