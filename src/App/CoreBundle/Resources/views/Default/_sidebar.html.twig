@@ -1,4 +1,11 @@
+<ul class="nav nav-pills nav-stacked">
+    <li{% if app.request.attributes.get('_route') == 'app_core_projects_import' %} class="active"{% endif %}>
+        <a href="{{ path('app_core_projects_import') }}"><i class="fa fa-github"></i> Import projects from GitHub</a>
+    </li>
+</ul>
 {% if app.user and app.user.projects | length > 0 %}
+<hr />
+
 <ul class="nav nav-pills nav-stacked" id="nav-projects">
     {% for project in app.user.projects %}
     <li{% if app.request.attributes.get('current_project_id') == project.id %} class="active"{% endif %}>
@@ -13,8 +20,6 @@
     </li>
     {% endfor %}
 </ul>
-
-<hr />
 {% endif %}
 
 <script type="text/mustache" id="tpl-nb-pending-builds">
@@ -28,9 +33,3 @@
 
 <hr />
 </script>
-
-<ul class="nav nav-pills nav-stacked">
-    <li{% if app.request.attributes.get('_route') == 'app_core_projects_import' %} class="active"{% endif %}>
-        <a href="{{ path('app_core_projects_import') }}">Import projects from github</a>
-    </li>
-</ul>
