@@ -4,6 +4,7 @@ STAGE1
 * install packer (http://packer.io)
 * build the VM in `packer/dev.json`
 * install vagrant
+* install hostmanager plugin `vagrant plugin install vagrant-hostmanager`
 * customize the Vagrantfile
 * run the VM with vagrant
 * `vagrant ssh`
