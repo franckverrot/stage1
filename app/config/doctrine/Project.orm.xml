@@ -27,6 +27,7 @@
         <field name="status" column="status" type="integer" />
         <field name="env" column="env" type="text" nullable="true" />
         <field name="urls" column="urls" type="text" nullable="true" />
+        <field name="domain" column="domain" type="string" length="255" nullable="true" />
 
         <!-- @todo make not nullable when everything has been migrated -->
         <field name="dockerBaseImage" column="docker_base_image" type="string" nullable="true" />

@@ -87,6 +87,8 @@ class Project implements WebsocketRoutable
 
     protected $settings;
 
+    protected $domain;
+
     /**
      * @var string
      */
@@ -196,13 +198,32 @@ SSH;
      */
     public function getDomain()
     {
-        list($org, $project) = explode('/', $this->getGithubFullName());
+        if (null === $this->domain) {
+            list($org, $project) = explode('/', $this->getGithubFullName());
 
-        $org = preg_replace('/[^a-z0-9\-]/', '-', strtolower($org));
-        $project = preg_replace('/[^a-z0-9\-]/', '-', strtolower($project));
+            $org = preg_replace('/[^a-z0-9\-]/', '-', strtolower($org));
+            $project = preg_replace('/[^a-z0-9\-]/', '-', strtolower($project));
 
-        return $org.'.'.$project;
+            return $org.'.'.$project;            
+        }
+
+        return $this->domain;
     }
+
+    /**
+     * Set domain
+     *
+     * @param string $domain
+     * @return Project
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+    
+        return $this;
+    }
+
+
 
     /**
      * @return string

@@ -80,7 +80,7 @@ class BuildRoutingListener
         if (count($urls) > 0) {
             $this->logger->info('adding custom build URLs', ['build' => $build->getId(), 'domains' => $urls]);
 
-            foreach ($urls as $domain) {
+            foreach ($urls as $domain) {                
                 $host = $domain.'.'.$build->getHost();
                 $redis->del('frontend:'.$host);
                 $redis->rpush('frontend:'.$host, $build->getImageName(), $container_url);
