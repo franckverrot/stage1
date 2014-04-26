@@ -27,7 +27,7 @@ app/check.php
 .vagrant
 
 # Packer
-boxes/*
+packer/boxes/*
 packer_cache
 
 # Node
