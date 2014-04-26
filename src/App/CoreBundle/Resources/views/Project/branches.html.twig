@@ -3,66 +3,86 @@
 {% block body %}
 {% include 'AppCoreBundle:Project:_header.html.twig' %}
 
-<table class="table" id="project-{{ project.id }}-branches">
-    <thead>
-        <tr>
-            <th width="15%">Branch</th>
-            <th width="10%">Status</th>
-            <th width="15%">&nbsp;</th>
-            <th>&nbsp;</th>
-        </tr>
-    </thead>
-    <tbody id="branches">
-        {% for branch in project.activeBranches %}
-            <tr class="branch" id="ref-{{ branch.normName }}">
-                <td class="ctn-name">
-                    {% if branch.hasRunningBuild %}
-                    <a href="{{ branch.runningBuild.url }}">{{ branch.name }}</a>
-                    {% else %}
-                    {{ branch.name }}
-                    {% endif %}
-                </td>
-                <td class="ctn-status">
-                    {% if branch.lastBuild %}
-                        <span
-                            id="ref-{{ branch.normName }}-status"
-                            data-status="{{ branch.lastBuild.status }}"
-                            class="label label-{{ branch.lastBuild.statusLabelClass }}"
-                        >{{ branch.lastBuild.statusLabel }}</span>
-                    {% endif %}
-                </td>
-                <td class="actions" id="ref-{{ branch.normName }}-form-container">
-                    {% if not branch.lastBuild or not branch.lastBuild.pending %}
-                        <form id="ref-{{ branch.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
-                            <button data-success-class="fa fa-refresh fa-spin" data-success-message="" class="btn btn-small">build</button>
-                            <input type="hidden" name="ref" value="{{ branch.name }}" />
-                        </form>
-                    {% endif %}
+<div class="row-fluid">
+    <div class="span6">
+        <table class="table project-branches" id="project-{{ project.id }}-branches">
+            <thead>
+                <tr>
+                    <th width="25%">Branch</th>
+                    <th width="20%">Status</th>
+                    <th width="25%">&nbsp;</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody id="branches">
+                {% for branch in project.activeBranches %}
+                    <tr class="branch" id="ref-{{ branch.normName }}">
+                        <td class="ctn-name">
+                            {% if branch.hasRunningBuild %}
+                            <a href="{{ branch.runningBuild.url }}">{{ branch.name }}</a>
+                            {% else %}
+                            {{ branch.name }}
+                            {% endif %}
+                        </td>
+                        <td class="ctn-status">
+                            {% if branch.lastBuild %}
+                                <span
+                                    id="ref-{{ branch.normName }}-status"
+                                    data-status="{{ branch.lastBuild.status }}"
+                                    class="label label-{{ branch.lastBuild.statusLabelClass }}"
+                                >{{ branch.lastBuild.statusLabel }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions" id="ref-{{ branch.normName }}-form-container">
+                            {% if not branch.lastBuild or not branch.lastBuild.pending %}
+                                <form id="ref-{{ branch.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
+                                    <button data-success-class="fa fa-refresh fa-spin" data-success-message="" class="btn btn-small">build</button>
+                                    <input type="hidden" name="ref" value="{{ branch.name }}" />
+                                </form>
+                            {% endif %}
 
-                    {% if branch.lastBuild and branch.lastBuild.building %}
-                        <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: branch.lastBuild.id }) }}">
-                            <button type="submit" class="btn btn-small btn-danger" data-success-class="fa fa-refresh fa-spin" data-success-message="">kill</button>
-                        </form>
-                    {% endif %}
+                            {% if branch.lastBuild and branch.lastBuild.building %}
+                                <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: branch.lastBuild.id }) }}">
+                                    <button type="submit" class="btn btn-small btn-danger" data-success-class="fa fa-refresh fa-spin" data-success-message="">kill</button>
+                                </form>
+                            {% endif %}
 
-                    {% if branch.lastBuild and branch.lastBuild.scheduled %}
-                        <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: branch.lastBuild.id }) }}">
-                            <button type="submit" class="btn btn-small btn-warning" data-success-class="fa fa-refresh fa-spin" data-success-message="">cancel</button>
-                        </form>
-                    {% endif %}
-                </td>
-                <td class="actions" id="ref-{{ branch.normName }}-actions">
+                            {% if branch.lastBuild and branch.lastBuild.scheduled %}
+                                <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: branch.lastBuild.id }) }}">
+                                    <button type="submit" class="btn btn-small btn-warning" data-success-class="fa fa-refresh fa-spin" data-success-message="">cancel</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                        <td class="actions" id="ref-{{ branch.normName }}-actions">
 
-                    <span id="ref-{{ branch.normName }}-show-link">
-                        {% if branch.lastBuild %}
-                        <a href="{{ path('app_core_build_show', { id: branch.lastBuild.id }) }}">show last build</a>
-                        {% endif %}
-                    </span>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                            <span id="ref-{{ branch.normName }}-show-link">
+                                {% if branch.lastBuild %}
+                                <a href="{{ path('app_core_build_show', { id: branch.lastBuild.id }) }}">show last build</a>
+                                {% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="span6">
+        <div id="what-now">
+            <h3>What now?</h3>
+
+            <p>If your are lucky (and your project is a Symfony2 project), Stage1's default builder will magically build your project. If your project is too complex for our builder, then you will have to get your hand dirty. Don't worry, it's still pretty easy to get up to speed.</p>
+
+            <p>You have 2 solutions to customize the build process:</p>
+
+            <ol>
+                <li>If your project is a <strong>Symfony2</strong> project, you can use a <strong>.build.yml</strong> file. It's Stage1's very own configuration file format. Since it's YAML, it's really easy to read and write. You can <a href="http://help.stage1.io/article/customizing-a-build-with-the-build-yml-file/">read more about the .build.yml file</a> in our online help. (.build.yml support for non-Symfony2 projects is coming)</li>
+                <li>In all other cases, you will have to write a <strong>Dockerfile</strong>. See <a href="http://help.stage1.io/article/using-my-own-dockerfile/">our documentation on using Dockerfile in Stage1</a>.</li>
+            </ol>
+
+            <p>And do not forget, we are here to help. Please <a href="#feedback" data-toggle="modal"><strong>do not hesitate to contact us</strong></a>, we are more than happy to help you setup your project!</p>
+        </div>
+    </div>
+</div>
 
 
 <script type="text/mustache" id="tpl-ref-kill-form">

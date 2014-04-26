@@ -11,7 +11,6 @@ class BetaController extends Controller
     public function signupAction(Request $request)
     {
         $email = $request->get('email');
-
         $session = $request->getSession();
 
         $beta_key = md5(uniqid(mt_rand(), true));

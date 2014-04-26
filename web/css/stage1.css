@@ -1,3 +1,9 @@
+#what-now {
+    background-color: whitesmoke;
+    border-radius: 5px;
+    padding: 1em 2em;
+}
+
 .commit-hash {
     white-space: nowrap;
 }

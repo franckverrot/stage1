@@ -25,7 +25,13 @@ class DefaultController extends Controller
 
     public function dashboardAction()
     {
-        return $this->render('AppCoreBundle:Default:dashboard.html.twig');
+        $runningBuilds = $this->get('doctrine')
+            ->getRepository('Model:Build')
+            ->findRunningBuildsByUser($this->getUser());
+
+        return $this->render('AppCoreBundle:Default:dashboard.html.twig', [
+            'builds' => $runningBuilds,
+        ]);
     }
 
     # @todo move to ProjectController
