@@ -9,12 +9,13 @@ STAGE1
 * run the VM with vagrant
 * `vagrant ssh`
 * update lxc-docker
-* install daemontools + daemontools-run
-* check that rabbitmq is running
+* `sudo apt-get install daemontools daemontools-run`
+* check that rabbitmq is running, if not
 * `rm -rf /etc/init/stage1*`
 * `ps auxwww | grep stage1 | awk '{print $1}' | xargs kill`
 * `cd /vagrant`
 * `fab service.export`
 * `sudo start svscan`
+* `composer install`
 * `app/console doctrine:database:create`
 * `app/console doctrine:schema:update --force`
