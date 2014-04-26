@@ -172,7 +172,7 @@ textarea.per-line-settings {
     padding-top: 3em;
 }
 
-#feedback-compose-button {
+/*#feedback-compose-button {
     position: fixed;
     bottom: 101px;
     left: 101px;
@@ -181,6 +181,15 @@ textarea.per-line-settings {
 #feedback-compose-button a {
     font-size: 2em;
     padding: .5em;
+}
+*/
+
+#_switch_user {
+    margin-bottom: 0;
+}
+
+#feedback-form {
+    margin: 0;
 }
 
 #feedback textarea {
