@@ -7,9 +7,13 @@ category: general
 
 If you already have a working `Dockerfile` that builds a working container for your app, good news! Stage1 will automatically use it to build your staging instances.
 
-All you have to do for Stage1 to detect it is to place your `Dockerfile` at the root of your project.
+There are 3 things you need to be aware of when using a `Dockerfile`:
 
-Your application is expected to listen on port `80` of your container.
+1. Your Dockerfile must be at the root of your project.
+2. Your container is expected to listen on port `80`.
+3. You need to set an `ENTRYPOINT` or a `CMD` in your `Dockerfile`.
+
+You can see an example of a `Dockerfile` that builds and works on Stage1 in [M6Web's BabitchClient repository](https://github.com/M6Web/BabitchClient/blob/master/Dockerfile).
 
 > Read more about [the Dockerfile format](http://docs.docker.io/reference/builder/).
 {:.note.oneline}
