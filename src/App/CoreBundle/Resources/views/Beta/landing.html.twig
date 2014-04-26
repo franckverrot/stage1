@@ -3,8 +3,16 @@
 {% block footer %}{% endblock %}
 
 {% block body %}
+
+<div class="row-fluid jumbotron">
+    <div class="container">
+        <div class="span6 offset3">
+            <h2>Thank you!</h2>
+        </div>
+    </div>
+</div>
+
 <div class="row-fluid subline">
-    <h1>Thank you!</h1>
     {% if beta.tries >= 10 %}
     <p class="lead">Ok we get it, you REALLY want to use <strong>Stage1</strong>, thanks!</p>
 

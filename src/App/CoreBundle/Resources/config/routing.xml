@@ -38,7 +38,7 @@
     </route>
 
     <route id="app_core_waiting_list" pattern="/landing" methods="GET">
-        <default key="_controller">AppCoreBundle:WaitingList:index</default>
+        <default key="_controller">AppCoreBundle:Beta:landing</default>
     </route>
 
     <route id="app_core_beta_enter" pattern="/beta/{betaKey}" methods="GET">
