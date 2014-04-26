@@ -25,7 +25,10 @@ app/check.php
 
 # Vagrant
 .vagrant
-boxes/
+
+# Packer
+boxes/*
+packer_cache
 
 # Node
 npm-debug.log
