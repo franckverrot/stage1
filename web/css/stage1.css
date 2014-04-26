@@ -4,6 +4,17 @@
     padding: 1em 2em;
 }
 
+#organisations .ctn-button {
+    text-align: right;
+}
+
+#organisations fieldset {
+    margin: 0 0 1em 0;
+    background-color: whitesmoke;
+    padding: 1em;
+    border-radius: 5px;
+}
+
 .commit-hash {
     white-space: nowrap;
 }
