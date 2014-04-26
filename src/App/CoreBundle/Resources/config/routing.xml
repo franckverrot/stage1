@@ -50,7 +50,7 @@
     </route>
 
     <route id="app_core_beta_landing" pattern="/beta" methods="GET">
-        <default key="_controller">AppCoreBundle:Beta:landing</default>
+        <default key="_controller">AppCoreBundle:Default:index</default>
     </route>
 
     <route id="app_core_primus_auth" pattern="/primus/auth" methods="POST">
