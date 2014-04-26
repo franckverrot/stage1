@@ -285,6 +285,7 @@ class ProjectController extends Controller
 
         return $this->render('AppCoreBundle:Project:branches.html.twig', [
             'project' => $project,
+            'builds_count' => count($builds),
         ]);
     }
 

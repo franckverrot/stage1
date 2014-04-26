@@ -67,6 +67,7 @@
         </table>
     </div>
     <div class="span6">
+        {% if builds_count < 20 %}
         <div id="what-now">
             <h3>What now?</h3>
 
@@ -81,6 +82,7 @@
 
             <p>And do not forget, we are here to help. Please <a href="#feedback" data-toggle="modal"><strong>do not hesitate to contact us</strong></a>, we are more than happy to help you setup your project!</p>
         </div>
+        {% endif %}
     </div>
 </div>
 
