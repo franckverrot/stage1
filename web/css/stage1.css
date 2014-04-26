@@ -4,6 +4,15 @@
     padding: 1em 2em;
 }
 
+#projects-import-filter {
+    width: 97%;
+    display: none;
+}
+
+#organisations .ctn-name {
+    width: 75%;
+}
+
 #organisations .ctn-button {
     text-align: right;
 }

@@ -7,6 +7,31 @@ var github_api_base_url = '{{ github_api_base_url }}';
 var import_url = '{{ path('app_core_project_import') }}';
 var existing_projects = {{ existing_projects | json_encode | raw }};
 find_repositories();
+
+$('#projects-import-filter').on('keyup', function() {
+    var term = $(this).val();
+
+    console.log('filtering on "' + term + '"');
+
+    $('[data-full-name]').each(function(i, el) {
+        var fullName = $(el).data('full-name');
+        var re = new RegExp('(' + term.toLowerCase() + ')', 'i');
+        if (term === '' || null !== fullName.match(re)) {
+            var ctnName = $(el).find('.ctn-name strong');
+            ctnName.html(term === '' ? fullName : fullName.replace(re, '<em>$1</em>'));
+            $(el).attr('data-filtered', 'no');
+            $(el).show();
+            $(el).parents('fieldset').show();
+        } else {
+            $(el).attr('data-filtered', 'yes');
+            $(el).hide();
+        }
+
+        if ($(el).parents('fieldset').find('[data-filtered=no]').length === 0) {
+            $(el).parents('fieldset').hide();
+        }
+    });
+});
 </script>
 {% endblock javascripts %}
 
@@ -17,7 +42,8 @@ find_repositories();
 </div>
 
 <div class="row-fluid">
-    <div class="span6" id="organisations">
+    <div class="span5" id="organisations">
+        <input type="text" id="projects-import-filter" placeholder="Filter projects..." />
     </div>
     <div class="span6" id="progress">
     </div>
@@ -69,7 +95,7 @@ find_repositories();
 
 <script type="text/mustache" id="tpl-project">
 {% verbatim %}
-<tr class="candidate" id="candidate-{{ github_id }}">
+<tr class="candidate" id="candidate-{{ github_id }}" data-full-name="{{ name }}" data-filtered="no">
     <td class="ctn-name"><strong>{{ name }}</strong></td>
     <td class="ctn-button">
         <button class="btn btn-import">import</button>
@@ -83,7 +109,7 @@ find_repositories();
 
 <script type="text/mustache" id="tpl-project-joinable">
 {% verbatim %}
-<tr class="candidate">
+<tr class="candidate" id="candidate-{{ github_id }}" data-full-name="{{ name }}" data-filtered="no">
     <td class="ctn-name">
         <strong>{{ name }}</strong>
         <div class="help">users: {{ users }}</div>
@@ -97,13 +123,13 @@ find_repositories();
 
 <script type="text/mustache" id="tpl-project-existing">
 {% verbatim %}
-<tr class="candidate">
+<tr class="candidate" id="candidate-{{ github_id }}" data-full-name="{{ name }}" data-filtered="no">
     <td class="ctn-name">
         <strong>{{ name }}</strong>
         <div class="help">users: {{ users }}</div>
     </td>
     <td class="ctn-button">
-        <button class="btn btn-info" disabled="disabled"><i class="fa fa-check"></i> imported</button>
+        
     </td>
 </tr>
 {% endverbatim %}

@@ -73,11 +73,9 @@ class Github
         return $this->projectsCache[$fullName];
     }
 
-    private function getComposerRequests(Client $client, Response $response)
+    public function fetchRepos($orgResponse)
     {
-        $requests = [];
-
-        foreach ($response->json() as $repo) {
+        foreach ($orgResponse->json() as $repo) {
             if (!$repo['permissions']['admin']) {
                 $this->addNonImportableProject($repo['full_name'], 'no admin rights on the project');
                 continue;
@@ -85,19 +83,8 @@ class Github
 
             $this->cacheProjectInfo($repo);
 
-            $request = $client->get(
-                [$repo['contents_url'], ['path' => 'composer.json']],
-                [
-                    'Accept' => 'application/vnd.github.v3.raw',
-                    'X-Full-Name' => $repo['full_name']
-                ],
-                ['exceptions' => false]
-            );
-
-            $requests[] = $request;
+            $this->addImportableProject($repo['full_name']);
         }
-
-        return $requests;
     }
 
     public function discover(User $user)
@@ -123,7 +110,7 @@ class Github
         $composerRequests = [];
 
         foreach ($orgResponses as $orgResponse) {
-            $composerRequests = array_merge($composerRequests, $this->getComposerRequests($client, $orgResponse));
+            $this->fetchRepos($orgResponse);
 
             if ($orgResponse->hasHeader('link')) {
                 $link = $orgResponse->getHeader('link');
@@ -140,41 +127,10 @@ class Github
                     $pagesResponses = $client->send($pagesRequests);
 
                     foreach ($pagesResponses as $pagesResponse) {
-                        $composerRequests = array_merge($composerRequests, $this->getComposerRequests($client, $pagesResponse));
+                        $this->fetchRepos($pagesResponse);
                     }
                 }
             }
-        }
-
-        $client->send($composerRequests);
-
-        $allowedPackages = ['symfony/symfony', 'laravel/laravel'];
-
-        foreach ($composerRequests as $repoRequest) {
-            $fullName = (string) $repoRequest->getHeader('x-full-name');
-            $repoResponse = $repoRequest->getResponse();
-
-            if ($repoResponse->getStatusCode() !== 200) {
-                $this->addNonImportableProject($fullName, 'no composer.json found');
-                continue;
-            }
-
-            $data = $repoResponse->json();
-
-            $hasSatisfactoryPackage = false;
-
-            foreach ($allowedPackages as $name) {
-                if (isset($data['require']) && isset($data['require'][$name])) {
-                    $hasSatisfactoryPackage = true;
-                }
-            }
-
-            if (!isset($data['require']) || !$hasSatisfactoryPackage) {
-                $this->addNonImportableProject($fullName, 'Satisfactory package not found in composer.json');
-                continue;
-            }
-
-            $this->addImportableProject($fullName);
         }
 
         return $this->getImportableProjects();

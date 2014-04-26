@@ -235,8 +235,10 @@
                     .addClass('fa fa-check');
 
                 $('#projects_import_status span')
-                    .text('Found ' + candidates_count + ' Symfony2 project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');
+                    .text('Found ' + candidates_count + ' project' + (candidates_count != 1 ? 's' : '') + ' in ' + organisations_count + ' organisation' + (organisations_count != 1 ? 's' : '') + '.');
             }
+
+            $('#projects-import-filter').show().focus();
         });
     };
 })(jQuery, window);
