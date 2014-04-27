@@ -64,7 +64,7 @@ class SecurityController extends Controller
         ]));
     }
 
-    private function registerGithubUser(Request $request, $accessToken)
+    private function registerGithubUser(Request $request, $accessToken, $scope)
     {
         $client = $this->container->get('app_core.client.github');
         $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
@@ -83,6 +83,8 @@ class SecurityController extends Controller
             $user->setPublicKey($keys['public']);
             $user->setPrivateKey($keys['private']);
         }
+
+        $user->setAccessTokenScope($scope);
 
         if (strlen($user->getEmail()) === 0) {
             $githubRequest = $client->get('/user/emails');
@@ -132,9 +134,9 @@ class SecurityController extends Controller
         }
     }
 
-    public function authorizeAction(Request $request)
+    public function authorizeAction(Request $request, $scope)
     {
-        if ($this->container->getParameter('kernel.environment') === 'dev') {
+        if (false && $this->container->getParameter('kernel.environment') === 'dev') {
             if (null !== ($user = $this->getDoctrine()->getRepository('Model:User')->findOneByUsername('ubermuda'))) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.context')->setToken($token);
@@ -154,13 +156,19 @@ class SecurityController extends Controller
             }
         }
 
+        $session = $this->get('session');
+
+        if (null !== $backTo = $request->get('back_to')) {
+            $session->set('oauth/back_to', $backTo);
+        }
+
         $token = $this->get('form.csrf_provider')->generateCsrfToken('github');
-        $this->get('session')->set('csrf_token', $token);
+        $session->set('csrf_token', $token);
 
         $payload = [
             'client_id' => $this->container->getParameter('github_client_id'),
             'redirect_uri' => $this->generateUrl('app_core_auth_github_callback', [], true),
-            'scope' => 'repo,user:email',
+            'scope' => $scope,
             'state' => $token,
         ];
 
@@ -204,12 +212,19 @@ class SecurityController extends Controller
             return $this->redirect($this->generateUrl('app_core_homepage'));
         }
 
-        $user = $this->registerGithubUser($request, $response->access_token);
+        $user = $this->registerGithubUser($request, $response->access_token, $response->scope);
 
         if ($user->getStatus() === User::STATUS_WAITING_LIST) {
             $request->getSession()->set('waiting_list', $user->getWaitingList());
 
             return $this->redirect($this->generateUrl('app_core_waiting_list'));
+        }
+
+        $session = $this->get('session');
+
+        if (null !== $backTo = $session->get('oauth/back_to')) {
+            $session->remove('oauth/back_to');
+            return $this->redirect($backTo);
         }
 
         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());

@@ -42,9 +42,18 @@ class User implements UserInterface, \Serializable
 
     protected $privateKey;
 
+    protected $accessTokenScope;
+
     public function __toString()
     {
         return (string) $this->username;
+    }
+
+    public function hasAccessTokenScope($name)
+    {
+        $scopes = explode(',', $this->getAccessTokenScope());
+
+        return false !== array_search($name, $scopes);
     }
 
     public function serialize()
@@ -440,5 +449,28 @@ class User implements UserInterface, \Serializable
     public function getPrivateKey()
     {
         return $this->privateKey;
+    }
+
+    /**
+     * Set accessTokenScope
+     *
+     * @param string $accessTokenScope
+     * @return User
+     */
+    public function setAccessTokenScope($accessTokenScope)
+    {
+        $this->accessTokenScope = $accessTokenScope;
+    
+        return $this;
+    }
+
+    /**
+     * Get accessTokenScope
+     *
+     * @return string 
+     */
+    public function getAccessTokenScope()
+    {
+        return $this->accessTokenScope;
     }
 }
