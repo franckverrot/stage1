@@ -301,6 +301,12 @@ class Import
 
     private function doWebhook(Project $project)
     {
+        $user = $this->getUser();
+
+        if (!($user->hasAccessTokenScope('public_repo') || $user->hasAccessTokenScope('repo'))) {
+            return;
+        }
+
         $githubHookUrl = $this->generateUrl('app_core_hooks_github', [], true);
 
         # @todo the fuck is this?

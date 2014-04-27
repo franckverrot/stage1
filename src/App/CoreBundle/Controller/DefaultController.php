@@ -35,7 +35,7 @@ class DefaultController extends Controller
     }
 
     # @todo move to ProjectController
-    public function projectsImportAction()
+    public function projectsImportAction(Request $request)
     {
         $existingProjects = [];
 
@@ -43,18 +43,52 @@ class DefaultController extends Controller
             $existingProjects[$project->getFullName()] = $this->generateUrl('app_core_project_show', ['id' => $project->getId()]);
         }
 
+        $session = $this->get('session');
+
+        if (null === $request->get('autostart') || $request->get('autostart')) {
+            $autostart = $session->get('projects_import/autostart', $request->get('autostart'));
+        } else {
+            $autostart = null;
+        }
+
+        $session->remove('projects_import/autostart');
+
         return $this->render('AppCoreBundle:Default:projectsImport.html.twig', [
             'access_token' => $this->getUser()->getAccessToken(),
             'existing_projects' => $existingProjects,
-            'github_api_base_url' => $this->container->getParameter('github_api_base_url')
+            'github_api_base_url' => $this->container->getParameter('github_api_base_url'),
+            'autostart' => $autostart,
         ]);
     }
 
     # @todo move to ProjectController
     public function projectImportAction(Request $request)
     {
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $infos = $request->request->all();
+
+        // $client = $this->get('app_core.client.github');
+        // $client->setDefaultOption('headers/Authorization', 'token '.$user->getAccessToken());
+
+        // $request = $client->get('/repos/'.$infos['github_full_name']);
+        // $data = $request->send()->json();
+
+        // $isPrivate = $data['private'];
+
+        if (!$request->get('force') && !($user->hasAccessTokenScope('repo') || $user->hasAccessTokenScope('public_repo'))) {
+            $session->set('projects_import/autostart', $infos['github_id']);
+
+            return new JsonResponse(json_encode([
+                'ask_scope' => true,
+                'github_id' => $infos['github_id'],
+            ]));
+        }
+
+        $session->remove('projects_import/autostart');
+
         $this->get('old_sound_rabbit_mq.project_import_producer')->publish(json_encode([
-            'request' => $request->request->all(),
+            'request' => $infos,
             'user_id' => $this->getUser()->getId(),
             'websocket_channel' => $this->getUser()->getChannel(),
             'session_id' => $request->getSession()->getId(),

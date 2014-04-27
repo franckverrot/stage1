@@ -6,12 +6,11 @@ var github_access_token = '{{ access_token }}';
 var github_api_base_url = '{{ github_api_base_url }}';
 var import_url = '{{ path('app_core_project_import') }}';
 var existing_projects = {{ existing_projects | json_encode | raw }};
-find_repositories();
+
+setTimeout(function() { find_repositories({{ autostart }}); }, 1000);
 
 $('#projects-import-filter').on('keyup', function() {
     var term = $(this).val();
-
-    console.log('filtering on "' + term + '"');
 
     $('[data-full-name]').each(function(i, el) {
         var fullName = $(el).data('full-name');
@@ -54,6 +53,24 @@ $('#projects-import-filter').on('keyup', function() {
         <input type="text" id="projects-import-filter" placeholder="Filter projects..." />
     </div>
     <div class="span6" id="progress">
+    </div>
+</div>
+
+<div id="ask_scope" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Install WebHook?</h3>
+    </div>
+    <div class="modal-body">
+        <p>Stage1 doesn't have enough permissions to install the build WebHook.</p>
+
+        <p>The WebHook enables automated builds whenever you push to your GitHub repository. In order to install the WebHook, you need to grant Stage1 the <strong>public_repo</strong> scope, that will grant us read and write permissions to all your public repositories.<p>
+
+        <p>Use of this WebHook is optional, if you'd rather trigger builds manually, that's ok too (although you're missing much of what makes Stage1 awesome in the first place).</p>
+    </div>
+    <div class="modal-footer">
+        <a id="grant" href="{{ path('app_core_auth_github_authorize', { scope: 'user:email,public_repo', back_to: path('app_core_projects_import') }) }}" class="btn btn-primary">Grant permission and install WebHook</a>
+        <button class="btn" id="btn-import-force">Continue without the WebHook</button>
     </div>
 </div>
 

@@ -42,6 +42,10 @@
 
         <service id="app_core.client.github" class="Guzzle\Http\Client">
             <argument>%github_api_base_url%</argument>
+            <call method="setDefaultOption">
+                <argument>headers/Accept</argument>
+                <argument>application/vnd.github.v3</argument>
+            </call>
         </service>
 
         <service id="app_core.docker.http_client" class="Docker\Http\Client">

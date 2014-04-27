@@ -114,11 +114,11 @@
         });
     });
 
-    $('#organisations').on('click', '.candidate button.btn-import', function() {
-        $(this).html('<i class="fa fa-refresh fa-spin"></i>').attr('disabled', 'disabled');
+    function doImport(button, force) {
+        $(button).html('<i class="fa fa-refresh fa-spin"></i>').attr('disabled', 'disabled');
         $('#organisations button.btn-import').attr('disabled', 'disabled');
 
-        var inputs = $(this).parent().find('input:hidden');
+        var inputs = $(button).parent().find('input:hidden');
         var data = {};
 
         inputs.each(function(index, item) {
@@ -129,26 +129,47 @@
         var tpl_project_link = Mustache.compile($('#tpl-project-link').text());
 
         $.ajax({
-            url: import_url,
+            url: import_url + '?force=' + (force ? '1' : '0'),
             type: 'POST',
             dataType: 'json',
             data: data,
-            context: $(this).parent().parent()
+            context: $(button).parent().parent()
+        }).then(function(data) {
+            var data = JSON.parse(data);
+
+            console.log(data);
+
+            if (typeof(data.ask_scope) !== 'undefined' && data.ask_scope) {
+                $('#btn-import-force').data('target', data.github_id);
+                $('#ask_scope').modal();
+            }
         }).fail(function(jqXHR, textStatus, errorThrown) {
-            // @todo restore disabled state on buttons
             try {
                 var message = jqXHR.responseJSON.message;
             } catch (e) {
                 var message = 'An unexpected error has occured (' + e.message + ')';
             }
 
-            $('button', this)
+            $('button', button)
                 .html('<i class="fa fa-times"></i> ' + message)
                 .addClass('btn-danger');                
+
+            $('#organisations button.btn-import')
+                .not('.btn-danger')
+                .attr('disabled', null);            
         });
+    }
+
+    $('#btn-import-force').on('click', function() {
+        doImport($('.btn-import', '#candidate-' + $(this).data('target')), true);
+        $('#ask_scope').modal('hide');
     });
 
-    window.find_repositories = function() {
+    $('#organisations').on('click', '.candidate button.btn-import', function() {
+        doImport(this, false);
+    });
+
+    window.find_repositories = function(autostart) {
         var tpl_project = Mustache.compile($('#tpl-project').text());
         var tpl_project_existing = Mustache.compile($('#tpl-project-existing').text());
         var tpl_project_joinable = Mustache.compile($('#tpl-project-joinable').text());
@@ -239,6 +260,10 @@
             }
 
             $('#projects-import-filter').show().focus();
+
+            if (autostart && $('#candidate-' + autostart).length > 0) {
+                $('.btn-import', '#candidate-' + autostart).trigger('click');
+            }
         });
     };
 })(jQuery, window);
