@@ -10,7 +10,11 @@
     <div class="container-narrow">
         <p class="lead">Congratulations, you have been selected to enter Stage1's <strong>very private beta</strong>. You will be able to use every feature of Stage1, unlimited and free of charge, <strong>even for private projects</strong>. Isn't that great?</p>
 
-        <p class="lead">Accessing Stage1 requires a <a href="https://github.com/"><i class="fa fa-github"></i> Github</a> account, and that your projects be hosted at Github. We will ask for <strong>read and write access to your repositories</strong>. This is because Stage1 automatically installs a <a href="https://help.github.com/articles/managing-deploy-keys">Deploy Key</a> and a <a href="https://help.github.com/articles/creating-webhooks">Webhook</a> to the projects you import.</p>
+        <p class="lead">Accessing Stage1 requires a <a href="https://github.com/"><i class="fa fa-github"></i> Github</a> account, and that your projects be hosted at Github. You can import an unlimited number of projects, both public or private.</p>
+
+        <p class="lead">In order to import private projects, you will need to grant Stage1 the <strong>repo</strong> scope, which includes read and write permissions for all your projects (both public and private).</p>
+
+        <p class="lead">If you wish to use Stage1 with public projects only, we will ask for the <strong>public_repo</strong> scope, which allows us to configure the Stage1 WebHook automatically in your projects. Use of this WebHook is optional, so you don't have to grant the <strong>public_repo</strong> scope if you do not wish to.</p>
 
         <p id="get-on-stage"><a class="btn btn-large btn-success" href="{{ path('app_core_auth_github_authorize') }}">Get on stage!</a></p>
     </div>
