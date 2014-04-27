@@ -141,6 +141,8 @@
 
             if (typeof(data.ask_scope) !== 'undefined' && data.ask_scope) {
                 $('#btn-import-force').data('target', data.github_id);
+                var link = $('#ask_scope a#grant');
+                link.attr('href', link.attr('href').replace('%autostart%', data.github_id));
                 $('#ask_scope').modal();
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {

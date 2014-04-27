@@ -56,9 +56,8 @@ $('#projects-import-filter').on('keyup', function() {
     </div>
 </div>
 
-<div id="ask_scope" class="modal hide fade">
+<div id="ask_scope" class="modal hide fade" data-backdrop="static">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
         <h3>Install WebHook?</h3>
     </div>
     <div class="modal-body">
@@ -69,7 +68,7 @@ $('#projects-import-filter').on('keyup', function() {
         <p>Use of this WebHook is optional, if you'd rather trigger builds manually, that's ok too (although you're missing much of what makes Stage1 awesome in the first place).</p>
     </div>
     <div class="modal-footer">
-        <a id="grant" href="{{ path('app_core_auth_github_authorize', { scope: 'user:email,public_repo', back_to: path('app_core_projects_import') }) }}" class="btn btn-primary">Grant permission and install WebHook</a>
+        <a id="grant" href="{{ path('app_core_auth_github_authorize', { scope: 'user:email,public_repo', back_to: path('app_core_projects_import') }) }}?autostart=%autostart%" class="btn btn-primary">Grant permission and install WebHook</a>
         <button class="btn" id="btn-import-force">Continue without the WebHook</button>
     </div>
 </div>

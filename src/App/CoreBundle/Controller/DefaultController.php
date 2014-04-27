@@ -45,11 +45,13 @@ class DefaultController extends Controller
 
         $session = $this->get('session');
 
-        if (null === $request->get('autostart') || $request->get('autostart')) {
-            $autostart = $session->get('projects_import/autostart', $request->get('autostart'));
-        } else {
-            $autostart = null;
-        }
+        $autostart = $request->get('autostart');
+
+        // if (null === $request->get('autostart') || $request->get('autostart')) {
+        //     $autostart = $session->get('projects_import/autostart', $request->get('autostart'));
+        // } else {
+        //     $autostart = null;
+        // }
 
         $session->remove('projects_import/autostart');
 
