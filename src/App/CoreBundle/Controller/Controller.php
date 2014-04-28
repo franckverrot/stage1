@@ -128,7 +128,7 @@ class Controller extends BaseController
             throw $this->createNotFoundException('Build not found');
         }
 
-        if ($this->getUser()->getUsername() === 'ubermuda') {
+        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             return $build;
         }
 
@@ -222,7 +222,7 @@ class Controller extends BaseController
             throw $this->createNotFoundException('Project not found');
         }
 
-        if ($this->getUser() && $this->getUser()->getUsername() === 'ubermuda') {
+        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             return $project;
         }
 
