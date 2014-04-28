@@ -24,7 +24,6 @@ class Controller extends BaseController
 
         $client = $this->container->get('app_core.client.github');
         $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
-        $client->setDefaultOption('headers/Accept', 'application/vnd.github.v3');
 
         $request = $client->get(['/repos/{owner}/{repo}/git/refs/heads', [
             'owner' => $project->getGithubOwnerLogin(),

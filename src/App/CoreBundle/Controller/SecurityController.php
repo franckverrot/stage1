@@ -214,6 +214,10 @@ class SecurityController extends Controller
 
         $user = $this->registerGithubUser($request, $response->access_token, $response->scope);
 
+        if ($user->hasPrivateProjects() && !$user->hasAccessTokenScope('repo')) {
+            return $this->redirect($this->generateUrl('app_core_auth_github_authorize', ['scope' => 'user:email,repo']));
+        }
+
         if ($user->getStatus() === User::STATUS_WAITING_LIST) {
             $request->getSession()->set('waiting_list', $user->getWaitingList());
 

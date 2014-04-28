@@ -49,6 +49,17 @@ class User implements UserInterface, \Serializable
         return (string) $this->username;
     }
 
+    public function hasPrivateProjects()
+    {
+        foreach ($this->getProjects() as $project) {
+            if ($project->getGithubPrivate()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function hasAccessTokenScope($name)
     {
         $scopes = explode(',', $this->getAccessTokenScope());
