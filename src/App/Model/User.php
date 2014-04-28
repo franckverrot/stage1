@@ -44,6 +44,8 @@ class User implements UserInterface, \Serializable
 
     protected $accessTokenScope;
 
+    protected $betaSignup;
+
     public function __toString()
     {
         return (string) $this->username;
@@ -492,5 +494,28 @@ class User implements UserInterface, \Serializable
     public function getAccessTokenScope()
     {
         return $this->accessTokenScope;
+    }
+
+    /**
+     * Set betaSignup
+     *
+     * @param \App\Model\BetaSignup $betaSignup
+     * @return User
+     */
+    public function setBetaSignup(\App\Model\BetaSignup $betaSignup = null)
+    {
+        $this->betaSignup = $betaSignup;
+    
+        return $this;
+    }
+
+    /**
+     * Get betaSignup
+     *
+     * @return \App\Model\BetaSignup 
+     */
+    public function getBetaSignup()
+    {
+        return $this->betaSignup;
     }
 }

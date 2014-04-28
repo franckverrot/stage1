@@ -28,5 +28,10 @@
                 <order-by-field name="githubFullName" direction="ASC" />
             </order-by>
         </many-to-many>
+
+        <many-to-one field="betaSignup" target-entity="App\Model\BetaSignup">
+            <cascade><persist /></cascade>
+            <join-column name="beta_signup_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
     </entity>
 </doctrine-mapping>

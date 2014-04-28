@@ -52,8 +52,10 @@ class BetaController extends Controller
 
         $betaSignup = $repo->findByBetaKey($betaKey);
 
+        $this->get('session')->set('beta_signup', $betaSignup->getId());
+
         if (!$betaSignup) {
-            // return $this->redirect($this->generateUrl('app_core_homepage'));
+            return $this->redirect($this->generateUrl('app_core_homepage'));
         }
 
         $request->getSession()->set('beta_key', $betaKey);

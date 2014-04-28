@@ -112,6 +112,11 @@ class SecurityController extends Controller
             }
         }
 
+        if (null !== $id = $this->get('session')->get('beta_signup')) {
+            $betaSignup = $this->get('doctrine')->getRepository('Model:BetaSignup')->find($id);
+            $user->setBetaSignup($betaSignup);
+        }
+
         $user->setLastLoginAt(new DateTime());
         $user->setAccessToken($accessToken);
 
