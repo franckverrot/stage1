@@ -84,7 +84,7 @@ class SecurityController extends Controller
             $user->setPrivateKey($keys['private']);
         }
 
-        $user->setAccessTokenScope($scope);
+        $user->addAccessTokenScopes(explode(',', $scope));
 
         if (strlen($user->getEmail()) === 0) {
             $githubRequest = $client->get('/user/emails');
@@ -220,7 +220,6 @@ class SecurityController extends Controller
 
         if ($user->getStatus() === User::STATUS_WAITING_LIST) {
             $request->getSession()->set('waiting_list', $user->getWaitingList());
-
             return $this->redirect($this->generateUrl('app_core_waiting_list'));
         }
 

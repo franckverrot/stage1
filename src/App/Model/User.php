@@ -60,6 +60,15 @@ class User implements UserInterface, \Serializable
         return false;
     }
 
+    public function addAccessTokenScopes($scopes)
+    {
+        $hasScopes = explode(',', $this->getAccessTokenScope());
+        $hasScopes = array_merge($hasScopes, $scopes);
+        $hasScopes = array_unique($hasScopes);
+
+        $this->setAccessTokenScope(implode(',', $hasScopes));
+    }
+
     public function hasAccessTokenScope($name)
     {
         $scopes = explode(',', $this->getAccessTokenScope());
