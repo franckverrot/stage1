@@ -84,7 +84,8 @@ class SecurityController extends Controller
             $user->setPrivateKey($keys['private']);
         }
 
-        $user->addAccessTokenScopes(explode(',', $scope));
+        // $user->addAccessTokenScopes(explode(',', $scope));
+        $user->setAccessTokenScope($scope);
 
         if (strlen($user->getEmail()) === 0) {
             $githubRequest = $client->get('/user/emails');
