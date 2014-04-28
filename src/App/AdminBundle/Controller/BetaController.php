@@ -53,9 +53,20 @@ class BetaController extends Controller
         return $this->redirect($this->generateUrl('app_admin_beta_signups'));
     }
 
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $signups = $this->getDoctrine()->getRepository('Model:BetaSignup')->findBy([], ['createdAt' => 'DESC']);
+        $criteria = [];
+
+        if (!$request->get('all')) {
+            $criteria['status'] = BetaSignup::STATUS_DEFAULT;
+        }
+
+        $orderBy = ['createdAt' => 'DESC'];
+
+        $signups = $this
+            ->getDoctrine()
+            ->getRepository('Model:BetaSignup')
+            ->findBy($criteria, $orderBy);
 
         return $this->render('AppAdminBundle:Beta:index.html.twig', ['signups' => $signups]);
     }
