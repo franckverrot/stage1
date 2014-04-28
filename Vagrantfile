@@ -9,7 +9,7 @@ $script = <<EOF
 # /vagrant/app/console doctrine:database:create
 # /vagrant/app/console doctrine:schema:update --force
 # /vagrant/app/console assetic:dump
-# /vagrant/app/console php
+# /vagrant/app/console stage1:demo:setup
 # bundle install
 # fab upstart_export
 # sudo restart stage1
