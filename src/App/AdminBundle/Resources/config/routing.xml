@@ -32,6 +32,10 @@
         <default key="_controller">AppAdminBundle:Beta:index</default>
     </route>
 
+    <route id="app_admin_beta_delete" pattern="/beta/{id}/delete" methods="POST">
+        <default key="_controller">AppAdminBundle:Beta:delete</default>
+    </route>
+
     <route id="app_admin_docker_containers" pattern="/docker/containers" methods="GET">
         <default key="_controller">AppAdminBundle:Docker\Container:index</default>
     </route>

@@ -9,6 +9,12 @@ $('table').on('submit', 'form.email-send', function(event) {
         event.preventDefault();
     }
 });
+
+$('table').on('submit', 'form.beta-delete', function(event) {
+    if (!confirm('Delete beta signup?')) {
+        event.preventDefault();
+    }
+});
 </script>
 {% endblock %}
 
@@ -51,6 +57,10 @@ $('table').on('submit', 'form.email-send', function(event) {
                     <button class="btn btn-danger"><strong>RE</strong>-send email</button>
                 </form>
                 {% endif %}
+
+                <form class="beta-delete" method="post" action="{{ path('app_admin_beta_delete', { id: signup.id }) }}">
+                    <button class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+                </form>
             </td>
         </tr>
         {% endfor %}

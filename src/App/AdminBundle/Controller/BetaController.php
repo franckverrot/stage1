@@ -37,6 +37,22 @@ class BetaController extends Controller
         return $this->redirect($this->generateUrl('app_admin_beta_signups'));
     }
 
+    public function deleteAction(Request $request, $id)
+    {
+
+        $em = $this->get('doctrine')->getManager();
+        $beta = $em->getRepository('Model:BetaSignup')->find($id);
+
+        if ($beta) {
+            $em->remove($beta);
+            $em->flush();
+        }
+
+        $this->getRequest()->getSession()->getFlashBag()->add('success', 'beta signup deleted');
+
+        return $this->redirect($this->generateUrl('app_admin_beta_signups'));
+    }
+
     public function indexAction()
     {
         $signups = $this->getDoctrine()->getRepository('Model:BetaSignup')->findBy([], ['createdAt' => 'DESC']);
