@@ -47,4 +47,3 @@ payload/
 *.pyc
 output-vmware
 .DS_Store
-Gemfile.lock
