@@ -75,6 +75,8 @@ class SecurityController extends Controller
 
         $result = $githubResponse->json();
 
+        // var_dump($result); die;
+
         if (null === ($user = $this->getDoctrine()->getRepository('Model:User')->findOneByGithubId($result['id']))) {
             $user = User::fromGithubResponse($result);
             $user->setStatus(User::STATUS_WAITING_LIST);
@@ -135,7 +137,7 @@ class SecurityController extends Controller
         }
     }
 
-    public function authorizeAction(Request $request, $scope)
+    public function authorizeAction(Request $request, $scopes = null)
     {
         if (false && $this->container->getParameter('kernel.environment') === 'dev') {
             if (null !== ($user = $this->getDoctrine()->getRepository('Model:User')->findOneByUsername('ubermuda'))) {
@@ -169,9 +171,12 @@ class SecurityController extends Controller
         $payload = [
             'client_id' => $this->container->getParameter('github_client_id'),
             'redirect_uri' => $this->generateUrl('app_core_auth_github_callback', [], true),
-            'scope' => $scope,
             'state' => $token,
         ];
+
+        if (strlen($scopes) > 0) {
+            $payload['scope'] = $scopes;
+        }
 
         return $this->redirect($this->container->getParameter('github_base_url').'/login/oauth/authorize?'.http_build_query($payload));
     }
@@ -193,30 +198,40 @@ class SecurityController extends Controller
             'code' => $code,
         ];
 
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'content' => http_build_query($payload),
-                'header' => "Content-Type: application/x-www-form-urlencoded\r\n".
-                            "Accept: application/json\r\n"
+        $client = $this->get('app_core.client.github');
+        $client->setDefaultOption('headers/Accept', 'application/json');
 
-            ]
-        ]);
+        $githubBaseUrl = $this->container->getParameter('github_base_url');
+        $accessTokenRequest = $client->post($githubBaseUrl.'/login/oauth/access_token');
+        $accessTokenRequest->setBody(http_build_query($payload));
 
-        # @todo error management
-        $accessTokenUrl = $this->container->getParameter('github_base_url').'/login/oauth/access_token';
-        $response = json_decode(file_get_contents($accessTokenUrl, false, $context));
+        $accessTokenResponse = $accessTokenRequest->send();
+        $data = $accessTokenResponse->json();
 
-        if (isset($response->error)) {
+        if (isset($data['error'])) {
             $this->addFlash('error', 'An error occured during authentication, please try again later.');
-            $this->get('logger')->error('An error occured during authentication', ['error' => $response->error]);
+            $this->get('logger')->error('An error occured during authentication', ['error' => $data['error']]);
             return $this->redirect($this->generateUrl('app_core_homepage'));
         }
 
-        $user = $this->registerGithubUser($request, $response->access_token, $response->scope);
+        // $githubClientId = $this->container->getParameter('github_client_id');
+        // $githubClientSecret = $this->container->getParameter('github_client_secret');
+
+        // $request = $client->get(['/applications/{client_id}/tokens/{access_token}', [
+        //     'client_id' => $githubClientId,
+        //     'access_token' => $data['access_token'],
+        // ]], [], [
+        //     'auth' => [$githubClientId, $githubClientSecret]
+        // ]);
+
+        // $response = $request->send();
+
+        // var_dump($data); die;
+
+        $user = $this->registerGithubUser($request, $data['access_token'], $data['scope']);
 
         if ($user->hasPrivateProjects() && !$user->hasAccessTokenScope('repo')) {
-            return $this->redirect($this->generateUrl('app_core_auth_github_authorize', ['scope' => 'user:email,repo']));
+            return $this->redirect($this->generateUrl('app_core_auth_github_authorize', ['scopes' => 'repo']));
         }
 
         if ($user->getStatus() === User::STATUS_WAITING_LIST) {

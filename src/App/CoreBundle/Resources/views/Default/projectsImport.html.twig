@@ -44,7 +44,7 @@ $('#projects-import-filter').on('keyup', function() {
 <div id="projects_import_info" class="alert alert-info">
     <p>Stage1 can only import public repositories in organizations for which your membership is public and for which you have admin rights.</p>
 
-    <p>In order to import <strong>private repositories</strong>, we must ask for the <strong>repo</strong> oauth scope, which will give us read and write access to all your public and private repositories. <a href="{{ path('app_core_auth_github_authorize', { scope: 'user:email,repo', back_to: path('app_core_projects_import') }) }}">I understand, go for it</a>.</p>
+    <p>In order to import <strong>private repositories</strong>, we must ask for the <strong>repo</strong> oauth scope, which will give us read and write access to all your public and private repositories. <a href="{{ path('app_core_auth_github_authorize', { scopes: 'repo', back_to: path('app_core_projects_import') }) }}">I understand, go for it</a>.</p>
 </div>
 {% endif %}
 
@@ -68,7 +68,7 @@ $('#projects-import-filter').on('keyup', function() {
         <p>Use of this WebHook is optional, if you'd rather trigger builds manually, that's ok too (although you're missing much of what makes Stage1 awesome in the first place).</p>
     </div>
     <div class="modal-footer">
-        <a id="grant" href="{{ path('app_core_auth_github_authorize', { scope: 'user:email,public_repo', back_to: path('app_core_projects_import') }) }}?autostart=%autostart%" class="btn btn-primary">Grant permission and install WebHook</a>
+        <a id="grant" href="{{ path('app_core_auth_github_authorize', { scopes: 'public_repo', back_to: path('app_core_projects_import') }) }}?autostart=%autostart%" class="btn btn-primary">Grant permission and install WebHook</a>
         <button class="btn" id="btn-import-force">Continue without the WebHook</button>
     </div>
 </div>

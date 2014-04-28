@@ -77,9 +77,9 @@
         <default key="_controller">AppCoreBundle:Hooks:github</default>
     </route>
 
-    <route id="app_core_auth_github_authorize" pattern="/login/github/{scope}">
+    <route id="app_core_auth_github_authorize" pattern="/login/github/{scopes}">
         <default key="_controller">AppCoreBundle:Security:authorize</default>
-        <default key="scope">user:email</default>
+        <default key="scopes"></default>
     </route>
 
     <route id="app_core_auth_github_callback" pattern="/auth/github">
