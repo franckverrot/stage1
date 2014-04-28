@@ -10,7 +10,7 @@ STAGE1
 * `vagrant ssh`
 * update lxc-docker
 * `sudo apt-get install daemontools daemontools-run`
-* check that rabbitmq is running, if not
+* check that rabbitmq is running
 * `rm -rf /etc/init/stage1*`
 * `ps auxwww | grep stage1 | awk '{print $1}' | xargs kill`
 * `cd /vagrant`
