@@ -1,24 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Stage1 / Help</title>
-        <link rel="icon" type="image/png" href="/images/cog.png" />
-        <link rel="stylesheet" href="/assets/css/vendor/bootstrap.css" />
-        <link rel="stylesheet" href="/assets/css/vendor/font-awesome.css" />
-        <link rel="stylesheet" href="/assets/css/public.css" />
-        <link rel="stylesheet" href="/assets/css/help.css" />
-    </head>
+<head>
+    <meta charset="utf-8">
+    <title>Stage1 / Help</title>
+    <link rel="stylesheet" href="/assets/css/vendor/bootstrap.css" />
+    <link rel="stylesheet" href="/assets/css/vendor/font-awesome.css" />
+    <link rel="stylesheet" href="/assets/css/public.css" />
+    <link rel="stylesheet" href="/assets/css/help.css" />
+</head>
 
-    <body>
-        <div class="container-narrow">
 
-            {% include navigation.html %}
+<body>
 
-            {{ content }}
+    <div class="row-fluid masthead">
+        <div class="container">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="http://stage1.io/blog/">Blog</a></li>
+                <li><a href="http://help.stage1.io/">Help</a></li>
+                <li><a href="http://stage1.io/login/github"><i class="fa fa-github"></i> Login</a></li>
+            </ul>
 
-            {% include footer.html %}
+            <ul class="nav nav-pills">
+                <li><a href="/">STAGE1 / Help</a></li>
+            </ul>
+        </div>
+    </div>
 
-        </div> <!-- /container -->
-    </body>
+    <div class="row-fluid jumbotron">
+        <div class="container">
+            <div class="span6">
+                <h2><a href="/blog/">Help Center</a></h2>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-narrow">
+        {{ content }}
+    </div>
+
+    <div class="row-fluid footer">
+        <div class="container">
+            <p>Stage1 &copy; 2013-2014</p>
+            <br />
+            <a href="https://github.com/stage1"><i class="fa fa-github-square fa-4x"></i></a>
+            &nbsp;
+            <a href="https://twitter.com/stage1hq"><i class="fa fa-twitter-square fa-4x"></i></a>
+        </div>
+    </div>
+</body>
 </html>

@@ -1,29 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>{{ page.title }} - Stage1 / Help</title>
-        <link rel="icon" type="image/png" href="/images/cog.png" />
-        <link rel="stylesheet" href="/assets/css/vendor/bootstrap.css" />
-        <link rel="stylesheet" href="/assets/css/vendor/font-awesome.css" />
-        <link rel="stylesheet" href="/assets/css/public.css" />
-        <link rel="stylesheet" href="/assets/css/help.css" />
-    </head>
+<head>
+    <meta charset="utf-8">
+    <title>{{ page.title }} - STAGE1 / Help</title>
+    <link rel="stylesheet" href="/assets/css/vendor/bootstrap.css" />
+    <link rel="stylesheet" href="/assets/css/vendor/font-awesome.css" />
+    <link rel="stylesheet" href="/assets/css/public.css" />
+    <link rel="stylesheet" href="/assets/css/help.css" />
+</head>
 
-    <body>
-        <div class="container-narrow">
 
-            {% include navigation.html %}
+<body>
 
-            <h3 class="post-title">{{ page.title }}</h3>
+    <div class="row-fluid masthead">
+        <div class="container">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="http://stage1.io/blog/">Blog</a></li>
+                <li><a href="http://help.stage1.io/">Help</a></li>
+                <li><a href="http://stage1.io/login/github"><i class="fa fa-github"></i> Login</a></li>
+            </ul>
 
-            <hr />
+            <ul class="nav nav-pills">
+                <li><a href="/">STAGE1 / Help</a></li>
+            </ul>
+        </div>
+    </div>
 
-            <div class="post-content">
-                {{ content }}
+    <div class="row-fluid jumbotron">
+        <div class="container">
+            <div class="span6">
+                <h2><a href="/">Help Center</a></h2>
             </div>
-    
-            {% include footer.html %}
-        </div> <!-- /container -->
-    </body>
+
+        </div>
+    </div>
+
+    <div class="container-narrow">
+        <h3 class="post-title">{{ page.title }}</h3>
+
+        <hr />
+
+        <div class="post-content">
+            {{ content }}
+        </div>
+
+        <hr />
+
+        <p id="contact_a_human">Didn't find what you were looking for? <a href="mailto:geoffrey@stage1.io">Contact a human</a>!</p>
+
+    </div>
+
+    <div class="row-fluid footer">
+        <div class="container">
+            <p>Stage1 &copy; 2013-2014</p>
+            <br />
+            <a href="https://github.com/stage1"><i class="fa fa-github-square fa-4x"></i></a>
+            &nbsp;
+            <a href="https://twitter.com/stage1hq"><i class="fa fa-twitter-square fa-4x"></i></a>
+        </div>
+    </div>
+</body>
 </html>

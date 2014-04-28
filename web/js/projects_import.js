@@ -137,7 +137,7 @@
         }).then(function(data) {
             var data = JSON.parse(data);
 
-            console.log(data);
+            // console.log(data);
 
             if (typeof(data.ask_scope) !== 'undefined' && data.ask_scope) {
                 $('#btn-import-force').data('target', data.github_id);

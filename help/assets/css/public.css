@@ -1,61 +1,91 @@
 body {
-  padding-top: 20px;
-  padding-bottom: 40px;
+  padding-top: 0px;
 }
 
-h3 img {
-  height: 34px;
-}
-
-h3 span {
-  vertical-align: middle;
-  font-size: 34px;
-}
-
-h3 a:hover {
+h1 a:hover {
   text-decoration: none;
+}
+
+#get-on-stage {
+  text-align: center;
+}
+
+.post-content {
+  margin-bottom: 3em;
+}
+
+.masthead {
+  color: white;
+  background-color: #0067A6;
 }
 
 .masthead ul {
   margin-top: 7px;
 }
 
-/* Custom container */
-.container-narrow {
-  margin: 0 auto;
-  max-width: 700px;
-}
-.container-narrow > hr {
-  margin: 30px 0;
+.masthead .nav a {
+  color: white;
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
-  margin: 60px 0;
+.masthead .nav a:hover {
+  background-color: #0088cc;
+}
+
+.footer {
   text-align: center;
 }
-.jumbotron h1 {
-  font-size: 72px;
-  line-height: 1;
+
+.container {
+  width: 940px;
 }
 
-.jumbotron .btn {
-  width: 210px;
-  padding: 14px 24px;
+.jumbotron {
+  box-shadow: 0px 2px 2px 0px black;
+  margin-bottom: 5em;
+  padding-bottom: 2em;
 }
 
-.jumbotron .btn-large {
-  font-size: 31px;
-  padding: 14px 24px;
+.jumbotron, .footer {
+  /*padding: 3em 0;*/
+  background-color: #0067A6;
+  color: white;
 }
 
-.jumbotron .btn-large {
-  font-weight: bold;
+.footer {
+  margin-top: 2em;
+  padding: 2em 0;
 }
 
-.jumbotron .btn-large small {
-  font-size: 12px;
-  font-weight: normal;
+.jumbotron h2 a {
+  color: yellow;
+}
+
+.jumbotron h2 a:hover {
+  text-decoration: none;
+}
+
+.jumbotron h2 {
+  text-align: center;
+  color: yellow;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0 0.005em #2d3958, 0.005em 0 #2d3958, 0.005em 0.01em #2d3958, 0.01em 0.005em #2d3958, 0.01em 0.015em #2d3958, 0.015em 0.01em #2d3958, 0.015em 0.02em #2d3958, 0.02em 0.015em #2d3958, 0.02em 0.025em #2d3958, 0.025em 0.02em #2d3958, 0.025em 0.03em #2d3958, 0.03em 0.025em #2d3958, 0.03em 0.035em #2d3958, 0.035em 0.03em #2d3958, 0.035em 0.04em #2d3958, 0.04em 0.035em #2d3958, 0.04em 0.045em #2d3958, 0.045em 0.04em #2d3958, 0.045em 0.05em #2d3958, 0.05em 0.045em #2d3958, 0.05em 0.055em #2d3958, 0.055em 0.05em #2d3958, 0.055em 0.06em #2d3958, 0.06em 0.055em #2d3958, 0.06em 0.065em #2d3958, 0.065em 0.06em #2d3958, 0.065em 0.07em #2d3958, 0.07em 0.065em #2d3958, 0.07em 0.075em #2d3958, 0.075em 0.07em #2d3958, 0.075em 0.08em #2d3958, 0.08em 0.075em #2d3958, 0.08em 0.085em #2d3958, 0.085em 0.08em #2d3958, 0.085em 0.09em #2d3958, 0.09em 0.085em #2d3958, 0.09em 0.095em #2d3958, 0.095em 0.09em #2d3958, 0.095em 0.1em #2d3958, 0.1em 0.095em #2d3958, 0.1em 0.105em #2d3958, 0.105em 0.1em #2d3958, 0.105em 0.11em #2d3958, 0.11em 0.105em #2d3958;
+  -webkit-transform: rotate(-7deg);
+  -moz-transform: rotate(-7deg);
+  -ms-transform: rotate(-7deg);
+  transform: rotate(-7deg);
+  line-height: 1em;
+  margin-bottom: 0.7em;
+  font-size: 5em;
+}
+
+.beta-register {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.subline {
+  text-align: center;
+  margin-top: 4em;
 }
 
 /* Supporting marketing content */
@@ -67,10 +97,37 @@ h3 a:hover {
   padding: 0px 35px;
 }
 
-.marketing p + h4 {
-  margin-top: 28px;
+.marketing h4 {
+  padding-left: 65px;
 }
 
 .marketing p {
   text-align: justify;
+  margin-bottom: 3em;
+}
+
+.marketing p > i {
+  float: left;
+  padding-right: 20px;
+  color: #0088cc;
+  min-width: 45px;
+  text-align: center;
+}
+
+.container-narrow {
+  width: 700px;
+  margin: auto;
+}
+
+.site-error {
+  overflow: hidden;
+}
+
+.status-code {
+  float: right;
+  font-size: 10em;
+  font-weight: bolder;
+  opacity: 0.5;
+  padding-left: 12pt;
+  margin-bottom: 12pt;
 }
