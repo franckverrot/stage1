@@ -8,6 +8,19 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ProjectAccessType extends AbstractType
 {
+    /**
+     * @var
+     */
+    protected $class;
+
+    /**
+     * @param $class
+     */
+    public function __construct($class)
+    {
+        $this->class = $class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('ip', 'text');
@@ -16,7 +29,7 @@ class ProjectAccessType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\\CoreBundle\\Value\\ProjectAccess',
+            'data_class' => $this->class
         ]);
     }
 

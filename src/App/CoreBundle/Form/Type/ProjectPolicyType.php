@@ -10,6 +10,19 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ProjectPolicyType extends AbstractType
 {
+    /**
+     * @var
+     */
+    protected $class;
+
+    /**
+     * @param $class
+     */
+    public function __construct($class)
+    {
+        $this->class = $class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -31,7 +44,7 @@ class ProjectPolicyType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\\Model\\ProjectSettings',
+            'data_class' => $this->class,
         ]);
     }
 
