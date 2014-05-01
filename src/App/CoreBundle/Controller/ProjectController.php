@@ -103,7 +103,7 @@ class ProjectController extends Controller
             $hash = $this->getHashFromRef($project, $ref);
 
             $scheduler = $this->container->get('app_core.build_scheduler');
-            $build = $scheduler->schedule($project, $ref, $hash, $this->getUser());
+            $build = $scheduler->schedule($project, $ref, $hash, null);
 
             return new JsonResponse([
                 'build_url' => $this->generateUrl('app_core_build_show', ['id' => $build->getId()]),
@@ -279,6 +279,12 @@ class ProjectController extends Controller
             foreach ($project->getActiveBranches() as $branch) {
                 if ($branch->getName() == $build->getRef()) {
                     $branch->setLastBuild($build);
+                }
+
+                foreach ($project->getActivePullRequests() as $pr) {
+                    if ($pr->getRef() === $build->getRef()) {
+                        $pr->setLastBuild($build);
+                    }
                 }
             }
         }

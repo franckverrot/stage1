@@ -1,0 +1,50 @@
+<table class="table project-refs project-{{ type_plural }}" id="project-{{ project.id }}-{{ type_plural }}">
+    <tbody id="{{ type_plural }}">
+        {% for obj in objects %}
+            <tr class="{{ type_singular }}" id="ref-{{ obj.normName }}">
+                <td class="ctn-name">
+                    {% if obj.hasRunningBuild %}
+                    <a href="{{ obj.runningBuild.url }}">{{ obj }}</a>
+                    {% else %}
+                    {{ obj }}
+                    {% endif %}
+                </td>
+                <td class="ctn-status">{% if obj.lastBuild %}
+                        <span
+                            id="ref-{{ obj.normName }}-status"
+                            data-status="{{ obj.lastBuild.status }}"
+                            class="label label-{{ obj.lastBuild.statusLabelClass }}"
+                        >{{ obj.lastBuild.statusLabel }}</span>
+                {% endif %}</td>
+                <td class="ctn-actions-btns" id="ref-{{ obj.normName }}-form-container">
+                    {% if not obj.lastBuild or not obj.lastBuild.pending %}
+                        <form id="ref-{{ obj.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
+                            <button data-success-class="fa fa-refresh fa-spin" data-success-message="" class="btn btn-small">build</button>
+                            <input type="hidden" name="ref" value="{{ obj.ref }}" />
+                        </form>
+                    {% endif %}
+
+                    {% if obj.lastBuild and obj.lastBuild.building %}
+                        <form id="ref-{{ obj.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: obj.lastBuild.id }) }}">
+                            <button type="submit" class="btn btn-small btn-danger" data-success-class="fa fa-refresh fa-spin" data-success-message="">kill</button>
+                        </form>
+                    {% endif %}
+
+                    {% if obj.lastBuild and obj.lastBuild.scheduled %}
+                        <form id="ref-{{ obj.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: obj.lastBuild.id }) }}">
+                            <button type="submit" class="btn btn-small btn-warning" data-success-class="fa fa-refresh fa-spin" data-success-message="">cancel</button>
+                        </form>
+                    {% endif %}
+                </td>
+                <td class="ctn-actions-links" id="ref-{{ obj.normName }}-actions">
+
+                    <span id="ref-{{ obj.normName }}-show-link">
+                        {% if obj.lastBuild %}
+                        <a href="{{ path('app_core_build_show', { id: obj.lastBuild.id }) }}">last build</a>
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

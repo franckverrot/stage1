@@ -124,6 +124,7 @@ class Builder
             'project' => $project->getGithubFullName(),
             'project_id' => $project->getId(),
             'ref' => $build->getRef(),
+            'hash' => $build->getHash(),
             'timeout' => $timeout,
             'force_local_build_yml' => $build->getForceLocalBuildYml(),
         ]);
@@ -141,6 +142,7 @@ class Builder
 
         $prepareContainer = new PrepareContainer($build);
 
+        // @todo move inside PrepareContainer
         if ($build->getForceLocalBuildYml()) {
             $prepareContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
         }

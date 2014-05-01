@@ -24,6 +24,22 @@
     border-radius: 5px;
 }
 
+.project-refs .ctn-name {
+    width: 40%;
+}
+
+.project-refs .ctn-status {
+    width: 20%;
+}
+
+.project-refs .ctn-actions-btns {
+    width: 20%;
+}
+
+.project-refs .ctn-actions-links {
+    width: 20%;
+}
+
 .commit-hash {
     white-space: nowrap;
 }

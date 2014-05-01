@@ -1,7 +1,7 @@
 (function($, window) {
     var branches = $('#branches');
 
-    $('#branches').on('click', '.branch button', function(event) {
+    $('#branches, #pull-requests').on('click', '.branch button, .pull-request button', function(event) {
         $(this).html('<i class="fa fa-refresh fa-spin"></i>').attr('disabled', 'disabled');
 
         var inputs = $(this).parent().find('input:hidden');

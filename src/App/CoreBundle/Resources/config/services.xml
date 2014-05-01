@@ -263,6 +263,12 @@
             <tag name="doctrine.event_subscriber" connection="default" />
         </service>
 
+        <service id="app_core.subscriber.build_pr_relation" class="App\CoreBundle\EventListener\BuildPullRequestRelationSubscriber">
+            <argument type="service" id="logger" />
+            <argument type="service" id="doctrine" />
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+
         <service id="app_core.subscriber.project_access_table" class="App\CoreBundle\EventListener\ProjectAccessTableSubscriber">
             <argument type="service" id="app_core.redis" />
             <argument type="service" id="logger" />

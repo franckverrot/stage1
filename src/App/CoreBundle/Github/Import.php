@@ -13,6 +13,7 @@ use App\Model\User;
 use App\Model\Project;
 use App\Model\ProjectSettings;
 use App\Model\Branch;
+use App\Model\PullRequest;
 use App\Model\Organization;
 use App\CoreBundle\Value\ProjectAccess;
 
@@ -71,6 +72,7 @@ class Import
             ['id' => 'deploy_key', 'label' => 'Adding deploy key'],
             ['id' => 'webhook', 'label' => 'Configuring webhook'],
             ['id' => 'branches', 'label' => 'Importing branches'],
+            ['id' => 'pull_requests', 'label' => 'Importing pull requests'],
             ['id' => 'access', 'label' => 'Granting default access'],
         ];
     }
@@ -148,6 +150,10 @@ class Import
         $callback(['id' => 'branches', 'label' => 'Importing branches']);
         $this->logger->debug('running branches step', ['project' => $githubFullName]);
         $this->doBranches($project);
+
+        $callback(['id' => 'pull_requests', 'label' => 'Importing pull requests']);
+        $this->logger->debug('running pull requests step', ['project' => $githubFullName]);
+        $this->doPullRequests($project);
 
         $callback(['id' => 'access', 'label' => 'Granting default access']);
         $this->logger->debug('running access step', ['project' => $githubFullName]);
@@ -331,7 +337,7 @@ class Import
             $request->setBody(json_encode([
                 'name' => 'web',
                 'active' => true,
-                'events' => ['push'],
+                'events' => ['push', 'pull_request'],
                 'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
             ]), 'application/json');
 
@@ -357,6 +363,27 @@ class Import
 
             $branch->setProject($project);
             $project->addBranch($branch);
+        }
+    }
+
+    private function doPullRequests(Project $project)
+    {
+        $request = $this->client->get(['/repos/{owner}/{repo}/pulls', [
+            'owner' => $project->getGithubOwnerLogin(),
+            'repo' => $project->getName(),
+        ]]);
+
+        $response = $request->send();
+
+        foreach ($response->json() as $data) {
+            $pr = new PullRequest();
+            $pr->setNumber($data['number']);
+            $pr->setOpen($data['state'] === 'open');
+            $pr->setTitle($data['title']);
+            $pr->setRef(sprintf('pull/%d/head', $data['number']));
+
+            $pr->setProject($project);
+            $project->addPullRequest($pr);
         }
     }
 

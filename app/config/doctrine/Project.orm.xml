@@ -53,6 +53,10 @@
             <cascade><persist /></cascade>
         </one-to-many>
 
+        <one-to-many field="pullRequests" target-entity="App\Model\PullRequest" mapped-by="project">
+            <cascade><persist /></cascade>
+        </one-to-many>
+
         <one-to-one field="settings" target-entity="App\Model\ProjectSettings" mapped-by="project">
             <cascade><persist /></cascade>
         </one-to-one>

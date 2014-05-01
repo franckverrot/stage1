@@ -19,6 +19,7 @@ class BuildContainer extends Container
                 'SSH_URL='.$build->getProject()->getGitUrl(),
                 'REF='.$build->getRef(),
                 'HASH='.$build->getHash(),
+                'IS_PULL_REQUEST='.($build->isPullRequest() ? 1 : 0),
                 /**
                  * @todo there must be a way to avoid requiring a valid access token
                  *       I think the token is only used to avoid hitting github's

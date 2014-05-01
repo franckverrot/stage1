@@ -22,6 +22,12 @@ class Branch
 
     protected $lastBuild;
 
+    /** @Buildable */
+    public function getRef()
+    {
+        return $this->getName();
+    }
+
     /**
      * @return string
      */
@@ -38,6 +44,11 @@ class Branch
     public function __construct()
     {
         $this->builds = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     public function hasBuildingBuild()

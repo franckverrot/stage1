@@ -77,6 +77,8 @@ class Project implements WebsocketRoutable
 
     protected $branches;
 
+    protected $pullRequests;
+
     protected $status = 1;
 
     protected $env;
@@ -792,6 +794,16 @@ SSH;
     }
 
     /**
+     * Get pull requests marked as open
+     * 
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActivePullRequests()
+    {
+        return $this->getPullRequests()->filter(function($pullRequest) { return $pullRequest->getOpen(); });
+    }
+
+    /**
      * Get branches
      *
      * @return \Doctrine\Common\Collections\Collection 
@@ -1109,5 +1121,38 @@ SSH;
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * Add pullRequests
+     *
+     * @param \App\Model\PullRequest $pullRequests
+     * @return Project
+     */
+    public function addPullRequest(\App\Model\PullRequest $pullRequests)
+    {
+        $this->pullRequests[] = $pullRequests;
+    
+        return $this;
+    }
+
+    /**
+     * Remove pullRequests
+     *
+     * @param \App\Model\PullRequest $pullRequests
+     */
+    public function removePullRequest(\App\Model\PullRequest $pullRequests)
+    {
+        $this->pullRequests->removeElement($pullRequests);
+    }
+
+    /**
+     * Get pullRequests
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPullRequests()
+    {
+        return $this->pullRequests;
     }
 }

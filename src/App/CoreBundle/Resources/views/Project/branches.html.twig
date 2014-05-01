@@ -4,69 +4,34 @@
 {% include 'AppCoreBundle:Project:_header.html.twig' %}
 
 <div class="row-fluid">
-    <div class="span6">
-        <table class="table project-branches" id="project-{{ project.id }}-branches">
-            <thead>
-                <tr>
-                    <th width="25%">Branch</th>
-                    <th width="20%">Status</th>
-                    <th width="25%">&nbsp;</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody id="branches">
-                {% for branch in project.activeBranches %}
-                    <tr class="branch" id="ref-{{ branch.normName }}">
-                        <td class="ctn-name">
-                            {% if branch.hasRunningBuild %}
-                            <a href="{{ branch.runningBuild.url }}">{{ branch.name }}</a>
-                            {% else %}
-                            {{ branch.name }}
-                            {% endif %}
-                        </td>
-                        <td class="ctn-status">
-                            {% if branch.lastBuild %}
-                                <span
-                                    id="ref-{{ branch.normName }}-status"
-                                    data-status="{{ branch.lastBuild.status }}"
-                                    class="label label-{{ branch.lastBuild.statusLabelClass }}"
-                                >{{ branch.lastBuild.statusLabel }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="actions" id="ref-{{ branch.normName }}-form-container">
-                            {% if not branch.lastBuild or not branch.lastBuild.pending %}
-                                <form id="ref-{{ branch.normName }}-schedule-form" method="post" action="{{ path('app_core_project_schedule_build', { id: project.id }) }}">
-                                    <button data-success-class="fa fa-refresh fa-spin" data-success-message="" class="btn btn-small">build</button>
-                                    <input type="hidden" name="ref" value="{{ branch.name }}" />
-                                </form>
-                            {% endif %}
+    <div class="span7">
 
-                            {% if branch.lastBuild and branch.lastBuild.building %}
-                                <form id="ref-{{ branch.normName }}-kill-form" method="post" action="{{ path('app_core_build_kill', { id: branch.lastBuild.id }) }}">
-                                    <button type="submit" class="btn btn-small btn-danger" data-success-class="fa fa-refresh fa-spin" data-success-message="">kill</button>
-                                </form>
-                            {% endif %}
+        {% if project.activeBranches | length > 0 %}
 
-                            {% if branch.lastBuild and branch.lastBuild.scheduled %}
-                                <form id="ref-{{ branch.normName }}-cancel-form" method="post" action="{{ path('app_core_build_cancel', { id: branch.lastBuild.id }) }}">
-                                    <button type="submit" class="btn btn-small btn-warning" data-success-class="fa fa-refresh fa-spin" data-success-message="">cancel</button>
-                                </form>
-                            {% endif %}
-                        </td>
-                        <td class="actions" id="ref-{{ branch.normName }}-actions">
+            <h4>Branches</h4>
+            <hr />
 
-                            <span id="ref-{{ branch.normName }}-show-link">
-                                {% if branch.lastBuild %}
-                                <a href="{{ path('app_core_build_show', { id: branch.lastBuild.id }) }}">show last build</a>
-                                {% endif %}
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            {% include 'AppCoreBundle:Project:_refs.html.twig' with { 
+                type_singular: 'branch',
+                type_plural: 'branches',
+                objects: project.activeBranches
+            } %}
+
+        {% endif %}
+
+        {% if project.activePullRequests | length > 0 %}
+
+            <h4>Pull Requests</h4>
+            <hr />
+
+            {% include 'AppCoreBundle:Project:_refs.html.twig' with { 
+                type_singular: 'pull-request',
+                type_plural: 'pull-requests',
+                objects: project.activePullRequests
+            } %}
+        {% endif %}
     </div>
-    <div class="span6">
+    <div class="span5">
         {% if builds_count < 20 %}
         <div id="what-now">
             <h3>What now?</h3>
@@ -122,7 +87,7 @@
 
 <script type="text/mustache" id="tpl-ref-show-link">
 {% verbatim %}
-<a href="{{ show_url }}">show last build</a>
+<a href="{{ show_url }}">last build</a>
 {% endverbatim %}
 </script>
 

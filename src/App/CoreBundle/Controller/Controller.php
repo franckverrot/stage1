@@ -25,22 +25,14 @@ class Controller extends BaseController
         $client = $this->container->get('app_core.client.github');
         $client->setDefaultOption('headers/Authorization', 'token '.$accessToken);
 
-        $request = $client->get(['/repos/{owner}/{repo}/git/refs/heads', [
+        $request = $client->get(['/repos/{owner}/{repo}/git/refs/{ref}', [
             'owner' => $project->getGithubOwnerLogin(),
             'repo' => $project->getName(),
+            'ref' => $ref,
         ]]);
 
         $response = $request->send();
-        $remoteRefs = $response->json();
-
-        foreach ($remoteRefs as $remoteRef) {
-            if ('refs/heads/'.$ref === $remoteRef['ref']) {
-                $hash = $remoteRef['object']['sha'];
-                break;
-            }
-        }
-
-        return $hash;
+        return $response->json()['object']['sha'];
     }
 
     protected function addFlash($type, $message)

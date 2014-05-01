@@ -12,6 +12,7 @@ class ProjectSettings
     const POLICY_ALL = 'all';
     const POLICY_NONE = 'none';
     const POLICY_PATTERNS = 'patterns';
+    const POLICY_PR = 'pr';
     
     /**
      * @var string

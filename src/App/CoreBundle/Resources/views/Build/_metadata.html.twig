@@ -1,7 +1,7 @@
 <fieldset id="build-metadata">
     <ul class="lead breadcrumb">
         <li><a href="{{ path('app_core_build_show', { id: build.id }) }}">#{{ build.id }}</a> <span class="divider">/</span></li>
-        <li>{{ build.ref }}</li>
+        <li>{{ build.title }}</li>
         <li id="build-{{ build.id }}-link" data-template="{{ '<span class="divider">/</span> <a href="{{ build_url }}">{{ build_url }}</a>' | e }}">
             {% if build.running and build.url %}
             <span class="divider">/</span>
@@ -26,12 +26,22 @@
         </dl>
 
         <dl class="span3">
+            {% if build.isPullRequest %}
+            <dt><abbr title="Pull Request">P.R.</abbr></dt>
+            <dd>
+                <a href="{{ build.pullRequest.githubUrl }}">
+                    <i class="fa fa-github"></i>&nbsp;
+                    {{ build.pullRequest.title }}
+                </a>
+            </dd>
+            {% else %}
             <dt>Ref.</dt>
             <dd>{{ build.ref }}{% if build.hash %}&nbsp;({% include 'AppCoreBundle:Default:_commit_hash.html.twig' with {
                     project_full_name: build.project.githubFullName,
                     hash: build.hash
                 } %})
                 {% endif %}</dd>
+            {% endif %}
         </dl>
     </div>
 </fieldset>

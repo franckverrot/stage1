@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * GithubPayload
@@ -44,12 +45,86 @@ class GithubPayload
      */
     private $event;
 
+    static public function fromRequest(Request $request)
+    {
+        $payload = json_decode($request->getContent());
+
+        $obj = new static();
+        $obj->setPayload($request->getContent());
+        $obj->setDeliveryId($request->headers->get('X-GitHub-Delivery'));
+        $obj->setEvent($request->headers->get('X-GitHub-Event'));
+
+        return $obj;
+    }
+
     /**
      * @return string
      */
     public function pretty()
     {
         return json_encode(json_decode($this->payload), JSON_PRETTY_PRINT);
+    }
+
+    public function getParsedPayload()
+    {
+        return json_decode($this->getPayload());
+    }
+
+    public function getAction()
+    {
+        return $this->getParsedPayload()->action;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRef()
+    {
+        $payload = $this->getParsedPayload();
+
+        return isset($payload->ref);
+    }
+
+    /**
+     * @return string
+     */
+    public function getRef()
+    {
+        return $this->getParsedPayload()->ref;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+        return $this->getParsedPayload()->after;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getGithubRepositoryId()
+    {
+        return $this->getParsedPayload()->repository->id;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getPullRequestNumber()
+    {
+        return $this->getParsedPayload()->number;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPullRequest()
+    {
+        $payload = $this->getParsedPayload();
+
+        return isset($payload->pull_request);
     }
 
     /**

@@ -57,7 +57,7 @@ class BuildRoutingListener
         }
 
         if (strlen($build->getHost()) === 0) {
-            $build->setHost(sprintf($this->buildHostMask, $build->getBranchDomain()));
+            $build->setHost(sprintf($this->buildHostMask, $build->getDomain()));
         }
 
         $this->logger->info('configuring build routing', ['build' => $build->getId(), 'host' => $build->getHost()]);

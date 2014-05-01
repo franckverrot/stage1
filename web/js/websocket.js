@@ -1,10 +1,10 @@
 (function($, window) {
     if (typeof(current_user_id) === 'undefined') { return; }
 
-    var primus = Primus.connect('http://' + document.location.hostname + ':8090/', {
+    var primus = Primus.connect('ws://' + document.location.hostname, {
         // privatePattern: /(project|user)\.\d+/,
         privatePattern: /.*/,
-        auth_url: websocket_auth_url,
+        auth_url: websocket_auth_url
     });
 
     var lastTimestamp = 0;
@@ -18,9 +18,9 @@
     primus.on('data', function(data) {
 
         if (data.event) {
-            // console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
+            console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
         } else {
-            // console.log(data);
+            console.log(data);
         }
 
         if (!data.data) {

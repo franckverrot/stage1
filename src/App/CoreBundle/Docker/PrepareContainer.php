@@ -12,7 +12,12 @@ class PrepareContainer extends Container
     {
         parent::__construct([
             'Image' => $build->getImageName('yuhao'),
-            'Cmd' => ['yuhao.sh', $build->getProject()->getGitUrl(), $build->getRef()],
+            'Cmd' => ['yuhao.sh'],
+            'Env' => [
+                'SSH_URL='.$build->getProject()->getGitUrl(),
+                'REF='.$build->getRef(),
+                'IS_PULL_REQUEST='.($build->isPullRequest() ? 1 : 0)
+            ]
         ]);
     }
 }

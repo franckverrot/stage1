@@ -72,6 +72,8 @@ class Build implements WebsocketRoutable
 
     private $branch;
 
+    private $pullRequest;
+
     private $logs;
 
     private $channel;
@@ -119,9 +121,25 @@ class Build implements WebsocketRoutable
         throw new BadMethodCallException(sprintf('Method "%s" does not exist in object "%s"', $method, __CLASS__));
     }
 
+    public function getTitle()
+    {
+        return $this->isPullRequest()
+            ? $this->getPullRequest()->getTitle()
+            : $this->getBranch()->getName();
+    }
+
     public function __toString()
     {
         return json_encode($this->asWebsocketMessage());
+    }
+
+    public function isPullRequest()
+    {
+        if ($this->getPayload()) {
+            return $this->getPayload()->isPullRequest();
+        }
+
+        return substr($this->getRef(), 0, 4) === 'pull';
     }
 
     public function getRoutingKey()
@@ -207,6 +225,18 @@ class Build implements WebsocketRoutable
     private function normalize($string)
     {
         return preg_replace('/[^a-z0-9\-]/', '-', strtolower($string));
+    }
+
+    public function getDomain()
+    {
+        return $this->isPullRequest()
+            ? $this->getPullRequestDomain()
+            : $this->getBranchDomain();
+    }
+
+    public function getPullRequestDomain()
+    {
+        return $this->getPullRequest()->getDomain();
     }
 
     public function getBranchDomain()
@@ -1016,6 +1046,8 @@ class Build implements WebsocketRoutable
      */
     public function setPayload(\App\Model\GithubPayload $payload = null)
     {
+        $payload->setBuild($this);
+        
         $this->payload = $payload;
     
         return $this;
@@ -1187,5 +1219,28 @@ class Build implements WebsocketRoutable
     public function getBuilderHost()
     {
         return $this->builderHost;
+    }
+
+    /**
+     * Set pullRequest
+     *
+     * @param \App\Model\PullRequest $pullRequest
+     * @return Build
+     */
+    public function setPullRequest(\App\Model\PullRequest $pullRequest = null)
+    {
+        $this->pullRequest = $pullRequest;
+    
+        return $this;
+    }
+
+    /**
+     * Get pullRequest
+     *
+     * @return \App\Model\PullRequest 
+     */
+    public function getPullRequest()
+    {
+        return $this->pullRequest;
     }
 }

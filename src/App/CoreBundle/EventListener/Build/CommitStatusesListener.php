@@ -58,6 +58,11 @@ class CommitStatusesListener
             return;
         }
 
+        if (strlen($build->getHash()) === 0) {
+            $this->logger->info('skipping commit status because of empty commit hash');
+            return;
+        }
+
         $project = $build->getProject();
 
         $this->github->setDefaultOption('headers/Authorization', 'token '.$project->getUsers()->first()->getAccessToken());
@@ -82,7 +87,12 @@ class CommitStatusesListener
         try {
             $request->send();
         } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-            throw new \RuntimeException((string) $e->getResponse()->getBody());
+            $this->logger->error('error sending commit status', [
+                'exception_class' => get_class($e),
+                'exception_message' => $e->getMessage(),
+                'url' => $e->getRequest()->getUrl(),
+                'response' => (string) $e->getResponse()->getBody(),
+            ]);
         }
     }
 }

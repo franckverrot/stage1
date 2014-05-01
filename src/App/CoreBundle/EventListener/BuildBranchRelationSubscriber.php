@@ -54,7 +54,7 @@ class BuildBranchRelationSubscriber implements EventSubscriber
     {
         $build = $args->getEntity();
 
-        if (!$build instanceof Build) {
+        if (!$build instanceof Build || $build->isPullRequest()) {
             return;
         }
 

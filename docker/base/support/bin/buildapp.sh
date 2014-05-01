@@ -9,8 +9,14 @@ if [ -d $APP_ROOT ]; then
     rm -rf $APP_ROOT
 fi
 
-# stage1_announce "cloning repository $ssh_url"
-stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
+if [ "$IS_PULL_REQUEST" = "1" ]; then
+    stage1_exec "git clone --quiet --depth 1 $SSH_URL $APP_ROOT"
+    cd $APP_ROOT
+    stage1_exec "git fetch --quiet origin refs/$REF"
+    stage1_exec "git checkout --quiet -b pull_request FETCH_HEAD"
+else
+    stage1_exec "git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT"
+fi
 
 cd $APP_ROOT
 

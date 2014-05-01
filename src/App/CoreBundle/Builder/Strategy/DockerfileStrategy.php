@@ -68,18 +68,48 @@ class DockerfileStrategy
         mkdir($workdir.'/ssh');
 
         $project->dumpSshKeys($workdir.'/ssh', 'root');
+
         file_put_contents($workdir.'/ssh/config', $project->getSshConfig($workdir.'/ssh'));
+        file_put_contents($workdir.'/git_ssh', "#!/bin/bash\nexec /usr/bin/ssh -F $workdir/ssh/config \"\$@\"");
+        chmod($workdir.'/git_ssh', 0777);
 
-        $clone =
-            ProcessBuilder::create(['git', 'clone', '--quiet', '--depth', '1', '--branch', $build->getRef(), $project->getGitUrl(), $workdir.'/source'])
-            ->setEnv('GIT_SSH', '/usr/bin/ssh -F '.$workdir.'/ssh/config')
-            ->getProcess();
+        $GIT_SSH = $workdir.'/git_ssh';
 
-        $publish('$ '.$clone->getCommandLine().PHP_EOL);
+        if ($build->isPullRequest()) {
+            $clone = ProcessBuilder::create(['git', 'clone', '--quiet', '--depth', '1', $project->getGitUrl(), $workdir.'/source'])
+                ->setEnv('GIT_SSH', $GIT_SSH)
+                ->getProcess();
 
-        $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
+            $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
+            $publish('$ '.$clone->getCommandLine().PHP_EOL);
+            $clone->run();
 
-        $clone->run();
+            $fetch = ProcessBuilder::create(['git', 'fetch', '--quiet', 'origin', 'refs/'.$build->getRef()])
+                ->setEnv('GIT_SSH', $GIT_SSH)
+                ->setWorkingDirectory($workdir.'/source')
+                ->getProcess();
+
+            $logger->info('fecthing pull request', ['command_line' => $fetch->getCommandLine()]);
+            $publish('$ '.$fetch->getCommandLine().PHP_EOL);
+            $fetch->run();
+
+            $checkout = ProcessBuilder::create(['git', 'checkout', '--quiet', '-b', 'pull_request', 'FETCH_HEAD'])
+                ->setEnv('GIT_SSH', $GIT_SSH)
+                ->setWorkingDirectory($workdir.'/source')
+                ->getProcess();
+
+            $logger->info('checkouting pull request', ['command_line' => $checkout->getCommandLine()]);
+            $publish('$ '.$checkout->getCommandLine().PHP_EOL);
+            $checkout->run();
+        } else {
+            $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
+            $clone = ProcessBuilder::create(['git', 'clone', '--quiet', '--depth', '1', '--branch', $build->getRef(), $project->getGitUrl(), $workdir.'/source'])
+                ->setEnv('GIT_SSH', $GIT_SSH)
+                ->getProcess();
+
+            $publish('$ '.$clone->getCommandLine().PHP_EOL);
+            $clone->run();
+        }
 
         $contextPath = $workdir.'/source/'.$options['dockerfile']['path'];
 

@@ -6,6 +6,7 @@ use App\Model\Branch;
 use App\Model\Build;
 use App\Model\Project;
 use App\Model\User;
+use App\Model\GithubPayload;
 use App\CoreBundle\Message\MessageFactory;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Psr\Log\LoggerInterface;
@@ -64,7 +65,7 @@ class BuildScheduler
      * 
      * @see App\CoreBundle\EventListener\BuildBranchRelationSubscriber for automatic creation of non-existing branches
      */
-    public function schedule(Project $project, $ref, $hash, User $initiator = null, $options = [])
+    public function schedule(Project $project, $ref, $hash, GithubPayload $payload = null, $options = [])
     {
         $logger = $this->logger;
         $logger->info('scheduling build', ['project' => $project->getId(), 'ref' => $ref, 'hash' => $hash]);
@@ -94,8 +95,8 @@ class BuildScheduler
         $build->setRef($ref);
         $build->setHash($hash);
 
-        if (null !== $initiator) {
-            $build->setInitiator($initiator);
+        if (null !== $payload) {            
+            $build->setPayload($payload);
         }
 
         if (isset($options['force_local_build_yml']) && $options['force_local_build_yml']) {
