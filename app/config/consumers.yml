@@ -24,6 +24,9 @@ old_sound_rabbit_mq:
         websocket:
             connection: default
             exchange_options: { name: 'websockets', type: direct, auto_delete: true, durable: false }
+        docker_output:
+            connection: default
+            exchange_options: { name: 'docker_output', type: fanout, auto_delete: true, durable: false }
     consumers:
         build:
             connection: default

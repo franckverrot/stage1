@@ -26,7 +26,9 @@ class DockerOutputConsumer implements ConsumerInterface
         $this->logger = $logger;
         $this->redis = $redis;
 
-        $this->logger->info('initialized '.__CLASS__);
+        $this->logger->info('initialized '.__CLASS__, [
+            'pid' => posix_getpid(),
+        ]);
     }
 
     private function getStreamType($type)
@@ -54,7 +56,7 @@ class DockerOutputConsumer implements ConsumerInterface
 
         $logger->debug('processing log fragment', [
             'build' => $buildId,
-            'container' => $body['container'],
+            'container' => isset($body['container']) ? $body['container'] : null,
             'keys' => array_keys($body),
         ]);
 

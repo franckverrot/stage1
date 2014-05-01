@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 
 use Exception;
 use RuntimeException;
+use Redis;
 
 class Builder
 {
@@ -46,6 +47,11 @@ class Builder
     private $websocketProducer;
 
     /**
+     * @var OldSound\RabbitMqBundle\RabbitMq\Producer
+     */
+    private $dockerOutputProducer;
+
+    /**
      * @var array
      */
     private $options = [
@@ -61,12 +67,13 @@ class Builder
      * @param Docker\Docker $docker
      * @param Symfony\Bridge\Doctrine\RegistryInterface $doctrine
      */
-    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine, Producer $websocketProducer)
+    public function __construct(LoggerInterface $logger, Docker $docker, RegistryInterface $doctrine, Producer $websocketProducer, Redis $redis)
     {
         $this->docker = $docker;
         $this->logger = $logger;
         $this->doctrine = $doctrine;
         $this->websocketProducer = $websocketProducer;
+        $this->redis = $redis;
     }
 
     /**
@@ -213,7 +220,7 @@ class Builder
         $logger->info('resolved options', ['options' => $options]);
 
         $strategy = array_key_exists('path', $options['dockerfile'])
-            ? new DockerfileStrategy($logger, $docker, $em, $this->websocketProducer, $this->options)
+            ? new DockerfileStrategy($logger, $docker, $em, $this->websocketProducer, $this->redis, $this->options)
             : new DefaultStrategy($logger, $docker, $em, $this->websocketProducer, $this->options);
 
         $logger->info('elected strategy', [

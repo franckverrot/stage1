@@ -11,6 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\Process\ProcessBuilder;
+use Redis;
 
 class DockerfileStrategy
 {
@@ -24,12 +25,13 @@ class DockerfileStrategy
 
     private $options = [];
 
-    public function __construct(LoggerInterface $logger, Docker $docker, ObjectManager $objectManager, Producer $websocketProducer, array $options)
+    public function __construct(LoggerInterface $logger, Docker $docker, ObjectManager $objectManager, Producer $websocketProducer, Redis $redis, array $options)
     {
         $this->logger = $logger;
         $this->docker = $docker;
         $this->objectManager = $objectManager;
         $this->websocketProducer = $websocketProducer;
+        $this->redis = $redis;
         $this->options = $options;
     }
 
@@ -48,10 +50,22 @@ class DockerfileStrategy
         $logger = $this->logger;
         $docker = $this->docker;
         $websocketProducer = $this->websocketProducer;
+        $redis = $this->redis;
 
-        $publish = function ($content) use ($build, $websocketProducer) {
+        $publish = function ($content) use ($build, $websocketProducer, $redis) {
+            static $fragment = 0;
+
             $message = new BuildMessage($build, $content);
             $websocketProducer->publish((string) $message);
+
+            $redis->rpush($build->getLogsList(), json_encode([
+                'type' => Build::LOG_OUTPUT,
+                'message' => $content,
+                'stream' => 'stdout',
+                'microtime' => microtime(true),
+                'fragment_id' => $fragment++,
+                'build_id' => $build->getId(),
+            ]));
         };
 
         $project = $build->getProject();
@@ -102,11 +116,11 @@ class DockerfileStrategy
             $publish('$ '.$checkout->getCommandLine().PHP_EOL);
             $checkout->run();
         } else {
-            $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
             $clone = ProcessBuilder::create(['git', 'clone', '--quiet', '--depth', '1', '--branch', $build->getRef(), $project->getGitUrl(), $workdir.'/source'])
                 ->setEnv('GIT_SSH', $GIT_SSH)
                 ->getProcess();
 
+            $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
             $publish('$ '.$clone->getCommandLine().PHP_EOL);
             $clone->run();
         }

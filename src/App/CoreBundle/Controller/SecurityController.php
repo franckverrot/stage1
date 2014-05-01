@@ -41,27 +41,35 @@ class SecurityController extends Controller
      */
     public function primusAuthAction(Request $request)
     {
-        # @todo @channel_auth move channel auth to an authenticator service
-        $channel = $request->request->get('channel');
-        $token = uniqid(mt_rand(), true);            
+        try {
+            # @todo @channel_auth move channel auth to an authenticator service
+            $channel = $request->request->get('channel');
+            $token = uniqid(mt_rand(), true);            
 
-        if (strlen($channel) > 0) {
-            $repo = $this->getDoctrine()->getRepository('Model:User');
-            $authUser = $repo->findByChannel($channel);
+            if (strlen($channel) > 0) {
+                $repo = $this->getDoctrine()->getRepository('Model:User');
+                $authUser = $repo->findByChannel($channel);
 
-            if ($authUser !== $this->getUser()) {
-                return new JsonResponse(null, 403);
+                if ($authUser !== $this->getUser()) {
+                    return new JsonResponse(null, 403);
+                }
+            } else {
+                if (!$this->getUser()) {
+                    throw new \RuntimeException();
+                }
+
+                $channel = $this->getUser()->getChannel();
             }
-        } else {
-            $channel = $this->getUser()->getChannel();
+
+            $this->get('app_core.redis')->sadd('channel:auth:' . $channel, $token);
+
+            return new JsonResponse(json_encode([
+                'channel' => $this->getUser()->getChannel(),
+                'token' => $token,
+            ]));            
+        } catch (\Exception $e) {
+            return new JsonResponse(json_encode(false), 500);
         }
-
-        $this->get('app_core.redis')->sadd('channel:auth:' . $channel, $token);
-
-        return new JsonResponse(json_encode([
-            'channel' => $this->getUser()->getChannel(),
-            'token' => $token,
-        ]));
     }
 
     private function registerGithubUser(Request $request, $accessToken, $scope)

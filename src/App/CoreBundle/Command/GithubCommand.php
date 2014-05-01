@@ -2,8 +2,8 @@
 
 namespace App\CoreBundle\Command;
 
+use Guzzle\Http\Exception\ClientErrorResponseException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -41,7 +41,11 @@ class GithubCommand extends ContainerAwareCommand
         }
 
         $request = $client->get($input->getArgument('path'));
-        $response = $request->send();
+        try {
+            $response = $request->send();
+        } catch (ClientErrorResponseException $e) {
+            $response = $e->getResponse();
+        }
 
         $output->writeln(json_encode($response->json(), JSON_PRETTY_PRINT));    
     }

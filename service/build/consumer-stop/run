@@ -1,3 +1,3 @@
 #!/bin/bash
 exec /var/www/stage1/app/console rabbitmq:consumer -vvv -m 1 -w stop \
-    >> /var/log/stage1/consumer-stop 2>&1
+    >> /var/log/stage1/consumer-stop.log 2>&1
