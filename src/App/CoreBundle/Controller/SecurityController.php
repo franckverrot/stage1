@@ -89,6 +89,8 @@ class SecurityController extends Controller
             $user = User::fromGithubResponse($result);
             $user->setStatus(User::STATUS_WAITING_LIST);
 
+            // @todo generate random websocket channel name
+
             $keys = SshKeys::generate();
             $user->setPublicKey($keys['public']);
             $user->setPrivateKey($keys['private']);
