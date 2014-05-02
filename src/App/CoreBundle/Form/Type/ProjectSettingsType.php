@@ -25,22 +25,22 @@ class ProjectSettingsType extends AbstractType
     {
         $builder
             ->add('buildYml', 'ace_editor', [
-                'mode' => 'ace/mode/yaml',
-                'theme' => 'ace/theme/dawn',
-                'width' => 'undefined',
-                'tab_size' => 2,
+                'mode'              => 'ace/mode/yaml',
+                'theme'             => 'ace/theme/dawn',
+                'width'             => 'undefined',
+                'tab_size'          => 2,
                 'show_print_margin' => false,
-                'font_size' => 13,
-                'height' => 400,
-                'label' => 'Build configuration'
+                'font_size'         => 13,
+                'height'            => 400,
+                'label'             => 'Build configuration'
             ])
             ->add('save', 'submit', [
                 'label' => 'Save settings',
-                'attr' => ['class' => 'btn btn-primary']
+                'attr'  => ['class' => 'btn btn-primary']
             ])
             ->add('save_and_build', 'submit', [
                 'label' => 'Save and build with these settings',
-                'attr' => ['class' => 'btn']
+                'attr'  => ['class' => 'btn']
             ]);
     }
 
@@ -48,6 +48,7 @@ class ProjectSettingsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->class,
+            'intention'  => 'yml_settings'
         ]);
     }
 

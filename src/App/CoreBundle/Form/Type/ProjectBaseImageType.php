@@ -25,9 +25,9 @@ class ProjectBaseImageType extends AbstractType
     {
         $builder
             ->add('docker_base_image', 'choice', [
-                'label' => false,
+                'label'   => false,
                 'choices' => [
-                    'stage1' => 'Stage1 Base',
+                    'stage1'   => 'Stage1 Base',
                     'symfony2' => 'Symfony2',
                 ]
             ])
@@ -37,7 +37,8 @@ class ProjectBaseImageType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class
+            'data_class' => $this->class,
+            'intention'  => 'docker_image'
         ]);
     }
 
