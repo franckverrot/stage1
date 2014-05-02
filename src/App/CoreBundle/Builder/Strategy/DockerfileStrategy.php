@@ -94,8 +94,10 @@ class DockerfileStrategy
                 ->setEnv('GIT_SSH', $GIT_SSH)
                 ->getProcess();
 
-            $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
-            $publish('$ '.$clone->getCommandLine().PHP_EOL);
+            $commandLine = $clone->getCommandLine();
+
+            $logger->info('cloning repository', ['command_line' => $commandLine]);
+            $publish('$ '.substr($commandLine, 0, strrpos($commandLine, ' ')).PHP_EOL);
             $clone->run();
 
             $fetch = ProcessBuilder::create(['git', 'fetch', '--quiet', 'origin', 'refs/'.$build->getRef()])
@@ -120,8 +122,10 @@ class DockerfileStrategy
                 ->setEnv('GIT_SSH', $GIT_SSH)
                 ->getProcess();
 
-            $logger->info('cloning repository', ['command_line' => $clone->getCommandLine()]);
-            $publish('$ '.$clone->getCommandLine().PHP_EOL);
+            $commandLine = $clone->getCommandLine();
+
+            $logger->info('cloning repository', ['command_line' => $commandLine]);
+            $publish('$ '.substr($commandLine, 0, strrpos($commandLine, ' ')).PHP_EOL);
             $clone->run();
         }
 
