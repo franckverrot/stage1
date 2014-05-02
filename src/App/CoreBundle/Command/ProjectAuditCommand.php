@@ -70,10 +70,17 @@ class ProjectAuditCommand extends ContainerAwareCommand
         $response = $client->get($project->getHooksUrl())->send();
 
         $infos['has_hook'] = 0;
+        $infos['has_pr_hook'] = 0;
 
         foreach ($response->json() as $githubHook) {
             if ($githubHook['name'] === 'web' && strpos($githubHook['config']['url'], 'stage1.io') !== false) {
                 $infos['has_hook']++;
+
+                foreach ($githubHook['events'] as $event) {
+                    if ($event === 'pull_request') {
+                        $infos['has_pr_hook']++;
+                    }
+                }
             }
         }
 
