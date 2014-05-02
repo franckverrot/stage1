@@ -6,6 +6,7 @@ def export():
     local('sudo mkdir -p /etc/service')
     local('sudo rm -rf /etc/service/*')
     local('sudo cp -r ./service/web/* /etc/service/')
+    local('sudo cp -r ./service/router/* /etc/service/')
     local('sudo cp -r ./service/build/* /etc/service/')
 
 @task

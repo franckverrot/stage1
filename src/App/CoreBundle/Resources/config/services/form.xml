@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="app_core.form.type.project_policy.class">App\CoreBundle\Form\Type\ProjectPolicyType</parameter>
+        <parameter key="app_core.form.type.project_settings.class">App\CoreBundle\Form\Type\ProjectSettingsType</parameter>
+        <parameter key="app_core.form.type.project_base_image.class">App\CoreBundle\Form\Type\ProjectBaseImageType</parameter>
+        <parameter key="app_core.form.type.project_access.class">App\CoreBundle\Form\Type\ProjectAccessType</parameter>
+        <parameter key="app_core.form.type.project_master_password.class">App\CoreBundle\Form\Type\ProjectMasterPasswordType</parameter>
+    </parameters>
+
+    <services>
+
+        <service id="app_core.form.type.project_policy" class="%app_core.form.type.project_policy.class%">
+            <argument>%app_core.model.project_settings.class%</argument>
+            <tag name="form.type" alias="project_policy" />
+        </service>
+
+        <service id="app_core.form.type.project_settings" class="%app_core.form.type.project_settings.class%">
+            <argument>%app_core.model.project_settings.class%</argument>
+            <tag name="form.type" alias="project_settings" />
+        </service>
+
+        <service id="app_core.form.type.project_base_image" class="%app_core.form.type.project_base_image.class%">
+            <argument>%app_core.model.project.class%</argument>
+            <tag name="form.type" alias="project_base_image" />
+        </service>
+
+        <service id="app_core.form.type.project_access" class="%app_core.form.type.project_access.class%">
+            <argument>%app_core.value.project_access.class%</argument>
+            <tag name="form.type" alias="project_access" />
+        </service>
+
+        <service id="app_core.form.type.project_master_password" class="%app_core.form.type.project_master_password.class%">
+            <argument>%app_core.model.project.class%</argument>
+            <tag name="form.type" alias="project_master_password" />
+        </service>
+
+    </services>
+</container>

@@ -1,0 +1,127 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="app_core.stopwatch.class">Symfony\Component\Stopwatch\Stopwatch</parameter>
+        <parameter key="app_core.build_scheduler.class">App\CoreBundle\BuildScheduler</parameter>
+        <parameter key="session.handler.redis.class">Drak\NativeSession\NativeRedisSessionHandler</parameter>
+        <parameter key="app_core.message.factory.class">App\CoreBundle\Message\MessageFactory</parameter>
+        <parameter key="app_core.redis.class">Redis</parameter>
+        <parameter key="app_core.client.github.class">Guzzle\Http\Client</parameter>
+        <parameter key="app_core.docker.http_client.class">Docker\Http\Client</parameter>
+        <parameter key="app_core.docker.class">Docker\Docker</parameter>
+        <parameter key="app_core.discover.github.class">App\CoreBundle\Discover\Github</parameter>
+        <parameter key="app_core.github.import_class">App\CoreBundle\Github\Import</parameter>
+        <parameter key="app_core.builder.class">App\CoreBundle\Builder\Builder</parameter>
+    </parameters>
+
+    <services>
+        <!-- misc services -->
+        <service id="app_core.stopwatch" class="%app_core.stopwatch.class%" />
+
+        <service id="app_core.build_scheduler" class="%app_core.build_scheduler.class%">
+            <argument type="service" id="logger" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="old_sound_rabbit_mq.build_producer" />
+            <argument type="service" id="old_sound_rabbit_mq.kill_producer" />
+            <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
+            <argument type="service" id="app_core.message.factory" />
+
+            <call method="setOption">
+                <argument>builder_host_allow</argument>
+                <argument>%stage1_builder_host_allow%</argument>
+            </call>
+        </service>
+
+        <service id="session.handler.redis" class="%session.handler.redis.class%">
+            <argument>tcp://%redis_host%:%redis_port%?auth=%redis_password%</argument>
+        </service>
+
+        <service id="app_core.message.factory" class="%app_core.message.factory.class%">
+            <argument type="service" id="router" />
+        </service>
+        
+        <service id="app_core.redis" class="%app_core.redis.class%">
+            <call method="connect">
+                <argument>%redis_host%</argument>
+                <argument>%redis_port%</argument>
+            </call>
+            <call method="auth">
+                <argument>%redis_password%</argument>
+            </call>
+        </service>
+
+        <service id="app_core.client.github" class="%app_core.client.github.class%">
+            <argument>%github_api_base_url%</argument>
+        </service>
+
+        <service id="app_core.docker.http_client" class="%app_core.docker.http_client.class%">
+            <argument>%docker_api_base_url%</argument>
+            <call method="setTimeout">
+                <argument>%stage1_build_timeout%</argument>
+            </call>
+        </service>
+
+        <service id="app_core.docker" class="%app_core.docker.class%">
+            <argument type="service" id="app_core.docker.http_client" />
+        </service>
+
+        <service id="app_core.discover.github" class="%app_core.discover.github.class%">
+            <argument type="service" id="app_core.client.github" />
+            <argument type="service" id="logger" />
+        </service>
+
+        <service id="app_core.github.import" class="%app_core.github.import_class%">
+            <argument type="service" id="logger" />
+            <argument type="service" id="app_core.client.github" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="app_core.redis" />
+            <argument type="service" id="router" />
+            
+            <tag name="monolog.logger" channel="build" />
+
+            <call method="setFeatureIpAccessList">
+                <argument>%feature_ip_access_list%</argument>
+                <argument>%feature_token_access_list%</argument>
+            </call>
+        </service>
+
+        <service id="app_core.builder" class="%app_core.builder.class%">
+            <argument type="service" id="logger" />
+            <argument type="service" id="app_core.docker" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
+
+            <tag name="monolog.logger" channel="build" />
+
+            <call method="setOption">
+                <argument>composer_enable_global_cache</argument>
+                <argument>%composer_enable_global_cache%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>composer_enable_project_cache</argument>
+                <argument>%composer_enable_project_cache%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>composer_cache_path</argument>
+                <argument>%composer_cache_path%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>dummy</argument>
+                <argument>%stage1_dummy_build%</argument>
+            </call>
+
+            <call method="setOption">
+                <argument>dummy_duration</argument>
+                <argument>%stage1_dummy_build_duration%</argument>
+            </call>
+        </service>
+
+    </services>
+</container>

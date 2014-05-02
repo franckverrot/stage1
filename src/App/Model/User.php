@@ -95,7 +95,7 @@ class User implements UserInterface, \Serializable
     {
         $roles = ['ROLE_USER'];
 
-        if ($this->getUsername() === 'ubermuda') {
+        if (in_array($this->getUsername(), array('ubermuda', 'pocky'))) {
             $roles[] = 'ROLE_ADMIN';
             $roles[] = 'ROLE_DEMO';
         }

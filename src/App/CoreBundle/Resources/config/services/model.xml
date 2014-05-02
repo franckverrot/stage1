@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="app_core.model.beta_signup.class">App\Model\BetaSignup</parameter>
+
+        <parameter key="app_core.model.branch.class">App\Model\Branch</parameter>
+
+        <parameter key="app_core.model.build.class">App\Model\Build</parameter>
+        <parameter key="app_core.model.build_failure.class">App\Model\BuildFailure</parameter>
+        <parameter key="app_core.model.build_log.class">App\Model\BuildLog</parameter>
+        <parameter key="app_core.model.build_script.class">App\Model\BuildScript</parameter>
+
+        <parameter key="app_core.model.demo.class">App\Model\Demo</parameter>
+        <parameter key="app_core.model.feedback.class">App\Model\Feedback</parameter>
+        <parameter key="app_core.model.github_payload.class">App\Model\GithubPayload</parameter>
+        <parameter key="app_core.model.organization.class">App\Model\Organization</parameter>
+
+        <parameter key="app_core.model.project.class">App\Model\Project</parameter>
+        <parameter key="app_core.model.project_settings.class">App\Model\ProjectSettings</parameter>
+
+        <parameter key="app_core.model.user.class">App\Model\User</parameter>
+
+        <parameter key="app_core.value.project_access.class">App\CoreBundle\Value\ProjectAccess</parameter>
+    </parameters>
+
+</container>

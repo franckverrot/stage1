@@ -19,7 +19,7 @@ class SecurityController extends Controller
 {
     private function isForceEnabled(User $user, SessionInterface $session)
     {
-        if ($user->getUsername() === 'ubermuda') {
+        if (in_array($user->getUsername(), array('ubermuda', 'pocky'))) {
             return true;
         }
 

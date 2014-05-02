@@ -22,13 +22,17 @@ web/assets/
 # Configuration files
 app/config/parameters.ini
 app/config/parameters.yml
+app/config/github.yml
 app/config/hipache_prod.json
 app/SymfonyRequirements.php
 app/check.php
 
 # Vagrant
 .vagrant
-boxes/
+
+# Packer
+packer/boxes/*
+packer_cache
 
 # Node
 npm-debug.log

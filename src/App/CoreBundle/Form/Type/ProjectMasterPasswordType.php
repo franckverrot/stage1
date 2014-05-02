@@ -8,6 +8,19 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ProjectMasterPasswordType extends AbstractType
 {
+    /**
+     * @var
+     */
+    protected $class;
+
+    /**
+     * @param $class
+     */
+    public function __construct($class)
+    {
+        $this->class = $class;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -19,7 +32,7 @@ class ProjectMasterPasswordType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\\Model\\Project',
+            'data_class' => $this->class
         ]);
     }
 

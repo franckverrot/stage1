@@ -25,7 +25,6 @@
                                 <li><a href="{{ path('app_admin_dashboard') }}">Admin</a></li>
                             {% else %}
                                 <li><a href="#">Logged in as {{ app.user }}</a></li>
-                                <li class="divider-vertical"></li>
                                 {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                                 <li><a href="?_switch_user=_exit">_exit</a></li>
                                 {% endif %}

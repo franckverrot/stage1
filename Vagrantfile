@@ -29,21 +29,12 @@ Vagrant.configure("2") do |config|
     config.vm.network :private_network, ip: '192.168.215.42'
     
     config.vm.synced_folder ".", "/vagrant", :nfs => true
-    config.vm.synced_folder "/Users/ash/Projects", "/projects", :nfs => true
+    config.vm.synced_folder ".", "/var/www/stage1", :nfs => true
 
     config.hostmanager.aliases = %w(
         stage1.dev
         www.stage1.dev
         help.stage1.dev
-        feature-checkout.acmemuda.acmeshop.stage1.dev
-        master.acmemuda.acmeshop.stage1.dev
-        master.ubermuda.puphpet.stage1.dev
-        gustave.dev
-        redmine.dev
-        jira.dev
-        sflive.dev
-        mytepee.dev
-        mytepee.example.com
     )
 
     config.vm.provision :shell, :inline => $script
@@ -53,5 +44,9 @@ Vagrant.configure("2") do |config|
         # v.vmx['numvcpus'] = 2
         v.vmx['memsize'] = 1024
         v.vmx['numvcpus'] = 1
+    end
+
+    config.vm.provider 'virtualbox' do |v|
+        v.customize [ "modifyvm", :id, "--memory", "1024" ]
     end
 end
