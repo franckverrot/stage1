@@ -94,6 +94,7 @@
             <argument type="service" id="app_core.docker" />
             <argument type="service" id="doctrine" />
             <argument type="service" id="old_sound_rabbit_mq.websocket_producer" />
+            <argument type="service" id="app_core.redis" />
 
             <tag name="monolog.logger" channel="build" />
 
