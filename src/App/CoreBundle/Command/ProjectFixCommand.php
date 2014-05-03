@@ -36,6 +36,11 @@ class ProjectFixCommand extends ContainerAwareCommand
                 continue;
             }
 
+            if (strlen($project->getHooksUrl()) === 0) {
+                $output->writeln('fixing hooks url for <info>'.$project->getGithubFullName().'</info>');
+                $project->setHooksUrl($githubInfos['hooks_url']);
+            }
+
             if (strlen($project->getDockerBaseImage()) === 0) {
                 $output->writeln('fixing base image for <info>'.$project->getGithubFullName().'</info>');
                 $project->setDockerBaseImage('symfony2:latest');
@@ -82,43 +87,45 @@ class ProjectFixCommand extends ContainerAwareCommand
                 $em->persist($settings);
             }
 
-            $githubHookUrl = $this->getContainer()->get('router')->generate('app_core_hooks_github', [], true);
-            $githubHookUrl = str_replace('http://localhost', 'http://stage1.io', $githubHookUrl);
+            try {
+                $githubHookUrl = $this->getContainer()->get('router')->generate('app_core_hooks_github', [], true);
+                $githubHookUrl = str_replace('http://localhost', 'http://stage1.io', $githubHookUrl);
 
-            $client = $this->getContainer()->get('app_core.client.github');
-            $client->setDefaultOption('headers/Authorization', 'token '.$project->getUsers()->first()->getAccessToken());
-                
-            if (strlen($project->getGithubHookId()) === 0) {
-                $request = $client->post($project->getHooksUrl());
-                $request->setBody(json_encode([
-                    'name' => 'web',
-                    'active' => true,
-                    'events' => ['push', 'pull_request'],
-                    'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
-                ]), 'application/json');
+                $client = $this->getContainer()->get('app_core.client.github');
+                $client->setDefaultOption('headers/Authorization', 'token '.$project->getUsers()->first()->getAccessToken());
+                    
+                if (strlen($project->getGithubHookId()) === 0) {
+                    $output->writeln('adding webhook for <info>'.$project->getGithubFullName().'</info>');
+                    $request = $client->post($project->getHooksUrl());
+                    $request->setBody(json_encode([
+                        'name' => 'web',
+                        'active' => true,
+                        'events' => ['push', 'pull_request'],
+                        'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
+                    ]), 'application/json');
 
-                $response = $request->send();
-                $installedHook = $response->json();
+                    $response = $request->send();
+                    $installedHook = $response->json();
 
-                $project->setGithubHookId($installedHook['id']);
-            } else {
-                $request = $client->get([$project->getHooksUrl(), [
-                    'id' => $project->getGithubHookId(),
-                ]]);
+                    $project->setGithubHookId($installedHook['id']);
+                } else {
+                    $request = $client->get([$project->getHooksUrl(), [
+                        'id' => $project->getGithubHookId(),
+                    ]]);
 
-                $response = $request->send();
-                $installedHook = $response->json()[0];
+                    $response = $request->send();
+                    $installedHook = $response->json()[0];
 
-                if (count($installedHook['events']) === 1) {
-                    $output->writeln('adding pull_request webhook event for <info>'.$project->getGithubFullName().'</info>');
-                    try {
+                    if (count($installedHook['events']) === 1) {
+                        $output->writeln('adding pull_request webhook event for <info>'.$project->getGithubFullName().'</info>');
                         $request = $client->patch($installedHook['url']);
                         $request->setBody(json_encode(['add_events' => ['pull_request']]));
                         $request->send();
-                    } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-                        echo $e->getResponse()->getBody();
                     }
                 }
+            } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+                $output->writeln('<error>could not check webhook for <info>'.$project->getGithubFullName().'</info>');
+                echo $e->getResponse()->getBody();
             }
 
             $em->persist($project);

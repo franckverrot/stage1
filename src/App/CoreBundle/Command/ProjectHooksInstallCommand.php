@@ -63,7 +63,7 @@ class ProjectHooksInstallCommand extends ContainerAwareCommand
         $request->setBody(json_encode([
             'name' => 'web',
             'active' => true,
-            'events' => ['push'],
+            'events' => ['push', 'pull_request'],
             'config' => ['url' => $githubHookUrl, 'content_type' => 'json'],
         ]), 'application/json');
 

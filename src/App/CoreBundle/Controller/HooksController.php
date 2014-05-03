@@ -80,11 +80,14 @@ class HooksController extends Controller
 
         $ref = sprintf('pull/%d/head', $payload->getPullRequestNumber());
 
-        return [$ref, $this->getHashFromRef($ref)];
+        return [$ref, $this->getHashFromRef($project, $ref)];
     }
 
     private function scheduleBranchPush(GithubPayload $payload, Project $project)
     {
+        $logger = $this->get('logger');
+        $em = $this->get('doctrine')->getManager();
+
         if (!$payload->hasRef()) {
             return new JsonResponse(json_encode(null), 400);
         }
@@ -172,10 +175,14 @@ class HooksController extends Controller
                 ->findOneByGithubId($payload->getGithubRepositoryId());
 
             if (!$project) {
+                $logger->info('could not find a project', ['github_repository_id' => $payload->getGithubRepositoryId()]);
                 throw $this->createNotFoundException('Unknown Github project');
             }
 
+            $logger->info('found project', ['full_name' => $project->getGithubFullName()]);
+
             if ($project->getStatus() === Project::STATUS_HOLD) {
+                $logger->info('project is on hold');
                 return new JsonResponse(['class' => 'danger', 'message' => 'Project is on hold']);
             }
 
@@ -183,13 +190,21 @@ class HooksController extends Controller
                 ? 'schedulePullRequest'
                 : 'scheduleBranchPush';
 
+            $logger->info('elected strategy', ['strategy' => $strategy]);
+
             $response = $this->$strategy($payload, $project);
 
             if ($response instanceof Response) {
+                $logger->info('got response, sending', ['status_code' => $response->getStatusCode()]);
                 return $response;
             }
 
             list($ref, $hash) = $response;
+
+            $logger->info('got ref and hash', [
+                'ref' => $ref,
+                'hash' => $hash
+            ]);
 
             $scheduler = $this->get('app_core.build_scheduler');
             $build = $scheduler->schedule($project, $ref, $hash, $payload);

@@ -50,15 +50,16 @@ class BetaController extends Controller
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('Model:BetaSignup');
 
-        $betaSignup = $repo->findByBetaKey($betaKey);
-
-        $this->get('session')->set('beta_signup', $betaSignup->getId());
+        $betaSignup = $repo->findOneByBetaKey($betaKey);
 
         if (!$betaSignup) {
             return $this->redirect($this->generateUrl('app_core_homepage'));
         }
 
-        $request->getSession()->set('beta_key', $betaKey);
+        $session = $this->get('session');
+
+        $session->set('beta_signup', $betaSignup->getId());
+        $session->set('beta_key', $betaKey);
 
         return $this->render('AppCoreBundle:Beta:enter.html.twig', [
             'beta_signup' => $betaSignup,
