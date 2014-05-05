@@ -27,8 +27,41 @@ GUIDELINES
 
 * Whenever (if) we need to add code to a repo, propose to create a PR, not to commit it directly
 
-TODO PRIVATE BETA
------------------
+SCALING
+=======
+
+* feature switches for (almost) everything
+* read-only mode
+* shutdown container after X minutes of idle, re-start them on-demand
+
+THIRD PARTY INTEGRATION
+=======================
+
+* https://github.com/marmelab/gaudi
+* http://wercker.com/
+* GitHub statuses API
+* Gitlab
+* Bitbucket
+* Kiln
+* Pagodabox Boxfile
+* http://voicechatapi.com/
+* phpci
+* phabricator
+* mailcatcher
+* gor (https://github.com/buger/gor)
+
+TODO
+====
+
+* Number of builds: add a tooltip explaining exactly what builds are counted
+
+* Github
+    * periodically check for access_token validity and warn user if it expired
+
+* Commands
+    * commands to empty redis
+
+* REST API / webhooks
 
 * help
     * how to use sass/compass
@@ -39,55 +72,12 @@ TODO PRIVATE BETA
         * ansible
         * salt
         * an heroku buildpack
-* builds
-    * switch runtime to supervisor or something to make sure everything runs as it should
-* global
-    * have contextual help everywhere it matters
-* dashboard
-    * list of running instances grouped by project and order by project.last_build_id
-* projects
-    * support dependencies in a gitlab instance
-    * update project access when an user joins the project
+
 * logs
     * application logs
 
-* Get a $100 service credit by completing our 6 question survey
-
-
-SCALING
-=======
-
-* feature switches for (almost) everything
-* read-only mode
-
-THIRD PARTY INTEGRATION
-=======================
-
-* https://github.com/marmelab/gaudi
-* http://wercker.com/
-* github deployment API
-* Gitlab
-* Bitbucket
-* Pagodabox Boxfile
-* http://voicechatapi.com/
-* phpci
-
-TODO
-====
-
-* nombre de builds en cours: tooltip qui explique ce que c'est exactement
-
-* pricing
-    * 50-200 (30 containers en continu en meme temps + filtrage de branche + features de staging)
-    * elevator pitch: expliquer aux agences qu'ils peuvent inclure le cout de stage1 dans les devis / factures
-
-* Github
-    * periodically check for access_token validity and warn user if it expired
-
-* Commands
-    * commands to empty redis
-
-* REST API / webhooks
+* dashboard
+    * list of running instances grouped by project and order by project.last_build_id
 
 * production
     * everything needs to transit through SSL
@@ -99,6 +89,7 @@ TODO
     * allow php.ini customization and set error_reporting back to E_ALL | E_STRICT
 
 * builds
+    * switch runtime to supervisor or something to make sure everything runs as it should
     * check that the runtime container was successfuly built
     * check the desired branch is available
     * running and building status are confusing
@@ -125,6 +116,8 @@ TODO
     * support Procfiles (?)
 
 * projects
+    * support dependencies in a gitlab instance
+    * update project access when an user joins the project
     * last_build_at + last_build_ref (last_build_id ?)
     * access (?)
         * implement "one-time-access-granting" URLs
@@ -174,8 +167,6 @@ A problem will be github's API rate limit and composer, because the access token
 THE DISTANT FUTURE
 ==================
 
-* see if https://github.com/travis-ci/travis-build is monkey patchable to not include script and after_script
-
 * builds
     * log queue time
     * separate builds and jobs
@@ -201,7 +192,7 @@ THE DISTANT FUTURE
         * new project (detected through a build poke)
 
 * runtimes
-    * premium option to allow a user to build his own docker image and then assign it to his projects
+    * allow a user to build his own docker image and then assign it to his projects
     * internal docker registry where users can push their own runtimes
     * support buildpacks, packer, chef, puppet
 
@@ -212,8 +203,6 @@ DEMO
 ----
 
 * add the place of the build in the builds queue (?)
-* limit number of demo build to 1 per email
-* if someone tries to launch a demo build with an already used email, try some marketing
 
 DEMO PROJECTS
 -------------
@@ -224,23 +213,3 @@ DEMO PROJECTS
 * puphpet (to remove, too confusing)
 * akeneo
 * ekino cms ?
-
-IDEES DE OUF
-============
-
-Gustave
--------
-
-* le client peut annoter la preprod
-* stage1 enregistre les actions des clients (clic la, clic la, tape ca, clic la)
-    * faire gaffe aux infos sensibles (numeros de CB, telephone)
-* multiplexage de la session (tu vois ce que le client fait en live)
-    * possibilite de discuter avec lui via un chat integre
-* feature de "touring" sur la preprod
-* possibilite de setup des surveys pour poser des questions aux users
-
-
-* integration avec mailcatcher
-* integration avec gor (https://github.com/buger/gor)
-* acces a un pool de beta-tester
-    * plutot axe videogames, pour plus tard

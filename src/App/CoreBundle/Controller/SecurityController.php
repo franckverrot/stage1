@@ -99,7 +99,7 @@ class SecurityController extends Controller
         // $user->addAccessTokenScopes(explode(',', $scope));
         $user->setAccessTokenScope($scope);
 
-        if (strlen($user->getEmail()) === 0) {
+        if (false && strlen($user->getEmail()) === 0) {
             $githubRequest = $client->get('/user/emails');
             $githubResponse = $githubRequest->send();
 
