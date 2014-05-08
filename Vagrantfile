@@ -13,7 +13,7 @@ app/console assetic:dump
 bundle install
 sudo fab service.export
 
-if ! -d /var/www/yuhao; then
+if [ ! -d /var/www/yuhao ]; then
     git clone https://github.com/stage1/yuhao.git /var/www/yuhao
 fi
 
@@ -28,19 +28,14 @@ Vagrant.configure("2") do |config|
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
 
-    config.vm.box = "stage1/dev"
-    config.vm.box_url = "packer/boxes/dev.box"
+    config.vm.box = "ubermuda/stage1-dev"
 
     config.vm.hostname = 'stage1.dev'
     config.vm.network :private_network, ip: '192.168.215.42'
     
     config.vm.synced_folder '.', '/var/www/stage1', type: 'nfs'
 
-    config.hostmanager.aliases = %w(
-        stage1.dev
-        www.stage1.dev
-        help.stage1.dev
-    )
+    config.hostmanager.aliases = %w(stage1.dev www.stage1.dev help.stage1.dev)
 
     config.vm.provision :shell, :inline => $script
 

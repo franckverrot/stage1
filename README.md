@@ -1,18 +1,33 @@
 STAGE1
 ======
 
-Install [Packer](http://packer.io/) and [Vagrant](http://vagrantup.com/), then build the VM and run it.
+Using [Vagrant](http://vagrantup.com/):
+
+    $ vagrant plugin install vagrant-hostmanager
+    $ vagrant up
+
+Then head to http://stage1.dev/.
+
+Repacking the VM
+----------------
+
+Using [Packer](http://packer.io/):
 
 **VMware users**:
 
     $ packer build -only=vmware-iso packer/dev.json
-    $ vagrant add --name stage1/dev --provider vmware_desktop packer/boxes/dev.box
-    $ vagrant up
+    $ vagrant box add \
+        --name ubermuda/stage1-dev \
+        --box-version 9999 \
+        --provider vmware_desktop \
+        packer/boxes/dev.box
 
 **VirtualBox users**:
 
     $ packer build -only=virtualbox-iso packer/dev.json
-    $ vagrant add --name stage1/dev packer/boxes/dev.box
-    $ vagrant up
+    $ vagrant box add \
+        --name ubermuda/stage1-dev \
+        --box-version 9999 \
+        packer/boxes/dev.box
 
-Open http://stage1.dev/.
+We use a box version of `9999` to trick Vagrant into using our version rather than the "official" one.
