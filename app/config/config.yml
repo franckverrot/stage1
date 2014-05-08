@@ -37,6 +37,7 @@ twig:
         feature_token_access_list: %feature_token_access_list%
         google_analytics_tracking_code: %google_analytics_tracking_code%
         google_analytics_site: %google_analytics_site%
+        websocket_port: %websocket_port%
 
 # Assetic Configuration
 assetic:
