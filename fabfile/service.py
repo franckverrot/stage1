@@ -4,6 +4,7 @@ from utils import *
 @task
 def export():
     local('sudo mkdir -p /etc/service')
+    local('sudo svc -d /etc/service/*')
     local('sudo rm -rf /etc/service/*')
     local('sudo cp -r ./service/web/* /etc/service/')
     local('sudo cp -r ./service/router/* /etc/service/')

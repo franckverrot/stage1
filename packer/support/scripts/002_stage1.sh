@@ -25,7 +25,7 @@ curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 cp /tmp/apt-docker.list /etc/apt/sources.list.d/docker.list
 curl http://get.docker.io/gpg | apt-key add -
 
-apt-get update
+apt-get update -y
 
 apt-get install -qy python-software-properties
 
@@ -50,7 +50,9 @@ apt-get -qy install \
     acl \
     nodejs \
     lxc-docker \
-    linux-image-generic-lts-raring
+    linux-image-generic-lts-raring \
+    daemontools \
+    daemontools-run
 
 # enable ACL on /
 
@@ -58,7 +60,7 @@ sed -e 's/errors=remount-ro/&,acl/' -i /etc/fstab
 mount -o remount /
 
 # install configuration
-cp /tmp/nginx-default /etc/nginx/sites-available/default
+cp /tmp/nginx-stage1.conf /etc/nginx/sites-available/default
 
 cp /tmp/docker-default /etc/default/docker
 
@@ -83,8 +85,11 @@ curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 
 # docker specific stuff
-docker pull ubuntu:precise
+docker pull stackbrew/ubuntu:saucy
 
 # hipache
 npm install -g git://github.com/ubermuda/hipache.git
 mkdir -p /var/log/hipache
+
+# misc directories
+mkdir -p /var/www/stage1 /var/log/stage1

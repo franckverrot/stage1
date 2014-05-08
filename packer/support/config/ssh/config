@@ -4,7 +4,3 @@ Host *
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
     StrictHostKeyChecking no
-
-Host bitbucket.org
-    User git
-    IdentityFile /home/vagrant/.ssh/id_rsa

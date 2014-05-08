@@ -15,9 +15,9 @@
       "guest_os_type": "ubuntu-64",
       "headless": false,
       "http_directory": "packer/support/preseed",
-      "iso_checksum": "af5f788aee1b32c4b2634734309cc9e9",
+      "iso_checksum": "e83adb9af4ec0a039e6a5c6e145a34de",
       "iso_checksum_type": "md5",
-      "iso_url": "/Users/ash/ISO/ubuntu-12.04.2-server-amd64.iso",
+      "iso_url": "http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-server-amd64.iso",
       "shutdown_command": "sudo halt -p",
       "ssh_password": "vagrant",
       "ssh_username": "vagrant",
@@ -94,13 +94,13 @@
       "type": "file"
     },
     {
-      "destination": "/tmp/nginx-default",
-      "source": "packer/support/config/nginx/dev/default",
+      "destination": "/tmp/nginx-stage1.conf",
+      "source": "packer/support/config/nginx/stage1.conf",
       "type": "file"
     },
     {
       "destination": "/tmp/php-php.ini",
-      "source": "packer/support/config/php/dev.ini",
+      "source": "packer/support/config/php/php.ini",
       "type": "file"
     },
     {
@@ -110,7 +110,7 @@
     },
     {
       "destination": "/tmp/ssh-config",
-      "source": "packer/support/config/ssh/dev",
+      "source": "packer/support/config/ssh/config",
       "type": "file"
     },
     {
@@ -136,12 +136,12 @@
     {
       "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
       "scripts": [
-        "packer/support/scripts/ssh.sh",
-        "packer/support/scripts/stage1.sh",
-        "packer/support/scripts/dev.sh",
-        "packer/support/scripts/vagrant.sh",
-        "packer/support/scripts/vmware.sh",
-        "packer/support/scripts/zerodisk.sh"
+        "packer/support/scripts/001_ssh.sh",
+        "packer/support/scripts/002_stage1.sh",
+        "packer/support/scripts/003_dev.sh",
+        "packer/support/scripts/004_vagrant.sh",
+        "packer/support/scripts/005_vmware.sh",
+        "packer/support/scripts/006_zerodisk.sh"
       ],
       "type": "shell"
     }

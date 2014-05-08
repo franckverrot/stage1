@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ "$PACKER_BUILDER_TYPE" == "vmware" ] || {
+[ "$PACKER_BUILDER_TYPE" == "vmware-iso" ] || {
     echo 'not building vmware, skipping';
     exit;
 }

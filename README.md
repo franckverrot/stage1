@@ -1,20 +1,14 @@
 STAGE1
 ======
 
-* install packer (http://packer.io)
-* build the VM in `packer/dev.json`
-* install vagrant
-* `vagrant plugin install vagrant-hostmanager`
-* customize the Vagrantfile
-* `vagrant up`
-* `vagrant ssh`
-* `apt-get update && apt-get install lxc-docker`
-* `sudo apt-get install daemontools daemontools-run`
-* `rm -rf /etc/init/stage1*`
-* `ps auxwww | grep stage1 | awk '{print $1}' | xargs kill`
-* `cd /vagrant`
-* `fab service.export`
-* `sudo start svscan`
-* `composer install`
-* `app/console doctrine:database:create`
-* `app/console doctrine:schema:update --force`
+1. Install [Packer](http://packer.io/) and [Vagrant](http://vagrantup.com/)
+2. Build a VM for your provider of choice, either `vmware-iso` or `virtualbox-iso`. A pre-built VM will be available soon.
+
+    $ packer build -only=$provider packer/dev.json
+
+3. Add it to vagrant and run it. The `--provider` part is only needed for VMware.
+
+    $ vagrant add --name stage1/dev --provider vmware_desktop packer/boxes/dev.box
+    $ vagrant up
+
+4. Open http://stage1.dev/
