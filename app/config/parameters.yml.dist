@@ -28,6 +28,8 @@ parameters:
     rabbitmq_user: guest
     rabbitmq_password: guest
 
+    websocket_port: 8090
+
     stage1_queue_build: build_vm
     stage1_queue_kill: kill_vm
     stage1_queue_stop: kill_stop

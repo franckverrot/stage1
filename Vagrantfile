@@ -2,19 +2,25 @@
 # vim:set ft=ruby:
 
 $script = <<EOF
-# cd /vagrant
-# composer self-update
-# composer install
-# /vagrant/app/console doctrine:database:drop --force
-# /vagrant/app/console doctrine:database:create
-# /vagrant/app/console doctrine:schema:update --force
-# /vagrant/app/console assetic:dump
-# /vagrant/app/console stage1:demo:setup
-# bundle install
-# fab upstart_export
-# sudo restart stage1
-# redis-cli del frontend:help.stage1.dev
-# redis-cli rpush frontend:help.stage1.dev help http://127.0.0.1:8080/
+cd /var/www/stage1
+composer self-update
+composer install
+app/console doctrine:database:drop --force
+app/console doctrine:database:create
+app/console doctrine:schema:update --force
+app/console assetic:dump
+
+bundle install
+sudo fab service.export
+
+if ! -d /var/www/yuhao; then
+    git clone https://github.com/stage1/yuhao.git /var/www/yuhao
+fi
+
+if ! docker images | grep stage1 > /dev/null; then
+    bin/docker/update.sh
+    bin/yuhao/update.sh
+fi
 EOF
 
 Vagrant.configure("2") do |config|
@@ -22,14 +28,13 @@ Vagrant.configure("2") do |config|
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
 
-    config.vm.box = "stage1-dev"
+    config.vm.box = "stage1/dev"
     config.vm.box_url = "packer/boxes/dev.box"
 
-    config.vm.hostname = 'stage1-dev'
+    config.vm.hostname = 'stage1.dev'
     config.vm.network :private_network, ip: '192.168.215.42'
     
-    config.vm.synced_folder ".", "/vagrant", :nfs => true
-    config.vm.synced_folder ".", "/var/www/stage1", :nfs => true
+    config.vm.synced_folder '.', '/var/www/stage1', type: 'nfs'
 
     config.hostmanager.aliases = %w(
         stage1.dev
@@ -40,8 +45,6 @@ Vagrant.configure("2") do |config|
     config.vm.provision :shell, :inline => $script
 
     config.vm.provider 'vmware_fusion' do |v|
-        # v.vmx['memsize'] = 2048
-        # v.vmx['numvcpus'] = 2
         v.vmx['memsize'] = 1024
         v.vmx['numvcpus'] = 1
     end
