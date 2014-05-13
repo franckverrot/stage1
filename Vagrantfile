@@ -2,25 +2,25 @@
 # vim:set ft=ruby:
 
 $script = <<EOF
-cd /var/www/stage1
-composer self-update
-composer install
-app/console doctrine:database:drop --force
-app/console doctrine:database:create
-app/console doctrine:schema:update --force
-app/console assetic:dump
+# cd /var/www/stage1
+# composer self-update
+# composer install
+# app/console doctrine:database:drop --force
+# app/console doctrine:database:create
+# app/console doctrine:schema:update --force
+# app/console assetic:dump
 
-bundle install
-sudo fab service.export
+# bundle install
+# sudo fab service.export
 
-if [ ! -d /var/www/yuhao ]; then
-    git clone https://github.com/stage1/yuhao.git /var/www/yuhao
-fi
+# if [ ! -d /var/www/yuhao ]; then
+#     git clone https://github.com/stage1/yuhao.git /var/www/yuhao
+# fi
 
-if ! docker images | grep stage1 > /dev/null; then
-    bin/docker/update.sh
-    bin/yuhao/update.sh
-fi
+# if ! docker images | grep stage1 > /dev/null; then
+#     bin/docker/update.sh
+#     bin/yuhao/update.sh
+# fi
 EOF
 
 Vagrant.configure("2") do |config|
@@ -34,6 +34,7 @@ Vagrant.configure("2") do |config|
     config.vm.network :private_network, ip: '192.168.215.42'
     
     config.vm.synced_folder '.', '/var/www/stage1', type: 'nfs'
+    config.vm.synced_folder '/Users/ash/Projects', '/projects', type: 'nfs'
 
     config.hostmanager.aliases = %w(stage1.dev www.stage1.dev help.stage1.dev)
 
