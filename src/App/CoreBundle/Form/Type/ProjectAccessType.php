@@ -30,7 +30,7 @@ class ProjectAccessType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->class,
-            'intention'  => 'access_ip'
+            'intention' => 'access_ip',
         ]);
     }
 

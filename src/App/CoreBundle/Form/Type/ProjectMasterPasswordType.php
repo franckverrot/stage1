@@ -24,7 +24,7 @@ class ProjectMasterPasswordType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('master_password', 'password', ['required' => false])
+            ->add('master_password', 'password', ['required' => false,])
             ->add('update', 'submit')
             ->add('delete', 'submit');
     }
@@ -33,7 +33,7 @@ class ProjectMasterPasswordType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->class,
-            'intention'  => 'master_password'
+            'intention' => 'master_password',
         ]);
     }
 
