@@ -550,6 +550,21 @@ class User implements UserInterface, \Serializable
     }
 
     /**
+     * Remove a role
+     * 
+     * @param string $role
+     * @return User
+     */
+    public function removeRole($role)
+    {
+        if (false !== $index = array_search($role, $this->roles)) {
+            unset($this->roles[$index]);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get roles
      *
      * @return array 
