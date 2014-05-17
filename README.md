@@ -17,6 +17,28 @@ And please don't look at the commit history.
 
 The whole codebase is undergoing drastic refactoring to bring its quality up to an acceptable level.
 
+Getting started
+---------------
+
+STAGE1 is quite a big project to grasp, so don't worry about understanding each and every detail (even I don't understand everything that's going on sometimes), and rather focus on the parts you're interesting in contributing to. The Vagrant VM should give you a fully functional dev environment (if not, it's a bug).
+
+There a few CLI commands that you may find interesting:
+
+* `stage1:user:role:add <username> <role>`: add a security role to a user. You might want give your user the `ROLE_ADMIN` role
+* `stage1:github -u <username> <path>`: a non-interactive CLI github client that uses the Access Token associated with the given user
+
+Structure
+---------
+
+The directory structure is basically that of a standard Symfony2 project, with a few additions:
+
+* `docker/` holds the Dockerfiles for all STAGE1's base containers
+* `fabfile/` has the fabric configuration
+* `help/` is the help site, built with [jekyll](http://jekyllrb.com/)
+* `node/` has all node related code
+* `packer` contains the packer configuration and support files
+* `service/` has the daemontools services definitions
+
 Architecture
 ------------
 
