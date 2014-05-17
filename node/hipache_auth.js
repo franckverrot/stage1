@@ -24,6 +24,7 @@ module.exports = function(hipache, req, stack, next) {
     var auth_url = hipache.cache.config.server.config.auth_url;
 
     console.log('======================================')
+    console.log('url: ' + req.url);
     console.log('project: ' + project);
     console.log('ip: ' + ip);
     console.log('token: ' + token);
