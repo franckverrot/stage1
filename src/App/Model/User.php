@@ -46,6 +46,8 @@ class User implements UserInterface, \Serializable
 
     protected $betaSignup;
 
+    protected $roles = [];
+
     public function __toString()
     {
         return (string) $this->username;
@@ -91,17 +93,17 @@ class User implements UserInterface, \Serializable
         $this->setUsername($data[1]);
     }
 
-    public function getRoles()
-    {
-        $roles = ['ROLE_USER'];
+    // public function getRoles()
+    // {
+    //     $roles = ['ROLE_USER'];
 
-        if (in_array($this->getUsername(), array('ubermuda', 'pocky'))) {
-            $roles[] = 'ROLE_ADMIN';
-            $roles[] = 'ROLE_DEMO';
-        }
+    //     if (in_array($this->getUsername(), array('ubermuda', 'pocky'))) {
+    //         $roles[] = 'ROLE_ADMIN';
+    //         $roles[] = 'ROLE_DEMO';
+    //     }
 
-        return $roles;
-    }
+    //     return $roles;
+    // }
 
     public function getPassword()
     {
@@ -307,6 +309,7 @@ class User implements UserInterface, \Serializable
     public function __construct()
     {
         $this->projects = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roles = [];
     }
 
     /**
@@ -517,5 +520,46 @@ class User implements UserInterface, \Serializable
     public function getBetaSignup()
     {
         return $this->betaSignup;
+    }
+
+    /**
+     * Set roles
+     *
+     * @param array $roles
+     * @return User
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+    
+        return $this;
+    }
+
+    /**
+     * Add a role
+     * 
+     * @param string $role
+     * @return User
+     */
+    public function addRole($role)
+    {
+        $this->roles[] = $role;
+        $this->roles = array_unique($this->roles);
+
+        return $this;
+    }
+
+    /**
+     * Get roles
+     *
+     * @return array 
+     */
+    public function getRoles($raw = false)
+    {
+        if (null === $this->roles && !$raw) {
+            return ['ROLE_USER'];
+        }
+
+        return $this->roles;
     }
 }

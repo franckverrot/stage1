@@ -129,6 +129,7 @@ class SecurityController extends Controller
 
         $user->setLastLoginAt(new DateTime());
         $user->setAccessToken($accessToken);
+        $user->addRole('ROLE_USER');
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
