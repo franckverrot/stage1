@@ -1,80 +1,76 @@
 parameters:
-    database_driver:        pdo_mysql
-    database_host:          127.0.0.1
-    database_port:          ~
-    database_name:          symfony
-    database_user:          root
-    database_password:      ~
+    database_driver:                    pdo_mysql
+    database_host:                      127.0.0.1
+    database_port:                      ~
+    database_name:                      symfony
+    database_user:                      root
+    database_password:                  ~
 
-    mailer_transport:       smtp
-    mailer_host:            127.0.0.1
-    mailer_user:            ~
-    mailer_password:        ~
+    mailer_transport:                   smtp
+    mailer_host:                        127.0.0.1
+    mailer_user:                        ~
+    mailer_password:                    ~
 
-    locale:                 en
-    secret:                 ThisTokenIsNotSoSecretChangeIt
+    locale:                             en
+    secret:                             ThisTokenIsNotSoSecretChangeIt
 
-    configured:             true
-    build_host_mask:        %s.stage1.io
+    configured:                         true
+    build_host_mask:                    %s.stage1.io
 
     # redis
-    redis_host:             127.0.0.1
-    redis_port:             6379
-    redis_password:         ''
+    redis_host:                         127.0.0.1
+    redis_port:                         6379
+    redis_password:                     ''
 
-    # rabbitmq credentials
-    rabbitmq_host: localhost
-    rabbitmq_vhost: /
-    rabbitmq_user: guest
-    rabbitmq_password: guest
+    # rabbitmq credentials and options
+    rabbitmq_host:                      localhost
+    rabbitmq_vhost:                     /
+    rabbitmq_user:                      guest
+    rabbitmq_password:                  guest
 
-    websocket_port: 8090
+    stage1_queue_build:                 build_vm
+    stage1_queue_kill:                  kill_vm
+    stage1_queue_stop:                  kill_stop
 
-    stage1_queue_build: build_vm
-    stage1_queue_kill: kill_vm
-    stage1_queue_stop: kill_stop
+    # websockets
+    websocket_port:                     8090
 
     # various parameters
-    build_logs_load_limit: 500
-    build_logs_stream_limit: 1000
+    build_logs_load_limit:              500
+    build_logs_stream_limit:            1000
 
-    composer_enable_global_cache: false
-    composer_enable_project_cache: true
-    composer_cache_path: /usr/local/share/composer/cache/
+    # build cache
+    composer_enable_global_cache:       false
+    composer_enable_project_cache:      true
+    composer_cache_path:                /usr/local/share/composer/cache/
 
-    rubygems_enable_global_cache: false
-    rubygems_enable_project_cache: true
-    rubygems_cache_path: /usr/local/share/rubygems/cache/
+    rubygems_enable_global_cache:       false
+    rubygems_enable_project_cache:      true
+    rubygems_cache_path:                /usr/local/share/rubygems/cache/
 
     # features switches
-    feature_ip_access_list:     false
-    feature_token_access_list:  true
+    feature_ip_access_list:             false
+    feature_token_access_list:          true
+    stage1_enable_pr_comments:          false
+    stage1_enable_commit_statuses:      false
 
-    # build timeout, in seconds
-    stage1_build_timeout:       10
-
-    # maximum number of containers running per user
+    # build options
+    stage1_build_timeout:               10
+    stage1_dummy_build:                 false
+    stage1_dummy_build_duration:        10
     stage1_running_containers_per_user: 5
-
-    # build misc options
-    stage1_dummy_build: false
-    stage1_dummy_build_duration: 10
+    stage1_builder_host:                vm
+    stage1_builder_host_allow:          ['vm']
+    stage1_builder_ip:                  127.0.0.1
 
     # docker
-    docker_api_base_url: http://127.0.0.1:9000/
-    docker_default_memory_limit: 134217728      # 128MB
-    docker_default_cpu_shares: 1
+    docker_api_base_url:                http://127.0.0.1:9000/
+    docker_default_memory_limit:        134217728      # 128MB
+    docker_default_cpu_shares:          1
 
     # google analytics
-    # google_analytics_tracking_code: UA-45690665-2
-    google_analytics_tracking_code: ~
-    google_analytics_site: stage1.io
+    google_analytics_tracking_code:     ~
+    google_analytics_site:              stage1.io
 
-    stage1_builder_host: vm
-    stage1_builder_host_allow: ['vm']
-    stage1_builder_ip: 127.0.0.1
-
-    help_site_url: http://help.stage1.dev/
-
-    stage1_enable_pr_comments: false
-    stage1_enable_commit_statuses: false
+    # help
+    help_site_url:                      http://help.stage1.dev/
