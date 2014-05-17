@@ -1,8 +1,8 @@
 {
-    "name": "autostack/stage1",
-    "license": "proprietary",
+    "name": "stage1/stage1",
+    "license": "MIT",
     "type": "project",
-    "description": "The staging environment builder",
+    "description": "Automated staging platform",
     "autoload": {
         "psr-0": {
             "": "src/"
