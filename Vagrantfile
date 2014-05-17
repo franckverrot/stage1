@@ -5,12 +5,15 @@ $script = <<EOF
 # cd /var/www/stage1
 # composer self-update
 # composer install
+
 # app/console doctrine:database:drop --force
 # app/console doctrine:database:create
 # app/console doctrine:schema:update --force
 # app/console assetic:dump
 
 # bundle install
+# npm install
+
 # sudo fab service.export
 
 # if [ ! -d /var/www/yuhao ]; then
