@@ -29,7 +29,8 @@ class ProjectAccessType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class
+            'data_class' => $this->class,
+            'intention' => 'access_ip',
         ]);
     }
 

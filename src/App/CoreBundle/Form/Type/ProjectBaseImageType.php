@@ -31,13 +31,14 @@ class ProjectBaseImageType extends AbstractType
                     'symfony2' => 'Symfony2',
                 ]
             ])
-            ->add('save', 'submit', ['label' => 'Save project\'s base image']);
+            ->add('save', 'submit', ['label' => 'Save project\'s base image',]);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class
+            'data_class' => $this->class,
+            'intention' => 'docker_image'
         ]);
     }
 

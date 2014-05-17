@@ -32,12 +32,16 @@ class ProjectPolicyType extends AbstractType
                     ProjectSettings::POLICY_ALL => 'All branches',
                     ProjectSettings::POLICY_NONE => 'No branches',
                     ProjectSettings::POLICY_PATTERNS => 'Branches matching some patterns',
-                ]
+                ],
             ])
-            ->add('branchPatterns', 'textarea', ['attr' => ['class' => 'per-line-settings']])
+            ->add('branchPatterns', 'textarea', [
+                'attr' => [
+                    'class' => 'per-line-settings',
+                ],
+            ])
             ->add('save', 'submit', [
                 'label' => 'Save policy',
-                'attr' => ['class' => 'btn btn-primary']
+                'attr' => ['class' => 'btn btn-primary'],
             ]);
     }
 
@@ -45,6 +49,7 @@ class ProjectPolicyType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->class,
+            'intention' => 'branch_policies',
         ]);
     }
 
