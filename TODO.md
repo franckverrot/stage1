@@ -1,31 +1,7 @@
 TODO
 ====
 
-Screencasts
------------
-
-1. plan sur le desktop du developpeur qui bosse
-2. notif IM du client "there's a bug on <url>, <description du bug>"
-3. plan sur developpeur qui cree une branche, fix le bug et push sur github
-4. plan sur stage1 qui build automatiquement la branche sus-citee
-5. plan sur l'IM du dev qui envoie l'url au client
-6. plan sur le desktop du client qui clique sur le lien et navigue sur sa preprod
-7. plan sur l'IM du client qui dit "bug is fixed, thanks!"
-
-Gustave Integration
--------------------
-
-* Detecter que la branche en cours (ou page) est liee a une issue/PR,
-    * avoir un bouton "confirm bug fix"
-        * passer l'issue en "fixed" ou "ready to merge" ou whatever
-        * laisser un commentaire sur l'issue "ready to merge"
-        * auto-merger la PR si possible
-
-
-GUIDELINES
-----------
-
-* Whenever (if) we need to add code to a repo, propose to create a PR, not to commit it directly
+The road is still long.
 
 SCALING
 =======
