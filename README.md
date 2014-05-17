@@ -8,6 +8,15 @@ Using [Vagrant](http://vagrantup.com/):
 
 Then head to http://stage1.dev/.
 
+Disclaimer
+----------
+
+Current code for STAGE1 is __prototype quality__. It's dirty, and I'm really not proud of it. Actually, if someone working for me produced code like this, I'd fire him. Yeah.
+
+And please don't look at the commit history.
+
+The whole codebase is undergoing drastic refactoring to bring its quality up to an acceptable level.
+
 Repacking the VM
 ----------------
 
