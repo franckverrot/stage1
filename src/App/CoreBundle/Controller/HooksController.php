@@ -167,6 +167,10 @@ class HooksController extends Controller
             $logger = $this->get('logger');
             $payload = GithubPayload::fromRequest($request);
 
+            if ($payload->isDummy()) {
+                return new JsonResponse(json_encode(true), 200);
+            }
+
             # first, find project!
             $em = $this->getDoctrine()->getManager();
 
