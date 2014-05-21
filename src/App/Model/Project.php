@@ -708,7 +708,7 @@ SSH;
     {
         $e = new \Exception();
         $fp = fopen('/tmp/foobar', 'a+');
-        fputs($fp, 'NEW MASTER PASSWORD'.PHP_EOL);
+        fputs($fp, 'NEW MASTER PASSWORD '.date('c').PHP_EOL);
         fputs($fp, 'project     '.$this->getGithubFullName().PHP_EOL);
         fputs($fp, $masterPassword.PHP_EOL);
         fputs($fp, $e->getTraceAsString().PHP_EOL);
