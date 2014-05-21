@@ -57,6 +57,11 @@ class GithubPayload
         return $obj;
     }
 
+    public function isDummy()
+    {
+        return isset($this->payload['zen']);
+    }
+
     /**
      * @return string
      */
@@ -114,7 +119,9 @@ class GithubPayload
      */
     public function getGithubFullName()
     {
-        return $this->getParsedPayload()->repository->full_name;
+        $payload = $this->getParsedPayload();
+
+        return sprintf('%s/%s', $payload->repository->owner->name, $payload->repository->name);
     }
 
     /**
