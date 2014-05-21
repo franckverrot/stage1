@@ -164,7 +164,7 @@ class ProjectController extends Controller
 
                 $hash = $this->getHashFromRef($project, $ref);
                 $scheduler = $this->container->get('app_core.build_scheduler');
-                $build = $scheduler->schedule($project, $ref, $hash, $this->getUser(), [
+                $build = $scheduler->schedule($project, $ref, $hash, null, [
                     'force_local_build_yml' => true,
                 ]);
 
@@ -494,6 +494,13 @@ class ProjectController extends Controller
 
         foreach ($projects as $project) {
             if (!password_verify($password, $project->getMasterPassword())) {
+
+                $this->get('logger')->error('wrong password for auth', [
+                    'project' => $project->getSlug(),
+                    'master_password_hash' => $project->getMasterPassword(),
+                    'presented_password_hash' => password_hash($password, PASSWORD_BCRYPT)
+                ]);
+
                 continue;
             }
 
