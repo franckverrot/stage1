@@ -110,6 +110,14 @@ class GithubPayload
     }
 
     /**
+     * @return string
+     */
+    public function getGithubFullName()
+    {
+        return $this->getParsedPayload()->repository->full_name;
+    }
+
+    /**
      * @return integer
      */
     public function getPullRequestNumber()
