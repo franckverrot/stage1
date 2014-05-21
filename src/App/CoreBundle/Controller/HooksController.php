@@ -182,7 +182,6 @@ class HooksController extends Controller
                 $logger->error('could not find a project', [
                     'github_repository_id' => $payload->getGithubRepositoryId(),
                     'full_name' => $payload->getGithubFullName(),
-                    'payload' => $payload->getPayload(),
                 ]);
 
                 throw $this->createNotFoundException('Unknown Github project');
