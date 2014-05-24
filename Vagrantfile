@@ -2,28 +2,28 @@
 # vim:set ft=ruby:
 
 $script = <<EOF
-# cd /var/www/stage1
-# composer self-update
-# composer install
+cd /var/www/stage1
+composer self-update
+composer install
 
-# app/console doctrine:database:drop --force
-# app/console doctrine:database:create
-# app/console doctrine:schema:update --force
-# app/console assetic:dump
+app/console doctrine:database:drop --force
+app/console doctrine:database:create
+app/console doctrine:schema:update --force
+app/console assetic:dump
 
-# bundle install
-# npm install
+bundle install
+npm install
 
-# sudo fab service.export
+sudo fab service.export
 
-# if [ ! -d /var/www/yuhao ]; then
-#     git clone https://github.com/stage1/yuhao.git /var/www/yuhao
-# fi
+if [ ! -d /var/www/yuhao ]; then
+    git clone https://github.com/stage1/yuhao.git /var/www/yuhao
+fi
 
-# if ! docker images | grep stage1 > /dev/null; then
-#     bin/docker/update.sh
-#     bin/yuhao/update.sh
-# fi
+if ! docker images | grep stage1 > /dev/null; then
+    bin/docker/update.sh
+    bin/yuhao/update.sh
+fi
 EOF
 
 Vagrant.configure("2") do |config|
