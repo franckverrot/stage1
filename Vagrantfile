@@ -37,7 +37,6 @@ Vagrant.configure("2") do |config|
     config.vm.network :private_network, ip: '192.168.215.42'
     
     config.vm.synced_folder '.', '/var/www/stage1', type: 'nfs'
-    config.vm.synced_folder '/Users/ash/Projects', '/projects', type: 'nfs'
 
     config.hostmanager.aliases = %w(stage1.dev www.stage1.dev help.stage1.dev)
 
@@ -50,5 +49,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider 'virtualbox' do |v|
         v.customize [ "modifyvm", :id, "--memory", "1024" ]
+        v.cpus = 1
+        v.name = "stage1"
     end
 end
