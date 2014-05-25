@@ -18,9 +18,9 @@
     primus.on('data', function(data) {
 
         if (data.event) {
-            console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
+            // console.log(data.event, data.channel, '@', data.timestamp, 'vs', lastTimestamp);
         } else {
-            console.log(data);
+            // console.log(data);
         }
 
         if (!data.data) {
