@@ -68,7 +68,7 @@ class UserFixCommand extends ContainerAwareCommand
                 $user->setPrivateKey($keys['private']);
             }
 
-            if (null === $user->getRoles(true)) {
+            if (null === $user->getRoles(true) || count($user->getRoles()) === 0) {
                 $output->writeln('setting default role for <info>'.$user->getUsername().'</info>');
                 $user->setRoles(['ROLE_USER']);
             }
