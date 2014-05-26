@@ -24,7 +24,7 @@ for service in ${services[@]}; do
 done;
 
 # @todo this should not be necessary
-mkdir -p $APP_ROOT/app/logs/
+mkdir -p $APP_ROOT/app/logs/ $APP_ROOT/app/cache
 touch $APP_ROOT/app/logs/prod.log /var/log/php.log
 
 chmod -R 777 $APP_ROOT/app/logs $APP_ROOT/app/cache
