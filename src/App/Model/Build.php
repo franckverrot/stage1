@@ -227,6 +227,11 @@ class Build implements WebsocketRoutable
         return preg_replace('/[^a-z0-9\-]/', '-', strtolower($string));
     }
 
+    public function hasForcedDomain()
+    {
+        return !$this->isPullRequest() && $this->getBranch()->hasForcedDomain();
+    }
+
     public function getDomain()
     {
         return $this->isPullRequest()
