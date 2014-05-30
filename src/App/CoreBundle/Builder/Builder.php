@@ -231,7 +231,9 @@ class Builder
         $em->persist($script);
         $em->flush();
 
+        $logger->info('starting build');
         $strategy->build($build, $script, $timeout);
+        $logger->info('finished build');
 
         $em->persist($build);
         $em->persist($script);
@@ -240,6 +242,11 @@ class Builder
         /**
          * Launch App container
          */
+        $logger->info('starting app container', [
+            'project' => $build->getProject->getGithubFullName(),
+            'image' => $build->getImageName(),
+        ]);
+
         $ports = new PortCollection(80, 22);
 
         # @todo DefaultStrategy containers should have an entrypoint
@@ -252,11 +259,19 @@ class Builder
             $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
         }
 
-        $manager
-            ->create($appContainer)
-            ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
+        try {
+            $manager
+                ->create($appContainer)
+                ->start($appContainer, ['PortBindings' => $ports->toSpec()]);
 
-        $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);
+            $logger->info('running app container', ['build' => $build->getId(), 'container' => $appContainer->getId()]);            
+        } catch (\Docker\Exception\UnexpectedStatusCodeException $e) {
+            if ($e->getStatusCode() === 404) {
+                throw new \RuntimeException('Could not start app container ('.$e->getMessage().')', $e);
+            }
+
+            throw $e;
+        }
 
         // $publish('  build finished ('.date('r').')'.PHP_EOL);
 
