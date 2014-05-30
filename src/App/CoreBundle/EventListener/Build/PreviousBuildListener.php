@@ -78,7 +78,10 @@ class PreviousBuildListener
                 'previous_build' => $previousBuild->getId()
             ]);
 
-            // return;
+            $previousBuild->setStatus(Build::STATUS_OBSOLETE);
+            $em->persist($previousBuild);
+
+            return;
         }
 
         $logger->info('sending stop order', [

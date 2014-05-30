@@ -18,6 +18,8 @@ class Branch
 
     protected $builds;
 
+    protected $isDemo = false;
+
     /** not persisted **/
 
     protected $lastBuild;
@@ -256,5 +258,28 @@ class Branch
     public function getDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Set isDemo
+     *
+     * @param boolean $isDemo
+     * @return Branch
+     */
+    public function setIsDemo($isDemo)
+    {
+        $this->isDemo = $isDemo;
+    
+        return $this;
+    }
+
+    /**
+     * Get isDemo
+     *
+     * @return boolean 
+     */
+    public function getIsDemo()
+    {
+        return $this->isDemo;
     }
 }

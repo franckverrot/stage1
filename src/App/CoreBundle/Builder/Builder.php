@@ -243,7 +243,7 @@ class Builder
          * Launch App container
          */
         $logger->info('starting app container', [
-            'project' => $build->getProject->getGithubFullName(),
+            'project' => $build->getProject()->getGithubFullName(),
             'image' => $build->getImageName(),
         ]);
 

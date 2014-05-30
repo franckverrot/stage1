@@ -48,7 +48,9 @@ class ContainersLimitListener
         $this->docker = $docker;
         $this->limit = $limit;
 
-        $logger->info('initialized '.__CLASS__);
+        $logger->info('initialized '.__CLASS__, [
+            'limit' => $limit
+        ]);
     }
 
     /**
@@ -57,6 +59,7 @@ class ContainersLimitListener
     public function onBuildFinished(BuildFinishedEvent $event)
     {
         $build = $event->getBuild();
+        $logger = $this->logger;
 
         if (!$build->isRunning() || $build->isDemo()) {
             return;
@@ -67,16 +70,28 @@ class ContainersLimitListener
 
         $user = $build->getProject()->getUsers()->first();
 
+        // we need all potential changed build status to be flushed
+        $em->flush();
+
         $runningBuilds = $buildRepository->findRunningBuildsByUser($user);
 
-        $this->logger->info('detected running builds for user', [
+        $runningBuilds = array_filter($runningBuilds, function($build) use ($logger) {
+            if ($build->getBranch()->getIsDemo()) {
+                $logger->info('not counting build as running because branch is demo', [
+                    'project' => $build->getProject()->getGithubFullname(),
+                    'build' => $build->getId(),
+                    'branch' => $build->getBranch()->getName(),
+                ]);
+            }
+
+            return !$build->getBranch()->getIsDemo();
+        });
+
+        $logger->info('detected running builds for user', [
             'build' => $build->getId(),
             'running_builds' => count($runningBuilds),
             'user' => $user->getUsername(),
         ]);
-
-        // we need all potential changed build status to be flushed
-        $em->flush();
 
         if (count($runningBuilds) <= $this->limit) {
             return;
@@ -89,10 +104,17 @@ class ContainersLimitListener
         foreach ($excessBuilds as $excessBuild) {
             $container = $excessBuild->getContainer();
 
+            $logger->info('stopping container for excess build', [
+                'excess_build' => $excessBuild->getId(),
+            ]);
+
             if (!$container) {
-                $this->logger->info('excess build does not have a container', ['build' => $build->getId(), 'excess_build' => $excessBuild->getId()]);
+                $logger->info('excess build does not have a container', [
+                    'build' => $build->getId(),
+                    'excess_build' => $excessBuild->getId()
+                ]);
             } else {
-                $this->logger->info('stopping excess container', [
+                $logger->info('stopping excess container', [
                     'build' => $build->getId(),
                     'excess_build' => $excessBuild->getId(),
                     'excess_container' => $container->getId()
@@ -103,7 +125,7 @@ class ContainersLimitListener
                         ->stop($container)
                         ->remove($container);
                 } catch (UnexpectedStatusCodeException $e) {
-                    $this->logger->warn('could not stop excess container', [
+                    $logger->warn('could not stop excess container', [
                         'build' => $build->getId(),
                         'excess_build' => $excessBuild->getId(),
                         'excess_container' => $container->getId()
