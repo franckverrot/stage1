@@ -909,9 +909,12 @@ SSH;
      * @return array
      */
     public function getContainerEnv()
-    {
+    {        
         $env = explode(PHP_EOL, $this->getEnv());
         $env = array_map('trim', $env);
+        $env = array_filter($env, function($e) {
+            return strlen($e) > 0;
+        });
 
         return $env;
     }

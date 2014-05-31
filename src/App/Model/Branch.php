@@ -18,6 +18,10 @@ class Branch
 
     protected $builds;
 
+    protected $isDemo = false;
+
+    protected $domain;
+
     /** not persisted **/
 
     protected $lastBuild;
@@ -28,16 +32,37 @@ class Branch
         return $this->getName();
     }
 
+    public function hasForcedDomain()
+    {
+        return null !== $this->domain;
+    }
+
     /**
      * @return string
      */
     public function getDomain()
     {
-        $name = preg_replace('/[^a-z0-9\-]/', '-', strtolower($this->getName()));
+        if (null === $this->domain) {
+            $name = preg_replace('/[^a-z0-9\-]/', '-', strtolower($this->getName()));
 
-        return sprintf('%s.%s', $name, $this->getProject()->getDomain());
+            return sprintf('%s.%s', $name, $this->getProject()->getDomain());            
+        }
+
+        return $this->domain;
     }
     
+    /**
+     * @param string $domain
+     *
+     * @return App\Model\Branch
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
     /**
      * Constructor
      */
@@ -256,5 +281,28 @@ class Branch
     public function getDeleted()
     {
         return $this->deleted;
+    }
+
+    /**
+     * Set isDemo
+     *
+     * @param boolean $isDemo
+     * @return Branch
+     */
+    public function setIsDemo($isDemo)
+    {
+        $this->isDemo = $isDemo;
+    
+        return $this;
+    }
+
+    /**
+     * Get isDemo
+     *
+     * @return boolean 
+     */
+    public function getIsDemo()
+    {
+        return $this->isDemo;
     }
 }

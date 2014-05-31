@@ -9,6 +9,8 @@
         <field name="createdAt" column="created_at" type="datetime" />
         <field name="updatedAt" column="updated_at" type="datetime" />
         <field name="deleted" column="deleted" type="boolean" />
+        <field name="isDemo" column="is_demo" type="boolean" default="true" />
+        <field name="domain" column="domain" type="string" length="255" nullable="true" />
 
         <many-to-one field="project" target-entity="App\Model\Project" inversed-by="branches">
             <join-column name="project_id" referenced-column-name="id" on-delete="CASCADE" />
