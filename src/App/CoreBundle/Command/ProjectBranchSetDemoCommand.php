@@ -8,29 +8,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-use InvalidArgumentException;
-
-class BranchSetDomainCommand extends ContainerAwareCommand
+class ProjectBranchSetDemoCommand extends ContainerAwareCommand
 {
     public function configure()
     {
         $this
-            ->setName('stage1:branch:set-domain')
-            ->setDescription('Sets the static domain of a branch')
+            ->setName('stage1:project:branch:set-demo')
+            ->setDescription('Sets the demo status of a branch')
             ->setDefinition([
                 new InputArgument('project_spec', InputArgument::REQUIRED, 'The project spec'),
                 new InputArgument('branch_spec', InputArgument::REQUIRED, 'The branch spec'),
-                new InputArgument('domain', InputArgument::OPTIONAL, 'The static domain'),
                 new InputOption('unset', null, InputOption::VALUE_NONE, 'Unset demo status'),
             ]);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if (null === $input->getArgument('domain') && !$input->getOption('unset')) {
-            throw new InvalidArgumentException('one of domain or --unset is required');
-        }
-
         $project = $this
             ->getContainer()
             ->get('doctrine')
@@ -43,11 +36,8 @@ class BranchSetDomainCommand extends ContainerAwareCommand
             ->getRepository('Model:Branch')
             ->findOneByProjectAndName($project, $input->getArgument('branch_spec'));
 
-        if ($input->getOption('unset')) {
-            $branch->setDomain(null);
-        } else {
-            $branch->setDomain($input->getArgument('domain'));
-        }
+        $isDemo = !$input->getOption('unset');
+        $branch->setIsDemo($isDemo);
 
         $em = $this
             ->getContainer()
@@ -57,10 +47,10 @@ class BranchSetDomainCommand extends ContainerAwareCommand
         $em->persist($branch);
         $em->flush();
 
-        if ($input->getOption('unset')) {
-            $output->writeln('<info>unset</info> static domain for branch <info>'.$project->getGithubFullName().':'.$branch->getName().'</info>');
+        if ($isDemo) {
+            $output->writeln('<info>set</info> demo status for branch <info>'.$project->getGithubFullName().':'.$branch->getName().'</info>');
         } else {
-            $output->writeln('<info>set</info> static domain <info>'.$input->getArgument('domain').'</info> for branch <info>'.$project->getGithubFullName().':'.$branch->getName().'</info>');
+            $output->writeln('<info>unset</info> demo status for branch <info>'.$project->getGithubFullName().':'.$branch->getName().'</info>');
         }
     }
 }
