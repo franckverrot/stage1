@@ -790,7 +790,9 @@ SSH;
      */
     public function getActiveBranches()
     {
-        return $this->getBranches()->filter(function($branch) { return !$branch->getDeleted(); });
+        return $this->getBranches()->filter(function($branch) {
+            return !$branch->getDeleted();
+        });
     }
 
     /**
