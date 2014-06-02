@@ -133,7 +133,10 @@ class Import
 
         $callback(['id' => 'inspect', 'label' => 'Inspecting project']);
         $this->logger->debug('running inspect step', ['project' => $githubFullName]);
-        $this->doInspect($project);
+
+        if (false === $this->doInspect($project)) {
+            return false;
+        }
 
         $callback(['id' => 'keys', 'label' => 'Generating keys']);
         $this->logger->debug('running keys step', ['project' => $githubFullName]);
@@ -203,8 +206,12 @@ class Import
     # @todo use github api instead of relying on request parameters
     private function doInspect(Project $project)
     {
-        $request = $this->client->get('/repos/'.$project->getGithubFullName());
-        $response = $request->send();
+        try {
+            $request = $this->client->get('/repos/'.$project->getGithubFullName());
+            $response = $request->send();
+        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+            return false;
+        }
 
         $infos = $response->json();
 
