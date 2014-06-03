@@ -4,7 +4,7 @@
   "author": "Geoffrey Bachelet <geoffrey@stage1.io>",
   "description": "stage1.io's node subsystem",
   "dependencies": {
-    "aldis": "0.0.1",
+    "aldis": "0.0.3",
     "primus": "~1.2.0",
     "ws": "~0.4.29",
     "redis": "~0.8.4",
