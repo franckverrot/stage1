@@ -2,8 +2,6 @@
 
 source /usr/local/lib/stage1.sh
 
-/usr/sbin/sshd
-
 # @todo move that to container ENV (maybe from Project's config)
 export APP_ROOT=/app
 cd $APP_ROOT

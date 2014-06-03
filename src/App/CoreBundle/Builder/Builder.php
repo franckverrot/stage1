@@ -247,7 +247,7 @@ class Builder
             'image' => $build->getImageName(),
         ]);
 
-        $ports = new PortCollection(80, 22);
+        $ports = new PortCollection(80);
 
         # @todo DefaultStrategy containers should have an entrypoint
         #       so we don't need to provide an actual command

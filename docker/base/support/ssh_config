@@ -1,5 +1,0 @@
-Host *
-    SendEnv LANG LC_*
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-    LogLevel QUIET

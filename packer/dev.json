@@ -114,16 +114,6 @@
       "type": "file"
     },
     {
-      "destination": "/tmp/keys-stage1-vm",
-      "source": "packer/support/keys/stage1-vm",
-      "type": "file"
-    },
-    {
-      "destination": "/tmp/keys-stage1-vm.pub",
-      "source": "packer/support/keys/stage1-vm.pub",
-      "type": "file"
-    },
-    {
       "destination": "/tmp/grub-default",
       "source": "packer/support/config/grub/default",
       "type": "file"

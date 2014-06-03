@@ -95,6 +95,7 @@ Using [Packer](http://packer.io/):
 
 **VMware users**:
 
+    $ packer/generate_keys.sh
     $ packer build -only=vmware-iso packer/dev.json
     $ vagrant box add \
         --name ubermuda/stage1-dev \
@@ -104,6 +105,7 @@ Using [Packer](http://packer.io/):
 
 **VirtualBox users**:
 
+    $ packer/generate_keys.sh
     $ packer build -only=virtualbox-iso packer/dev.json
     $ vagrant box add \
         --name ubermuda/stage1-dev \
