@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-YUHAO_DIR=/projects/yuhao
+YUHAO_DIR=../yuhao
 
 if [ -d $YUHAO_DIR ]; then
     cd $YUHAO_DIR

@@ -18,6 +18,10 @@ sudo fab service.export
 
 if [ ! -d /var/www/yuhao ]; then
     git clone https://github.com/stage1/yuhao.git /var/www/yuhao
+    cd /var/www/yuhao
+    composer install
+    cd -
+    chmod -R vagrant:vagrant /var/www/yuhao
 fi
 
 if ! docker images | grep stage1 > /dev/null; then
