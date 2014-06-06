@@ -23,7 +23,7 @@ env.project_path = '/var/www/stage1'
 env.upstart_path = '/etc/init'
 env.remote_dump_path = '/root/dump'
 env.local_dump_path = '~/dump'
-env.use_ssh_config = True
+# env.use_ssh_config = True
 env.rsync_exclude_from = './app/Resources/rsync-exclude.txt'
 
 env.processes_prefix = 'stage1'
