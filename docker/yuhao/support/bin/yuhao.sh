@@ -14,9 +14,9 @@ else
     git clone --quiet --depth 1 --branch $REF $SSH_URL $APP_ROOT > /dev/null
 fi
 
-# check if we must (or want to) use the local build.yml configuration
-if [[ -n "$FORCE_LOCAL_BUILD_YML" || (! -f $APP_ROOT/.build.yml && -f /root/build_local.yml) ]]; then
-    cp /root/build_local.yml $APP_ROOT/.build.yml
+# check if we must (or want to) use the local .stage1.yml configuration
+if [[ -n "$FORCE_LOCAL_STAGE1_YML" || (! -f $APP_ROOT/.stage1.yml && -f /root/stage1_local.yml) ]]; then
+    cp /root/stage1_local.yml $APP_ROOT/.stage1.yml
 fi
 
 yuhao.phar $APP_ROOT

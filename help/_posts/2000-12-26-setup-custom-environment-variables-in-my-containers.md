@@ -25,9 +25,9 @@ Example:
     FOO_API_KEY=7BMnTzAIoTeVg
     FOO=some value with spaces
 
-### Configuring environment variables in the `.build.yml` file
+### Configuring environment variables in the `.stage1.yml` file
 
-You can also configure custom environment variables in your `.build.yml` file, using the `env` configuration key:
+You can also configure custom environment variables in your `.stage1.yml` file, using the `env` configuration key:
 
     env:
         - SYMFONY_ENV=prod

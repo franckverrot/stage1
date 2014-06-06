@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Customizing a build with the .build.yml file
+title: Customizing a build with the .stage1.yml file
 published: true
 category: general
 ---
 
-The `.build.yml` file is a configuration file specific to [Stage1](http://stage1.io/) that allows full customization of your build process. It must be placed at the root of your project and contain valid YAML with a `build` key.
+The `.stage1.yml` file is a configuration file specific to [Stage1](http://stage1.io/) that allows full customization of your build process. It must be placed at the root of your project and contain valid YAML with a `build` key.
 
 Here is an example build installing dependencies through **composer** and then publishing assets with **assetic**:
 
@@ -29,7 +29,7 @@ You can configure the base image used for your builds using the `image` key:
 
 ### Configuring environment variables
 
-You can configure environment variables right from your `.build.yml` file, with the `env` key:
+You can configure environment variables right from your `.stage1.yml` file, with the `env` key:
 
     env:
       - SYMFONY_ENV=prod

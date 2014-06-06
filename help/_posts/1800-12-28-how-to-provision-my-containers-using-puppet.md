@@ -5,7 +5,7 @@ published: true
 category: provisioning
 ---
 
-To provision your containers using a Puppet manifest, you need to install it and run it manually using the `.build.yml` configuration file:
+To provision your containers using a Puppet manifest, you need to install it and run it manually using the `.stage1.yml` configuration file:
 
     build:
       - apt-get install -y puppet

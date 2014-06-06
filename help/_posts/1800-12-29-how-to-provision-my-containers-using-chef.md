@@ -5,7 +5,7 @@ published: true
 category: provisioning
 ---
 
-To provision your containers using a Chef, you need to install it and run it manually using the `.build.yml` configuration file:
+To provision your containers using a Chef, you need to install it and run it manually using the `.stage1.yml` configuration file:
 
     build:
       - curl -L https://www.opscode.com/chef/install.sh | sudo bash

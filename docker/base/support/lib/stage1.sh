@@ -9,7 +9,7 @@ fi
 
 trap 'exit $?' ERR
 
-STAGE1_CONFIG_PATH=".build.yml"
+STAGE1_CONFIG_PATH=".stage1.yml"
 
 stage1_announce() {
     # echo -e "\033[33mstage1\033[0m> $@"

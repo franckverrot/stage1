@@ -20,9 +20,9 @@ You may add as many domains as you want, one per line. URLs will be constructed 
 
 With _branch_ being the name of the branch, as usual.
 
-### Configuring domains in the `.build.yml` file
+### Configuring domains in the `.stage1.yml` file
 
-You can also configure custom domains in your `.build.yml` file, using the `urls` configuration key:
+You can also configure custom domains in your `.stage1.yml` file, using the `urls` configuration key:
 
     urls:
       - foo

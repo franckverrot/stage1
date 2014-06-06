@@ -5,7 +5,7 @@ published: true
 category: general
 ---
 
-Launching arbitrary services in your app container is supported through the `.build.yml` configuration file with the `run` section. Much like the `build` section, you can specify any number of arbitrary commands. These commands can daemonize or not, it will work the same.
+Launching arbitrary services in your app container is supported through the `.stage1.yml` configuration file with the `run` section. Much like the `build` section, you can specify any number of arbitrary commands. These commands can daemonize or not, it will work the same.
 
 > Do not forget though that specifying a `build` section will completely bypass the default build, so you still need to include, for example, dependencies installation.
 {:.note}

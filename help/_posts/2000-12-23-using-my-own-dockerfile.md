@@ -5,7 +5,7 @@ published: true
 category: general
 ---
 
-If you can't (or do not want to) use a `.build.yml` file to configure your build, Stage1 can use a `Dockerfile` to build your staging instances.
+If you can't (or do not want to) use a `.stage1.yml` file to configure your build, Stage1 can use a `Dockerfile` to build your staging instances.
 
 ### Constraints
 
