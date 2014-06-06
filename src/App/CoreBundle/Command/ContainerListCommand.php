@@ -109,12 +109,16 @@ class ContainerListCommand extends ContainerAwareCommand
 
             $data = $container->getData();
 
+            $label = $build->isPullRequest()
+                ? sprintf('pf-%s', $build->getPullRequest()->getNumber())
+                : $build->getBranch()->getName();
+
             $rows[] = [
                 $build->getId(),
                 explode(':', $container->getImage()->getName())[0],
                 (!$onlyContainer && posix_isatty(STDOUT)) ? substr($container->getId(), 0, 8) : $container->getId(),
                 $projectName,
-                $build->getBranch()->getName(),
+                $label,
                 $username,
                 $build->getStatusLabel(),
                 // $data['Status'],

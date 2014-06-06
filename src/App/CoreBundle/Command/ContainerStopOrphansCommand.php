@@ -26,7 +26,9 @@ class ContainerStopOrphansCommand extends ContainerAwareCommand
     {
         $docker = $this->getContainer()->get('app_core.docker');
 
-        $containers = $docker->getContainerManager()->findAll();
+        $containers = $docker
+            ->getContainerManager()
+            ->findAll();
 
         if (count($containers) === 0) {
             return;
@@ -36,10 +38,7 @@ class ContainerStopOrphansCommand extends ContainerAwareCommand
         $rp = $em->getRepository('Model:Build');
 
         foreach ($containers as $container) {
-
-            list(,$projectId,,$buildId) = explode('/', $container->getImage()->getRepository());
-            $data = $container->getData();
-            $build = $rp->find($buildId);
+            $build = $rp->findOneByContainerId($container->getId());
 
             if ($build) {
                 continue;
