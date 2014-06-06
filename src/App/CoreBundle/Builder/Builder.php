@@ -151,7 +151,7 @@ class Builder
 
         // @todo move inside PrepareContainer
         if ($build->getForceLocalBuildYml()) {
-            $prepareContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+            $prepareContainer->addEnv(['FORCE_LOCAL_STAGE1_YML=1']);
         }
 
         $manager = $docker->getContainerManager();
@@ -256,7 +256,7 @@ class Builder
         $appContainer->setExposedPorts($ports);
 
         if ($build->getForceLocalBuildYml()) {
-            $appContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+            $appContainer->addEnv(['FORCE_LOCAL_STAGE1_YML=1']);
         }
 
         try {

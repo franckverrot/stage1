@@ -14,7 +14,7 @@ category: general
 5. Dumping assets using [Assetic](https://github.com/kriswallsmith/assetic) if available
 6. Setting permissions on `app/cache` and `app/logs`
 
-And the build script is equivalent to this `.build.yml` configuration:
+And the build script is equivalent to this `.stage1.yml` configuration:
 
     build:
       - composer install

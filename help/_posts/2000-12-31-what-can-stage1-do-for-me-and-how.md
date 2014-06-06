@@ -34,7 +34,7 @@ Depending on your project type or configuration, a different base container will
 > You can also use [a bare image]({% post_url 1900-12-30-the-ubuntu-precise-12-04-base-image %}/) and easily provision your build using existing provisioning tools, like [Puppet]({% post_url 1800-12-28-how-to-provision-my-containers-using-puppet %}/) (and more provisioning tools to come!)
 {:.note}
 
-The build itself is directed either by [Stage1's automated builder]({% post_url 2000-12-30-stage-1-s-automated-builder %}/) or by your [custom `.build.yml` configuration file]({% post_url 2000-12-29-customizing-a-build-with-the-build-yml-file %}/). The build output is streamed in real-time (or whatever that means in a web application) to Stage1's web console so you can monitor its progress and see error messages if any.
+The build itself is directed either by [Stage1's automated builder]({% post_url 2000-12-30-stage-1-s-automated-builder %}/) or by your [custom `.stage1.yml` configuration file]({% post_url 2000-12-29-customizing-a-build-with-the-build-yml-file %}/). The build output is streamed in real-time (or whatever that means in a web application) to Stage1's web console so you can monitor its progress and see error messages if any.
 
 ![Stage1 building PuPHPet and streaming output to the web console](/assets/screenshots/build-web-console.png)
 

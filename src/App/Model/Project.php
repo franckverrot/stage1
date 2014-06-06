@@ -189,7 +189,7 @@ SSH;
         $this->dumpSshKeys($identityRoot, 'root', [$builder, 'add'], [$builder, 'run']);
 
         if ($this->getSettings() && strlen($this->getSettings()->getBuildYml()) > 0) {
-            $builder->add('/root/build_local.yml', $this->getSettings()->getBuildYml());
+            $builder->add('/root/stage1_local.yml', $this->getSettings()->getBuildYml());
         }
 
         return $builder;

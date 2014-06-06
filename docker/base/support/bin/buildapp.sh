@@ -26,13 +26,13 @@ if [ -f composer.json ]; then
     stage1_composer_configure $ACCESS_TOKEN
 fi
 
-# check if we must (or want to) use the local build.yml configuration
-if [ -n "$FORCE_LOCAL_BUILD_YML" ]; then
-    stage1_announce "forcing local .build.yml"
-    cp /root/build_local.yml ./.build.yml
-elif [[ ( ! -f ./.build.yml && -f /root/build_local.yml ) ]]; then
-    stage1_announce "no .build.yml found, using local .build.yml"
-    cp /root/build_local.yml ./.build.yml
+# check if we must (or want to) use the local stage1.yml configuration
+if [ -n "$FORCE_LOCAL_STAGE1_YML" ]; then
+    stage1_announce "forcing local .stage1.yml"
+    cp /root/stage1_local.yml ./.stage1.yml
+elif [[ ( ! -f ./.stage1.yml && -f /root/stage1_local.yml ) ]]; then
+    stage1_announce "no .stage1.yml found, using local .stage1.yml"
+    cp /root/stage1_local.yml ./.stage1.yml
 fi
 
 STAGE1_STAGE='build'

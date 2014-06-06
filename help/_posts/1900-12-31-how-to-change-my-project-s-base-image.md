@@ -16,8 +16,8 @@ You can change your project's base image in the **Admin** tab of your project:
 
 ![Change your project's base image](/assets/screenshots/project-base-image.png)
 
-### Configuring your base image in the `.build.yml` file
+### Configuring your base image in the `.stage1.yml` file
 
-You can also configure your base image in the `.build.yml` file, using the `image` configuration key:
+You can also configure your base image in the `.stage1.yml` file, using the `image` configuration key:
 
     image: symfony2

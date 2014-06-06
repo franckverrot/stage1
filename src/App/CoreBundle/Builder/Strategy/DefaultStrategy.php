@@ -89,7 +89,7 @@ class DefaultStrategy
         $script->setRuntimeEnv($buildContainer->getEnv());
 
         if ($build->getForceLocalBuildYml()) {
-            $buildContainer->addEnv(['FORCE_LOCAL_BUILD_YML=1']);
+            $buildContainer->addEnv(['FORCE_LOCAL_STAGE1_YML=1']);
         }
 
         $manager = $docker->getContainerManager();
