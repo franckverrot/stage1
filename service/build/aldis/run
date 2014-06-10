@@ -5,5 +5,9 @@ else
     NODE=/usr/bin/env node
 fi
 
+if [ -f /etc/environment ]; then
+    source /etc/environment
+fi
+
 exec $NODE /var/www/stage1/node/node_modules/aldis/aldis.js -A -E CHANNEL -E BUILD_ID -l \
     >> /var/log/stage1/aldis.log 2>&1
